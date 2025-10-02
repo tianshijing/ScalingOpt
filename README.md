@@ -8,27 +8,13 @@ Welcome to **ScalingOpt (Optimization Community)**, a meticulously curated colle
 
 If this repository has been helpful to you, please consider giving it a ⭐️ to show your support. Your support helps us reach more researchers and contributes to the growth of this resource. Thank you! ☺️
 
-## Table of Contents
-
-- [Introduction](#introduction)
-- [Awesome Optimizers](#awesome-optimizers)
-- [Optimizer Paradigm Definition](#optimizer-paradigm-definition)
-- [Our Latest Work: A Decade’s Battle on the Bias of Vision Backbone and Optimizer](#our-latest-work-a-decades-battle-on-the-bias-of-vision-backbone-and-optimizer)
-- [Benchmark](#benchmark)
-- [Four categories of optimizers](#four-categories-of-optimizers)
-- [Recommended Hyperparameter Settings](#recommended-hyperparameter-settings)
-- [Contribution](#contribution)
-## Introduction
-
-**ScalingOpt** - A comprehensive platform for discovering, comparing, and contributing to cutting-edge optimization algorithms designed for large-scale machine learning.
-
 [![GitHub](https://img.shields.io/badge/GitHub-ScalingOpt-blue?style=flat-square&logo=github)](https://github.com/tianshijing/ScalingOpt)
 [![Website](https://img.shields.io/badge/Website-Live-green?style=flat-square)](https://tianshijing.github.io/ScalingOpt/)
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
 
 ## 🌟 Introduction
 
-ScalingOpt is a comprehensive platform dedicated to optimization algorithms for large-scale machine learning. As deep learning models grow increasingly complex and datasets become massive, choosing the right optimizer becomes crucial for achieving optimal performance and efficiency.
+**ScalingOpt** is a comprehensive platform dedicated to optimization algorithms for large-scale machine learning. As deep learning models grow increasingly complex and datasets become massive, choosing the right optimizer becomes crucial for achieving optimal performance and efficiency.
 
 This platform provides:
 
