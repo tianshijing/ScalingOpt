@@ -6,15 +6,8 @@ const nextConfig = {
     unoptimized: true
   },
   trailingSlash: true,
-  // Disable SWC minification to avoid platform-specific binaries
-  swcMinify: false,
-  // Use webpack for minification instead
-  webpack: (config, { dev, isServer }) => {
-    if (!dev && !isServer) {
-      config.optimization.minimize = true;
-    }
-    return config;
-  }
+  basePath: process.env.NODE_ENV === 'production' ? '/ScalingOpt' : '',
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/ScalingOpt/' : ''
 }
 
 module.exports = nextConfig

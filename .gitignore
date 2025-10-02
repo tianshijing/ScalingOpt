@@ -1,0 +1,118 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Next.js
+.next/
+out/
+build/
+
+# Production
+dist/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# nyc test coverage
+.nyc_output
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# next.js build output
+.next
+
+# nuxt.js build output
+.nuxt
+
+# vuepress build output
+.vuepress/dist
+
+# Serverless directories
+.serverless
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# SWC binary files (platform-specific)
+node_modules/@next/swc-*/
+node_modules/@swc/core-*/
+
+# Large binary files
+*.node
+*.so
+*.dylib
+*.dll
+
+# Platform-specific SWC binaries
+node_modules/@next/swc-darwin-x64/
+node_modules/@next/swc-darwin-arm64/
+node_modules/@next/swc-linux-x64-gnu/
+node_modules/@next/swc-linux-x64-musl/
+node_modules/@next/swc-win32-x64-msvc/
+node_modules/@next/swc-win32-ia32-msvc/
+
+# SWC core binaries
+node_modules/@swc/core-darwin-x64/
+node_modules/@swc/core-darwin-arm64/
+node_modules/@swc/core-linux-x64-gnu/
+node_modules/@swc/core-linux-x64-musl/
+node_modules/@swc/core-win32-x64-msvc/
+node_modules/@swc/core-win32-ia32-msvc/
+
+# GitHub Pages deployment files (keep workflows)
+# .github/workflows/ - commented out as we need the workflow files

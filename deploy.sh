@@ -48,8 +48,16 @@ fi
 
 echo "✅ Build completed successfully"
 
-# Check if we're deploying to Vercel
-if command -v vercel &> /dev/null; then
+# Check if we're deploying to GitHub Pages
+if [ "$1" = "github-pages" ]; then
+    echo "🌐 Preparing for GitHub Pages deployment..."
+    echo "✅ Static files generated in 'out' directory"
+    echo "📝 Next steps:"
+    echo "   1. Commit and push your changes to GitHub"
+    echo "   2. Enable GitHub Pages in repository settings"
+    echo "   3. Set source to 'GitHub Actions'"
+    echo "   4. The workflow will automatically deploy to GitHub Pages"
+elif command -v vercel &> /dev/null; then
     echo "🌐 Deploying to Vercel..."
     vercel --prod
 elif command -v netlify &> /dev/null; then
@@ -57,9 +65,10 @@ elif command -v netlify &> /dev/null; then
     netlify deploy --prod --dir=out
 else
     echo "✅ Build completed! You can now:"
-    echo "   1. Deploy the 'out' folder to any static hosting service"
-    echo "   2. Run 'npm start' to test the production build locally"
-    echo "   3. Install Vercel CLI (npm i -g vercel) for easy deployment"
+    echo "   1. Run './deploy.sh github-pages' for GitHub Pages"
+    echo "   2. Deploy the 'out' folder to any static hosting service"
+    echo "   3. Run 'npm start' to test the production build locally"
+    echo "   4. Install Vercel CLI (npm i -g vercel) for easy deployment"
 fi
 
 echo "🎉 Deployment process completed!"
