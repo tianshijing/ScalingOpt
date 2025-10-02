@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimizer Blogs - ScalingOpt</title>
+    <meta name="description" content="Stay updated with the latest insights, research, and tutorials about optimization algorithms from leading experts in the field.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 font-inter">
+    <div class="flex flex-col min-h-screen">
+        <!-- Navbar -->
+        <nav class="bg-white/95 backdrop-blur-md border-b border-blue-100 sticky top-0 z-50 shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <a href="index.html" class="flex items-center">
+                            <span class="text-xl font-bold text-blue-900">ScalingOpt</span>
+                        </a>
+                    </div>
+
+                    <!-- Desktop Navigation -->
+                    <div class="hidden md:flex items-center space-x-8">
+                        <a href="index.html" class="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">Home</a>
+                        <a href="optimizers.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="search" class="w-4 h-4"></i>
+                            <span>Optimizers</span>
+                        </a>
+                        <a href="benchmarks.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                            <span>Benchmarks</span>
+                        </a>
+                        <a href="papers.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                            <span>Papers</span>
+                        </a>
+                        <a href="tutorials.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="book-open" class="w-4 h-4"></i>
+                            <span>Tutorials</span>
+                        </a>
+                        <a href="blogs.html" class="flex items-center space-x-1 text-blue-700 hover:text-blue-900 transition-colors duration-200 font-medium">
+                            <i data-lucide="file-text" class="w-4 h-4"></i>
+                            <span>Blogs</span>
+                        </a>
+                        <a href="community.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="users" class="w-4 h-4"></i>
+                            <span>Community</span>
+                        </a>
+                        <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200">
+                            <i data-lucide="github" class="w-5 h-5"></i>
+                            <span class="hidden lg:inline">GitHub</span>
+                        </a>
+                    </div>
+
+                    <!-- Mobile menu button -->
+                    <div class="md:hidden flex items-center">
+                        <button id="mobile-menu-button" class="text-gray-700 hover:text-blue-600 transition-colors duration-200">
+                            <i data-lucide="menu" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Navigation -->
+            <div id="mobile-menu" class="md:hidden bg-white border-t border-gray-200 hidden">
+                <div class="px-2 pt-2 pb-3 space-y-1">
+                    <a href="index.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">Home</a>
+                    <a href="optimizers.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="search" class="w-4 h-4"></i>
+                        <span>Optimizers</span>
+                    </a>
+                    <a href="benchmarks.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                        <span>Benchmarks</span>
+                    </a>
+                    <a href="papers.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                        <span>Papers</span>
+                    </a>
+                    <a href="tutorials.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="book-open" class="w-4 h-4"></i>
+                        <span>Tutorials</span>
+                    </a>
+                    <a href="blogs.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="file-text" class="w-4 h-4"></i>
+                        <span>Blogs</span>
+                    </a>
+                    <a href="community.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="users" class="w-4 h-4"></i>
+                        <span>Community</span>
+                    </a>
+                    <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="github" class="w-4 h-4"></i>
+                        <span>GitHub</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="flex-grow">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <!-- Header -->
+                <div class="text-center mb-12">
+                    <h1 class="text-4xl md:text-5xl font-bold text-blue-900 mb-4">
+                        Optimizer <span class="gradient-text">Blogs</span>
+                    </h1>
+                    <p class="text-xl text-blue-700 max-w-3xl mx-auto">
+                        Stay updated with the latest insights, research, and tutorials about optimization algorithms 
+                        from leading experts in the field.
+                    </p>
+                </div>
+
+                <!-- Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+                        <i data-lucide="file-text" class="w-8 h-8 text-blue-600 mx-auto mb-2"></i>
+                        <div class="text-2xl font-bold text-gray-900" id="articles-count">4</div>
+                        <div class="text-gray-600">Articles</div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+                        <i data-lucide="user" class="w-8 h-8 text-green-600 mx-auto mb-2"></i>
+                        <div class="text-2xl font-bold text-gray-900" id="authors-count">3</div>
+                        <div class="text-gray-600">Authors</div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+                        <i data-lucide="tag" class="w-8 h-8 text-orange-600 mx-auto mb-2"></i>
+                        <div class="text-2xl font-bold text-gray-900" id="topics-count">15</div>
+                        <div class="text-gray-600">Topics</div>
+                    </div>
+                </div>
+
+                <!-- Featured Posts -->
+                <div class="mb-12">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Featured Articles</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="featured-posts">
+                        <!-- Featured posts will be dynamically loaded here -->
+                    </div>
+                </div>
+
+                <!-- Search and Filter -->
+                <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="md:col-span-2">
+                            <div class="relative">
+                                <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+                                <input
+                                    type="text"
+                                    id="search-input"
+                                    placeholder="Search articles..."
+                                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="relative">
+                                <i data-lucide="filter" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+                                <select
+                                    id="category-filter"
+                                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
+                                >
+                                    <option value="All">All Categories</option>
+                                    <option value="Research">Research</option>
+                                    <option value="Tutorial">Tutorial</option>
+                                    <option value="News">News</option>
+                                    <option value="Opinion">Opinion</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 text-sm text-gray-600">
+                        Showing <span id="filtered-count">4</span> of 4 articles
+                    </div>
+                </div>
+
+                <!-- All Posts -->
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">All Articles</h2>
+                    <div class="space-y-6" id="all-posts">
+                        <!-- All posts will be dynamically loaded here -->
+                    </div>
+                </div>
+
+                <!-- CTA -->
+                <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 text-white text-center">
+                    <h3 class="text-2xl font-bold mb-4">Want to Contribute an Article?</h3>
+                    <p class="text-blue-100 mb-6 max-w-2xl mx-auto">
+                        Share your insights and expertise with the community! We welcome high-quality articles 
+                        about optimization algorithms, research findings, and practical tutorials.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a
+                            href="community.html"
+                            class="inline-flex items-center px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                        >
+                            <i data-lucide="file-text" class="w-4 h-4 mr-2"></i>
+                            Submit Article
+                        </a>
+                        <a
+                            href="community.html"
+                            class="inline-flex items-center px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-blue-600 transition-colors duration-200"
+                        >
+                            Writing Guidelines
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-gradient-to-br from-blue-900 to-blue-800 text-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <!-- Brand -->
+                    <div class="col-span-1 md:col-span-2">
+                        <div class="flex items-center mb-4">
+                            <span class="text-xl font-bold text-white">ScalingOpt</span>
+                        </div>
+                        <p class="text-blue-100 mb-4 max-w-md">
+                            A comprehensive platform for scaling optimization algorithms. 
+                            Discover, compare, and contribute to cutting-edge optimizers for large-scale machine learning.
+                        </p>
+                        <div class="flex space-x-4">
+                            <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors duration-200">
+                                <i data-lucide="github" class="w-5 h-5"></i>
+                            </a>
+                            <a href="mailto:contact@awesome-optimizers.com" class="text-gray-400 hover:text-white transition-colors duration-200">
+                                <i data-lucide="mail" class="w-5 h-5"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                        <ul class="space-y-2">
+                            <li><a href="optimizers.html" class="text-gray-300 hover:text-white transition-colors duration-200">Browse Optimizers</a></li>
+                            <li><a href="benchmarks.html" class="text-gray-300 hover:text-white transition-colors duration-200">Benchmarks</a></li>
+                            <li><a href="papers.html" class="text-gray-300 hover:text-white transition-colors duration-200">Papers</a></li>
+                            <li><a href="tutorials.html" class="text-gray-300 hover:text-white transition-colors duration-200">Tutorials</a></li>
+                            <li><a href="blogs.html" class="text-gray-300 hover:text-white transition-colors duration-200">Blogs</a></li>
+                            <li><a href="community.html" class="text-gray-300 hover:text-white transition-colors duration-200">Community</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Resources -->
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Resources</h3>
+                        <ul class="space-y-2">
+                            <li><a href="https://arxiv.org/abs/2410.06373" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-white transition-colors duration-200">Research Paper</a></li>
+                            <li><a href="#contribute" class="text-gray-300 hover:text-white transition-colors duration-200">Contribute</a></li>
+                            <li><a href="#about" class="text-gray-300 hover:text-white transition-colors duration-200">About Us</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-400 text-sm">
+                        © 2025 ScalingOpt Community. All rights reserved.
+                    </p>
+                    <div class="flex items-center space-x-1 text-gray-400 text-sm mt-4 md:mt-0">
+                        <span>Made with</span>
+                        <i data-lucide="heart" class="w-4 h-4 text-red-500"></i>
+                        <span>by the community</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Blogs Data -->
+    <script>
+        const blogPosts = [
+            {
+                id: 'modular-manifolds-2025',
+                title: 'Modular Manifolds',
+                excerpt: 'When we train large neural networks, we need to keep them healthy. This post covers one appealing way to constrain the weight matrices of a neural network—by keeping the tensors constrained to submanifolds at each layer. We propose a manifold version of the Muon optimizer whose weights are constrained to the Stiefel manifold.',
+                content: 'Full blog content would go here...',
+                author: 'Jeremy Bernstein',
+                publishDate: '2025-09-26',
+                readTime: '15 min read',
+                category: 'Research',
+                tags: ['Neural Networks', 'Optimization', 'Manifolds', 'Muon', 'Stiefel Manifold'],
+                featured: true,
+                externalUrl: 'https://thinkingmachines.ai/blog/modular-manifolds/'
+            },
+            {
+                id: 'lora-without-regret-2025',
+                title: 'LoRA Without Regret',
+                excerpt: 'This post explores the application of Low-Rank Adaptation (LoRA) methods in parameter-efficient fine-tuning. Through a series of experiments, we study LoRA\'s performance on small to medium-scale datasets and find that when certain key conditions are met, LoRA\'s learning efficiency can match that of full fine-tuning.',
+                content: 'Full blog content would go here...',
+                author: 'John Schulman',
+                publishDate: '2025-09-29',
+                readTime: '12 min read',
+                category: 'Research',
+                tags: ['LoRA', 'Fine-tuning', 'Parameter Efficiency', 'Language Models'],
+                featured: true,
+                externalUrl: 'https://thinkingmachines.ai/blog/lora/'
+            },
+            {
+                id: 'deriving-muon-2025',
+                title: 'Deriving Muon',
+                excerpt: 'This post introduces the derivation process of the Muon optimizer. Muon is an optimizer designed specifically for linear neural network layers, with its core numerical methods derived from exact theoretical principles. We detail the theoretical foundations of Muon and provide the derivation process to help researchers extend these methods to new layer types and applications.',
+                content: 'Full blog content would go here...',
+                author: 'Jeremy Bernstein',
+                publishDate: '2025-03-07',
+                readTime: '10 min read',
+                category: 'Tutorial',
+                tags: ['Muon', 'Optimization', 'Neural Networks', 'Theory', 'Derivation'],
+                featured: true,
+                externalUrl: 'https://jeremybernste.in/writing/deriving-muon'
+            },
+            {
+                id: 'lora-weight-decay-2025',
+                title: 'LoRA and Weight Decay',
+                excerpt: 'An in-depth analysis of how weight decay interacts with Low-Rank Adaptation (LoRA) in fine-tuning scenarios. This post examines the theoretical and practical implications of applying weight decay to LoRA parameters and provides insights into optimal regularization strategies for parameter-efficient fine-tuning.',
+                content: 'Full blog content would go here...',
+                author: 'Irhum Shafkat',
+                publishDate: '2025-08-15',
+                readTime: '8 min read',
+                category: 'Research',
+                tags: ['LoRA', 'Weight Decay', 'Regularization', 'Fine-tuning'],
+                featured: false,
+                externalUrl: 'https://irhum.github.io/blog/lorawd/'
+            }
+        ];
+    </script>
+
+    <!-- JavaScript -->
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const icon = this.querySelector('i');
+            
+            if (mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.remove('hidden');
+                icon.setAttribute('data-lucide', 'x');
+            } else {
+                mobileMenu.classList.add('hidden');
+                icon.setAttribute('data-lucide', 'menu');
+            }
+            
+            lucide.createIcons();
+        });
+
+        // Close mobile menu when clicking on links
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', function() {
+                document.getElementById('mobile-menu').classList.add('hidden');
+                document.querySelector('#mobile-menu-button i').setAttribute('data-lucide', 'menu');
+                lucide.createIcons();
+            });
+        });
+
+        // Filter and search functionality
+        let filteredPosts = [...blogPosts];
+
+        function getCategoryColor(category) {
+            const colors = {
+                'Research': 'bg-blue-100 text-blue-800 border-blue-200',
+                'Tutorial': 'bg-green-100 text-green-800 border-green-200',
+                'News': 'bg-purple-100 text-purple-800 border-purple-200',
+                'Opinion': 'bg-orange-100 text-orange-800 border-orange-200'
+            };
+            return colors[category] || 'bg-gray-100 text-gray-800 border-gray-200';
+        }
+
+        function renderFeaturedPosts(postsToRender) {
+            const container = document.getElementById('featured-posts');
+            const featuredPosts = postsToRender.filter(post => post.featured);
+
+            container.innerHTML = featuredPosts.map(post => `
+                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 overflow-hidden">
+                    <div class="h-48 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                        <i data-lucide="file-text" class="w-16 h-16 text-white"></i>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${getCategoryColor(post.category)}">
+                                ${post.category}
+                            </span>
+                        </div>
+                        
+                        <h3 class="text-lg font-bold text-gray-900 mb-2 line-clamp-2">
+                            ${post.title}
+                        </h3>
+                        
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-3">
+                            ${post.excerpt}
+                        </p>
+                        
+                        <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                            <span>${post.author}</span>
+                            <div class="flex items-center space-x-3">
+                                <span class="flex items-center">
+                                    <i data-lucide="calendar" class="w-4 h-4 mr-1"></i>
+                                    ${new Date(post.publishDate).toLocaleDateString()}
+                                </span>
+                                <span class="flex items-center">
+                                    <i data-lucide="clock" class="w-4 h-4 mr-1"></i>
+                                    ${post.readTime}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-wrap gap-1 mb-4">
+                            ${post.tags.slice(0, 3).map(tag => `
+                                <span class="inline-flex items-center px-2 py-1 rounded text-xs bg-gray-100 text-gray-600">
+                                    ${tag}
+                                </span>
+                            `).join('')}
+                        </div>
+                        
+                        <a
+                            href="${post.externalUrl}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium text-sm"
+                        >
+                            Read More
+                            <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+
+            // Re-initialize icons for the new content
+            lucide.createIcons();
+        }
+
+        function renderAllPosts(postsToRender) {
+            const container = document.getElementById('all-posts');
+            const filteredCount = document.getElementById('filtered-count');
+
+            filteredCount.textContent = postsToRender.length;
+
+            container.innerHTML = postsToRender.map(post => `
+                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 p-6">
+                    <div class="flex flex-col md:flex-row md:items-start md:space-x-6">
+                        <div class="flex-shrink-0 mb-4 md:mb-0">
+                            <div class="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                                <i data-lucide="file-text" class="w-8 h-8 text-white"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${getCategoryColor(post.category)}">
+                                    ${post.category}
+                                </span>
+                            </div>
+                            
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">
+                                ${post.title}
+                            </h3>
+                            
+                            <p class="text-gray-600 mb-4">
+                                ${post.excerpt}
+                            </p>
+                            
+                            <div class="flex items-center justify-between text-sm text-gray-500 mb-3">
+                                <span>By ${post.author}</span>
+                                <div class="flex items-center space-x-4">
+                                    <span class="flex items-center">
+                                        <i data-lucide="calendar" class="w-4 h-4 mr-1"></i>
+                                        ${new Date(post.publishDate).toLocaleDateString()}
+                                    </span>
+                                    <span class="flex items-center">
+                                        <i data-lucide="clock" class="w-4 h-4 mr-1"></i>
+                                        ${post.readTime}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <div class="flex flex-wrap gap-1">
+                                    ${post.tags.map(tag => `
+                                        <span class="inline-flex items-center px-2 py-1 rounded text-xs bg-gray-100 text-gray-600">
+                                            ${tag}
+                                        </span>
+                                    `).join('')}
+                                </div>
+                                
+                                <a
+                                    href="${post.externalUrl}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium"
+                                >
+                                    Read Article
+                                    <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Re-initialize icons for the new content
+            lucide.createIcons();
+        }
+
+        function filterPosts() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const selectedCategory = document.getElementById('category-filter').value;
+
+            filteredPosts = blogPosts.filter(post => {
+                const matchesCategory = selectedCategory === 'All' || post.category === selectedCategory;
+                const matchesSearch = post.title.toLowerCase().includes(searchTerm) ||
+                                     post.excerpt.toLowerCase().includes(searchTerm) ||
+                                     post.tags.some(tag => tag.toLowerCase().includes(searchTerm));
+                return matchesCategory && matchesSearch;
+            });
+
+            renderFeaturedPosts(filteredPosts);
+            renderAllPosts(filteredPosts);
+        }
+
+        // Add event listeners
+        document.getElementById('search-input').addEventListener('input', filterPosts);
+        document.getElementById('category-filter').addEventListener('change', filterPosts);
+
+        // Initial render
+        renderFeaturedPosts(filteredPosts);
+        renderAllPosts(filteredPosts);
+    </script>
+</body>
+</html>

@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Tutorials - ScalingOpt</title>
+    <meta name="description" content="Master optimization algorithms with our comprehensive tutorials, from basic concepts to advanced techniques used in cutting-edge research.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 font-inter">
+    <div class="flex flex-col min-h-screen">
+        <!-- Navbar -->
+        <nav class="bg-white/95 backdrop-blur-md border-b border-blue-100 sticky top-0 z-50 shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <a href="index.html" class="flex items-center">
+                            <span class="text-xl font-bold text-blue-900">ScalingOpt</span>
+                        </a>
+                    </div>
+
+                    <!-- Desktop Navigation -->
+                    <div class="hidden md:flex items-center space-x-8">
+                        <a href="index.html" class="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">Home</a>
+                        <a href="optimizers.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="search" class="w-4 h-4"></i>
+                            <span>Optimizers</span>
+                        </a>
+                        <a href="benchmarks.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                            <span>Benchmarks</span>
+                        </a>
+                        <a href="papers.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                            <span>Papers</span>
+                        </a>
+                        <a href="tutorials.html" class="flex items-center space-x-1 text-blue-700 hover:text-blue-900 transition-colors duration-200 font-medium">
+                            <i data-lucide="book-open" class="w-4 h-4"></i>
+                            <span>Tutorials</span>
+                        </a>
+                        <a href="blogs.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="file-text" class="w-4 h-4"></i>
+                            <span>Blogs</span>
+                        </a>
+                        <a href="community.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="users" class="w-4 h-4"></i>
+                            <span>Community</span>
+                        </a>
+                        <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200">
+                            <i data-lucide="github" class="w-5 h-5"></i>
+                            <span class="hidden lg:inline">GitHub</span>
+                        </a>
+                    </div>
+
+                    <!-- Mobile menu button -->
+                    <div class="md:hidden flex items-center">
+                        <button id="mobile-menu-button" class="text-gray-700 hover:text-blue-600 transition-colors duration-200">
+                            <i data-lucide="menu" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Navigation -->
+            <div id="mobile-menu" class="md:hidden bg-white border-t border-gray-200 hidden">
+                <div class="px-2 pt-2 pb-3 space-y-1">
+                    <a href="index.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">Home</a>
+                    <a href="optimizers.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="search" class="w-4 h-4"></i>
+                        <span>Optimizers</span>
+                    </a>
+                    <a href="benchmarks.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                        <span>Benchmarks</span>
+                    </a>
+                    <a href="papers.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                        <span>Papers</span>
+                    </a>
+                    <a href="tutorials.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="book-open" class="w-4 h-4"></i>
+                        <span>Tutorials</span>
+                    </a>
+                    <a href="blogs.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="file-text" class="w-4 h-4"></i>
+                        <span>Blogs</span>
+                    </a>
+                    <a href="community.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="users" class="w-4 h-4"></i>
+                        <span>Community</span>
+                    </a>
+                    <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="github" class="w-4 h-4"></i>
+                        <span>GitHub</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="flex-grow">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <!-- Header -->
+                <div class="text-center mb-12">
+                    <h1 class="text-4xl md:text-5xl font-bold text-blue-900 mb-4">
+                        Learning <span class="gradient-text">Tutorials</span>
+                    </h1>
+                    <p class="text-xl text-blue-700 max-w-3xl mx-auto">
+                        Master optimization algorithms with our comprehensive tutorials, from basic concepts 
+                        to advanced techniques used in cutting-edge research.
+                    </p>
+                </div>
+
+                <!-- Filters -->
+                <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Difficulty Level</label>
+                            <select
+                                id="level-filter"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            >
+                                <option value="All">All Levels</option>
+                                <option value="Beginner">Beginner</option>
+                                <option value="Intermediate">Intermediate</option>
+                                <option value="Advanced">Advanced</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Content Type</label>
+                            <select
+                                id="type-filter"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            >
+                                <option value="All">All Types</option>
+                                <option value="Interactive">Interactive</option>
+                                <option value="Video">Video</option>
+                                <option value="Article">Article</option>
+                                <option value="Notebook">Notebook</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tutorials Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8" id="tutorials-grid">
+                    <!-- Tutorials will be dynamically loaded here -->
+                </div>
+
+                <!-- Learning Path -->
+                <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                    <div class="flex items-center mb-6">
+                        <i data-lucide="lightbulb" class="w-6 h-6 text-yellow-500 mr-3"></i>
+                        <h2 class="text-2xl font-bold text-gray-900">Recommended Learning Path</h2>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <span class="text-green-600 font-bold">1</span>
+                            </div>
+                            <h3 class="font-semibold text-gray-900 mb-2">Start with Fundamentals</h3>
+                            <p class="text-sm text-gray-600">
+                                Begin with "Optimization Fundamentals" to understand the mathematical foundations.
+                            </p>
+                        </div>
+                        
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <span class="text-blue-600 font-bold">2</span>
+                            </div>
+                            <h3 class="font-semibold text-gray-900 mb-2">Explore Popular Optimizers</h3>
+                            <p class="text-sm text-gray-600">
+                                Learn about Adam, SGD, and other commonly used optimizers in practice.
+                            </p>
+                        </div>
+                        
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <span class="text-purple-600 font-bold">3</span>
+                            </div>
+                            <h3 class="font-semibold text-gray-900 mb-2">Advanced Techniques</h3>
+                            <p class="text-sm text-gray-600">
+                                Dive into cutting-edge optimizers and advanced optimization strategies.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CTA -->
+                <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 text-white text-center">
+                    <h3 class="text-2xl font-bold mb-4">Want to Contribute a Tutorial?</h3>
+                    <p class="text-blue-100 mb-6 max-w-2xl mx-auto">
+                        Share your knowledge with the community! We welcome high-quality tutorials, 
+                        code examples, and educational content about optimization algorithms.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a
+                            href="https://github.com/tianshijing/ScalingOpt"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="inline-flex items-center px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                        >
+                            <i data-lucide="external-link" class="w-4 h-4 mr-2"></i>
+                            Contribution Guidelines
+                        </a>
+                        <a
+                            href="community.html"
+                            class="inline-flex items-center px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-blue-600 transition-colors duration-200"
+                        >
+                            Join Community
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-gradient-to-br from-blue-900 to-blue-800 text-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <!-- Brand -->
+                    <div class="col-span-1 md:col-span-2">
+                        <div class="flex items-center mb-4">
+                            <span class="text-xl font-bold text-white">ScalingOpt</span>
+                        </div>
+                        <p class="text-blue-100 mb-4 max-w-md">
+                            A comprehensive platform for scaling optimization algorithms. 
+                            Discover, compare, and contribute to cutting-edge optimizers for large-scale machine learning.
+                        </p>
+                        <div class="flex space-x-4">
+                            <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors duration-200">
+                                <i data-lucide="github" class="w-5 h-5"></i>
+                            </a>
+                            <a href="mailto:contact@awesome-optimizers.com" class="text-gray-400 hover:text-white transition-colors duration-200">
+                                <i data-lucide="mail" class="w-5 h-5"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                        <ul class="space-y-2">
+                            <li><a href="optimizers.html" class="text-gray-300 hover:text-white transition-colors duration-200">Browse Optimizers</a></li>
+                            <li><a href="benchmarks.html" class="text-gray-300 hover:text-white transition-colors duration-200">Benchmarks</a></li>
+                            <li><a href="papers.html" class="text-gray-300 hover:text-white transition-colors duration-200">Papers</a></li>
+                            <li><a href="tutorials.html" class="text-gray-300 hover:text-white transition-colors duration-200">Tutorials</a></li>
+                            <li><a href="blogs.html" class="text-gray-300 hover:text-white transition-colors duration-200">Blogs</a></li>
+                            <li><a href="community.html" class="text-gray-300 hover:text-white transition-colors duration-200">Community</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Resources -->
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Resources</h3>
+                        <ul class="space-y-2">
+                            <li><a href="https://arxiv.org/abs/2410.06373" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-white transition-colors duration-200">Research Paper</a></li>
+                            <li><a href="#contribute" class="text-gray-300 hover:text-white transition-colors duration-200">Contribute</a></li>
+                            <li><a href="#about" class="text-gray-300 hover:text-white transition-colors duration-200">About Us</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-400 text-sm">
+                        © 2025 ScalingOpt Community. All rights reserved.
+                    </p>
+                    <div class="flex items-center space-x-1 text-gray-400 text-sm mt-4 md:mt-0">
+                        <span>Made with</span>
+                        <i data-lucide="heart" class="w-4 h-4 text-red-500"></i>
+                        <span>by the community</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Tutorials Data -->
+    <script>
+        const tutorials = [
+            {
+                id: 'data-centric-methods',
+                title: 'Data-centric Methods',
+                description: 'Comprehensive presentation on data-centric approaches in machine learning and optimization, focusing on data quality and preprocessing techniques.',
+                level: 'Intermediate',
+                duration: '45 min',
+                type: 'Article',
+                topics: ['Data Quality', 'Preprocessing', 'Data-centric AI', 'Machine Learning'],
+                author: 'XLeaf Lab'
+            },
+            {
+                id: 'optimizer-preconditioners-main',
+                title: 'Optimizer Preconditioners (Main)',
+                description: 'In-depth exploration of preconditioners in optimization algorithms, covering theory and practical applications for improving convergence.',
+                level: 'Advanced',
+                duration: '60 min',
+                type: 'Article',
+                topics: ['Preconditioners', 'Convergence', 'Optimization Theory'],
+                author: 'XLeaf Lab'
+            },
+            {
+                id: 'optimizer-preconditioners-mobile',
+                title: 'Optimizer Preconditioners (Mobile)',
+                description: 'Mobile-optimized version of the optimizer preconditioners presentation, designed for on-the-go learning and quick reference.',
+                level: 'Advanced',
+                duration: '30 min',
+                type: 'Article',
+                topics: ['Preconditioners', 'Optimization'],
+                author: 'XLeaf Lab'
+            }
+        ];
+
+        function getPdfUrl(tutorialId) {
+            const pdfMap = {
+                'data-centric-methods': '/Tutorial/Presentation___Data-centric_Methods__mobile.pdf',
+                'optimizer-preconditioners-main': '/Tutorial/Presentation___Optimizer_Preconditioners__main.pdf',
+                'optimizer-preconditioners-mobile': '/Tutorial/Presentation___Optimizer_Preconditioners__mobile.pdf'
+            };
+            return pdfMap[tutorialId] || '#';
+        }
+    </script>
+
+    <!-- JavaScript -->
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const icon = this.querySelector('i');
+            
+            if (mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.remove('hidden');
+                icon.setAttribute('data-lucide', 'x');
+            } else {
+                mobileMenu.classList.add('hidden');
+                icon.setAttribute('data-lucide', 'menu');
+            }
+            
+            lucide.createIcons();
+        });
+
+        // Close mobile menu when clicking on links
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', function() {
+                document.getElementById('mobile-menu').classList.add('hidden');
+                document.querySelector('#mobile-menu-button i').setAttribute('data-lucide', 'menu');
+                lucide.createIcons();
+            });
+        });
+
+        // Filter functionality
+        let filteredTutorials = [...tutorials];
+
+        function getLevelColor(level) {
+            const colors = {
+                'Beginner': 'bg-green-100 text-green-800 border-green-200',
+                'Intermediate': 'bg-yellow-100 text-yellow-800 border-yellow-200',
+                'Advanced': 'bg-red-100 text-red-800 border-red-200'
+            };
+            return colors[level] || 'bg-gray-100 text-gray-800 border-gray-200';
+        }
+
+        function getTypeIcon(type) {
+            const icons = {
+                'Interactive': 'play',
+                'Video': 'play',
+                'Article': 'book-open',
+                'Notebook': 'code'
+            };
+            return icons[type] || 'book-open';
+        }
+
+        function renderTutorials(tutorialsToRender) {
+            const grid = document.getElementById('tutorials-grid');
+
+            grid.innerHTML = tutorialsToRender.map(tutorial => `
+                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 overflow-hidden">
+                    <!-- Thumbnail placeholder -->
+                    <div class="h-48 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                        <i data-lucide="${getTypeIcon(tutorial.type)}" class="w-16 h-16 text-white"></i>
+                    </div>
+                    
+                    <div class="p-6">
+                        <!-- Header -->
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex-1">
+                                <h3 class="text-lg font-bold text-gray-900 mb-2 line-clamp-2">
+                                    ${tutorial.title}
+                                </h3>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-3">
+                            ${tutorial.description}
+                        </p>
+
+                        <!-- Meta info -->
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${getLevelColor(tutorial.level)}">
+                                ${tutorial.level}
+                            </span>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <span class="flex items-center">
+                                    <i data-lucide="clock" class="w-4 h-4 mr-1"></i>
+                                    ${tutorial.duration}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Topics -->
+                        <div class="mb-4">
+                            <div class="flex flex-wrap gap-1">
+                                ${tutorial.topics.slice(0, 3).map(topic => `
+                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs bg-gray-100 text-gray-600">
+                                        ${topic}
+                                    </span>
+                                `).join('')}
+                                ${tutorial.topics.length > 3 ? `
+                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs bg-gray-100 text-gray-600">
+                                        +${tutorial.topics.length - 3}
+                                    </span>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        <!-- Author -->
+                        <div class="flex items-center justify-end pt-4 border-t border-gray-100">
+                            <span class="text-sm text-gray-500">${tutorial.author}</span>
+                        </div>
+
+                        <!-- Action Button -->
+                        <div class="mt-4">
+                            <a
+                                href="${getPdfUrl(tutorial.id)}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="w-full inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                            >
+                                <i data-lucide="${getTypeIcon(tutorial.type)}" class="w-4 h-4 mr-2"></i>
+                                View Tutorial
+                                <i data-lucide="external-link" class="w-4 h-4 ml-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Re-initialize icons for the new content
+            lucide.createIcons();
+        }
+
+        function filterTutorials() {
+            const selectedLevel = document.getElementById('level-filter').value;
+            const selectedType = document.getElementById('type-filter').value;
+
+            filteredTutorials = tutorials.filter(tutorial => {
+                const matchesLevel = selectedLevel === 'All' || tutorial.level === selectedLevel;
+                const matchesType = selectedType === 'All' || tutorial.type === selectedType;
+                return matchesLevel && matchesType;
+            });
+
+            renderTutorials(filteredTutorials);
+        }
+
+        // Add event listeners
+        document.getElementById('level-filter').addEventListener('change', filterTutorials);
+        document.getElementById('type-filter').addEventListener('change', filterTutorials);
+
+        // Initial render
+        renderTutorials(filteredTutorials);
+    </script>
+</body>
+</html>

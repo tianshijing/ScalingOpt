@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community - ScalingOpt</title>
+    <meta name="description" content="Connect with researchers and practitioners sharing insights, tips, and latest developments in optimization.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 font-inter">
+    <div class="flex flex-col min-h-screen">
+        <!-- Navbar -->
+        <nav class="bg-white/95 backdrop-blur-md border-b border-blue-100 sticky top-0 z-50 shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <a href="index.html" class="flex items-center">
+                            <span class="text-xl font-bold text-blue-900">ScalingOpt</span>
+                        </a>
+                    </div>
+
+                    <!-- Desktop Navigation -->
+                    <div class="hidden md:flex items-center space-x-8">
+                        <a href="index.html" class="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">Home</a>
+                        <a href="optimizers.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="search" class="w-4 h-4"></i>
+                            <span>Optimizers</span>
+                        </a>
+                        <a href="benchmarks.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                            <span>Benchmarks</span>
+                        </a>
+                        <a href="papers.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                            <span>Papers</span>
+                        </a>
+                        <a href="tutorials.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="book-open" class="w-4 h-4"></i>
+                            <span>Tutorials</span>
+                        </a>
+                        <a href="blogs.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="file-text" class="w-4 h-4"></i>
+                            <span>Blogs</span>
+                        </a>
+                        <a href="community.html" class="flex items-center space-x-1 text-blue-700 hover:text-blue-900 transition-colors duration-200 font-medium">
+                            <i data-lucide="users" class="w-4 h-4"></i>
+                            <span>Community</span>
+                        </a>
+                        <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200">
+                            <i data-lucide="github" class="w-5 h-5"></i>
+                            <span class="hidden lg:inline">GitHub</span>
+                        </a>
+                    </div>
+
+                    <!-- Mobile menu button -->
+                    <div class="md:hidden flex items-center">
+                        <button id="mobile-menu-button" class="text-gray-700 hover:text-blue-600 transition-colors duration-200">
+                            <i data-lucide="menu" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Navigation -->
+            <div id="mobile-menu" class="md:hidden bg-white border-t border-gray-200 hidden">
+                <div class="px-2 pt-2 pb-3 space-y-1">
+                    <a href="index.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">Home</a>
+                    <a href="optimizers.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="search" class="w-4 h-4"></i>
+                        <span>Optimizers</span>
+                    </a>
+                    <a href="benchmarks.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                        <span>Benchmarks</span>
+                    </a>
+                    <a href="papers.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                        <span>Papers</span>
+                    </a>
+                    <a href="tutorials.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="book-open" class="w-4 h-4"></i>
+                        <span>Tutorials</span>
+                    </a>
+                    <a href="blogs.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="file-text" class="w-4 h-4"></i>
+                        <span>Blogs</span>
+                    </a>
+                    <a href="community.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="users" class="w-4 h-4"></i>
+                        <span>Community</span>
+                    </a>
+                    <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="github" class="w-4 h-4"></i>
+                        <span>GitHub</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="flex-grow">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <!-- Header -->
+                <div class="text-center mb-12">
+                    <h1 class="text-4xl md:text-5xl font-bold text-blue-900 mb-4">
+                        Join Our <span class="gradient-text">Community</span>
+                    </h1>
+                    <p class="text-xl text-blue-700 max-w-3xl mx-auto">
+                        Connect with researchers, practitioners, and enthusiasts working on optimization algorithms. 
+                        Share knowledge, ask questions, and contribute to the future of machine learning optimization.
+                    </p>
+                </div>
+
+                <!-- Community Stats -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+                    <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+                        <i data-lucide="users" class="w-8 h-8 text-blue-600 mx-auto mb-3"></i>
+                        <div class="text-2xl font-bold text-gray-900 mb-1">0</div>
+                        <div class="text-gray-600 text-sm">Contributors</div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+                        <i data-lucide="star" class="w-8 h-8 text-blue-600 mx-auto mb-3"></i>
+                        <div class="text-2xl font-bold text-gray-900 mb-1">0</div>
+                        <div class="text-gray-600 text-sm">GitHub Stars</div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+                        <i data-lucide="git-pull-request" class="w-8 h-8 text-blue-600 mx-auto mb-3"></i>
+                        <div class="text-2xl font-bold text-gray-900 mb-1">0</div>
+                        <div class="text-gray-600 text-sm">Pull Requests</div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+                        <i data-lucide="bug" class="w-8 h-8 text-blue-600 mx-auto mb-3"></i>
+                        <div class="text-2xl font-bold text-gray-900 mb-1">0</div>
+                        <div class="text-gray-600 text-sm">Issues Resolved</div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Main Content -->
+                    <div class="lg:col-span-2 space-y-8">
+                        <!-- Recent Discussions -->
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <div class="flex items-center">
+                                    <i data-lucide="message-circle" class="w-6 h-6 text-blue-600 mr-3"></i>
+                                    <h2 class="text-2xl font-bold text-gray-900">Recent Discussions</h2>
+                                </div>
+                                <a
+                                    href="https://github.com/tianshijing/ScalingOpt/discussions"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center"
+                                >
+                                    View All
+                                    <i data-lucide="external-link" class="w-4 h-4 ml-1"></i>
+                                </a>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div class="text-center py-8 text-gray-500">
+                                    <i data-lucide="message-circle" class="w-12 h-12 mx-auto mb-4 text-gray-300"></i>
+                                    <p class="text-lg font-medium mb-2">No discussions yet</p>
+                                    <p class="text-sm">Be the first to start a conversation about optimizers!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contributors -->
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <div class="flex items-center mb-6">
+                                <i data-lucide="heart" class="w-6 h-6 text-red-500 mr-3"></i>
+                                <h2 class="text-2xl font-bold text-gray-900">Core Contributors</h2>
+                            </div>
+                            
+                            <div class="max-w-md mx-auto">
+                                <div class="flex items-center space-x-6 p-6 border border-gray-200 rounded-lg bg-gradient-to-r from-blue-50 to-purple-50">
+                                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <img src="/Fig/tianshijing.png" alt="Juanxi Tian" class="w-16 h-16 rounded-full object-cover" />
+                                    </div>
+                                    <div class="flex-1">
+                                        <h3 class="font-bold text-xl text-gray-900">Juanxi Tian</h3>
+                                        <p class="text-blue-600 font-medium mb-2">Project Maintainer</p>
+                                        <p class="text-sm text-gray-600 mb-3">Lead maintainer</p>
+                                        <a
+                                            href="https://github.com/tianshijing"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="inline-flex items-center text-gray-600 hover:text-gray-900 font-medium text-sm bg-white px-3 py-2 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors duration-200"
+                                        >
+                                            <i data-lucide="github" class="w-4 h-4 mr-2"></i>
+                                            GitHub Profile
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-8 text-center">
+                                <p class="text-gray-600 mb-4">
+                                    Special thanks to all community contributors who have helped make this project better.
+                                </p>
+                                <a
+                                    href="https://github.com/tianshijing/ScalingOpt/graphs/contributors"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium"
+                                >
+                                    <i data-lucide="users" class="w-4 h-4 mr-2"></i>
+                                    View All Contributors
+                                    <i data-lucide="external-link" class="w-4 h-4 ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- How to Contribute -->
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <div class="flex items-center mb-6">
+                                <i data-lucide="lightbulb" class="w-6 h-6 text-yellow-500 mr-3"></i>
+                                <h2 class="text-2xl font-bold text-gray-900">How to Contribute</h2>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-4">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <i data-lucide="book-open" class="w-4 h-4 text-blue-600"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-gray-900 mb-1">Add New Optimizers</h3>
+                                            <p class="text-sm text-gray-600">Implement and document new optimization algorithms</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <i data-lucide="bug" class="w-4 h-4 text-green-600"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-gray-900 mb-1">Report Issues</h3>
+                                            <p class="text-sm text-gray-600">Help us improve by reporting bugs and issues</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <i data-lucide="star" class="w-4 h-4 text-purple-600"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-gray-900 mb-1">Improve Documentation</h3>
+                                            <p class="text-sm text-gray-600">Enhance tutorials, examples, and documentation</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="space-y-4">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <i data-lucide="git-pull-request" class="w-4 h-4 text-orange-600"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-gray-900 mb-1">Submit Benchmarks</h3>
+                                            <p class="text-sm text-gray-600">Contribute benchmark results and evaluations</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <i data-lucide="message-circle" class="w-4 h-4 text-red-600"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-gray-900 mb-1">Join Discussions</h3>
+                                            <p class="text-sm text-gray-600">Participate in community discussions and Q&A</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <i data-lucide="users" class="w-4 h-4 text-indigo-600"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-gray-900 mb-1">Share Knowledge</h3>
+                                            <p class="text-sm text-gray-600">Write tutorials and share your expertise</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar -->
+                    <div class="space-y-6">
+                        <!-- Connect with Us -->
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Connect with Us</h3>
+                            
+                            <div class="space-y-3">
+                                <a
+                                    href="https://github.com/tianshijing/ScalingOpt"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                                >
+                                    <i data-lucide="github" class="w-5 h-5 text-gray-700"></i>
+                                    <span class="font-medium text-gray-900">GitHub Repository</span>
+                                </a>
+                                
+                                <a
+                                    href="https://github.com/tianshijing/ScalingOpt/discussions"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                                >
+                                    <i data-lucide="message-circle" class="w-5 h-5 text-blue-600"></i>
+                                    <span class="font-medium text-gray-900">Discussions</span>
+                                </a>
+                                
+                                <a
+                                    href="mailto:contact@awesome-optimizers.com"
+                                    class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                                >
+                                    <i data-lucide="mail" class="w-5 h-5 text-green-600"></i>
+                                    <span class="font-medium text-gray-900">Email Us</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Upcoming Events -->
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <div class="flex items-center mb-4">
+                                <i data-lucide="calendar" class="w-5 h-5 text-purple-600 mr-2"></i>
+                                <h3 class="text-lg font-semibold text-gray-900">Upcoming Events</h3>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div class="border-l-4 border-blue-500 pl-4">
+                                    <h4 class="font-medium text-gray-900">Community Meetup</h4>
+                                    <p class="text-sm text-gray-600 mb-1">ScalingOpt Community Meetup</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-gray-500">Oct 02, 2025</span>
+                                        <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                                            Meetup
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Links -->
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Links</h3>
+                            
+                            <div class="space-y-2">
+                                <a
+                                    href="https://github.com/tianshijing/ScalingOpt/blob/main/CONTRIBUTING.md"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="block text-blue-600 hover:text-blue-700 text-sm"
+                                >
+                                    → Contribution Guidelines
+                                </a>
+                                <a
+                                    href="https://github.com/tianshijing/ScalingOpt/blob/main/CODE_OF_CONDUCT.md"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="block text-blue-600 hover:text-blue-700 text-sm"
+                                >
+                                    → Code of Conduct
+                                </a>
+                                <a
+                                    href="https://arxiv.org/abs/2410.06373"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="block text-blue-600 hover:text-blue-700 text-sm"
+                                >
+                                    → Research Paper
+                                </a>
+                                <a
+                                    href="https://github.com/tianshijing/ScalingOpt/issues"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="block text-blue-600 hover:text-blue-700 text-sm"
+                                >
+                                    → Report Issues
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CTA -->
+                <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 text-white text-center mt-12">
+                    <h3 class="text-2xl font-bold mb-4">Ready to Get Involved?</h3>
+                    <p class="text-blue-100 mb-6 max-w-2xl mx-auto">
+                        Join our growing community of researchers and practitioners. Whether you're a beginner 
+                        or an expert, there's a place for you in our community.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a
+                            href="https://github.com/tianshijing/ScalingOpt"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="inline-flex items-center px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                        >
+                            <i data-lucide="github" class="w-4 h-4 mr-2"></i>
+                            Star on GitHub
+                        </a>
+                        <a
+                            href="https://github.com/tianshijing/ScalingOpt/discussions"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="inline-flex items-center px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-blue-600 transition-colors duration-200"
+                        >
+                            <i data-lucide="message-circle" class="w-4 h-4 mr-2"></i>
+                            Join Discussion
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-gradient-to-br from-blue-900 to-blue-800 text-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <!-- Brand -->
+                    <div class="col-span-1 md:col-span-2">
+                        <div class="flex items-center mb-4">
+                            <span class="text-xl font-bold text-white">ScalingOpt</span>
+                        </div>
+                        <p class="text-blue-100 mb-4 max-w-md">
+                            A comprehensive platform for scaling optimization algorithms. 
+                            Discover, compare, and contribute to cutting-edge optimizers for large-scale machine learning.
+                        </p>
+                        <div class="flex space-x-4">
+                            <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors duration-200">
+                                <i data-lucide="github" class="w-5 h-5"></i>
+                            </a>
+                            <a href="mailto:contact@awesome-optimizers.com" class="text-gray-400 hover:text-white transition-colors duration-200">
+                                <i data-lucide="mail" class="w-5 h-5"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                        <ul class="space-y-2">
+                            <li><a href="optimizers.html" class="text-gray-300 hover:text-white transition-colors duration-200">Browse Optimizers</a></li>
+                            <li><a href="benchmarks.html" class="text-gray-300 hover:text-white transition-colors duration-200">Benchmarks</a></li>
+                            <li><a href="papers.html" class="text-gray-300 hover:text-white transition-colors duration-200">Papers</a></li>
+                            <li><a href="tutorials.html" class="text-gray-300 hover:text-white transition-colors duration-200">Tutorials</a></li>
+                            <li><a href="blogs.html" class="text-gray-300 hover:text-white transition-colors duration-200">Blogs</a></li>
+                            <li><a href="community.html" class="text-gray-300 hover:text-white transition-colors duration-200">Community</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Resources -->
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Resources</h3>
+                        <ul class="space-y-2">
+                            <li><a href="https://arxiv.org/abs/2410.06373" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-white transition-colors duration-200">Research Paper</a></li>
+                            <li><a href="#contribute" class="text-gray-300 hover:text-white transition-colors duration-200">Contribute</a></li>
+                            <li><a href="#about" class="text-gray-300 hover:text-white transition-colors duration-200">About Us</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-400 text-sm">
+                        © 2025 ScalingOpt Community. All rights reserved.
+                    </p>
+                    <div class="flex items-center space-x-1 text-gray-400 text-sm mt-4 md:mt-0">
+                        <span>Made with</span>
+                        <i data-lucide="heart" class="w-4 h-4 text-red-500"></i>
+                        <span>by the community</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const icon = this.querySelector('i');
+            
+            if (mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.remove('hidden');
+                icon.setAttribute('data-lucide', 'x');
+            } else {
+                mobileMenu.classList.add('hidden');
+                icon.setAttribute('data-lucide', 'menu');
+            }
+            
+            lucide.createIcons();
+        });
+
+        // Close mobile menu when clicking on links
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', function() {
+                document.getElementById('mobile-menu').classList.add('hidden');
+                document.querySelector('#mobile-menu-button i').setAttribute('data-lucide', 'menu');
+                lucide.createIcons();
+            });
+        });
+    </script>
+</body>
+</html>
