@@ -1,7 +1,5 @@
 # ScalingOpt
 
-## Awesome Optimizer List
-
 [![Awesome](https://awesome.re/badge.svg)](https://awesome.re)
 ![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-green) 
 ![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green)
