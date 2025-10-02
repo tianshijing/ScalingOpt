@@ -14,8 +14,8 @@ If this repository has been helpful to you, please consider giving it a ⭐️ t
 
 This platform provides:
 
-- **📚 Extensive Optimizer Library**: 44+ optimization algorithms from foundational SGD to cutting-edge Adam-mini and Muon
-- **🔬 Research Hub**: 21+ research papers covering optimization theory and latest developments  
+- **📚 Extensive Optimizer Library**: optimizers from foundational SGD to cutting-edge Adam-mini and Muon
+- **🔬 Research Hub**: research papers covering optimization theory and latest developments  
 - **📊 Performance Benchmarks**: Comprehensive comparisons across multiple datasets and model architectures
 - **🎓 Educational Resources**: Tutorials, guides, and learning paths for all skill levels
 - **🤝 Open Source Community**: Collaborative environment for researchers and practitioners
