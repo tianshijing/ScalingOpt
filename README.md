@@ -26,76 +26,56 @@ A comprehensive collection of optimization algorithms spanning from foundational
 
 ### 📚 Complete Optimizer List
 
-| **Optimizer** | **Year** | **Paper** | **Category** |
-|:-------------:|:--------:|:---------:|:------------:|
-| **SGD** | 1999 | [On the importance of initialization and momentum in deep learning](https://www.cs.toronto.edu/~hinton/absps/momentum.pdf) | First-order |
-| **Rprop** | 2000 | [Rprop - A Fast Adaptive Learning Algorithm](http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.52.4576) | Adaptive |
-| **AdaGrad** | 2011 | [Adaptive Subgradient Methods for Online Learning and Stochastic Optimization](http://www.jmlr.org/papers/volume12/duchi11a/duchi11a.pdf) | Adaptive |
-| **RMSprop** | 2012 | [Lecture 6.5 - rmsprop, COURSERA: Neural Networks for Machine Learning](https://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf) | Adaptive |
-| **AdaDelta** | 2012 | [ADADELTA: An Adaptive Learning Rate Method](https://arxiv.org/abs/1212.5701) | Adaptive |
-| **Adam** | 2014 | [Adam: A Method for Stochastic Optimization](https://arxiv.org/abs/1412.6980) | Adaptive |
-| **LARS** | 2017 | [Large Batch Training of Convolutional Networks](https://arxiv.org/abs/1708.03888) | Large-scale |
-| **AdamW** | 2017 | [Decoupled Weight Decay Regularization](https://arxiv.org/abs/1711.05101) | Adaptive |
-| **SWATS** | 2017 | [Improving Generalization Performance by Switching from Adam to SGD](https://arxiv.org/abs/1712.07628) | Hybrid |
-| **Shampoo** | 2018 | [Shampoo: Preconditioned Stochastic Tensor Optimization](https://arxiv.org/abs/1802.09568) | Second-order |
-| **QHAdam** | 2018 | [Quasi-hyperbolic momentum and Adam for deep learning](https://arxiv.org/abs/1810.06801) | Momentum-based |
-| **QHM** | 2018 | [Quasi-hyperbolic momentum and Adam for deep learning](https://arxiv.org/abs/1810.06801) | Momentum-based |
-| **Yogi** | 2018 | [Adaptive Methods for Nonconvex Optimization](https://papers.nips.cc/paper/8186-adaptive-methods-for-nonconvex-optimization.pdf) | Adaptive |
-| **AdaFactor** | 2018 | [AdaFactor: Adaptive Learning Rates with Sublinear Memory Cost](https://arxiv.org/abs/1804.04235) | Memory-efficient |
-| **AggMo** | 2018 | [Aggregated Momentum: Stability Through Passive Damping](https://arxiv.org/abs/1804.00325) | Momentum-based |
-| **PID** | 2018 | [A PID Controller Approach for Stochastic Optimization of Deep Networks](https://arxiv.org/abs/1802.07640) | Control-based |
-| **AccSGD** | 2018 | [Accelerating Stochastic Gradient Descent via Online Learning to Learn](https://arxiv.org/abs/1807.02259) | First-order |
-| **AdaBound** | 2019 | [Adaptive Gradient Methods with Dynamic Bound of Learning Rate](https://arxiv.org/abs/1902.09843) | Adaptive |
-| **LAMB** | 2019 | [Large Batch Optimization for Deep Learning: Training BERT in 76 minutes](https://arxiv.org/abs/1904.00962) | Large-scale |
-| **Lookahead** | 2019 | [Lookahead Optimizer: k steps forward, 1 step back](https://arxiv.org/abs/1907.08610) | Meta-optimizer |
-| **RAdam** | 2019 | [On the Variance of the Adaptive Learning Rate and Beyond](https://arxiv.org/abs/1908.03265) | Adaptive |
-| **AdaMod** | 2019 | [AdaMod: An Adaptive Momentum Method for Stochastic Gradient Descent](https://arxiv.org/abs/1910.12249) | Adaptive |
-| **Ranger** | 2019 | [Ranger: A Hybrid Optimizer for Deep Learning](https://medium.com/@lessw/new-deep-learning-optimizer-ranger-synergistic-combination-of-radam-lookahead-for-the-best-of-2dc83f79a48d) | Hybrid |
-| **NAdam** | 2019 | [Incorporating Nesterov Momentum into Adam](https://openreview.net/forum?id=OM0jvwB8jIp57ZJjtNEZ) | Momentum-based |
-| **NovoGrad** | 2019 | [Stochastic Gradient Methods with Layer-wise Adaptive Moments for Training of Deep Networks](https://arxiv.org/abs/1905.11286) | Layer-wise |
-| **DiffGRAD** | 2019 | [DiffGrad: An Optimization Method for Convolutional Neural Networks](https://arxiv.org/abs/1909.11015) | Gradient-based |
-| **Adahessian** | 2020 | [ADAHESSIAN: An Adaptive Second Order Optimizer for Machine Learning](https://arxiv.org/abs/2006.00719) | Second-order |
-| **AdaBelief** | 2020 | [AdaBelief Optimizer: Adapting Stepsizes by the Belief in Observed Gradients](https://arxiv.org/abs/2010.07468) | Adaptive |
-| **AdamP** | 2020 | [Slowing Down the Weight Norm Increase in Momentum-based Optimizers](https://arxiv.org/abs/2006.08217) | Momentum-based |
-| **SGDP** | 2020 | [Slowing Down the Weight Norm Increase in Momentum-based Optimizers](https://arxiv.org/abs/2006.08217) | Momentum-based |
-| **SAM** | 2020 | [Sharpness-Aware Minimization for Efficiently Improving Generalization](https://arxiv.org/abs/2010.01412) | Generalization |
-| **MADGRAD** | 2021 | [Adaptive Gradient Methods with Dynamic Bound of Learning Rate](https://arxiv.org/abs/2101.11075) | Adaptive |
-| **LION** | 2021 | [LION: Lévy-inspired Optimizer for Deep Learning](https://arxiv.org/abs/2102.07227) | Novel |
-| **Adan** | 2022 | [Adaptive Nesterov Momentum Algorithm for Faster Optimizing Deep Models](https://arxiv.org/abs/2208.06677) | Momentum-based |
-| **CAME** | 2023 | [CAME: Confidence-guided Adaptive Memory Efficient Optimization](https://arxiv.org/abs/2307.02047) | Memory-efficient |
-| **Sophia** | 2023 | [Sophia: A Scalable Stochastic Second-order Optimizer for Language Model Pre-training](https://arxiv.org/abs/2305.14342) | Second-order |
-| **SVRG** | 2023 | [A Coefficient Makes SVRG Effective](https://arxiv.org/abs/2311.05589) | Variance-reduced |
-| **Prodigy** | 2024 | [Prodigy: An Expeditiously Adaptive Parameter-Free Learner](https://arxiv.org/abs/2306.06101) | Parameter-free |
-| **Adam-mini** | 2024 | [Adam-mini: Use Fewer Learning Rates To Gain More](https://arxiv.org/abs/2406.16793) | Memory-efficient |
-| **GALORE** | 2024 | [GALORE: Gradient Low-Rank Projection Training](https://arxiv.org/abs/2403.03507) | Memory-efficient |
-| **SWAN** | 2024 | [SWAN: State-Free Learning for Deep Neural Networks](https://arxiv.org/pdf/2412.13148) | State-free |
-| **Apollo** | 2024 | [APOLLO: SGD-like Memory, AdamW-level Performance](https://arxiv.org/abs/2412.05270) | Memory-efficient |
-| **AdEMAMix** | 2024 | [AdEMAMix: Adaptive EMA Momentum for Deep Learning](https://arxiv.org/abs/2409.03137) | Momentum-based |
-| **Muon** | 2024 | [Muon: Orthogonal Weight Updates via Newton-Schulz Iteration](https://arxiv.org/abs/2502.16982) | Novel |
-| **MARS** | 2024 | [MARS: Unleashing the Power of Variance Reduction for Training Large Models](https://arxiv.org/abs/2411.10438) | Variance-reduced |
-| **SOAP** | 2024 | [SOAP: Improving and Stabilizing Shampoo using Adam](https://arxiv.org/abs/2409.11321) | Hybrid |
-| **SPAM** | 2024 | [SPAM: Spike-Aware Adam with Momentum Reset for Stable LLM Training](https://arxiv.org/abs/2501.06842) | Stable |
-| **Stable-SPAM** | 2024 | [Stable-SPAM: How to Train in 4-Bit More Stably than 16-Bit Adam](https://arxiv.org/abs/2502.17055) | Stable |
-
-### 🏷️ Categories Legend
-
-- **First-order**: Traditional gradient-based methods
-- **Adaptive**: Methods with adaptive learning rates
-- **Momentum-based**: Methods incorporating momentum
-- **Second-order**: Methods using second-order information
-- **Memory-efficient**: Optimized for memory usage
-- **Large-scale**: Designed for large-scale training
-- **Hybrid**: Combining multiple optimization strategies
-- **Novel**: Innovative approaches with unique characteristics
-- **Meta-optimizer**: Optimizers that work with other optimizers
-- **Control-based**: Methods inspired by control theory
-- **Layer-wise**: Methods operating at layer level
-- **Gradient-based**: Methods focusing on gradient manipulation
-- **Generalization**: Methods improving model generalization
-- **Variance-reduced**: Methods reducing gradient variance
-- **Parameter-free**: Methods requiring minimal hyperparameter tuning
-- **State-free**: Methods without internal state storage
-- **Stable**: Methods designed for training stability
+| **Optimizer** | **Year** | **Paper** |
+|:-------------:|:--------:|:---------:|
+| **SGD** | 1999 | [On the importance of initialization and momentum in deep learning](https://www.cs.toronto.edu/~hinton/absps/momentum.pdf) |
+| **Rprop** | 2000 | [Rprop - A Fast Adaptive Learning Algorithm](http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.52.4576) |
+| **AdaGrad** | 2011 | [Adaptive Subgradient Methods for Online Learning and Stochastic Optimization](http://www.jmlr.org/papers/volume12/duchi11a/duchi11a.pdf) |
+| **RMSprop** | 2012 | [Lecture 6.5 - rmsprop, COURSERA: Neural Networks for Machine Learning](https://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf) |
+| **AdaDelta** | 2012 | [ADADELTA: An Adaptive Learning Rate Method](https://arxiv.org/abs/1212.5701) |
+| **Adam** | 2014 | [Adam: A Method for Stochastic Optimization](https://arxiv.org/abs/1412.6980) |
+| **LARS** | 2017 | [Large Batch Training of Convolutional Networks](https://arxiv.org/abs/1708.03888) |
+| **AdamW** | 2017 | [Decoupled Weight Decay Regularization](https://arxiv.org/abs/1711.05101) |
+| **SWATS** | 2017 | [Improving Generalization Performance by Switching from Adam to SGD](https://arxiv.org/abs/1712.07628) |
+| **Shampoo** | 2018 | [Shampoo: Preconditioned Stochastic Tensor Optimization](https://arxiv.org/abs/1802.09568) |
+| **QHAdam** | 2018 | [Quasi-hyperbolic momentum and Adam for deep learning](https://arxiv.org/abs/1810.06801) |
+| **QHM** | 2018 | [Quasi-hyperbolic momentum and Adam for deep learning](https://arxiv.org/abs/1810.06801) |
+| **Yogi** | 2018 | [Adaptive Methods for Nonconvex Optimization](https://papers.nips.cc/paper/8186-adaptive-methods-for-nonconvex-optimization.pdf) |
+| **AdaFactor** | 2018 | [AdaFactor: Adaptive Learning Rates with Sublinear Memory Cost](https://arxiv.org/abs/1804.04235) |
+| **AggMo** | 2018 | [Aggregated Momentum: Stability Through Passive Damping](https://arxiv.org/abs/1804.00325) |
+| **PID** | 2018 | [A PID Controller Approach for Stochastic Optimization of Deep Networks](https://arxiv.org/abs/1802.07640) |
+| **AccSGD** | 2018 | [Accelerating Stochastic Gradient Descent via Online Learning to Learn](https://arxiv.org/abs/1807.02259) |
+| **AdaBound** | 2019 | [Adaptive Gradient Methods with Dynamic Bound of Learning Rate](https://arxiv.org/abs/1902.09843) |
+| **LAMB** | 2019 | [Large Batch Optimization for Deep Learning: Training BERT in 76 minutes](https://arxiv.org/abs/1904.00962) |
+| **Lookahead** | 2019 | [Lookahead Optimizer: k steps forward, 1 step back](https://arxiv.org/abs/1907.08610) |
+| **RAdam** | 2019 | [On the Variance of the Adaptive Learning Rate and Beyond](https://arxiv.org/abs/1908.03265) |
+| **AdaMod** | 2019 | [AdaMod: An Adaptive Momentum Method for Stochastic Gradient Descent](https://arxiv.org/abs/1910.12249) |
+| **Ranger** | 2019 | [Ranger: A Hybrid Optimizer for Deep Learning](https://medium.com/@lessw/new-deep-learning-optimizer-ranger-synergistic-combination-of-radam-lookahead-for-the-best-of-2dc83f79a48d) |
+| **NAdam** | 2019 | [Incorporating Nesterov Momentum into Adam](https://openreview.net/forum?id=OM0jvwB8jIp57ZJjtNEZ) |
+| **NovoGrad** | 2019 | [Stochastic Gradient Methods with Layer-wise Adaptive Moments for Training of Deep Networks](https://arxiv.org/abs/1905.11286) |
+| **DiffGRAD** | 2019 | [DiffGrad: An Optimization Method for Convolutional Neural Networks](https://arxiv.org/abs/1909.11015) |
+| **Adahessian** | 2020 | [ADAHESSIAN: An Adaptive Second Order Optimizer for Machine Learning](https://arxiv.org/abs/2006.00719) |
+| **AdaBelief** | 2020 | [AdaBelief Optimizer: Adapting Stepsizes by the Belief in Observed Gradients](https://arxiv.org/abs/2010.07468) |
+| **AdamP** | 2020 | [Slowing Down the Weight Norm Increase in Momentum-based Optimizers](https://arxiv.org/abs/2006.08217) |
+| **SGDP** | 2020 | [Slowing Down the Weight Norm Increase in Momentum-based Optimizers](https://arxiv.org/abs/2006.08217) |
+| **SAM** | 2020 | [Sharpness-Aware Minimization for Efficiently Improving Generalization](https://arxiv.org/abs/2010.01412) |
+| **MADGRAD** | 2021 | [Adaptive Gradient Methods with Dynamic Bound of Learning Rate](https://arxiv.org/abs/2101.11075) |
+| **LION** | 2021 | [LION: Lévy-inspired Optimizer for Deep Learning](https://arxiv.org/abs/2102.07227) |
+| **Adan** | 2022 | [Adaptive Nesterov Momentum Algorithm for Faster Optimizing Deep Models](https://arxiv.org/abs/2208.06677) |
+| **CAME** | 2023 | [CAME: Confidence-guided Adaptive Memory Efficient Optimization](https://arxiv.org/abs/2307.02047) |
+| **Sophia** | 2023 | [Sophia: A Scalable Stochastic Second-order Optimizer for Language Model Pre-training](https://arxiv.org/abs/2305.14342) |
+| **SVRG** | 2023 | [A Coefficient Makes SVRG Effective](https://arxiv.org/abs/2311.05589) |
+| **Prodigy** | 2024 | [Prodigy: An Expeditiously Adaptive Parameter-Free Learner](https://arxiv.org/abs/2306.06101) |
+| **Adam-mini** | 2024 | [Adam-mini: Use Fewer Learning Rates To Gain More](https://arxiv.org/abs/2406.16793) |
+| **GALORE** | 2024 | [GALORE: Gradient Low-Rank Projection Training](https://arxiv.org/abs/2403.03507) |
+| **SWAN** | 2024 | [SWAN: State-Free Learning for Deep Neural Networks](https://arxiv.org/pdf/2412.13148) |
+| **Apollo** | 2024 | [APOLLO: SGD-like Memory, AdamW-level Performance](https://arxiv.org/abs/2412.05270) |
+| **AdEMAMix** | 2024 | [AdEMAMix: Adaptive EMA Momentum for Deep Learning](https://arxiv.org/abs/2409.03137) |
+| **Muon** | 2024 | [Muon: Orthogonal Weight Updates via Newton-Schulz Iteration](https://arxiv.org/abs/2502.16982) |
+| **MARS** | 2024 | [MARS: Unleashing the Power of Variance Reduction for Training Large Models](https://arxiv.org/abs/2411.10438) |
+| **SOAP** | 2024 | [SOAP: Improving and Stabilizing Shampoo using Adam](https://arxiv.org/abs/2409.11321) |
+| **SPAM** | 2024 | [SPAM: Spike-Aware Adam with Momentum Reset for Stable LLM Training](https://arxiv.org/abs/2501.06842) |
+| **Stable-SPAM** | 2024 | [Stable-SPAM: How to Train in 4-Bit More Stably than 16-Bit Adam](https://arxiv.org/abs/2502.17055) |
 
 ## 📊 Platform Statistics
 
