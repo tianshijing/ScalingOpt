@@ -100,19 +100,6 @@ Here is a list of some popular optimizers and their corresponding papers:
 | SPAM | [SPAM: Spike-Aware Momentum Optimization](https://arxiv.org/abs/2501.06842) | 2025 | Moment resetting + spike-aware clipping + sparse momentum. |
 </details>
 
-## 🚀 Quick Start
-
-### Browse Optimizers
-Visit our [optimizer library](https://tianshijing.github.io/ScalingOpt/optimizers.html) to explore many optimization algorithms:
-
-```python
-# Example: Using Adam-mini for large-scale training
-import torch
-from optimizers.adam_mini import AdamMini
-
-optimizer = AdamMini(model.parameters(), lr=0.001)
-```
-
 ## 📊 Platform Statistics
 
 - **Optimizers** 
