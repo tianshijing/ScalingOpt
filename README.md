@@ -4,7 +4,7 @@
 ![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-green) 
 ![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green)
 
-Welcome to ScalingOpt(Optimization Community), a meticulously curated collection of optimization algorithms implemented in PyTorch, designed to serve the diverse needs of the machine learning research community.
+Welcome to **ScalingOpt (Optimization Community)**, a meticulously curated collection of optimization algorithms implemented in PyTorch, designed to serve the diverse needs of the machine learning research community.
 
 If this repository has been helpful to you, please consider giving it a ⭐️ to show your support. Your support helps us reach more researchers and contributes to the growth of this resource. Thank you! ☺️
 
