@@ -1,0 +1,76 @@
+\begin{table*}[ht]
+\centering
+    \vspace{-1.0em}
+    \caption{Basic optimizing hyper-parameters for primary and classical CNNs with different optimizers on CIFAR-100.}
+    \vspace{-0.5em}
+    \setlength{\tabcolsep}{1.6mm}
+\resizebox{1.0\linewidth}{!}{
+\begin{tabular}{l|cccccccccccccc}
+    \toprule
+Backbone & \multicolumn{2}{c}{AlexNet} & \multicolumn{2}{c}{VGG-13} & \multicolumn{2}{c}{R-50} & \multicolumn{2}{c}{R-101} & \multicolumn{2}{c}{R-101 (DeiT)} & \multicolumn{2}{c}{Mob-V2} & \multicolumn{2}{c}{Eff-B0} \\
+ & lr & wd & lr & wd & lr & wd & lr & wd & lr & wd & lr & wd & lr & wd \\ \hline
+\rowcolor[HTML]{FDF0E2} SGD-M~\cite{tsmc1971sgd} & 1e-3 & 5e-4 & 3e-1 & 2e-4 & 1e-1 & 1e-4 & 1e-1 & 1e-4 & 1e-1 & 1e-4 & 1e-1 & 1e-4 & 1e-1 & 1e-4 \\
+\rowcolor[HTML]{FDF0E2} SGDP~\cite{iclr2021adamp} & 2e-3 & 1e-4 & 3e-1 & 1e-4 & 2e-1 & 5e-4 & 2e-1 & 5e-4 & 5e-2 & 1e-4 & 5e-2 & 1e-4 & 0.1 & 1e-4 \\
+\rowcolor[HTML]{FDF0E2} LION~\cite{nips2023lion} & 1e-5 & 0 & 5e-5 & 0 & 1e-4 & 0 & 1e-4 & 0 & 5e-5 & 0 & 1e-4 & 0 & 1e-4 & 1e-8 \\
+\rowcolor[HTML]{D1F5FF} Adam~\cite{iclr2015adam} & 1e-4 & 0 & 5e-4 & 1e-8 & 5e-4 & 1e-8 & 5e-4 & 1e-8 & 5e-4 & 1e-8 & 1e-3 & 0 & 1e-3 & 0 \\
+\rowcolor[HTML]{D1F5FF} Adamax~\cite{iclr2015adam} & 5e-4 & 1e-4 & 5e-4 & 1e-8 & 1e-3 & 1e-4 & 5e-4 & 1e-4 & 5e-4 & 1e-4 & 1e-3 & 1e-4 & 2e-3 & 1e-4 \\
+\rowcolor[HTML]{D1F5FF} AdamW~\cite{iclr2019AdamW} & 5e-4 & 5e-2 & 5e-4 & 5e-2 & 1e-3 & 5e-2 & 1e-3 & 5e-2 & 5e-4 & 5e-2 & 2e-3 & 5e-2 & 3e-3 & 5e-2 \\
+\rowcolor[HTML]{D1F5FF} AdamP~\cite{iclr2021adamp} & 5e-4 & 1e-2 & 5e-3 & 5e-2 & 1e-3 & 5e-2 & 2e-3 & 5e-2 & 1e-3 & 1e-2 & 2e-3 & 1e-2 & 5e-3 & 1e-2 \\
+\rowcolor[HTML]{D1F5FF} LAMB~\cite{iclr2020lamb} & 1e-3 & 5e-2 & 5e-3 & 2e-2 & 5e-3 & 5e-2 & 5e-3 & 2e-2 & 5e-3 & 5e-2 & 5e-3 & 2e-2 & 5e-3 & 2e-2 \\
+\rowcolor[HTML]{D1F5FF} NAdam~\cite{iclr2018nadam} & 5e-4 & 1e-8 & 5e-4 & 0 & 1e-3 & 0 & 1e-3 & 0 & 1e-4 & 0 & 1e-3 & 0 & 1e-3 & 1e-8 \\
+\rowcolor[HTML]{D1F5FF} RAdam~\cite{iclr2020radam} & 1e-3 & 5e-4 & 1e-3 & 0 & 1e-3 & 0 & 1e-3 & 0 & 1e-4 & 1e-8 & 1e-3 & 0 & 1e-3 & 1e-8 \\
+\rowcolor[HTML]{D1F5FF} Adan~\cite{tpami2023adan} & 1e-3 & 2e-2 & 5e-3 & 5e-2 & 2e-3 & 5e-2 & 2e-3 & 5e-2 & 5e-4 & 1e-2 & 5e-3 & 5e-2 & 2e-2 & 2e-2 \\
+\rowcolor[HTML]{DCF0E2} AdaBelief~\cite{nips2019adabelief} & 2e-3 & 5e-2 & 1e-3 & 2e-2 & 5e-3 & 5e-2 & 5e-3 & 5e-2 & 5e-3 & 1e-2 & 1e-3 & 0 & 2e-3 & 1e-2 \\
+\rowcolor[HTML]{DCF0E2} AdaBound~\cite{iclr2019adabound} & 1e-4 & 1e-4 & 1e-3 & 2e-2 & 5e-4 & 1e-2 & 5e-4 & 1e-2 & 1e-4 & 0 & 1e-4 & 1e-2 & 1e-4 & 1e-2 \\
+\rowcolor[HTML]{DCF0E2} AdaFactor~\cite{icml2018adafactor} & 5e-4 & 2e-2 & 5e-4 & 5e-2 & 5e-4 & 1e-2 & 5e-4 & 5e-2 & 1e-4 & 5e-2 & 5e-4 & 1e-2 & 1e-3 & 2e-2 \\
+\rowcolor[HTML]{DCF0E2} LARS~\cite{iclr2018lars} & 0.5 & 1e-6 & 1.2 & 5e-5 & 1.2 & 1e-4 & 1.2 & 1e-4 & 1.0 & 1e-6 & 1.2 & 1e-6 & 1.4 & 1e-6 \\
+\rowcolor[HTML]{DCF0E2} Novograd~\cite{arxiv2020Novograd} & 2e-3 & 1e-8 & 2e-3 & 1e-2 & 2e-3 & 1e-2 & 2e-3 & 1e-2 & 1e-3 & 1e-2 & 2e-3 & 1e-2 & 2e-3 & 0 \\
+\rowcolor[HTML]{DCF0E2} Sophia~\cite{liu2023sophia} & 1e-5 & 1e-2 & 5e-5 & 1e-1 & 1e-4 & 1e-1 & 1e-4 & 1e-1 & 5e-5 & 2e-1 & 5e-4 & 2e-1 & 5e-4 & 2e-1 \\
+\rowcolor[HTML]{DBCEE4} AdaGrad~\cite{jmlr2011adagrad} & 1e-5 & 1e-4 & 5e-4 & 1e-8 & 5e-4 & 1e-8 & 5e-4 & 1e-8 & 5e-4 & 0 & 5e-4 & 1e-8 & 5e-4 & 1e-4 \\
+\rowcolor[HTML]{DBCEE4} AdaDelta~\cite{arxiv2012adadelta} & 0.1 & 1e-8 & 2.0 & 0 & 1.5 & 0 & 1.5 & 0 & 1.8 & 0 & 2.0 & 0 & 1.5 & 0 \\
+\rowcolor[HTML]{DBCEE4} RMSProp~\cite{hinton2012rmsprop} & 5e-4 & 0 & 5e-4 & 1e-8 & 1e-3 & 0 & 1e-3 & 0 & 5e-4 & 1e-8 & 1e-3 & 0 & 5e-4 & 0 \\
+    \bottomrule
+    \end{tabular}
+    }
+\label{tab:app_hyper_cifar_basic}
+\vspace{-0.5em}
+\end{table*}
+
+
+\begin{table*}[ht]
+\centering
+    \vspace{-1.0em}
+    \caption{Basic optimizing hyper-parameters of modern DNNs with optimizers on CIFAR-100.}
+    \vspace{0.15em}
+    \setlength{\tabcolsep}{1.2mm}
+\resizebox{1.0\linewidth}{!}{
+\begin{tabular}{l|cccccccccccccccccc}
+    \toprule
+Optimizer & \multicolumn{2}{c}{DeiT-S} & \multicolumn{2}{c}{MLP-S} & \multicolumn{2}{c}{Swin-T} & \multicolumn{2}{c}{CX-T} & \multicolumn{2}{c}{Moga-S} & \multicolumn{2}{c}{IF-S12} & \multicolumn{2}{c}{PF-S12} & \multicolumn{2}{c}{CF-S12} & \multicolumn{2}{c}{AF-S12} \\
+ & lr & wd & lr & wd & lr & wd & lr & wd & lr & wd & lr & wd & lr & wd & lr & wd & lr & wd \\ \hline
+\rowcolor[HTML]{FDF0E2} SGD-M~\cite{tsmc1971sgd} & 1e-1 & 1e-4 & 2e-1 & 5e-5 & 5e-2 & 1e-4 & 5e-2 & 1e-8 & 5e-2 & 1e-8 & 3e-2 & 1e-4 & 5e-2 & 1e-4 & 5e-2 & 1e-4 & 1e-1 & 1e-4 \\
+\rowcolor[HTML]{FDF0E2} SGDP~\cite{iclr2021adamp} & 1e-1 & 1e-4 & 2e-1 & 1e-4 & 1e-1 & 1e-4 & 5e-3 & 1e-8 & 2e-1 & 1e-6 & 3e-2 & 1e-4 & 5e-2 & 1e-4 & 1e-1 & 1e-4 & 1e-1 & 1e-4 \\
+\rowcolor[HTML]{FDF0E2} LION~\cite{nips2023lion} & 5e-5 & 1e-3 & 1e-4 & 0 & 5e-5 & 1e-8 & 5e-4 & 0 & 1e-4 & 1e-3 & 5e-5 & 0 & 5e-5 & 0 & 1e-4 & 0 & 5e-5 & 0 \\
+\rowcolor[HTML]{D1F5FF} Adam~\cite{iclr2015adam} & 5e-4 & 1e-8 & 5e-4 & 1e-8 & 2e-4 & 0 & 2e-3 & 1e-8 & 1e-3 & 1e-8 & 5e-4 & 1e-8 & 5e-4 & 1e-8 & 1e-3 & 0 & 2e-4 & 0 \\
+\rowcolor[HTML]{D1F5FF} Adamax~\cite{iclr2015adam} & 5e-4 & 1e-4 & 1e-3 & 0 & 5e-4 & 1e-4 & 1e-3 & 1e-8 & 1e-3 & 1e-8 & 1e-3 & 1e-4 & 1e-3 & 1e-8 & 5e-3 & 0 & 5e-4 & 1e-4 \\
+\rowcolor[HTML]{D1F5FF} AdamW~\cite{iclr2019AdamW} & 5e-4 & 5e-2 & 5e-4 & 5e-2 & 2e-4 & 5e-2 & 5e-4 & 5e-2 & 5e-4 & 5e-2 & 5e-4 & 5e-2 & 1e-3 & 5e-2 & 2e-3 & 5e-2 & 5e-4 & 5e-2 \\
+\rowcolor[HTML]{D1F5FF} AdamP~\cite{iclr2021adamp} & 1e-3 & 5e-2 & 5e-4 & 5e-2 & 5e-4 & 5e-2 & 5e-3 & 2e-2 & 1e-3 & 5e-2 & 2e-3 & 5e-2 & 2e-3 & 5e-2 & 1e-3 & 5e-2 & 1e-3 & 5e-2 \\
+\rowcolor[HTML]{D1F5FF} LAMB~\cite{iclr2020lamb} & 5e-3 & 5e-2 & 5e-3 & 5e-2 & 5e-3 & 2e-2 & 5e-3 & 5e-2 & 5e-3 & 2e-2 & 5e-3 & 5e-2 & 1e-3 & 1e-2 & 5e-3 & 5e-2 & 5e-3 & 5e-2 \\
+\rowcolor[HTML]{D1F5FF} NAdam~\cite{iclr2018nadam} & 1e-4 & 0 & 5e-4 & 1e-8 & 5e-4 & 1e-4 & 2e-3 & 1e-8 & 1e-3 & 1e-8 & 5e-4 & 0 & 5e-4 & 0 & 2e-3 & 0 & 5e-4 & 0 \\
+\rowcolor[HTML]{D1F5FF} RAdam~\cite{iclr2020radam} & 1e-4 & 1e-8 & 1e-3 & 1e-8 & 1e-4 & 1e-4 & 2e-3 & 1e-8 & 5e-4 & 0 & 5e-4 & 1e-8 & 5e-4 & 1e-8 & 2e-3 & 0 & 2e-4 & 0 \\
+\rowcolor[HTML]{D1F5FF} Adan~\cite{tpami2023adan} & 2e-3 & 5e-2 & 2e-3 & 2e-2 & 5e-3 & 5e-2 & 5e-3 & 5e-2 & 2e-3 & 5e-2 & 2e-3 & 5e-2 & 5e-3 & 5e-2 & 2e-3 & 5e-2 & 5e-3 & 2e-2 \\
+\rowcolor[HTML]{DCF0E2} AdaBelief~\cite{nips2019adabelief} & 5e-3 & 1e-2 & 5e-3 & 2e-2 & 5e-3 & 2e-2 & 5e-3 & 1e-2 & 5e-3 & 1e-2 & 6e-3 & 1e-2 & 5e-3 & 2e-2 & 1e-3 & 1e-2 & 5e-3 & 2e-2 \\
+\rowcolor[HTML]{DCF0E2} AdaBound~\cite{iclr2019adabound} & 5e-3 & 0 & 5e-3 & 0 & 1e-3 & 1e-4 & 5e-3 & 1e-4 & 5e-4 & 1e-8 & 3e-3 & 1e-4 & 5e-4 & 0 & 5e-3 & 1e-8 & 1e-3 & 1e-4 \\
+\rowcolor[HTML]{DCF0E2} AdaFactor~\cite{icml2018adafactor} & 2e-4 & 1e-2 & 1e-3 & 1e-2 & 5e-4 & 2e-2 & 5e-4 & 5e-2 & 1e-3 & 1e-2 & 5e-4 & 5e-2 & 5e-4 & 1e-2 & 2e-3 & 1e-2 & 5e-4 & 1e-2 \\
+\rowcolor[HTML]{DCF0E2} LARS~\cite{iclr2018lars} & 0.6 & 1e-6 & 0.5 & 1e-6 & 0.8 & 1e-4 & 6e-2 & 0 & 6e-2 & 0 & 0.6 & 1e-8 & 0.5 & 1e-8 & 0.8 & 1e-6 & 0.6 & 1e-6 \\
+\rowcolor[HTML]{DCF0E2} Novograd~\cite{arxiv2020Novograd} & 5e-3 & 1e-4 & 1e-3 & 0 & 5e-3 & 1e-4 & 3e-3 & 1e-4 & 5e-3 & 1e-8 & 1e-3 & 1e-2 & 5e-4 & 0 & 5e-3 & 1e-4 & 2e-3 & 1e-2 \\
+\rowcolor[HTML]{DCF0E2} Sophia~\cite{liu2023sophia} & 1e-4 & 2e-1 & 1e-4 & 5e-4 & 5e-5 & 1e-1 & 5e-4 & 2e-1 & 1e-4 & 2e-1 & 5e-5 & 1e-1 & 5e-4 & 1e-1 & 1e-4 & 2e-1 & 5e-5 & 1e-1 \\
+\rowcolor[HTML]{DBCEE4} AdaGrad~\cite{jmlr2011adagrad} & 1e-4 & 1e-4 & 1e-4 & 1e-4 & 2e-4 & 1e-4 & 5e-4 & 1e-8 & 5e-4 & 1e-8 & 1e-4 & 1e-4 & 1e-4 & 1e-4 & 1e-4 & 0 & 1e-4 & 0 \\
+\rowcolor[HTML]{DBCEE4} AdaDelta~\cite{arxiv2012adadelta} & 2.0 & 0 & 2.0 & 1e-8 & 2.2 & 1e-4 & 2.4 & 0 & 2.2 & 0 & 1.2 & 0 & 1.0 & 0 & 1.5 & 1e-4 & 2.0 & 1e-4 \\
+\rowcolor[HTML]{DBCEE4} RMSProp~\cite{hinton2012rmsprop} & 5e-4 & 1e-8 & 5e-4 & 0 & 1e-4 & 1e-4 & 2e-3 & 1e-8 & 5e-4 & 1e-8 & 5e-4 & 1e-8 & 5e-4 & 0 & 5e-4 & 0 & 1e-4 & 0 \\
+    \bottomrule
+    \end{tabular}
+    }
+\label{tab:app_hyper_cifar_modern}
+\vspace{-0.5em}
+\end{table*}

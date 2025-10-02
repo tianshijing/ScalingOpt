@@ -1,0 +1,41 @@
+% \begin{table}[t]
+\begin{table}[H]
+    \centering
+    \vspace{-0.5em}
+    \caption{Top-1 accuracy (\%) of DeiT-S and R-50 training 300 epochs by popular optimizers with DeiT and RSB A2 settings on ImageNet-1K.}
+    \vspace{-0.5em}
+    \setlength{\tabcolsep}{1.1mm}
+\resizebox{1.0\linewidth}{!}{
+    \begin{tabular}{l|cc}
+\toprule
+Backbone                          & DeiT-S            & R-50              \\
+                                  & (DeiT)            & (A2)              \\ \hline
+\cellcolor[HTML]{FDF0E2}SGD-M     & \clow{75.35}      & 78.82             \\
+\cellcolor[HTML]{FDF0E2}SGDP      & 76.34             & 78.02             \\
+\cellcolor[HTML]{FDF0E2}LION      & 78.78             & 78.92             \\ \hline
+\cellcolor[HTML]{D1F5FF}Adam      & 78.44             & 78.16             \\
+\cellcolor[HTML]{D1F5FF}Adamax    & 77.71             & 78.05             \\
+\cellcolor[HTML]{D1F5FF}NAdam     & 78.26             & 78.97             \\
+\cellcolor[HTML]{D1F5FF}AdamW     & \chig{80.38}      & \chig{79.88}      \\
+\cellcolor[HTML]{D1F5FF}LAMB      & \chig{80.23}      & \chig{79.84}      \\
+\cellcolor[HTML]{D1F5FF}RAdam     & 78.54             & 78.75             \\
+\cellcolor[HTML]{D1F5FF}AdamP     & 79.26             & 79.28             \\
+\cellcolor[HTML]{D1F5FF}Adan      & \chhg{80.81}     & \chhg{79.91}      \\
+\hline
+\cellcolor[HTML]{DCF0E2}AdaBound  & \clow{72.96}      & \clow{75.37}      \\
+\cellcolor[HTML]{DCF0E2}LARS      & \clow{73.18}      & 79.66             \\
+\cellcolor[HTML]{DCF0E2}AdaFactor & 79.98             & 79.36             \\
+\cellcolor[HTML]{DCF0E2}AdaBelief & \clow{75.32}      & 78.25             \\
+\cellcolor[HTML]{DCF0E2}NovoGrad  & \clow{71.26}      & \clow{76.83}      \\
+\cellcolor[HTML]{DCF0E2}Sophia    & 79.65             & 79.13             \\
+\hline
+\cellcolor[HTML]{DBCEE4}AdaGrad   & \cllw{54.96}      & \cllw{74.92}      \\
+\cellcolor[HTML]{DBCEE4}AdaDelta  & \clow{74.14}      & \clow{77.40}      \\
+\cellcolor[HTML]{DBCEE4}RMSProp   & 78.03             & 78.04             \\
+% 
+    \bottomrule
+    \end{tabular}
+    }
+    \label{tab:in1k}
+    % \vspace{-1.0em}
+\end{table}

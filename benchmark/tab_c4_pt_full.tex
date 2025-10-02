@@ -1,0 +1,52 @@
+\begin{table*}[t]
+    \centering
+    \vspace{-1.5em}
+    \caption{\textbf{LLaMA Pre-training Comparison on the C4 Dataset} with model sizes ranging from 60M to 1B. We report three key metrics: the validation perplexity (PPL)$\downarrow$, GPU memory (Mem.)$\downarrow$ (including model weights and optimization states), and the averaged running Time (s)$\downarrow$ of optimizer step. For all metrics, lower is better. The practical hyperparameters are clearly tuned and reported for all optimizers. \textbf{Bold} denotes the best results in each category, while \gbf{green} and \red{red} types denote the performance gains$\downarrow$ of SAC (\sethlcolor{lightblue}\hl{blue background}) over related baselines (\sethlcolor{gray90}\hl{gray background}). Note that \textbf{SAC+AdamW} achieves the best performance over all compared optimizers.
+    % \caption{\textbf{Full Comparison Results of LLaMA Pre-training on C4} using full-rank and memory-efficient training with the model sizes ranging from 60M to 1B. The validation perplexity (PPL$\downarrow$: lower is better) and GPU memory (Mem.)$\downarrow$ are reported, where only the weights and optimization states are considered. \textbf{Bold} and \gbf{green} types denote the best results and performance gains$\downarrow$ of SGG (\sethlcolor{lightblue}\hl{blue background}) over related baselines (\sethlcolor{gray90}\hl{gray background}).
+    }
+    % \vspace{-0.70em}
+    \setlength{\tabcolsep}{0.3mm}
+\resizebox{1.0\linewidth}{!}{
+    \begin{tabular}{l|ccc|ccc|ccc|ccc|ccc}
+    \toprule
+% 
+\bf{Optimizer}           & \bf{Venue}         & \bf{Betas}                     & \bf{Eps.} &             & \bf{60M}  &              &             & \bf{130M} &             &             & \bf{350M} &             &             & \bf{1B}   &             \\
+                         &                    &                                &           & PPL         & \#M(G)    & Time(s)      & PPL         & \#M(G)    & Time(s)     & PPL         & \#M(G)    & Time(s)     & PPL         & \#M(G)    & Time(s)     \\ \hline
+\grow AdamW              & ICLR'19            & \small{(0.9, 0.99)}            & 1e-8      & 29.19       & 0.25      & 0.0018       & 22.64       & 0.55      & 0.0023      & 16.97       & 1.43      & 0.0045      & 14.40       & 5.11      & 0.0762      \\
+Adabelief                & \small{NeurIPS'19} & \small{(0.9, 0.999)}           & 1e-12     & 29.49       & 0.46      & 0.0099       & 22.92       & 1.04      & 0.0156      & 17.46       & 2.80      & 0.0614      & 16.85       & 10.1      & 0.2448      \\
+Adamp                    & ICLR'21            & \small{(0.9, 0.98)}            & 1e-8      & 29.34       & 0.25      & 0.0263       & 22.52       & 0.55      & 0.0397      & 17.04       & 1.43      & 0.1139      & 14.41       & 5.11      & 0.2836      \\
+LAMB                     & ICLR'20            & \small{(0.9, 0.99)}            & 1e-6      & 29.08       & 0.25      & 0.0168       & 22.57       & 0.55      & 0.0274      & 16.89       & 1.43      & 0.0897      & 15.32       & 5.11      & 0.2269      \\
+Nadam                    & ICLR'18            & \small{(0.9, 0.99)}            & 1e-8      & 32.75       & 0.25      & 0.0029       & 24.04       & 0.55      & 0.0040      & 17.57       & 1.43      & 0.0065      & 16.48       & 5.11      & 0.0879      \\
+Radam                    & ICLR'20            & \small{(0.9, 0.99)}            & 1e-8      & 29.23       & 0.25      & 0.0024       & 22.67       & 0.55      & 0.0031      & 16.94       & 1.43      & 0.0053      & 14.30       & 5.11      & 0.0994      \\
+Adan                     & \small{TPAMI'23}   & \scriptsize{(0.9, 0.92, 0.99)} & 1e-8      & 29.40       & 0.46      & 0.0042       & 22.30       & 1.04      & 0.0041      & 17.01       & 2.80      & 0.0158      & 14.70       & 10.1      & 0.1787      \\
+Prodigy                  & ICML'23            & \small{(0.9, 0.95)}            & 1e-8      & 32.33       & 0.46      & 0.0141       & 29.56       & 1.04      & 0.0257      & 17.96       & 2.80      & 0.0814      & 14.94       & 10.1      & 0.2298      \\
+MARS+AdamW               & ICML'25            & \small{(0.9, 0.99)}            & 1e-8      & 29.10       & 0.32      & 0.0147       & 22.26       & 0.75      & 0.0290      & 16.65       & 2.06      & 0.0804      & 14.76       & 7.48      & 0.2333      \\
+SGG+AdamW                & ACL'25             & \small{(0.9, 0.99)}            & 1e-8      & 29.98       & 0.46      & 0.0392       & 22.13       & 1.04      & 0.0631      & 16.97       & 1.43      & 0.0714      & 14.34       & 4.77      & 0.3526      \\
+\brow \bf{SAC+AdamW}     & \bf{Ours}          & \small{(0.9, 0.99)}            & 1e-8      & \bf{28.63}  & 0.25      & 0.0169       & \bf{21.85}  & 0.55      & 0.0213      & \bf{16.16}  & 1.43      & 0.0401      & \bf{13.58}  & 5.11      & 0.1089      \\
+\gray{$\Delta$Gains}     &                    &                                &           & \gbf{-0.56} & \gray{+0} & \rsm{+0.0152} & \gbf{-0.79} & \gray{+0} & \rsm{+0.0190} & \gbf{-0.81} & \gray{+0} & \rsm{+0.0363} & \gbf{-0.82} & \gray{+0} & \rsm{+0.0329} \\ \hline
+% 
+Adam8bit                 & ICLR'22            & \small{(0.9, 0.99)}            & 1e-8      & 29.47       & 0.14      & 0.0091       & 22.74       & 0.30      & 0.0189      & 17.35       & 0.76      & 0.0652      & 14.49       & 2.66      & 0.2286      \\
+\grow Adam-mini          & ICLR'25            & \small{(0.9, 0.99)}            & 1e-8      & 29.63       & 0.14      & 0.0106       & 23.08       & 0.30      & 0.0152      & 19.25       & 0.75      & 0.0599      & 16.44       & 2.62      & 0.1868      \\
+Adafactor                & ICML'18            & (0.9,)                         & 1e-30     & \bf{29.07}  & 0.24      & 0.0059       & 22.38       & 0.61      & 0.0082      & 16.96       & 1.53      & 0.0447      & 16.25       & 6.65      & 0.1725      \\
+CAME                     & ACL'23             & \small{(0.9, 0.98)}            & 1e-6      & 29.26       & 0.18      & 0.0068       & 22.55       & 0.38      & 0.0084      & 16.84       & 1.08      & 0.0451      & 15.76       & 3.83      & 0.1794      \\
+APOLLO                   & MLSys'25           & \small{(0.9, 0.99)}            & 1e-6      & 29.82       & 0.24      & 0.0061       & \bf{22.18}  & 0.52      & 0.0090      & \bf{16.54}  & 1.22      & 0.0453      & \bf{13.91}  & 4.38      & 0.1809      \\
+Lion                     & arXiv'23           & \small{(0.9, 0.98)}            & $-$       & 34.80       & 0.14      & 0.0049       & 24.95       & 0.30      & 0.0057      & 18.84       & 0.75      & 0.0400      & 17.01       & 2.62      & 0.1684      \\
+Sophia                   & arXiv'23           & \small{(0.9, 0.99)}            & 1e-8      & 35.14       & 0.25      & 0.0080       & 25.09       & 0.55      & 0.0105      & 18.42       & 1.43      & 0.0478      & 17.62       & 5.11      & 0.1843      \\
+MARS+Lion                & ICML'25            & \small{(0.9, 0.98)}            & 1e-8      & 31.50       & 0.32      & 0.0139       & 25.02       & 0.75      & 0.0247      & 18.36       & 2.06      & 0.0753      & 16.94       & 7.48      & 0.1804      \\
+\brow \bf{SAC+Adam-mini} & \bf{Ours}          & \small{(0.9, 0.99)}            & 1e-8      & 29.49       & 0.14      & 0.0131       & 22.62       & 0.30      & 0.0157      & 16.66       & 0.75      & 0.0605      & 14.23       & 2.62      & 0.1873      \\
+\gray{$\Delta$Gains}     &                    &                                &           & \gbf{-0.14} & \gray{+0} & \rsm{+0.0025}  & \gbf{-0.46} & \gray{+0} & \rsm{+0.0005} & \gbf{-2.59} & \gray{+0} & \rsm{+0.0006} & \gbf{-2.21} & \gray{+0} & \rsm{+0.0005} \\ \hline
+% 
+\grow Shampoo            & arXiv'18           & \small{(0.9, 0.999)}           & 1e-8      & 29.30       & 0.18      & 0.0364       & 22.01       & 0.35      & 0.0526      & 16.71       & 1.37      & 0.1465      & 14.34       & 4.77      & 0.8762      \\
+Muon (kimi)              & arXiv'25           & \small{(0.9, 0.95)}            & 1e-8      & 28.91       & 0.14      & 0.0336       & 22.19       & 0.30      & 0.0486      & 16.72       & 0.75      & 0.1370      & 14.52       & 2.62      & 0.8870      \\
+SOAP                     & arXiv'24           & \small{(0.9, 0.95)}            & 1e-8      & \bf{28.60}  & 0.17      & 0.0747       & 22.15       & 0.34      & 0.1028      & 16.79       & 1.35      & 0.1943      & 14.58       & 4.72      & 0.9205      \\
+MARS+Shampoo             & ICML'25            & \small{(0.9, 0.99)}            & 1e-8      & 29.13       & 0.32      & 0.0491       & \bf{21.96}  & 0.75      & 0.0768      & \bf{16.49}  & 2.06      & 0.1537      & \bf{13.75}  & 7.48      & 0.8823      \\
+\brow \bf{SAC+Shampoo}   & \bf{Ours}          & \small{(0.9, 0.999)}           & 1e-8      & 29.22       & 0.18      & 0.0376       & \bf{21.96}  & 0.35      & 0.0541      & 16.61       & 1.37      & 0.1481      & 14.07       & 4.77      & 0.8785      \\
+\gray{$\Delta$Gains}     &                    &                                &           & \gbf{-0.08} & \gray{+0} & \rsm{+0.0012}  & \gbf{-0.05} & \gray{+0} & \rsm{+0.0015} & \gbf{-0.09} & \gray{+0} & \rsm{+0.0016} & \gbf{-0.27} & \gray{+0} & \rsm{+0.0023} \\
+% 
+    \bottomrule
+    \end{tabular}
+    }
+    \label{tab:comp_c4_pt_full}
+    \vspace{-0.25em}
+\end{table*}
+
