@@ -61,7 +61,6 @@ Here is a list of some popular optimizers and their corresponding papers:
 | AdaBelief | [AdaBelief Optimizer: Adapting Stepsizes by the Belief in Observed Gradients](https://arxiv.org/abs/2010.07468) | 2020 | Adapts stepsizes based on the belief in observed gradients; improves convergence. |
 | AdamP | [Slowing Down the Weight Norm Increase in Momentum-based Optimizers](https://arxiv.org/abs/2006.08217) | 2020 | Mitigates weight norm increase; improves generalization. |
 | SGDP | [Slowing Down the Weight Norm Increase in Momentum-based Optimizers](https://arxiv.org/abs/2006.08217) | 2020 | Prevents excessive weight norm increase; improves stability. |
-| Apollo | [Apollo: An Adaptive Parameter-wise Diagonal Quasi-Newton Method for Nonconvex Stochastic Optimization](https://arxiv.org/abs/2009.13586) | 2020 | Adaptive quasi-Newton method; efficient for nonconvex optimization. |
 | SAM | [Sharpness-Aware Minimization for Efficiently Improving Generalization](https://arxiv.org/abs/2010.01412) | 2020 | Minimizes sharpness of the loss landscape; improves generalization. |
 | MADGRAD | [Adaptive Gradient Methods with Dynamic Bound of Learning Rate](https://arxiv.org/abs/2101.11075) | 2021 | Dynamically bounds the learning rate; improves stability. |
 | LION | [LION: Lévy-inspired Optimizer for Deep Learning](https://arxiv.org/abs/2102.07227) | 2021 | Inspired by Lévy flights; explores the loss landscape efficiently. |
@@ -73,7 +72,7 @@ Here is a list of some popular optimizers and their corresponding papers:
 | Adam-mini | [Adam-mini: Use Fewer Learning Rates To Gain More](https://arxiv.org/abs/2406.16793) | 2024 | Reduces the number of learning rates; simplifies hyperparameter tuning. |
 | GALORE | [GALORE: Gradient Low-Rank Projection Training](https://arxiv.org/abs/2403.03507) | 2024 | Projects gradients to low-rank subspaces with dynamic switching; memory-efficient. |
 | SWAN | [SWAN: State-Free Learning for Deep Neural Networks](https://arxiv.org/pdf/2412.13148) | 2024 | No optimizer state storage; scales additively (small models) or multiplicatively (large models). |
-| APOLLO | [APOLLO: Memory-Efficient Optimization via Low-Rank Gradient Approximation](https://arxiv.org/abs/2412.05270) | 2024 | Low-rank gradient projection with diagonal scaling. |
+| Apollo | [APOLLO: SGD-like Memory, AdamW-level Performance](https://arxiv.org/abs/2412.05270) | 2024 | Memory efficient for nonconvex optimization. |
 | AdEMAMix | [AdEMAMix: Adaptive EMA Momentum for Deep Learning](https://arxiv.org/abs/2409.03137) | 2024 | Dual EMA system balances recent/historical gradients. |
 | Muon | [Muon: Orthogonal Weight Updates via Newton-Schulz Iteration](https://arxiv.org/abs/2502.16982) | 2024 | Orthogonalizes gradient momentum via Newton-Schulz. |
 | SOAP | [SOAP: Efficient Stochastic Optimization of the Second-Order Loss](https://arxiv.org/abs/2409.11321) | 2025 | Shampoo/Adafactor hybrid that runs AdamW in Shampoo's eigenbasis. |
