@@ -124,7 +124,18 @@
 
                 <!-- Filters -->
                 <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Search -->
+                        <div class="relative">
+                            <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+                            <input
+                                type="text"
+                                id="search-input"
+                                placeholder="Search Tutorials..."
+                                class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent search-input"
+                            />
+                        </div>
+                        
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Difficulty Level</label>
                             <select
@@ -466,19 +477,25 @@
         }
 
         function filterTutorials() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
             const selectedLevel = document.getElementById('level-filter').value;
             const selectedType = document.getElementById('type-filter').value;
 
             filteredTutorials = tutorials.filter(tutorial => {
+                const matchesSearch = tutorial.title.toLowerCase().includes(searchTerm) ||
+                                     tutorial.description.toLowerCase().includes(searchTerm) ||
+                                     tutorial.topics.some(topic => topic.toLowerCase().includes(searchTerm)) ||
+                                     tutorial.author.toLowerCase().includes(searchTerm);
                 const matchesLevel = selectedLevel === 'All' || tutorial.level === selectedLevel;
                 const matchesType = selectedType === 'All' || tutorial.type === selectedType;
-                return matchesLevel && matchesType;
+                return matchesSearch && matchesLevel && matchesType;
             });
 
             renderTutorials(filteredTutorials);
         }
 
         // Add event listeners
+        document.getElementById('search-input').addEventListener('input', filterTutorials);
         document.getElementById('level-filter').addEventListener('change', filterTutorials);
         document.getElementById('type-filter').addEventListener('change', filterTutorials);
 

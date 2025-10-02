@@ -228,7 +228,7 @@
                                     <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 shadow-lg gradient-bg-2">
                                         <i data-lucide="users" class="w-10 h-10 text-white"></i>
                                     </div>
-                                    <div class="text-5xl font-bold text-gray-900 mb-3 group-hover:scale-110 transition-transform duration-300">
+                                    <div class="text-5xl font-bold text-gray-900 mb-3 group-hover:scale-110 transition-transform duration-300" id="visitor-count">
                                         0
                                     </div>
                                     <div class="text-lg font-semibold text-gray-600 uppercase tracking-wide">
@@ -402,13 +402,13 @@
                             <div class="bg-white rounded-3xl p-10 shadow-xl hover:shadow-2xl transition-all duration-500 card-hover border border-blue-100">
                                 <div class="text-center">
                                     <div class="inline-flex items-center justify-center w-20 h-20 gradient-bg-1 rounded-2xl mb-8 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                                        <i data-lucide="book-open" class="w-10 h-10 text-white"></i>
+                                        <i data-lucide="search" class="w-10 h-10 text-white"></i>
                                     </div>
                                     <h3 class="text-2xl font-bold text-gray-900 mb-6 group-hover:text-blue-600 transition-colors">
-                                        Comprehensive Documentation
+                                        Extensive Optimizer Library
                                     </h3>
                                     <p class="text-gray-600 leading-relaxed text-lg">
-                                        Detailed explanations, mathematical foundations, and implementation guides for each optimizer with real-world examples.
+                                        Explore 44+ optimization algorithms from foundational SGD to cutting-edge Adam-mini and Muon, with detailed implementations and PyTorch code.
                                     </p>
                                 </div>
                                 <div class="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse"></div>
@@ -419,13 +419,13 @@
                             <div class="bg-white rounded-3xl p-10 shadow-xl hover:shadow-2xl transition-all duration-500 card-hover border border-purple-100">
                                 <div class="text-center">
                                     <div class="inline-flex items-center justify-center w-20 h-20 gradient-bg-2 rounded-2xl mb-8 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                                        <i data-lucide="bar-chart-3" class="w-10 h-10 text-white"></i>
+                                        <i data-lucide="graduation-cap" class="w-10 h-10 text-white"></i>
                                     </div>
                                     <h3 class="text-2xl font-bold text-gray-900 mb-6 group-hover:text-purple-600 transition-colors">
-                                        Performance Benchmarks
+                                        Research & Learning Hub
                                     </h3>
                                     <p class="text-gray-600 leading-relaxed text-lg">
-                                        Compare performance across different datasets, architectures, and optimization scenarios with detailed metrics.
+                                        Access 21+ research papers, tutorials, and educational content covering optimization theory, implementation guides, and latest developments.
                                     </p>
                                 </div>
                                 <div class="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse"></div>
@@ -436,13 +436,13 @@
                             <div class="bg-white rounded-3xl p-10 shadow-xl hover:shadow-2xl transition-all duration-500 card-hover border border-green-100">
                                 <div class="text-center">
                                     <div class="inline-flex items-center justify-center w-20 h-20 gradient-bg-4 rounded-2xl mb-8 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                                        <i data-lucide="users" class="w-10 h-10 text-white"></i>
+                                        <i data-lucide="github" class="w-10 h-10 text-white"></i>
                                     </div>
                                     <h3 class="text-2xl font-bold text-gray-900 mb-6 group-hover:text-green-600 transition-colors">
-                                        Active Community
+                                        Open Source & Community
                                     </h3>
                                     <p class="text-gray-600 leading-relaxed text-lg">
-                                        Join researchers and practitioners sharing insights, tips, and latest developments in optimization.
+                                        Contribute to open-source implementations, join GitHub discussions, and collaborate with researchers worldwide on optimization algorithms.
                                     </p>
                                 </div>
                                 <div class="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-green-400 to-cyan-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse"></div>
@@ -553,6 +553,62 @@
     <script>
         // Initialize Lucide icons
         lucide.createIcons();
+
+        // Visitor counter functionality
+        function updateVisitorCount() {
+            // Check if this is a new visitor
+            const visitorKey = 'scalingopt_visitor';
+            const visitCountKey = 'scalingopt_visit_count';
+            const lastVisitKey = 'scalingopt_last_visit';
+            
+            const today = new Date().toDateString();
+            const lastVisit = localStorage.getItem(lastVisitKey);
+            const isNewVisitor = !localStorage.getItem(visitorKey);
+            const isNewDay = lastVisit !== today;
+            
+            // If this is a new visitor or a new day, increment the count
+            if (isNewVisitor || isNewDay) {
+                let currentCount = parseInt(localStorage.getItem(visitCountKey)) || 0;
+                currentCount++;
+                localStorage.setItem(visitCountKey, currentCount.toString());
+                localStorage.setItem(visitorKey, 'true');
+                localStorage.setItem(lastVisitKey, today);
+                
+                // Update the display with animation
+                animateCountUp(currentCount);
+            } else {
+                // Just display the current count
+                const currentCount = parseInt(localStorage.getItem(visitCountKey)) || 0;
+                document.getElementById('visitor-count').textContent = currentCount;
+            }
+        }
+        
+        function animateCountUp(targetCount) {
+            const element = document.getElementById('visitor-count');
+            const startCount = parseInt(element.textContent) || 0;
+            const duration = 2000; // 2 seconds
+            const startTime = performance.now();
+            
+            function updateCount(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Use easing function for smooth animation
+                const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                const currentCount = Math.floor(startCount + (targetCount - startCount) * easeOutQuart);
+                
+                element.textContent = currentCount;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateCount);
+                }
+            }
+            
+            requestAnimationFrame(updateCount);
+        }
+
+        // Initialize visitor count when page loads
+        updateVisitorCount();
 
         // Mobile menu toggle
         document.getElementById('mobile-menu-button').addEventListener('click', function() {

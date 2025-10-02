@@ -126,22 +126,22 @@
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
                     <div class="bg-white rounded-xl shadow-lg p-6 text-center">
                         <i data-lucide="users" class="w-8 h-8 text-blue-600 mx-auto mb-3"></i>
-                        <div class="text-2xl font-bold text-gray-900 mb-1">0</div>
+                        <div class="text-2xl font-bold text-gray-900 mb-1" id="contributors-count">1</div>
                         <div class="text-gray-600 text-sm">Contributors</div>
                     </div>
                     <div class="bg-white rounded-xl shadow-lg p-6 text-center">
                         <i data-lucide="star" class="w-8 h-8 text-blue-600 mx-auto mb-3"></i>
-                        <div class="text-2xl font-bold text-gray-900 mb-1">0</div>
+                        <div class="text-2xl font-bold text-gray-900 mb-1" id="stars-count">2</div>
                         <div class="text-gray-600 text-sm">GitHub Stars</div>
                     </div>
                     <div class="bg-white rounded-xl shadow-lg p-6 text-center">
                         <i data-lucide="git-pull-request" class="w-8 h-8 text-blue-600 mx-auto mb-3"></i>
-                        <div class="text-2xl font-bold text-gray-900 mb-1">0</div>
+                        <div class="text-2xl font-bold text-gray-900 mb-1" id="pr-count">0</div>
                         <div class="text-gray-600 text-sm">Pull Requests</div>
                     </div>
                     <div class="bg-white rounded-xl shadow-lg p-6 text-center">
                         <i data-lucide="bug" class="w-8 h-8 text-blue-600 mx-auto mb-3"></i>
-                        <div class="text-2xl font-bold text-gray-900 mb-1">0</div>
+                        <div class="text-2xl font-bold text-gray-900 mb-1" id="issues-count">0</div>
                         <div class="text-gray-600 text-sm">Issues Resolved</div>
                     </div>
                 </div>
@@ -185,22 +185,33 @@
                             
                             <div class="max-w-md mx-auto">
                                 <div class="flex items-center space-x-6 p-6 border border-gray-200 rounded-lg bg-gradient-to-r from-blue-50 to-purple-50">
-                                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <img src="/Fig/tianshijing.png" alt="Juanxi Tian" class="w-16 h-16 rounded-full object-cover" />
+                                    <div class="w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                        <img src="https://github.com/tianshijing.png" alt="Juanxi Tian" class="w-16 h-16 rounded-full object-cover" />
                                     </div>
                                     <div class="flex-1">
                                         <h3 class="font-bold text-xl text-gray-900">Juanxi Tian</h3>
                                         <p class="text-blue-600 font-medium mb-2">Project Maintainer</p>
                                         <p class="text-sm text-gray-600 mb-3">Lead maintainer</p>
-                                        <a
-                                            href="https://github.com/tianshijing"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            class="inline-flex items-center text-gray-600 hover:text-gray-900 font-medium text-sm bg-white px-3 py-2 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors duration-200"
-                                        >
-                                            <i data-lucide="github" class="w-4 h-4 mr-2"></i>
-                                            GitHub Profile
-                                        </a>
+                                        <div class="flex items-center space-x-2">
+                                            <a
+                                                href="https://github.com/tianshijing"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                class="inline-flex items-center text-gray-600 hover:text-gray-900 font-medium text-sm bg-white px-3 py-2 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors duration-200"
+                                            >
+                                                <i data-lucide="github" class="w-4 h-4 mr-2"></i>
+                                                GitHub Profile
+                                            </a>
+                                            <a
+                                                href="https://github.com/tianshijing?tab=followers"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                class="inline-flex items-center text-white bg-blue-600 hover:bg-blue-700 font-medium text-sm px-3 py-2 rounded-lg transition-colors duration-200"
+                                            >
+                                                <i data-lucide="user-plus" class="w-4 h-4 mr-2"></i>
+                                                Follow
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -493,6 +504,68 @@
     <script>
         // Initialize Lucide icons
         lucide.createIcons();
+
+        // GitHub API data fetching
+        async function fetchGitHubStats() {
+            try {
+                // Fetch repository data
+                const repoResponse = await fetch('https://api.github.com/repos/tianshijing/ScalingOpt');
+                const repoData = await repoResponse.json();
+                
+                // Fetch contributors data
+                const contributorsResponse = await fetch('https://api.github.com/repos/tianshijing/ScalingOpt/contributors');
+                const contributorsData = await contributorsResponse.json();
+                
+                // Fetch issues data
+                const issuesResponse = await fetch('https://api.github.com/repos/tianshijing/ScalingOpt/issues?state=closed');
+                const issuesData = await issuesResponse.json();
+                
+                // Fetch pull requests data
+                const prResponse = await fetch('https://api.github.com/repos/tianshijing/ScalingOpt/pulls?state=closed');
+                const prData = await prResponse.json();
+                
+                // Update the display with animation
+                animateCountUp('contributors-count', contributorsData.length);
+                animateCountUp('stars-count', repoData.stargazers_count);
+                animateCountUp('pr-count', prData.length);
+                animateCountUp('issues-count', issuesData.length);
+                
+            } catch (error) {
+                console.log('GitHub API not available, using fallback data');
+                // Fallback to static data if API fails
+                animateCountUp('contributors-count', 1);
+                animateCountUp('stars-count', 2);
+                animateCountUp('pr-count', 0);
+                animateCountUp('issues-count', 0);
+            }
+        }
+        
+        function animateCountUp(elementId, targetCount) {
+            const element = document.getElementById(elementId);
+            const startCount = parseInt(element.textContent) || 0;
+            const duration = 1500; // 1.5 seconds
+            const startTime = performance.now();
+            
+            function updateCount(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Use easing function for smooth animation
+                const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                const currentCount = Math.floor(startCount + (targetCount - startCount) * easeOutQuart);
+                
+                element.textContent = currentCount;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateCount);
+                }
+            }
+            
+            requestAnimationFrame(updateCount);
+        }
+
+        // Fetch GitHub stats when page loads
+        fetchGitHubStats();
 
         // Mobile menu toggle
         document.getElementById('mobile-menu-button').addEventListener('click', function() {

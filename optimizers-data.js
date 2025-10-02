@@ -42,8 +42,8 @@ const optimizers = [
     },
     "implementation": {
       "pytorch": true,
-      "tensorflow": true,
-      "jax": true
+      "tensorflow": false,
+      "jax": false
     },
     "popularity": 85,
     "tags": [
@@ -86,8 +86,8 @@ const optimizers = [
     },
     "implementation": {
       "pytorch": true,
-      "tensorflow": true,
-      "jax": true
+      "tensorflow": false,
+      "jax": false
     },
     "popularity": 75,
     "tags": [
@@ -177,8 +177,8 @@ const optimizers = [
     },
     "implementation": {
       "pytorch": true,
-      "tensorflow": true,
-      "jax": true
+      "tensorflow": false,
+      "jax": false
     },
     "popularity": 70,
     "tags": [
@@ -221,8 +221,8 @@ const optimizers = [
     },
     "implementation": {
       "pytorch": true,
-      "tensorflow": true,
-      "jax": true
+      "tensorflow": false,
+      "jax": false
     },
     "popularity": 65,
     "tags": [
@@ -270,8 +270,8 @@ const optimizers = [
     },
     "implementation": {
       "pytorch": true,
-      "tensorflow": true,
-      "jax": true
+      "tensorflow": false,
+      "jax": false
     },
     "popularity": 80,
     "tags": [
@@ -326,8 +326,8 @@ const optimizers = [
     },
     "implementation": {
       "pytorch": true,
-      "tensorflow": true,
-      "jax": true
+      "tensorflow": false,
+      "jax": false
     },
     "popularity": 95,
     "tags": [
@@ -376,8 +376,8 @@ const optimizers = [
     },
     "implementation": {
       "pytorch": true,
-      "tensorflow": true,
-      "jax": true
+      "tensorflow": false,
+      "jax": false
     },
     "popularity": 70,
     "tags": [
@@ -483,8 +483,8 @@ const optimizers = [
     },
     "implementation": {
       "pytorch": true,
-      "tensorflow": true,
-      "jax": true
+      "tensorflow": false,
+      "jax": false
     },
     "popularity": 90,
     "tags": [
@@ -792,7 +792,7 @@ const optimizers = [
     },
     "implementation": {
       "pytorch": true,
-      "tensorflow": true,
+      "tensorflow": false,
       "jax": false
     },
     "popularity": 78,
@@ -1326,8 +1326,8 @@ const optimizers = [
     },
     "implementation": {
       "pytorch": true,
-      "tensorflow": true,
-      "jax": true
+      "tensorflow": false,
+      "jax": false
     },
     "popularity": 75,
     "tags": [
@@ -2243,7 +2243,7 @@ const optimizers = [
     "implementation": {
       "pytorch": true,
       "tensorflow": false,
-      "jax": true
+      "jax": false
     },
     "popularity": 88,
     "tags": [
