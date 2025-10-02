@@ -15,7 +15,12 @@ interface Props {
   }
 }
 
-// Note: generateStaticParams removed due to 'use client' directive
+// Generate static params for all optimizers
+export async function generateStaticParams() {
+  return optimizers.map((optimizer) => ({
+    id: optimizer.id,
+  }))
+}
 
 export default function OptimizerDetailPage({ params }: Props) {
   const [copiedCode, setCopiedCode] = useState(false)

@@ -75,7 +75,12 @@ interface Props {
   }
 }
 
-// Note: generateStaticParams removed due to 'use client' directive
+// Generate static params for all blog posts
+export async function generateStaticParams() {
+  return [
+    { id: 'adam-vs-sgd-2024' }
+  ]
+}
 
 export default function BlogPostPage({ params }: Props) {
   const post = blogPosts.find(p => p.id === params.id)
