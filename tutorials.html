@@ -123,44 +123,89 @@
                 </div>
 
                 <!-- Filters -->
-                <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <!-- Search -->
+                <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                    <div class="mb-6">
+                        <h2 class="text-xl font-semibold text-gray-900 mb-2">Filter & Search</h2>
+                        <p class="text-gray-600 text-sm">Find the perfect tutorial for your learning journey</p>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <!-- Search Bar -->
                         <div class="relative">
-                            <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+                            <i data-lucide="search" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
                             <input
                                 type="text"
                                 id="search-input"
-                                placeholder="Search Tutorials..."
-                                class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent search-input"
+                                placeholder="Search tutorials by title, description, topics, or author..."
+                                class="w-full pl-12 pr-4 py-4 text-gray-900 placeholder-gray-500 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white transition-all duration-200 shadow-sm"
                             />
                         </div>
                         
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Difficulty Level</label>
-                            <select
-                                id="level-filter"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            >
-                                <option value="All">All Levels</option>
-                                <option value="Beginner">Beginner</option>
-                                <option value="Intermediate">Intermediate</option>
-                                <option value="Advanced">Advanced</option>
-                            </select>
+                        <!-- Filter Controls -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="space-y-2">
+                                <label class="block text-sm font-semibold text-gray-700">Difficulty Level</label>
+                                <div class="relative">
+                                    <select
+                                        id="level-filter"
+                                        class="w-full px-4 py-3 pr-10 text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white transition-all duration-200 shadow-sm appearance-none cursor-pointer"
+                                    >
+                                        <option value="All">All Levels</option>
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                        <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label class="block text-sm font-semibold text-gray-700">Content Type</label>
+                                <div class="relative">
+                                    <select
+                                        id="type-filter"
+                                        class="w-full px-4 py-3 pr-10 text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white transition-all duration-200 shadow-sm appearance-none cursor-pointer"
+                                    >
+                                        <option value="All">All Types</option>
+                                        <option value="Interactive">Interactive</option>
+                                        <option value="Video">Video</option>
+                                        <option value="Article">Article</option>
+                                        <option value="Notebook">Notebook</option>
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                        <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label class="block text-sm font-semibold text-gray-700">Series</label>
+                                <div class="relative">
+                                    <select
+                                        id="series-filter"
+                                        class="w-full px-4 py-3 pr-10 text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white transition-all duration-200 shadow-sm appearance-none cursor-pointer"
+                                    >
+                                        <option value="All">All Series</option>
+                                        <option value="Optimization for Machine Learning">Optimization for Machine Learning</option>
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                        <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Content Type</label>
-                            <select
-                                id="type-filter"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        <!-- Clear Filters Button -->
+                        <div class="flex justify-end">
+                            <button
+                                id="clear-filters"
+                                class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 border border-gray-200 rounded-lg hover:bg-gray-200 hover:text-gray-700 transition-colors duration-200"
                             >
-                                <option value="All">All Types</option>
-                                <option value="Interactive">Interactive</option>
-                                <option value="Video">Video</option>
-                                <option value="Article">Article</option>
-                                <option value="Notebook">Notebook</option>
-                            </select>
+                                <i data-lucide="x" class="w-4 h-4 mr-2"></i>
+                                Clear All Filters
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -331,6 +376,159 @@
                 type: 'Article',
                 topics: ['Preconditioners', 'Optimization'],
                 author: 'XLeaf Lab'
+            },
+            {
+                id: 'optimization-machine-learning',
+                title: 'Optimization for Machine Learning',
+                description: 'Comprehensive slides on optimization techniques specifically designed for machine learning applications, covering theoretical foundations and practical implementations.',
+                level: 'Intermediate',
+                duration: '90 min',
+                type: 'Article',
+                topics: ['Machine Learning', 'Optimization', 'Gradient Methods', 'Convex Optimization'],
+                author: 'Martin Jaggi, EPFL'
+            },
+            {
+                id: 'epfl-optml-notes',
+                title: 'Optimization for Machine Learning - Lecture Notes',
+                description: 'Complete lecture notes covering the comprehensive course on optimization methods for machine learning, including theoretical foundations and practical applications.',
+                level: 'Intermediate',
+                duration: '120 min',
+                type: 'Article',
+                topics: ['Machine Learning', 'Optimization', 'Lecture Notes', 'Course Material'],
+                author: 'Nicolas Flammarion, EPFL',
+                series: 'Optimization for Machine Learning'
+            },
+            {
+                id: 'epfl-optml-lecture01',
+                title: 'Lecture 1: Introduction to Optimization',
+                description: 'Introduction to optimization problems in machine learning, basic concepts, and mathematical foundations.',
+                level: 'Beginner',
+                duration: '90 min',
+                type: 'Article',
+                topics: ['Introduction', 'Optimization Basics', 'Mathematical Foundations'],
+                author: 'Nicolas Flammarion, EPFL',
+                series: 'Optimization for Machine Learning'
+            },
+            {
+                id: 'epfl-optml-lecture02',
+                title: 'Lecture 2: Convex Optimization',
+                description: 'Fundamentals of convex optimization, convex sets, convex functions, and their properties in machine learning contexts.',
+                level: 'Intermediate',
+                duration: '90 min',
+                type: 'Article',
+                topics: ['Convex Optimization', 'Convex Sets', 'Convex Functions'],
+                author: 'Nicolas Flammarion, EPFL',
+                series: 'Optimization for Machine Learning'
+            },
+            {
+                id: 'epfl-optml-lecture03',
+                title: 'Lecture 3: Gradient Descent Methods',
+                description: 'Introduction to gradient descent, its variants, convergence analysis, and practical considerations.',
+                level: 'Intermediate',
+                duration: '90 min',
+                type: 'Article',
+                topics: ['Gradient Descent', 'Convergence Analysis', 'Optimization Algorithms'],
+                author: 'Nicolas Flammarion, EPFL',
+                series: 'Optimization for Machine Learning'
+            },
+            {
+                id: 'epfl-optml-lecture04',
+                title: 'Lecture 4: Stochastic Gradient Descent',
+                description: 'Stochastic gradient descent methods, mini-batch techniques, and their applications in large-scale machine learning.',
+                level: 'Intermediate',
+                duration: '90 min',
+                type: 'Article',
+                topics: ['Stochastic Gradient Descent', 'Mini-batch', 'Large-scale Learning'],
+                author: 'Nicolas Flammarion, EPFL',
+                series: 'Optimization for Machine Learning'
+            },
+            {
+                id: 'epfl-optml-lecture05',
+                title: 'Lecture 5: Momentum and Acceleration',
+                description: 'Momentum methods, Nesterov acceleration, and advanced techniques for improving optimization convergence.',
+                level: 'Intermediate',
+                duration: '90 min',
+                type: 'Article',
+                topics: ['Momentum', 'Nesterov Acceleration', 'Convergence Acceleration'],
+                author: 'Nicolas Flammarion, EPFL',
+                series: 'Optimization for Machine Learning'
+            },
+            {
+                id: 'epfl-optml-lecture06',
+                title: 'Lecture 6: Adaptive Methods',
+                description: 'Adaptive optimization methods including AdaGrad, RMSprop, and Adam, with theoretical and practical insights.',
+                level: 'Intermediate',
+                duration: '90 min',
+                type: 'Article',
+                topics: ['AdaGrad', 'RMSprop', 'Adam', 'Adaptive Methods'],
+                author: 'Nicolas Flammarion, EPFL',
+                series: 'Optimization for Machine Learning'
+            },
+            {
+                id: 'epfl-optml-lecture07',
+                title: 'Lecture 7: Second-Order Methods',
+                description: 'Second-order optimization methods, Newton\'s method, quasi-Newton methods, and their applications in ML.',
+                level: 'Advanced',
+                duration: '90 min',
+                type: 'Article',
+                topics: ['Newton\'s Method', 'Quasi-Newton', 'Second-order Methods'],
+                author: 'Nicolas Flammarion, EPFL',
+                series: 'Optimization for Machine Learning'
+            },
+            {
+                id: 'epfl-optml-lecture08',
+                title: 'Lecture 8: Constrained Optimization',
+                description: 'Constrained optimization problems, Lagrange multipliers, and methods for handling constraints in ML.',
+                level: 'Advanced',
+                duration: '90 min',
+                type: 'Article',
+                topics: ['Constrained Optimization', 'Lagrange Multipliers', 'Constraints'],
+                author: 'Nicolas Flammarion, EPFL',
+                series: 'Optimization for Machine Learning'
+            },
+            {
+                id: 'epfl-optml-lecture09',
+                title: 'Lecture 9: Non-convex Optimization',
+                description: 'Challenges and methods for non-convex optimization in deep learning and neural networks.',
+                level: 'Advanced',
+                duration: '90 min',
+                type: 'Article',
+                topics: ['Non-convex Optimization', 'Deep Learning', 'Neural Networks'],
+                author: 'Nicolas Flammarion, EPFL',
+                series: 'Optimization for Machine Learning'
+            },
+            {
+                id: 'epfl-optml-lecture10',
+                title: 'Lecture 10: Distributed Optimization',
+                description: 'Distributed and parallel optimization methods for large-scale machine learning systems.',
+                level: 'Advanced',
+                duration: '90 min',
+                type: 'Article',
+                topics: ['Distributed Optimization', 'Parallel Computing', 'Large-scale Systems'],
+                author: 'Nicolas Flammarion, EPFL',
+                series: 'Optimization for Machine Learning'
+            },
+            {
+                id: 'epfl-optml-lecture11',
+                title: 'Lecture 11: Optimization in Practice',
+                description: 'Practical considerations, hyperparameter tuning, and best practices for optimization in real-world ML applications.',
+                level: 'Intermediate',
+                duration: '90 min',
+                type: 'Article',
+                topics: ['Practical Optimization', 'Hyperparameter Tuning', 'Best Practices'],
+                author: 'Nicolas Flammarion, EPFL',
+                series: 'Optimization for Machine Learning'
+            },
+            {
+                id: 'epfl-optml-lecture12',
+                title: 'Lecture 12: Recent Advances',
+                description: 'Recent advances in optimization for machine learning, including new algorithms and theoretical developments.',
+                level: 'Advanced',
+                duration: '90 min',
+                type: 'Article',
+                topics: ['Recent Advances', 'New Algorithms', 'Theoretical Developments'],
+                author: 'Nicolas Flammarion, EPFL',
+                series: 'Optimization for Machine Learning'
             }
         ];
 
@@ -338,7 +536,21 @@
             const pdfMap = {
                 'data-centric-methods': '/Tutorial/Presentation___Data-centric_Methods__mobile.pdf',
                 'optimizer-preconditioners-main': '/Tutorial/Presentation___Optimizer_Preconditioners__main.pdf',
-                'optimizer-preconditioners-mobile': '/Tutorial/Presentation___Optimizer_Preconditioners__mobile.pdf'
+                'optimizer-preconditioners-mobile': '/Tutorial/Presentation___Optimizer_Preconditioners__mobile.pdf',
+                'optimization-machine-learning': '/Tutorial/slides-summer-school.pdf',
+                'epfl-optml-notes': '/Tutorial/EPFL_optML/lecture-notes.pdf',
+                'epfl-optml-lecture01': '/Tutorial/EPFL_optML/lecture01.pdf',
+                'epfl-optml-lecture02': '/Tutorial/EPFL_optML/lecture02.pdf',
+                'epfl-optml-lecture03': '/Tutorial/EPFL_optML/lecture03.pdf',
+                'epfl-optml-lecture04': '/Tutorial/EPFL_optML/lecture04.pdf',
+                'epfl-optml-lecture05': '/Tutorial/EPFL_optML/lecture05.pdf',
+                'epfl-optml-lecture06': '/Tutorial/EPFL_optML/lecture06.pdf',
+                'epfl-optml-lecture07': '/Tutorial/EPFL_optML/lecture07.pdf',
+                'epfl-optml-lecture08': '/Tutorial/EPFL_optML/lecture08.pdf',
+                'epfl-optml-lecture09': '/Tutorial/EPFL_optML/lecture09.pdf',
+                'epfl-optml-lecture10': '/Tutorial/EPFL_optML/lecture10.pdf',
+                'epfl-optml-lecture11': '/Tutorial/EPFL_optML/lecture11.pdf',
+                'epfl-optml-lecture12': '/Tutorial/EPFL_optML/lecture12.pdf'
             };
             return pdfMap[tutorialId] || '#';
         }
@@ -410,6 +622,9 @@
                         <!-- Header -->
                         <div class="flex items-start justify-between mb-3">
                             <div class="flex-1">
+                                ${tutorial.series ? `
+                                    <div class="text-xs text-blue-600 font-medium mb-1">${tutorial.series}</div>
+                                ` : ''}
                                 <h3 class="text-lg font-bold text-gray-900 mb-2 line-clamp-2">
                                     ${tutorial.title}
                                 </h3>
@@ -480,6 +695,7 @@
             const searchTerm = document.getElementById('search-input').value.toLowerCase();
             const selectedLevel = document.getElementById('level-filter').value;
             const selectedType = document.getElementById('type-filter').value;
+            const selectedSeries = document.getElementById('series-filter').value;
 
             filteredTutorials = tutorials.filter(tutorial => {
                 const matchesSearch = tutorial.title.toLowerCase().includes(searchTerm) ||
@@ -488,16 +704,28 @@
                                      tutorial.author.toLowerCase().includes(searchTerm);
                 const matchesLevel = selectedLevel === 'All' || tutorial.level === selectedLevel;
                 const matchesType = selectedType === 'All' || tutorial.type === selectedType;
-                return matchesSearch && matchesLevel && matchesType;
+                const matchesSeries = selectedSeries === 'All' || tutorial.series === selectedSeries;
+                return matchesSearch && matchesLevel && matchesType && matchesSeries;
             });
 
             renderTutorials(filteredTutorials);
+        }
+
+        // Clear filters function
+        function clearFilters() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('level-filter').value = 'All';
+            document.getElementById('type-filter').value = 'All';
+            document.getElementById('series-filter').value = 'All';
+            filterTutorials();
         }
 
         // Add event listeners
         document.getElementById('search-input').addEventListener('input', filterTutorials);
         document.getElementById('level-filter').addEventListener('change', filterTutorials);
         document.getElementById('type-filter').addEventListener('change', filterTutorials);
+        document.getElementById('series-filter').addEventListener('change', filterTutorials);
+        document.getElementById('clear-filters').addEventListener('click', clearFilters);
 
         // Initial render
         renderTutorials(filteredTutorials);
