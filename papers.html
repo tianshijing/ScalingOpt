@@ -194,7 +194,7 @@
                     </div>
 
                     <div class="mt-4 text-sm text-gray-600">
-                        Showing <span id="results-count">21</span> of 21 papers
+                        Showing <span id="results-count">77</span> of 77 papers
                     </div>
                 </div>
 
@@ -321,6 +321,9 @@
 
         // Filter and search functionality
         let filteredPapers = [...papers];
+        
+        // Sort papers by year (newest to oldest) by default
+        filteredPapers.sort((a, b) => b.year - a.year);
 
         function getCategoryColor(category) {
             const colors = {

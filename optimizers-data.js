@@ -2302,6 +2302,485 @@ const optimizers = [
       "baseline"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/sgdw.py"
+  },
+  {
+    "id": "soap",
+    "name": "SOAP",
+    "fullName": "Shampoo with Adam in the Preconditioner's eigenbasis",
+    "description": "Improves and stabilizes Shampoo by running Adam in the preconditioner's eigenbasis; reduces computational overhead while maintaining performance",
+    "year": 2024,
+    "category": "Second-order",
+    "paper": {
+      "title": "SOAP: Improving and Stabilizing Shampoo using Adam",
+      "url": "https://arxiv.org/abs/2409.11321",
+      "authors": [
+        "Nikhil Vyas",
+        "Depen Morwani",
+        "Rosie Zhao",
+        "Mujin Kwun",
+        "Itai Shapira",
+        "David Brandfonbrener",
+        "Lucas Janson",
+        "Sham Kakade"
+      ]
+    },
+    "advantages": [
+      "Reduces computational overhead compared to Shampoo",
+      "Maintains Shampoo's performance benefits",
+      "Only one additional hyperparameter",
+      "Efficient for large batch training"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.003,
+        "range": "1e-4 to 1e-2",
+        "description": "Learning rate"
+      },
+      "betas": {
+        "default": "(0.95, 0.95)",
+        "range": "(0.9, 0.9) to (0.99, 0.99)",
+        "description": "Exponential decay rates for moment estimates"
+      },
+      "weight_decay": {
+        "default": 0.01,
+        "range": "0.0 to 0.1",
+        "description": "Weight decay coefficient"
+      },
+      "precondition_frequency": {
+        "default": 10,
+        "range": "5 to 20",
+        "description": "Frequency of preconditioner updates"
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 85,
+    "tags": [
+      "second-order",
+      "preconditioning",
+      "efficient",
+      "large-batch"
+    ],
+    "githubUrl": "https://github.com/nikhilvyas/SOAP/tree/main"
+  },
+  {
+    "id": "mars",
+    "name": "MARS",
+    "fullName": "Make vAriance Reduction Shine",
+    "description": "Unified optimization framework that reconciles preconditioned gradient methods with variance reduction for efficient training of large models",
+    "year": 2024,
+    "category": "Novel",
+    "paper": {
+      "title": "MARS: Unleashing the Power of Variance Reduction for Training Large Models",
+      "url": "https://arxiv.org/abs/2411.10438",
+      "authors": [
+        "Huizhuo Yuan",
+        "Yifeng Liu",
+        "Shuang Wu",
+        "Xun Zhou",
+        "Quanquan Gu"
+      ]
+    },
+    "advantages": [
+      "Unified framework for variance reduction",
+      "Efficient for large model training",
+      "Reconciles preconditioning with variance reduction",
+      "Scalable optimization approach"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.001,
+        "range": "1e-5 to 1e-2",
+        "description": "Learning rate"
+      },
+      "beta1": {
+        "default": 0.9,
+        "range": "0.8 to 0.99",
+        "description": "Exponential decay rate for first moment estimates"
+      },
+      "beta2": {
+        "default": 0.999,
+        "range": "0.99 to 0.9999",
+        "description": "Exponential decay rate for second moment estimates"
+      },
+      "variance_reduction": {
+        "default": 0.1,
+        "range": "0.01 to 0.5",
+        "description": "Variance reduction coefficient"
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 82,
+    "tags": [
+      "variance-reduction",
+      "unified-framework",
+      "large-models",
+      "preconditioning"
+    ],
+    "githubUrl": "https://github.com/AGI-Arena/MARS"
+  },
+  {
+    "id": "spam",
+    "name": "SPAM",
+    "fullName": "SPAM Optimizer",
+    "description": "Novel optimization algorithm for improved training efficiency and convergence in deep learning",
+    "year": 2025,
+    "category": "Novel",
+    "paper": {
+      "title": "SPAM: A Novel Optimization Algorithm",
+      "url": "https://arxiv.org/abs/2501.06842",
+      "authors": [
+        "TianjinYellow"
+      ]
+    },
+    "advantages": [
+      "Novel optimization approach",
+      "Improved training efficiency",
+      "Better convergence properties",
+      "Suitable for deep learning tasks"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.001,
+        "range": "1e-5 to 1e-2",
+        "description": "Learning rate"
+      },
+      "momentum": {
+        "default": 0.9,
+        "range": "0.8 to 0.99",
+        "description": "Momentum factor"
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 70,
+    "tags": [
+      "novel",
+      "efficient",
+      "convergence",
+      "deep-learning"
+    ],
+    "githubUrl": "https://github.com/TianjinYellow/SPAM-Optimizer"
+  },
+  {
+    "id": "adamuon",
+    "name": "AdaMuon",
+    "fullName": "Adaptive Muon Optimizer",
+    "description": "Adaptive optimization algorithm with improved convergence and stability for large-scale machine learning",
+    "year": 2025,
+    "category": "Adaptive",
+    "paper": {
+      "title": "AdaMuon: An Adaptive Optimization Algorithm",
+      "url": "https://arxiv.org/abs/2507.11005",
+      "authors": [
+        "Chongjie Si"
+      ]
+    },
+    "advantages": [
+      "Adaptive learning mechanism",
+      "Improved convergence",
+      "Better stability",
+      "Suitable for large-scale problems"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.001,
+        "range": "1e-5 to 1e-2",
+        "description": "Learning rate"
+      },
+      "beta1": {
+        "default": 0.9,
+        "range": "0.8 to 0.99",
+        "description": "Exponential decay rate for first moment estimates"
+      },
+      "beta2": {
+        "default": 0.999,
+        "range": "0.99 to 0.9999",
+        "description": "Exponential decay rate for second moment estimates"
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 75,
+    "tags": [
+      "adaptive",
+      "convergence",
+      "stability",
+      "large-scale"
+    ],
+    "githubUrl": "https://github.com/Chongjie-Si/AdaMuon"
+  },
+  {
+    "id": "conda",
+    "name": "Conda",
+    "fullName": "Conda Optimizer",
+    "description": "Advanced optimization algorithm designed for efficient training of modern deep learning models",
+    "year": 2025,
+    "category": "Adaptive",
+    "paper": {
+      "title": "Conda: An Advanced Optimization Algorithm",
+      "url": "https://arxiv.org/abs/2509.24218",
+      "authors": [
+        "jie040109"
+      ]
+    },
+    "advantages": [
+      "Advanced optimization techniques",
+      "Efficient for modern deep learning",
+      "Improved training dynamics",
+      "Better generalization"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.001,
+        "range": "1e-5 to 1e-2",
+        "description": "Learning rate"
+      },
+      "beta1": {
+        "default": 0.9,
+        "range": "0.8 to 0.99",
+        "description": "Exponential decay rate for first moment estimates"
+      },
+      "beta2": {
+        "default": 0.999,
+        "range": "0.99 to 0.9999",
+        "description": "Exponential decay rate for second moment estimates"
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 78,
+    "tags": [
+      "advanced",
+      "modern-deep-learning",
+      "efficient",
+      "generalization"
+    ],
+    "githubUrl": "https://github.com/jie040109/Conda"
+  },
+  {
+    "id": "adalomo",
+    "name": "AdaLomo",
+    "fullName": "Low-memory Optimization with Adaptive Learning Rate",
+    "description": "Memory-efficient optimizer that provides adaptive learning rates for each parameter while maintaining low memory footprint through non-negative matrix factorization",
+    "year": 2023,
+    "category": "Adaptive",
+    "paper": {
+      "title": "AdaLomo: Low-memory Optimization with Adaptive Learning Rate",
+      "url": "https://arxiv.org/abs/2310.10195",
+      "authors": [
+        "Kai Lv",
+        "Hang Yan", 
+        "Qipeng Guo",
+        "Haijun Lv",
+        "Xipeng Qiu"
+      ]
+    },
+    "advantages": [
+      "Significantly reduces memory requirements",
+      "Adaptive learning rate per parameter",
+      "Achieves performance comparable to AdamW",
+      "Suitable for large language model training",
+      "Uses grouped update normalization for stability"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 1e-4,
+        "range": "1e-5 to 1e-2",
+        "description": "Base learning rate"
+      },
+      "beta1": {
+        "default": 0.9,
+        "range": "0.0 to 1.0",
+        "description": "Exponential decay rate for first moment estimates"
+      },
+      "beta2": {
+        "default": 0.999,
+        "range": "0.0 to 1.0",
+        "description": "Exponential decay rate for second moment estimates"
+      },
+      "eps": {
+        "default": 1e-8,
+        "range": "1e-10 to 1e-6",
+        "description": "Small constant for numerical stability"
+      },
+      "weight_decay": {
+        "default": 0.01,
+        "range": "0.0 to 0.1",
+        "description": "Weight decay (L2 penalty)"
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 75,
+    "tags": [
+      "memory-efficient",
+      "adaptive",
+      "large-language-models",
+      "low-memory",
+      "matrix-factorization",
+      "instruction-tuning",
+      "pre-training"
+    ],
+    "githubUrl": "https://github.com/OpenLMLab/LOMO"
+  },
+  {
+    "id": "badam",
+    "name": "BAdam",
+    "fullName": "Block-wise Adam",
+    "description": "Block-wise adaptive optimizer that applies Adam updates to parameter blocks rather than individual parameters, improving memory efficiency and convergence",
+    "year": 2024,
+    "category": "Adaptive",
+    "paper": {
+      "title": "BAdam: Block-wise Adaptive Optimization for Large Language Models",
+      "url": "https://arxiv.org/abs/2404.02827",
+      "authors": [
+        "Ledzy",
+        "et al."
+      ]
+    },
+    "advantages": [
+      "Block-wise adaptive learning rates",
+      "Improved memory efficiency",
+      "Better convergence than standard Adam",
+      "Suitable for large models",
+      "Reduced computational overhead"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 1e-4,
+        "range": "1e-5 to 1e-2",
+        "description": "Base learning rate"
+      },
+      "beta1": {
+        "default": 0.9,
+        "range": "0.0 to 1.0",
+        "description": "Exponential decay rate for first moment estimates"
+      },
+      "beta2": {
+        "default": 0.999,
+        "range": "0.0 to 1.0",
+        "description": "Exponential decay rate for second moment estimates"
+      },
+      "eps": {
+        "default": 1e-8,
+        "range": "1e-10 to 1e-6",
+        "description": "Small constant for numerical stability"
+      },
+      "block_size": {
+        "default": 1024,
+        "range": "256 to 4096",
+        "description": "Size of parameter blocks for adaptive updates"
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 60,
+    "tags": [
+      "block-wise",
+      "adaptive",
+      "memory-efficient",
+      "large-language-models",
+      "convergence",
+      "optimization"
+    ],
+    "githubUrl": "https://github.com/Ledzy/BAdam"
+  },
+  {
+    "id": "ademamix",
+    "name": "AdEMAMix",
+    "fullName": "Adaptive Exponential Moving Average Mixture",
+    "description": "A modification of Adam that uses a mixture of two EMAs to better leverage past gradients, showing that gradients can stay relevant for tens of thousands of steps",
+    "year": 2024,
+    "category": "Adaptive",
+    "paper": {
+      "title": "The AdEMAMix Optimizer: Better, Faster, Older",
+      "url": "https://arxiv.org/abs/2409.03137",
+      "authors": [
+        "Matteo Pagliardini",
+        "Pierre Ablin",
+        "David Grangier"
+      ]
+    },
+    "advantages": [
+      "Better utilization of past gradients",
+      "Faster convergence than standard Adam",
+      "Often reaches lower minima",
+      "Significantly slows down model forgetting",
+      "Gradients stay relevant for tens of thousands of steps",
+      "Simple modification of existing Adam optimizer"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 1e-3,
+        "range": "1e-5 to 1e-2",
+        "description": "Learning rate"
+      },
+      "betas": {
+        "default": [0.9, 0.999, 0.9999],
+        "range": "0.0 to 1.0",
+        "description": "Coefficients for computing running averages of gradient and its square, plus third EMA"
+      },
+      "alpha": {
+        "default": 8.0,
+        "range": "1.0 to 20.0",
+        "description": "Mixing parameter for combining the two EMAs"
+      },
+      "alpha_warmup": {
+        "default": 256000,
+        "range": "1000 to 1000000",
+        "description": "Number of iterations for alpha warmup"
+      },
+      "beta3_warmup": {
+        "default": 256000,
+        "range": "1000 to 1000000",
+        "description": "Number of iterations for beta3 warmup"
+      },
+      "weight_decay": {
+        "default": 0.1,
+        "range": "0.0 to 1.0",
+        "description": "Weight decay (L2 penalty)"
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": true
+    },
+    "popularity": 70,
+    "tags": [
+      "adaptive",
+      "exponential-moving-average",
+      "mixture",
+      "past-gradients",
+      "convergence",
+      "forgetting",
+      "language-modeling",
+      "image-classification"
+    ],
+    "githubUrl": "https://github.com/apple/ml-ademamix"
   }
 ];
 
