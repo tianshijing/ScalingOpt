@@ -1,4 +1,6 @@
 # ScalingOpt - Optimization Community
+<img width="1536" height="1024" alt="ChatGPT Image 2025年10月5日 02_25_58_PhotoGrid" src="https://github.com/user-attachments/assets/88990ba9-8211-4aa2-8708-0503ac035302" />
+
 [![GitHub](https://img.shields.io/badge/GitHub-ScalingOpt-blue?style=flat-square&logo=github)](https://github.com/tianshijing/ScalingOpt)
 [![Awesome](https://awesome.re/badge.svg)](https://awesome.re)
 ![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-green) 
