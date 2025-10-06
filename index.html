@@ -32,46 +32,46 @@
     <!-- Custom Styles -->
     <link rel="stylesheet" href="styles.css">
 </head>
-<body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 font-inter">
+<body class="min-h-screen theme-body font-inter">
     <div class="flex flex-col min-h-screen">
         <!-- Navbar -->
-        <nav class="bg-white/95 backdrop-blur-md border-b border-blue-100 sticky top-0 z-50 shadow-sm">
+        <nav class="theme-navbar sticky top-0 z-50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
                         <a href="index.html" class="flex items-center">
-                            <span class="text-xl font-bold text-blue-900">ScalingOpt</span>
+                            <span class="text-xl font-bold text-theme-accent tracking-wide">ScalingOpt</span>
                         </a>
                     </div>
 
                     <!-- Desktop Navigation -->
                     <div class="hidden md:flex items-center space-x-8">
-                        <a href="index.html" class="text-blue-700 hover:text-blue-900 transition-colors duration-200 font-medium">Home</a>
-                        <a href="optimizers.html" class="flex items-center space-x-1 text-blue-700 hover:text-blue-900 transition-colors duration-200 font-medium">
+                        <a href="index.html" class="theme-nav-link font-medium theme-nav-link-active">Home</a>
+                        <a href="optimizers.html" class="flex items-center space-x-1 theme-nav-link font-medium">
                             <i data-lucide="search" class="w-4 h-4"></i>
                             <span>Optimizers</span>
                         </a>
-                        <a href="benchmarks.html" class="flex items-center space-x-1 text-blue-700 hover:text-blue-900 transition-colors duration-200 font-medium">
+                        <a href="benchmarks.html" class="flex items-center space-x-1 theme-nav-link font-medium">
                             <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
                             <span>Benchmarks</span>
                         </a>
-                        <a href="papers.html" class="flex items-center space-x-1 text-blue-700 hover:text-blue-900 transition-colors duration-200 font-medium">
+                        <a href="papers.html" class="flex items-center space-x-1 theme-nav-link font-medium">
                             <i data-lucide="graduation-cap" class="w-4 h-4"></i>
                             <span>Papers</span>
                         </a>
-                        <a href="tutorials.html" class="flex items-center space-x-1 text-blue-700 hover:text-blue-900 transition-colors duration-200 font-medium">
+                        <a href="tutorials.html" class="flex items-center space-x-1 theme-nav-link font-medium">
                             <i data-lucide="book-open" class="w-4 h-4"></i>
                             <span>Tutorials</span>
                         </a>
-                        <a href="blogs.html" class="flex items-center space-x-1 text-blue-700 hover:text-blue-900 transition-colors duration-200 font-medium">
+                        <a href="blogs.html" class="flex items-center space-x-1 theme-nav-link font-medium">
                             <i data-lucide="file-text" class="w-4 h-4"></i>
                             <span>Blogs</span>
                         </a>
-                        <a href="community.html" class="flex items-center space-x-1 text-blue-700 hover:text-blue-900 transition-colors duration-200 font-medium">
+                        <a href="community.html" class="flex items-center space-x-1 theme-nav-link font-medium">
                             <i data-lucide="users" class="w-4 h-4"></i>
                             <span>Community</span>
                         </a>
-                        <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200">
+                        <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-1 theme-nav-link font-medium">
                             <i data-lucide="github" class="w-5 h-5"></i>
                             <span class="hidden lg:inline">GitHub</span>
                         </a>
@@ -79,7 +79,7 @@
 
                     <!-- Mobile menu button -->
                     <div class="md:hidden flex items-center">
-                        <button id="mobile-menu-button" class="text-gray-700 hover:text-blue-600 transition-colors duration-200">
+                        <button id="mobile-menu-button" class="text-white/70 hover:text-theme-accent transition-colors duration-200">
                             <i data-lucide="menu" class="w-6 h-6"></i>
                         </button>
                     </div>
@@ -87,34 +87,34 @@
             </div>
 
             <!-- Mobile Navigation -->
-            <div id="mobile-menu" class="md:hidden bg-white border-t border-gray-200 hidden">
+            <div id="mobile-menu" class="md:hidden theme-mobile-nav hidden">
                 <div class="px-2 pt-2 pb-3 space-y-1">
-                    <a href="index.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">Home</a>
-                    <a href="optimizers.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                    <a href="index.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors duration-200 theme-mobile-link">Home</a>
+                    <a href="optimizers.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors duration-200 theme-mobile-link">
                         <i data-lucide="search" class="w-4 h-4"></i>
                         <span>Optimizers</span>
                     </a>
-                    <a href="benchmarks.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                    <a href="benchmarks.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors duration-200 theme-mobile-link">
                         <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
                         <span>Benchmarks</span>
                     </a>
-                    <a href="papers.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                    <a href="papers.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors duration-200 theme-mobile-link">
                         <i data-lucide="graduation-cap" class="w-4 h-4"></i>
                         <span>Papers</span>
                     </a>
-                    <a href="tutorials.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                    <a href="tutorials.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors duration-200 theme-mobile-link">
                         <i data-lucide="book-open" class="w-4 h-4"></i>
                         <span>Tutorials</span>
                     </a>
-                    <a href="blogs.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                    <a href="blogs.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors duration-200 theme-mobile-link">
                         <i data-lucide="file-text" class="w-4 h-4"></i>
                         <span>Blogs</span>
                     </a>
-                    <a href="community.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                    <a href="community.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors duration-200 theme-mobile-link">
                         <i data-lucide="users" class="w-4 h-4"></i>
                         <span>Community</span>
                     </a>
-                    <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                    <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors duration-200 theme-mobile-link">
                         <i data-lucide="github" class="w-4 h-4"></i>
                         <span>GitHub</span>
                     </a>
@@ -125,38 +125,41 @@
         <!-- Main Content -->
         <main class="flex-grow">
             <!-- Hero Section -->
-            <section class="relative overflow-hidden bg-gradient-to-br from-indigo-900 via-blue-900 to-purple-900 min-h-screen flex items-center">
+            <section class="relative overflow-hidden theme-hero-gradient min-h-screen flex items-center text-white">
                 <div class="absolute inset-0 bg-grid-pattern opacity-10"></div>
-                
+
                 <!-- Floating geometric shapes -->
-                <div class="absolute top-20 left-10 w-20 h-20 bg-blue-400 rounded-full opacity-20 float-animation"></div>
-                <div class="absolute top-40 right-20 w-16 h-16 bg-purple-400 rounded-lg opacity-20 float-animation" style="animation-delay: 1s;"></div>
-                <div class="absolute bottom-40 left-20 w-12 h-12 bg-indigo-400 rounded-full opacity-20 float-animation" style="animation-delay: 2s;"></div>
-                <div class="absolute bottom-20 right-40 w-24 h-24 bg-cyan-400 rounded-lg opacity-20 float-animation" style="animation-delay: 0.5s;"></div>
-                
+                <div class="absolute top-20 left-10 w-24 h-24 rounded-full blur-2xl" style="background: rgba(255, 255, 255, 0.12);"></div>
+                <div class="absolute top-40 right-20 w-20 h-20 rounded-3xl float-animation" style="animation-delay: 1s; background: rgba(251, 191, 36, 0.22);"></div>
+                <div class="absolute bottom-32 left-24 w-16 h-16 rounded-full float-animation" style="animation-delay: 2s; background: rgba(255, 255, 255, 0.18);"></div>
+                <div class="absolute bottom-16 right-40 w-28 h-28 rounded-3xl float-animation" style="animation-delay: 0.5s; background: rgba(251, 191, 36, 0.32);"></div>
+
                 <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
                     <div class="text-center">
-                        <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold mb-8">
-                            <span class="text-shimmer block mb-4">ScalingOpt</span>
-                            <span class="text-2xl md:text-4xl lg:text-5xl text-blue-200 font-light">
-                                Optimization at Scale
+                        <div class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 backdrop-blur text-sm uppercase tracking-[0.35em] mb-6">
+                            Scholarly Atlas for Scalable Optimisation
+                        </div>
+                        <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold mb-6">
+                            <span class="text-shimmer block mb-2">ScalingOpt</span>
+                            <span class="text-2xl md:text-4xl lg:text-5xl text-white/80 font-light">
+                                Curated Intelligence for Optimisers at Scale
                             </span>
                         </h1>
-                        <p class="text-xl md:text-2xl text-blue-100 mb-12 max-w-4xl mx-auto leading-relaxed">
-                            Discover, compare, and contribute to cutting-edge optimization algorithms designed for
-                            <span class="text-cyan-300 font-semibold"> large-scale deep learning</span>. 
-                            From foundational methods to state-of-the-art scalable optimizers.
+                        <p class="text-xl md:text-2xl text-white/80 mb-12 max-w-4xl mx-auto leading-relaxed">
+                            We consolidate rigorous evidence on optimisation algorithms for
+                            <span class="text-theme-accent font-semibold">large-scale machine learning</span>.
+                            Compare theoretical foundations, empirical benchmarks, and implementation practice in one scholarly resource.
                         </p>
                         <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
-                            <a href="optimizers.html" class="group inline-flex items-center px-10 py-5 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold rounded-2xl hover:from-cyan-400 hover:to-blue-400 transition-all duration-300 hover:scale-105 shadow-2xl hover:shadow-cyan-500/25 pulse-glow">
-                                <i data-lucide="zap" class="mr-3 w-6 h-6 group-hover:animate-pulse"></i>
-                                Explore Optimizers
+                            <a href="optimizers.html" class="group inline-flex items-center theme-button-primary">
+                                <i data-lucide="compass" class="mr-3 w-6 h-6 group-hover:animate-pulse"></i>
+                                Explore the Optimiser Atlas
                                 <i data-lucide="arrow-right" class="ml-3 w-6 h-6 group-hover:translate-x-1 transition-transform"></i>
                             </a>
-                            <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="group inline-flex items-center px-10 py-5 border-2 border-blue-300 text-blue-200 font-bold rounded-2xl hover:border-blue-200 hover:bg-blue-800/30 transition-all duration-300 hover:scale-105 backdrop-blur-sm">
+                            <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="group inline-flex items-center theme-button-secondary">
                                 <i data-lucide="github" class="mr-3 w-6 h-6 group-hover:rotate-12 transition-transform"></i>
-                                View on GitHub
-                                <i data-lucide="arrow-right" class="ml-3 w-6 h-6 group-hover:translate-x-1 transition-transform"></i>
+                                Contribute via GitHub
+                                <i data-lucide="arrow-up-right" class="ml-3 w-6 h-6 group-hover:translate-x-1 transition-transform"></i>
                             </a>
                         </div>
                     </div>
@@ -164,75 +167,77 @@
             </section>
 
             <!-- Stats Section -->
-            <section class="py-20 bg-gradient-to-r from-slate-50 to-blue-50 relative">
-                <div class="absolute inset-0 bg-grid-pattern opacity-5"></div>
+            <section class="py-20 relative overflow-hidden">
+                <div class="absolute inset-0 bg-white/10 opacity-20"></div>
+                <div class="absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-white/5 to-transparent"></div>
+                <div class="absolute inset-y-0 right-0 w-1/3 bg-gradient-to-l from-theme-accent/10 to-transparent"></div>
                 <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="text-center mb-16">
-                        <h2 class="text-4xl font-bold text-gray-900 mb-4">
-                            Platform <span class="gradient-text">Statistics</span>
+                    <div class="text-center mb-16 text-white">
+                        <h2 class="text-4xl font-bold mb-4">
+                            Evidence <span class="text-theme-accent">at a Glance</span>
                         </h2>
-                        <p class="text-xl text-gray-600">Real-time data from our comprehensive optimizer database</p>
+                        <p class="text-xl text-white/70">Curated aggregates derived from our continuously maintained optimisation registry.</p>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                         <div class="group">
-                            <div class="bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 card-hover gradient-border">
+                            <div class="theme-card-light rounded-3xl p-8 hover:shadow-2xl transition-all duration-300 card-hover">
                                 <div class="text-center">
-                                    <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 shadow-lg gradient-bg-3">
+                                    <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 shadow-lg bg-gradient-to-br from-purple-500/80 to-theme-accent/80">
                                         <i data-lucide="zap" class="w-10 h-10 text-white"></i>
                                     </div>
-                                    <div class="text-5xl font-bold text-gray-900 mb-3 group-hover:scale-110 transition-transform duration-300" id="optimizer-count">
+                                    <div class="text-5xl font-bold theme-text-primary mb-3 group-hover:scale-105 transition-transform duration-300" id="optimizer-count">
                                         50
                                     </div>
-                                    <div class="text-lg font-semibold text-gray-600 uppercase tracking-wide">
-                                        Optimizers
+                                    <div class="text-sm uppercase tracking-[0.3em] theme-text-muted">
+                                        Optimisers catalogued
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="group">
-                            <div class="bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 card-hover gradient-border">
+                            <div class="theme-card-light rounded-3xl p-8 hover:shadow-2xl transition-all duration-300 card-hover">
                                 <div class="text-center">
-                                    <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 shadow-lg gradient-bg-1">
+                                    <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 shadow-lg bg-gradient-to-br from-theme-accent/80 to-purple-500/80">
                                         <i data-lucide="book-open" class="w-10 h-10 text-white"></i>
                                     </div>
-                                    <div class="text-5xl font-bold text-gray-900 mb-3 group-hover:scale-110 transition-transform duration-300">
+                                    <div class="text-5xl font-bold theme-text-primary mb-3 group-hover:scale-105 transition-transform duration-300">
                                         77
                                     </div>
-                                    <div class="text-lg font-semibold text-gray-600 uppercase tracking-wide">
-                                        Research Papers
+                                    <div class="text-sm uppercase tracking-[0.3em] theme-text-muted">
+                                        Peer-reviewed sources
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="group">
-                            <div class="bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 card-hover gradient-border">
+                            <div class="theme-card-light rounded-3xl p-8 hover:shadow-2xl transition-all duration-300 card-hover">
                                 <div class="text-center">
-                                    <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 shadow-lg gradient-bg-4">
+                                    <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 shadow-lg bg-gradient-to-br from-purple-500/80 to-purple-900/80">
                                         <i data-lucide="bar-chart-3" class="w-10 h-10 text-white"></i>
                                     </div>
-                                    <div class="text-5xl font-bold text-gray-900 mb-3 group-hover:scale-110 transition-transform duration-300">
+                                    <div class="text-5xl font-bold theme-text-primary mb-3 group-hover:scale-105 transition-transform duration-300">
                                         2
                                     </div>
-                                    <div class="text-lg font-semibold text-gray-600 uppercase tracking-wide">
-                                        Benchmarks
+                                    <div class="text-sm uppercase tracking-[0.3em] theme-text-muted">
+                                        Benchmark suites
                                     </div>
                                 </div>
                             </div>
                         </div>
                         
                         <div class="group">
-                            <div class="bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 card-hover gradient-border">
+                            <div class="theme-card-light rounded-3xl p-8 hover:shadow-2xl transition-all duration-300 card-hover">
                                 <div class="text-center">
-                                    <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 shadow-lg gradient-bg-2">
+                                    <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 shadow-lg bg-gradient-to-br from-purple-600/80 to-theme-accent/70">
                                         <i data-lucide="users" class="w-10 h-10 text-white"></i>
                                     </div>
-                                    <div class="text-5xl font-bold text-gray-900 mb-3 group-hover:scale-110 transition-transform duration-300" id="visitor-count">
+                                    <div class="text-5xl font-bold theme-text-primary mb-3 group-hover:scale-105 transition-transform duration-300" id="visitor-count">
                                         100
                                     </div>
-                                    <div class="text-lg font-semibold text-gray-600 uppercase tracking-wide">
-                                        Total Visitors
+                                    <div class="text-sm uppercase tracking-[0.3em] theme-text-muted">
+                                        Community contributors
                                     </div>
                                 </div>
                             </div>
@@ -242,143 +247,129 @@
             </section>
 
             <!-- Featured Optimizers Section -->
-            <section class="py-24 bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900 relative overflow-hidden">
-                <div class="absolute inset-0 bg-grid-pattern opacity-5"></div>
-                
-                <!-- Background decorative elements -->
-                <div class="absolute top-10 right-10 w-32 h-32 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full opacity-10 blur-xl"></div>
-                <div class="absolute bottom-10 left-10 w-40 h-40 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full opacity-10 blur-xl"></div>
-                
+            <section class="py-24 theme-section-dark relative overflow-hidden">
+                <div class="absolute inset-0 bg-grid-pattern opacity-10"></div>
+                <div class="absolute top-10 right-10 w-32 h-32 rounded-full blur-3xl" style="background: rgba(251, 191, 36, 0.18);"></div>
+                <div class="absolute bottom-10 left-10 w-44 h-44 rounded-full blur-3xl" style="background: rgba(91, 33, 182, 0.28);"></div>
+
                 <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16">
-                        <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
-                            Featured <span class="text-shimmer">Optimizers</span>
+                        <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                            Exemplar Optimisation Strategies
                         </h2>
-                        <p class="text-xl text-blue-200 max-w-3xl mx-auto">
-                            Discover the most powerful and innovative optimization algorithms powering modern AI
+                        <p class="text-lg md:text-xl text-white/80 max-w-3xl mx-auto">
+                            Curated highlights illustrating the breadth of algorithmic design paradigms represented in ScalingOpt.
                         </p>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                         <!-- SGD -->
                         <div class="group relative">
-                            <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl hover:shadow-cyan-500/20 transition-all duration-500 card-hover">
+                            <div class="theme-card rounded-2xl p-6 border border-white/10 transition-all duration-500 card-hover">
                                 <div class="flex items-center justify-between mb-4">
-                                    <h3 class="text-2xl font-bold text-white group-hover:text-cyan-300 transition-colors">
+                                    <h3 class="text-2xl font-semibold text-white group-hover:text-theme-accent transition-colors">
                                         SGD
                                     </h3>
-                                    <span class="text-sm text-blue-300 bg-blue-900/50 px-3 py-1 rounded-full">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium theme-badge-gold">
                                         1999
                                     </span>
                                 </div>
-                                <p class="text-blue-100 mb-6 text-sm leading-relaxed">
-                                    Stochastic Gradient Descent - foundational and reliable optimizer
+                                <p class="theme-text-soft mb-6 text-sm leading-relaxed">
+                                    Stochastic gradient descent remains the canonical baseline for large-scale convex and non-convex optimisation, enabling reproducible empirical comparisons.
                                 </p>
                                 <div class="flex items-center justify-between">
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border bg-green-500/20 text-green-300 border-green-500/30">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium theme-badge">
                                         First-order
                                     </span>
-                                    <div class="flex items-center space-x-1">
-                                        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                                        <span class="text-sm font-medium text-green-300">85%</span>
+                                    <div class="flex items-center space-x-1 text-theme-accent">
+                                        <i data-lucide="activity" class="w-4 h-4"></i>
+                                        <span class="text-sm font-medium">85% adoption</span>
                                     </div>
                                 </div>
-                                
-                                <!-- Hover overlay -->
-                                <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                             </div>
                         </div>
 
                         <!-- AdamW -->
                         <div class="group relative">
-                            <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl hover:shadow-cyan-500/20 transition-all duration-500 card-hover">
+                            <div class="theme-card rounded-2xl p-6 border border-white/10 transition-all duration-500 card-hover">
                                 <div class="flex items-center justify-between mb-4">
-                                    <h3 class="text-2xl font-bold text-white group-hover:text-cyan-300 transition-colors">
+                                    <h3 class="text-2xl font-semibold text-white group-hover:text-theme-accent transition-colors">
                                         AdamW
                                     </h3>
-                                    <span class="text-sm text-blue-300 bg-blue-900/50 px-3 py-1 rounded-full">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium theme-badge-gold">
                                         2017
                                     </span>
                                 </div>
-                                <p class="text-blue-100 mb-6 text-sm leading-relaxed">
-                                    Adam with decoupled weight decay - excellent for transformers
+                                <p class="theme-text-soft mb-6 text-sm leading-relaxed">
+                                    Decoupled weight decay refines adaptive gradient methods, yielding superior stability for transformer-scale architectures.
                                 </p>
                                 <div class="flex items-center justify-between">
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border bg-blue-500/20 text-blue-300 border-blue-500/30">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium theme-badge">
                                         Adaptive
                                     </span>
-                                    <div class="flex items-center space-x-1">
-                                        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                                        <span class="text-sm font-medium text-green-300">90%</span>
+                                    <div class="flex items-center space-x-1 text-theme-accent">
+                                        <i data-lucide="activity" class="w-4 h-4"></i>
+                                        <span class="text-sm font-medium">90% adoption</span>
                                     </div>
                                 </div>
-                                
-                                <!-- Hover overlay -->
-                                <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                             </div>
                         </div>
 
                         <!-- Adam-mini -->
                         <div class="group relative">
-                            <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl hover:shadow-cyan-500/20 transition-all duration-500 card-hover">
+                            <div class="theme-card rounded-2xl p-6 border border-white/10 transition-all duration-500 card-hover">
                                 <div class="flex items-center justify-between mb-4">
-                                    <h3 class="text-2xl font-bold text-white group-hover:text-cyan-300 transition-colors">
+                                    <h3 class="text-2xl font-semibold text-white group-hover:text-theme-accent transition-colors">
                                         Adam-mini
                                     </h3>
-                                    <span class="text-sm text-blue-300 bg-blue-900/50 px-3 py-1 rounded-full">
-                                        2024
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium theme-badge-gold">
+                                        2023
                                     </span>
                                 </div>
-                                <p class="text-blue-100 mb-6 text-sm leading-relaxed">
-                                    Memory-efficient Adam variant with fewer learning rates
+                                <p class="theme-text-soft mb-6 text-sm leading-relaxed">
+                                    Parameter-efficient adaptation reduces optimiser state without compromising convergence, ideal for memory-constrained large language model training.
                                 </p>
                                 <div class="flex items-center justify-between">
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border bg-blue-500/20 text-blue-300 border-blue-500/30">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium theme-badge">
                                         Adaptive
                                     </span>
-                                    <div class="flex items-center space-x-1">
-                                        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                                        <span class="text-sm font-medium text-green-300">78%</span>
+                                    <div class="flex items-center space-x-1 text-theme-accent">
+                                        <i data-lucide="activity" class="w-4 h-4"></i>
+                                        <span class="text-sm font-medium">78% adoption</span>
                                     </div>
                                 </div>
-                                
-                                <!-- Hover overlay -->
-                                <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                             </div>
                         </div>
 
                         <!-- Muon -->
                         <div class="group relative">
-                            <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-2xl hover:shadow-cyan-500/20 transition-all duration-500 card-hover">
+                            <div class="theme-card rounded-2xl p-6 border border-white/10 transition-all duration-500 card-hover">
                                 <div class="flex items-center justify-between mb-4">
-                                    <h3 class="text-2xl font-bold text-white group-hover:text-cyan-300 transition-colors">
+                                    <h3 class="text-2xl font-semibold text-white group-hover:text-theme-accent transition-colors">
                                         Muon
                                     </h3>
-                                    <span class="text-sm text-blue-300 bg-blue-900/50 px-3 py-1 rounded-full">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium theme-badge-gold">
                                         2024
                                     </span>
                                 </div>
-                                <p class="text-blue-100 mb-6 text-sm leading-relaxed">
-                                    Orthogonal weight updates via Newton-Schulz iteration
+                                <p class="theme-text-soft mb-6 text-sm leading-relaxed">
+                                    Orthogonal updates via Newton–Schulz iterations provide rapid loss descent on exceptionally deep networks while preserving numerical stability.
                                 </p>
                                 <div class="flex items-center justify-between">
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border bg-purple-500/20 text-purple-300 border-purple-500/30">
-                                        Novel
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium theme-badge">
+                                        Novel paradigm
                                     </span>
-                                    <div class="flex items-center space-x-1">
-                                        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                                        <span class="text-sm font-medium text-green-300">82%</span>
+                                    <div class="flex items-center space-x-1 text-theme-accent">
+                                        <i data-lucide="activity" class="w-4 h-4"></i>
+                                        <span class="text-sm font-medium">82% adoption</span>
                                     </div>
                                 </div>
-                                
-                                <!-- Hover overlay -->
-                                <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                             </div>
                         </div>
                     </div>
                     <div class="text-center mt-16">
-                        <a href="optimizers.html" class="group inline-flex items-center px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold rounded-2xl hover:from-cyan-400 hover:to-blue-400 transition-all duration-300 hover:scale-105 shadow-2xl hover:shadow-cyan-500/25">
-                            <i data-lucide="star" class="mr-3 w-5 h-5 group-hover:animate-spin"></i>
-                            View All Optimizers
+                        <a href="optimizers.html" class="group inline-flex items-center theme-button-primary">
+                            <i data-lucide="library" class="mr-3 w-5 h-5"></i>
+                            View the complete optimiser catalogue
                             <i data-lucide="arrow-right" class="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
                         </a>
                     </div>
@@ -489,60 +480,47 @@
         </main>
 
         <!-- Footer -->
-        <footer class="bg-gradient-to-br from-blue-900 to-blue-800 text-white">
+                <footer class="theme-footer mt-auto">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                    <!-- Brand -->
-                    <div class="col-span-1 md:col-span-2">
-                        <div class="flex items-center mb-4">
-                            <span class="text-xl font-bold text-white">ScalingOpt</span>
-                        </div>
-                        <p class="text-blue-100 mb-4 max-w-md">
-                            A comprehensive platform for scaling optimization algorithms. 
-                            Discover, compare, and contribute to cutting-edge optimizers for large-scale machine learning.
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4">ScalingOpt</h3>
+                        <p class="text-sm text-white/80 leading-relaxed">
+                            A scholarly observatory for optimisation at scale. We curate rigorous evidence, reproducible benchmarks,
+                            and practitioner guidance for machine learning optimisation research.
                         </p>
-                        <div class="flex space-x-4">
-                            <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors duration-200">
-                                <i data-lucide="github" class="w-5 h-5"></i>
-                            </a>
-                            <a href="mailto:juanxitian1031@gmail.com" class="text-gray-400 hover:text-white transition-colors duration-200">
-                                <i data-lucide="mail" class="w-5 h-5"></i>
-                            </a>
-                        </div>
                     </div>
-
-                    <!-- Quick Links -->
                     <div>
-                        <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
-                        <ul class="space-y-2">
-                            <li><a href="optimizers.html" class="text-gray-300 hover:text-white transition-colors duration-200">Browse Optimizers</a></li>
-                            <li><a href="benchmarks.html" class="text-gray-300 hover:text-white transition-colors duration-200">Benchmarks</a></li>
-                            <li><a href="papers.html" class="text-gray-300 hover:text-white transition-colors duration-200">Papers</a></li>
-                            <li><a href="tutorials.html" class="text-gray-300 hover:text-white transition-colors duration-200">Tutorials</a></li>
-                            <li><a href="blogs.html" class="text-gray-300 hover:text-white transition-colors duration-200">Blogs</a></li>
-                            <li><a href="community.html" class="text-gray-300 hover:text-white transition-colors duration-200">Community</a></li>
+                        <h4 class="theme-footer-heading text-lg mb-4">Explore</h4>
+                        <ul class="space-y-2 text-sm text-white/70">
+                            <li><a href="optimizers.html" class="theme-link">Optimizer Library</a></li>
+                            <li><a href="benchmarks.html" class="theme-link">Benchmark Explorer</a></li>
+                            <li><a href="papers.html" class="theme-link">Literature Digest</a></li>
+                            <li><a href="tutorials.html" class="theme-link">Learning Hub</a></li>
                         </ul>
                     </div>
-
-                    <!-- Resources -->
                     <div>
-                        <h3 class="text-lg font-semibold mb-4">Resources</h3>
-                        <ul class="space-y-2">
-                            <li><a href="https://arxiv.org/abs/2410.06373" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-white transition-colors duration-200">Research Paper</a></li>
-                            <li><a href="#contribute" class="text-gray-300 hover:text-white transition-colors duration-200">Contribute</a></li>
-                            <li><a href="#about" class="text-gray-300 hover:text-white transition-colors duration-200">About Us</a></li>
+                        <h4 class="theme-footer-heading text-lg mb-4">Scholarly Resources</h4>
+                        <ul class="space-y-2 text-sm text-white/70">
+                            <li><a href="https://arxiv.org/abs/2410.06373" target="_blank" rel="noopener noreferrer" class="theme-link">Scaling Laws for Optimisation</a></li>
+                            <li><a href="blogs.html" class="theme-link">Editorial Commentary</a></li>
+                            <li><a href="community.html" class="theme-link">Research Community</a></li>
                         </ul>
+                    </div>
+                    <div>
+                        <h4 class="theme-footer-heading text-lg mb-4">Stay Connected</h4>
+                        <p class="text-sm text-white/70 mb-4">Receive curated updates on large-scale optimisation breakthroughs and datasets.</p>
+                        <form class="space-y-3">
+                            <input type="email" placeholder="academic.email@university.edu" class="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[rgba(251,191,36,0.45)]">
+                            <button type="submit" class="theme-button-secondary w-full text-center">Join the digest</button>
+                        </form>
                     </div>
                 </div>
-
-                <div class="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-                    <p class="text-gray-400 text-sm">
-                        © 2025 ScalingOpt Community. All rights reserved.
-                    </p>
-                    <div class="flex items-center space-x-1 text-gray-400 text-sm mt-4 md:mt-0">
-                        <span>Made with</span>
-                        <i data-lucide="heart" class="w-4 h-4 text-red-500"></i>
-                        <span>by the community</span>
+                <div class="mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/70">
+                    <span>© 2025 ScalingOpt Collective. Academic use encouraged with citation.</span>
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-theme-accent"></i>
+                        <span>Crafted with rigour and collegiality.</span>
                     </div>
                 </div>
             </div>
