@@ -18,46 +18,46 @@
     <!-- Custom Styles -->
     <link rel="stylesheet" href="styles.css">
 </head>
-<body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 font-inter">
+<body class="min-h-screen theme-body font-inter">
     <div class="flex flex-col min-h-screen">
         <!-- Navbar -->
-        <nav class="bg-white/95 backdrop-blur-md border-b border-blue-100 sticky top-0 z-50 shadow-sm">
+        <nav class="theme-navbar sticky top-0 z-50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
                         <a href="index.html" class="flex items-center">
-                            <span class="text-xl font-bold text-blue-900">ScalingOpt</span>
+                            <span class="text-xl font-bold text-theme-accent tracking-wide">ScalingOpt</span>
                         </a>
                     </div>
 
                     <!-- Desktop Navigation -->
                     <div class="hidden md:flex items-center space-x-8">
-                        <a href="index.html" class="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">Home</a>
-                        <a href="optimizers.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                        <a href="index.html" class="theme-nav-link font-medium">Home</a>
+                        <a href="optimizers.html" class="flex items-center space-x-1 theme-nav-link font-medium">
                             <i data-lucide="search" class="w-4 h-4"></i>
                             <span>Optimizers</span>
                         </a>
-                        <a href="benchmarks.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                        <a href="benchmarks.html" class="flex items-center space-x-1 theme-nav-link font-medium">
                             <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
                             <span>Benchmarks</span>
                         </a>
-                        <a href="papers.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                        <a href="papers.html" class="flex items-center space-x-1 theme-nav-link font-medium">
                             <i data-lucide="graduation-cap" class="w-4 h-4"></i>
                             <span>Papers</span>
                         </a>
-                        <a href="tutorials.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                        <a href="tutorials.html" class="flex items-center space-x-1 theme-nav-link font-medium">
                             <i data-lucide="book-open" class="w-4 h-4"></i>
                             <span>Tutorials</span>
                         </a>
-                        <a href="blogs.html" class="flex items-center space-x-1 text-blue-700 hover:text-blue-900 transition-colors duration-200 font-medium">
+                        <a href="blogs.html" class="flex items-center space-x-1 theme-nav-link font-medium theme-nav-link-active">
                             <i data-lucide="file-text" class="w-4 h-4"></i>
                             <span>Blogs</span>
                         </a>
-                        <a href="community.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                        <a href="community.html" class="flex items-center space-x-1 theme-nav-link font-medium">
                             <i data-lucide="users" class="w-4 h-4"></i>
                             <span>Community</span>
                         </a>
-                        <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200">
+                        <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-1 theme-nav-link font-medium">
                             <i data-lucide="github" class="w-5 h-5"></i>
                             <span class="hidden lg:inline">GitHub</span>
                         </a>
@@ -65,7 +65,7 @@
 
                     <!-- Mobile menu button -->
                     <div class="md:hidden flex items-center">
-                        <button id="mobile-menu-button" class="text-gray-700 hover:text-blue-600 transition-colors duration-200">
+                        <button id="mobile-menu-button" class="text-white/70 hover:text-theme-accent transition-colors duration-200">
                             <i data-lucide="menu" class="w-6 h-6"></i>
                         </button>
                     </div>
@@ -73,34 +73,34 @@
             </div>
 
             <!-- Mobile Navigation -->
-            <div id="mobile-menu" class="md:hidden bg-white border-t border-gray-200 hidden">
+            <div id="mobile-menu" class="md:hidden theme-mobile-nav hidden">
                 <div class="px-2 pt-2 pb-3 space-y-1">
-                    <a href="index.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">Home</a>
-                    <a href="optimizers.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                    <a href="index.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors duration-200 theme-mobile-link">Home</a>
+                    <a href="optimizers.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors duration-200 theme-mobile-link">
                         <i data-lucide="search" class="w-4 h-4"></i>
                         <span>Optimizers</span>
                     </a>
-                    <a href="benchmarks.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                    <a href="benchmarks.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors duration-200 theme-mobile-link">
                         <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
                         <span>Benchmarks</span>
                     </a>
-                    <a href="papers.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                    <a href="papers.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors duration-200 theme-mobile-link">
                         <i data-lucide="graduation-cap" class="w-4 h-4"></i>
                         <span>Papers</span>
                     </a>
-                    <a href="tutorials.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                    <a href="tutorials.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors duration-200 theme-mobile-link">
                         <i data-lucide="book-open" class="w-4 h-4"></i>
                         <span>Tutorials</span>
                     </a>
-                    <a href="blogs.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                    <a href="blogs.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors duration-200 theme-mobile-link">
                         <i data-lucide="file-text" class="w-4 h-4"></i>
                         <span>Blogs</span>
                     </a>
-                    <a href="community.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                    <a href="community.html" class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors duration-200 theme-mobile-link">
                         <i data-lucide="users" class="w-4 h-4"></i>
                         <span>Community</span>
                     </a>
-                    <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                    <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors duration-200 theme-mobile-link">
                         <i data-lucide="github" class="w-4 h-4"></i>
                         <span>GitHub</span>
                     </a>
@@ -221,60 +221,47 @@
         </main>
 
         <!-- Footer -->
-        <footer class="bg-gradient-to-br from-blue-900 to-blue-800 text-white">
+                <footer class="theme-footer mt-auto">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                    <!-- Brand -->
-                    <div class="col-span-1 md:col-span-2">
-                        <div class="flex items-center mb-4">
-                            <span class="text-xl font-bold text-white">ScalingOpt</span>
-                        </div>
-                        <p class="text-blue-100 mb-4 max-w-md">
-                            A comprehensive platform for scaling optimization algorithms. 
-                            Discover, compare, and contribute to cutting-edge optimizers for large-scale machine learning.
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4">ScalingOpt</h3>
+                        <p class="text-sm text-white/80 leading-relaxed">
+                            A scholarly observatory for optimisation at scale. We curate rigorous evidence, reproducible benchmarks,
+                            and practitioner guidance for machine learning optimisation research.
                         </p>
-                        <div class="flex space-x-4">
-                            <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors duration-200">
-                                <i data-lucide="github" class="w-5 h-5"></i>
-                            </a>
-                            <a href="mailto:juanxitian1031@gmail.com" class="text-gray-400 hover:text-white transition-colors duration-200">
-                                <i data-lucide="mail" class="w-5 h-5"></i>
-                            </a>
-                        </div>
                     </div>
-
-                    <!-- Quick Links -->
                     <div>
-                        <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
-                        <ul class="space-y-2">
-                            <li><a href="optimizers.html" class="text-gray-300 hover:text-white transition-colors duration-200">Browse Optimizers</a></li>
-                            <li><a href="benchmarks.html" class="text-gray-300 hover:text-white transition-colors duration-200">Benchmarks</a></li>
-                            <li><a href="papers.html" class="text-gray-300 hover:text-white transition-colors duration-200">Papers</a></li>
-                            <li><a href="tutorials.html" class="text-gray-300 hover:text-white transition-colors duration-200">Tutorials</a></li>
-                            <li><a href="blogs.html" class="text-gray-300 hover:text-white transition-colors duration-200">Blogs</a></li>
-                            <li><a href="community.html" class="text-gray-300 hover:text-white transition-colors duration-200">Community</a></li>
+                        <h4 class="theme-footer-heading text-lg mb-4">Explore</h4>
+                        <ul class="space-y-2 text-sm text-white/70">
+                            <li><a href="optimizers.html" class="theme-link">Optimizer Library</a></li>
+                            <li><a href="benchmarks.html" class="theme-link">Benchmark Explorer</a></li>
+                            <li><a href="papers.html" class="theme-link">Literature Digest</a></li>
+                            <li><a href="tutorials.html" class="theme-link">Learning Hub</a></li>
                         </ul>
                     </div>
-
-                    <!-- Resources -->
                     <div>
-                        <h3 class="text-lg font-semibold mb-4">Resources</h3>
-                        <ul class="space-y-2">
-                            <li><a href="https://arxiv.org/abs/2410.06373" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-white transition-colors duration-200">Research Paper</a></li>
-                            <li><a href="#contribute" class="text-gray-300 hover:text-white transition-colors duration-200">Contribute</a></li>
-                            <li><a href="#about" class="text-gray-300 hover:text-white transition-colors duration-200">About Us</a></li>
+                        <h4 class="theme-footer-heading text-lg mb-4">Scholarly Resources</h4>
+                        <ul class="space-y-2 text-sm text-white/70">
+                            <li><a href="https://arxiv.org/abs/2410.06373" target="_blank" rel="noopener noreferrer" class="theme-link">Scaling Laws for Optimisation</a></li>
+                            <li><a href="blogs.html" class="theme-link">Editorial Commentary</a></li>
+                            <li><a href="community.html" class="theme-link">Research Community</a></li>
                         </ul>
+                    </div>
+                    <div>
+                        <h4 class="theme-footer-heading text-lg mb-4">Stay Connected</h4>
+                        <p class="text-sm text-white/70 mb-4">Receive curated updates on large-scale optimisation breakthroughs and datasets.</p>
+                        <form class="space-y-3">
+                            <input type="email" placeholder="academic.email@university.edu" class="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[rgba(251,191,36,0.45)]">
+                            <button type="submit" class="theme-button-secondary w-full text-center">Join the digest</button>
+                        </form>
                     </div>
                 </div>
-
-                <div class="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-                    <p class="text-gray-400 text-sm">
-                        © 2025 ScalingOpt Community. All rights reserved.
-                    </p>
-                    <div class="flex items-center space-x-1 text-gray-400 text-sm mt-4 md:mt-0">
-                        <span>Made with</span>
-                        <i data-lucide="heart" class="w-4 h-4 text-red-500"></i>
-                        <span>by the community</span>
+                <div class="mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/70">
+                    <span>© 2025 ScalingOpt Collective. Academic use encouraged with citation.</span>
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-theme-accent"></i>
+                        <span>Crafted with rigour and collegiality.</span>
                     </div>
                 </div>
             </div>
