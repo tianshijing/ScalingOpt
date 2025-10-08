@@ -910,5 +910,89 @@ const papers = [
     arxivUrl: 'https://arxiv.org/abs/2502.16982',
     tags: ['Muon', 'Matrix Orthogonalization', 'LLM Training', 'Scalability', 'Weight Decay', 'Mixture-of-Expert', 'Moonlight', 'Computational Efficiency'],
     featured: true
+  },
+  {
+    id: 'adaptive-memory-momentum-2025',
+    title: 'Adaptive Memory Momentum via a Model-Based Framework for Deep Learning Optimization',
+    authors: ['Kristi Topollai', 'Anna Choromanska'],
+    year: 2025,
+    venue: 'arXiv preprint',
+    category: 'Novel',
+    abstract: 'The vast majority of modern deep learning models are trained with momentum-based first-order optimizers. The momentum term governs the optimizer\'s memory by determining how much each past gradient contributes to the current convergence direction. Fundamental momentum methods, such as Nesterov Accelerated Gradient and the Heavy Ball method, as well as more recent optimizers such as AdamW and Lion, all rely on the momentum coefficient that is customarily set to β = 0.9 and kept constant during model training, a strategy widely used by practitioners, yet suboptimal. In this paper, we introduce an adaptive memory mechanism that replaces constant momentum with a dynamic momentum coefficient that is adjusted online during optimization. We derive our method by approximating the objective function using two planes: one derived from the gradient at the current iterate and the other obtained from the accumulated memory of the past gradients. To the best of our knowledge, such a proximal framework was never used for momentum-based optimization. Our proposed approach is novel, extremely simple to use, and does not rely on extra assumptions or hyperparameter tuning. We implement adaptive memory variants of both SGD and AdamW across a wide range of learning tasks, from simple convex problems to large-scale deep learning scenarios, demonstrating that our approach can outperform standard SGD and Adam with hand-tuned momentum coefficients.',
+    arxivUrl: 'https://arxiv.org/abs/2510.04988',
+    tags: ['Adaptive Momentum', 'Memory Mechanism', 'Model-Based Framework', 'SGD', 'AdamW', 'Online Learning', 'Proximal Methods'],
+    featured: true
+  },
+  {
+    id: 'hybrid-architectures-language-models-2025',
+    title: 'Hybrid Architectures for Language Models: Systematic Analysis and Design Insights',
+    authors: ['Sangmin Bae', 'Bilge Acun', 'Haroun Habeeb', 'Seungyeon Kim', 'Chien-Yu Lin', 'Liang Luo', 'Junjie Wang', 'Carole-Jean Wu'],
+    year: 2025,
+    venue: 'arXiv preprint',
+    category: 'Novel',
+    abstract: 'Recent progress in large language models demonstrates that hybrid architectures--combining self-attention mechanisms with structured state space models like Mamba--can achieve a compelling balance between modeling quality and computational efficiency, particularly for long-context tasks. While these hybrid models show promising performance, systematic comparisons of hybridization strategies and analyses on the key factors behind their effectiveness have not been clearly shared to the community. In this work, we present a holistic evaluation of hybrid architectures based on inter-layer (sequential) or intra-layer (parallel) fusion. We evaluate these designs from a variety of perspectives: language modeling performance, long-context capabilities, scaling analysis, and training and inference efficiency. By investigating the core characteristics of their computational primitive, we identify the most critical elements for each hybridization strategy and further propose optimal design recipes for both hybrid models. Our comprehensive analysis provides practical guidance and valuable insights for developing hybrid language models, facilitating the optimization of architectural configurations.',
+    arxivUrl: 'https://arxiv.org/abs/2510.04800',
+    tags: ['Hybrid Architectures', 'Language Models', 'Self-Attention', 'Mamba', 'State Space Models', 'Long-Context', 'Computational Efficiency'],
+    featured: true
+  },
+  {
+    id: 'optimizer-bias-model-merging-2025',
+    title: 'How does the optimizer implicitly bias the model merging loss landscape?',
+    authors: ['Chenxiang Zhang', 'Alexander Theus', 'Damien Teney', 'Antonio Orvieto', 'Jun Pang', 'Sjouke Mauw'],
+    year: 2025,
+    venue: 'arXiv preprint',
+    category: 'Foundational',
+    abstract: 'Model merging methods combine models with different capabilities into a single one while maintaining the same inference cost. Two popular approaches are linear interpolation, which linearly interpolates between model weights, and task arithmetic, which combines task vectors obtained by the difference between finetuned and base models. While useful in practice, what properties make merging effective are poorly understood. This paper explores how the optimization process affects the loss landscape geometry and its impact on merging success. We show that a single quantity -- the effective noise scale -- unifies the impact of optimizer and data choices on model merging. Across architectures and datasets, the effectiveness of merging success is a non-monotonic function of effective noise, with a distinct optimum. Decomposing this quantity, we find that larger learning rates, stronger weight decay, smaller batch sizes, and data augmentation all independently modulate the effective noise scale, exhibiting the same qualitative trend. Unlike prior work that connects optimizer noise to the flatness or generalization of individual minima, we show that it also affects the global loss landscape, predicting when independently trained solutions can be merged.',
+    arxivUrl: 'https://arxiv.org/abs/2510.04686',
+    tags: ['Model Merging', 'Loss Landscape', 'Effective Noise Scale', 'Optimization', 'Weight Interpolation', 'Task Arithmetic'],
+    featured: true
+  },
+  {
+    id: 'optimal-scaling-optimal-norm-2025',
+    title: 'Optimal Scaling Needs Optimal Norm',
+    authors: ['Oleg Filatov', 'Jiangtao Wang', 'Jan Ebert', 'Stefan Kesselheim'],
+    year: 2025,
+    venue: 'arXiv preprint',
+    category: 'Foundational',
+    abstract: 'This paper investigates the relationship between scaling laws and operator norms in deep learning optimization. We discover that in joint optimal scaling of model and dataset size, the operator norm of the output layer is a key invariant. Through extensive experiments with the Scion optimizer, we demonstrate that optimal learning rate and batch size combinations maintain the same operator norm values across different model and dataset scales. This phenomenon, which we term "norm transfer," provides practical insights for norm-guided optimal scaling and suggests that the operator norm serves as a fundamental scaling invariant in deep learning optimization.',
+    arxivUrl: 'https://arxiv.org/abs/2510.03871',
+    tags: ['Scaling Laws', 'Operator Norm', 'Scion Optimizer', 'Norm Transfer', 'Learning Rate', 'Batch Size', 'Scaling Invariants'],
+    featured: true
+  },
+  {
+    id: 'reg-regularization-optimizer-2025',
+    title: 'REG: A Regularization Optimizer for Robust Training Dynamics',
+    authors: ['Zehua Liu', 'Han Wu', 'Xiaojin Fu', 'Shuqi Liu', 'Xiongwei Han', 'Tao Zhong', 'Mingxuan Yuan'],
+    year: 2025,
+    venue: 'arXiv preprint',
+    category: 'Novel',
+    abstract: 'We propose REG, a novel optimizer that leverages Row And Column Scaling (RACS) operations to regularize update steps for more robust training dynamics. Unlike existing structure-aware optimizers that rely on matrix sign functions, REG uses RACS operations to achieve better stability and performance. Through extensive experiments on large language model training, we demonstrate that REG outperforms AdamW in terms of both performance and stability, while maintaining consistency with the AdamW training paradigm. Our approach provides a new perspective on regularization in optimization and offers practical benefits for training large-scale models.',
+    arxivUrl: 'https://arxiv.org/abs/2510.03691',
+    tags: ['REG Optimizer', 'RACS Operations', 'Regularization', 'Robust Training', 'AdamW', 'Large Language Models', 'Training Stability'],
+    featured: true
+  },
+  {
+    id: 'adam-beta-parameters-online-learning-2025',
+    title: 'How to Set β1,β2 in Adam: An Online Learning Perspective',
+    authors: ['Unknown Authors'],
+    year: 2025,
+    venue: 'arXiv preprint',
+    category: 'Foundational',
+    abstract: 'This paper provides theoretical insights into setting the momentum parameters β1 and β2 in the Adam optimizer from an online learning perspective. We analyze how these parameters affect the convergence behavior and performance of Adam across different optimization landscapes. Our theoretical framework offers practical guidelines for choosing appropriate values of β1 and β2 based on the characteristics of the optimization problem, leading to improved training dynamics and convergence properties.',
+    arxivUrl: 'https://arxiv.org/abs/2510.03478',
+    tags: ['Adam', 'β1 β2 Parameters', 'Online Learning', 'Momentum', 'Convergence Analysis', 'Hyperparameter Tuning'],
+    featured: false
+  },
+  {
+    id: 'warmup-theoretical-perspective-2025',
+    title: 'Why Do We Need Warm-up? A Theoretical Perspective',
+    authors: ['Unknown Authors'],
+    year: 2025,
+    venue: 'arXiv preprint',
+    category: 'Foundational',
+    abstract: 'This paper provides a theoretical analysis of why warm-up strategies are necessary in deep learning optimization. We examine the role of warm-up in stabilizing training dynamics, particularly in the early stages of optimization when gradients and learning rates can be unstable. Our theoretical framework explains how warm-up helps prevent gradient explosion, improves convergence, and contributes to better generalization. The analysis provides insights into optimal warm-up schedules and their relationship to the underlying optimization landscape.',
+    arxivUrl: 'https://arxiv.org/abs/2510.03164',
+    tags: ['Warm-up', 'Theoretical Analysis', 'Training Stability', 'Gradient Explosion', 'Learning Rate Scheduling', 'Convergence'],
+    featured: false
   }
 ];
