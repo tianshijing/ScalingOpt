@@ -1,5 +1,17 @@
 const papers = [
   {
+    id: 'optimizer-bias-model-merging-2024',
+    title: 'How Does the Optimizer Implicitly Bias the Model Merging Loss Landscape?',
+    authors: ['Chenxiang Zhang', 'Alexander Theus', 'Damien Teney', 'Antonio Orvieto', 'Jun Pang', 'Sjouke Mauw'],
+    year: 2024,
+    venue: 'arXiv preprint',
+    category: 'Novel',
+    abstract: 'Model merging methods combine models with different capabilities into a single one while maintaining the same inference cost. Two popular approaches are linear interpolation, which linearly interpolates between model weights, and task arithmetic, which combines task vectors obtained by the difference between finetuned and base models. While useful in practice, what properties make merging effective are poorly understood. This paper explores how the optimization process affects the loss landscape geometry and its impact on merging success. We show that a single quantity - the effective noise scale - unifies the impact of optimizer and data choices on model merging. Across architectures and datasets, the effectiveness of merging success is a non-monotonic function of effective noise, with a distinct optimum. Decomposing this quantity, we find that larger learning rates, stronger weight decay, smaller batch sizes, and data augmentation all independently modulate the effective noise scale, exhibiting the same qualitative trend. Unlike prior work that connects optimizer noise to the flatness or generalization of individual minima, we show that it also affects the global loss landscape, predicting when independently trained solutions can be merged.',
+    arxivUrl: 'https://arxiv.org/pdf/2510.04686',
+    tags: ['Model Merging', 'Loss Landscape', 'Optimization Dynamics', 'Learning Rate', 'Weight Decay', 'Mode Connectivity', 'Effective Noise Scale'],
+    featured: true
+  },
+  {
     id: 'adam-convergence-chen-2018',
     title: 'On the Convergence of A Class of Adam-Type Algorithms for Non-Convex Optimization',
     authors: ['Xiangyi Chen', 'Sijia Liu', 'Ruoyu Sun', 'Mingyi Hong'],
