@@ -1,9 +1,21 @@
 const papers = [
   {
+    id: 'second-order-llm-gauss-newton-2025',
+    title: 'The Potential of Second-Order Optimization for LLMs: A Study with Full Gauss-Newton',
+    authors: ['Natalie Abreu', 'Nikhil Vyas', 'Sham Kakade', 'Depen Morwani'],
+    year: 2025,
+    venue: 'arXiv preprint',
+    category: 'Second-order',
+    abstract: 'Recent efforts to accelerate LLM pretraining have focused on computationally-efficient approximations that exploit second-order structure. This raises a key question for large-scale training: how much performance is forfeited by these approximations? To probe this question, we establish a practical upper bound on iteration complexity by applying full Gauss-Newton (GN) preconditioning to transformer models of up to 150M parameters. Our experiments show that full GN updates yield substantial gains over existing optimizers, achieving a 5.4x reduction in training iterations compared to strong baselines like SOAP and Muon. Furthermore, we find that a precise layerwise GN preconditioner, which ignores cross-layer information, nearly matches the performance of the full GN method. Collectively, our results suggest: (1) the GN approximation is highly effective for preconditioning, implying higher-order loss terms may not be critical for convergence speed; (2) the layerwise Hessian structure contains sufficient information to achieve most of these potential gains; and (3) a significant performance gap exists between current approximate methods and an idealized layerwise oracle.',
+    arxivUrl: 'https://arxiv.org/abs/2510.09378',
+    tags: ['Second-Order Optimization', 'LLM', 'Gauss-Newton', 'Preconditioning', 'Transformer', 'Hessian', 'SOAP', 'Muon'],
+    featured: true
+  },
+  {
     id: 'optimizer-bias-model-merging-2024',
     title: 'How Does the Optimizer Implicitly Bias the Model Merging Loss Landscape?',
     authors: ['Chenxiang Zhang', 'Alexander Theus', 'Damien Teney', 'Antonio Orvieto', 'Jun Pang', 'Sjouke Mauw'],
-    year: 2024,
+    year: 2025,
     venue: 'arXiv preprint',
     category: 'Novel',
     abstract: 'Model merging methods combine models with different capabilities into a single one while maintaining the same inference cost. Two popular approaches are linear interpolation, which linearly interpolates between model weights, and task arithmetic, which combines task vectors obtained by the difference between finetuned and base models. While useful in practice, what properties make merging effective are poorly understood. This paper explores how the optimization process affects the loss landscape geometry and its impact on merging success. We show that a single quantity - the effective noise scale - unifies the impact of optimizer and data choices on model merging. Across architectures and datasets, the effectiveness of merging success is a non-monotonic function of effective noise, with a distinct optimum. Decomposing this quantity, we find that larger learning rates, stronger weight decay, smaller batch sizes, and data augmentation all independently modulate the effective noise scale, exhibiting the same qualitative trend. Unlike prior work that connects optimizer noise to the flatness or generalization of individual minima, we show that it also affects the global loss landscape, predicting when independently trained solutions can be merged.',
