@@ -1,5 +1,17 @@
 const papers = [
   {
+    id: 'lotion-quantized-training-2025',
+    title: 'LOTION: Smoothing the Optimization Landscape for Quantized Training',
+    authors: ['Mujin Kwun', 'Depen Morwani', 'Chloe Huangyuan Su', 'Stephanie Gil', 'Nikhil Anand', 'Sham Kakade'],
+    year: 2025,
+    venue: 'arXiv preprint',
+    category: 'Novel',
+    abstract: 'Optimizing neural networks for quantized objectives is fundamentally challenging because the quantizer is piece-wise constant, yielding zero gradients everywhere except at quantization thresholds where the derivative is undefined. Most existing methods deal with this issue by relaxing gradient computations with techniques like Straight Through Estimators (STE) and do not provide any guarantees of convergence. In this work, taking inspiration from Nesterov smoothing, we approximate the quantized loss surface with a continuous loss surface. In particular, we introduce LOTION, Low-precision Optimization via sTochastic-noIse smOothiNg, a principled smoothing framework that replaces the raw quantized loss with its expectation under unbiased randomized-rounding noise. In this framework, standard optimizers are guaranteed to converge to a local minimum of the loss surface. Moreover, when using noise derived from stochastic rounding, we show that the global minima of the original quantized loss are preserved. We empirically demonstrate that this method outperforms standard QAT on synthetic testbeds and on 150M- and 300M- parameter language models.',
+    arxivUrl: 'https://arxiv.org/abs/2510.08757',
+    tags: ['Quantization', 'Low-Precision Training', 'Stochastic Rounding', 'Nesterov Smoothing', 'Neural Networks', 'QAT', 'Language Models'],
+    featured: true
+  },
+  {
     id: 'second-order-llm-gauss-newton-2025',
     title: 'The Potential of Second-Order Optimization for LLMs: A Study with Full Gauss-Newton',
     authors: ['Natalie Abreu', 'Nikhil Vyas', 'Sham Kakade', 'Depen Morwani'],
