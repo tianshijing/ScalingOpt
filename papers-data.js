@@ -1030,5 +1030,29 @@ const papers = [
     arxivUrl: 'https://arxiv.org/abs/2510.03164',
     tags: ['Warm-up', 'Theoretical Analysis', 'Training Stability', 'Gradient Explosion', 'Learning Rate Scheduling', 'Convergence'],
     featured: false
+  },
+  {
+    id: 'pome-post-optimization-model-edit-2025',
+    title: 'POME: Post Optimization Model Edit via Muon-style Projection',
+    authors: ['Yong Liu', 'Di Fu', 'Yang Luo', 'Zirui Zhu', 'Minhao Cheng', 'Cho-Jui Hsieh', 'Yang You'],
+    year: 2025,
+    venue: 'arXiv preprint',
+    category: 'Novel',
+    abstract: 'We introduce Post-Optimization Model Edit (POME), a new algorithm that enhances the performance of fine-tuned large language models using only their pretrained and fine-tuned checkpoints, without requiring extra data or further optimization. The core idea is to apply a muon-style projection to ΔW, the difference between the fine-tuned and pretrained weights. This projection uses truncated singular value decomposition (SVD) to equalize the influence of dominant update directions and prune small singular values, which often represent noise. As a simple post-processing step, POME is completely decoupled from the training pipeline. It requires zero modifications and imposes no overhead, making it universally compatible with any optimizer or distributed framework. POME delivers consistent gains, boosting average performance by +2.5% on GSM8K and +1.0% on code generation. Its broad applicability -- from 7B foundation models to 72B RLHF-instructed models -- establishes it as a practical, zero-cost enhancement for any fine-tuning pipeline.',
+    arxivUrl: 'https://arxiv.org/abs/2510.06627',
+    tags: ['POME', 'Post-Optimization', 'Model Edit', 'Muon-style Projection', 'SVD', 'Fine-tuning', 'Large Language Models', 'Zero-cost Enhancement'],
+    featured: true
+  },
+  {
+    id: 'seesaw-accelerating-training-2025',
+    title: 'Seesaw: Accelerating Training by Balancing Learning Rate and Batch Size Scheduling',
+    authors: ['Alexandru Meterez', 'Depen Morwani', 'Jingfeng Wu', 'Costin-Andrei Oncescu', 'Cengiz Pehlevan', 'Sham Kakade'],
+    year: 2025,
+    venue: 'arXiv preprint',
+    category: 'Novel',
+    abstract: 'Increasing the batch size during training -- a "batch ramp" -- is a promising strategy to accelerate large language model pretraining. While for SGD, doubling the batch size can be equivalent to halving the learning rate, the optimal strategy for adaptive optimizers like Adam is less clear. As a result, any batch-ramp scheduling, if used at all, is typically tuned heuristically. This work develops a principled framework for batch-size scheduling and introduces Seesaw: whenever a standard scheduler would halve the learning rate, Seesaw instead multiplies it by 1/√2 and doubles the batch size, preserving loss dynamics while reducing serial steps. Theoretically, we provide, to our knowledge, the first finite-sample proof of equivalence between learning-rate decay and batch-size ramp-up for SGD on noisy linear regression, and we extend this equivalence to normalized SGD, a tractable proxy for Adam, under a variance-dominated regime observed in practice. Empirically, on 150M/300M/600M-parameter models trained at Chinchilla scale using a constant (critical) batch size, Seesaw matches cosine decay at equal FLOPs while reducing wall-clock time by ≈36%, approaching the theoretical limit implied by our analysis.',
+    arxivUrl: 'https://arxiv.org/abs/2510.14717v1',
+    tags: ['Seesaw', 'Batch Size Scheduling', 'Learning Rate Scheduling', 'Training Acceleration', 'Adam', 'SGD', 'Large Language Models', 'Chinchilla Scale'],
+    featured: true
   }
 ];
