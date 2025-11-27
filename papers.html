@@ -147,10 +147,8 @@
                                     class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
                                 >
                                     <option value="All">All Categories</option>
-                                    <option value="Foundational">Foundational</option>
-                                    <option value="Adaptive">Adaptive</option>
-                                    <option value="Second-order">Second-order</option>
-                                    <option value="Novel">Novel</option>
+                                    <option value="Analysis">Analysis</option>
+                                    <option value="New Optimizer">New Optimizer</option>
                                     <option value="Survey">Survey</option>
                                 </select>
                             </div>
@@ -327,10 +325,8 @@
 
         function getCategoryColor(category) {
             const colors = {
-                'Foundational': 'bg-blue-100 text-blue-800 border-blue-200',
-                'Adaptive': 'bg-green-100 text-green-800 border-green-200',
-                'Second-order': 'bg-purple-100 text-purple-800 border-purple-200',
-                'Novel': 'bg-pink-100 text-pink-800 border-pink-200',
+                'Analysis': 'bg-blue-100 text-blue-800 border-blue-200',
+                'New Optimizer': 'bg-purple-100 text-purple-800 border-purple-200',
                 'Survey': 'bg-orange-100 text-orange-800 border-orange-200'
             };
             return colors[category] || 'bg-gray-100 text-gray-800 border-gray-200';

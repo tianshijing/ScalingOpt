@@ -146,9 +146,6 @@
                                 <option value="All">All Categories</option>
                                 <option value="First-order">First-order</option>
                                 <option value="Second-order">Second-order</option>
-                                <option value="Adaptive">Adaptive</option>
-                                <option value="Momentum-based">Momentum-based</option>
-                                <option value="Novel">Novel</option>
                             </select>
                         </div>
 
@@ -319,10 +316,7 @@
         function getCategoryColor(category) {
             const colors = {
                 'First-order': 'bg-blue-100 text-blue-800',
-                'Second-order': 'bg-purple-100 text-purple-800',
-                'Adaptive': 'bg-green-100 text-green-800',
-                'Momentum-based': 'bg-orange-100 text-orange-800',
-                'Novel': 'bg-pink-100 text-pink-800'
+                'Second-order': 'bg-purple-100 text-purple-800'
             };
             return colors[category] || 'bg-gray-100 text-gray-800';
         }

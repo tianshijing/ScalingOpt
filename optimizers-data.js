@@ -47,9 +47,9 @@ const optimizers = [
     },
     "popularity": 85,
     "tags": [
-      "foundational",
-      "momentum",
-      "simple"
+      "Gradient Descent",
+      "Stochastic",
+      "Baselines"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/sgd.py"
   },
@@ -59,7 +59,7 @@ const optimizers = [
     "fullName": "Nesterov Accelerated Gradient",
     "description": "Accelerated gradient method with momentum",
     "year": 1983,
-    "category": "Momentum-based",
+    "category": "First-order",
     "paper": {
       "title": "A method for solving the convex programming problem with convergence rate O(1/k^2)",
       "url": "https://mpawankumar.info/teaching/cdt-big-data/nesterov83.pdf",
@@ -91,9 +91,9 @@ const optimizers = [
     },
     "popularity": 75,
     "tags": [
-      "momentum",
-      "acceleration",
-      "nesterov"
+      "Momentum",
+      "Nesterov",
+      "Acceleration"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/NAG.py"
   },
@@ -103,7 +103,7 @@ const optimizers = [
     "fullName": "Resilient Backpropagation",
     "description": "Adaptive step sizes per parameter; fast convergence for small networks",
     "year": 2000,
-    "category": "Adaptive",
+    "category": "First-order",
     "paper": {
       "title": "Rprop - A Fast Adaptive Learning Algorithm",
       "url": "http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.52.4576",
@@ -136,9 +136,9 @@ const optimizers = [
     },
     "popularity": 60,
     "tags": [
-      "adaptive",
-      "resilient",
-      "small-networks"
+      "Adaptive Step",
+      "Full Batch",
+      "Gradient Sign"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/rprop.py"
   },
@@ -148,7 +148,7 @@ const optimizers = [
     "fullName": "Adaptive Gradient Algorithm",
     "description": "Adaptive learning rates; effective for sparse data",
     "year": 2011,
-    "category": "Adaptive",
+    "category": "First-order",
     "paper": {
       "title": "Adaptive Subgradient Methods for Online Learning and Stochastic Optimization",
       "url": "http://www.jmlr.org/papers/volume12/duchi11a/duchi11a.pdf",
@@ -182,9 +182,9 @@ const optimizers = [
     },
     "popularity": 70,
     "tags": [
-      "adaptive",
-      "sparse",
-      "subgradient"
+      "Adaptive Learning Rate",
+      "Sparse Data",
+      "Convex"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adagrad.py"
   },
@@ -194,7 +194,7 @@ const optimizers = [
     "fullName": "Adaptive Delta",
     "description": "Adaptive learning rates without manual tuning; addresses AdaGrad's diminishing learning rates",
     "year": 2012,
-    "category": "Adaptive",
+    "category": "First-order",
     "paper": {
       "title": "ADADELTA: An Adaptive Learning Rate Method",
       "url": "https://arxiv.org/abs/1212.5701",
@@ -214,7 +214,7 @@ const optimizers = [
         "description": "Coefficient for computing running averages"
       },
       "eps": {
-        "default": 0.000001,
+        "default": 1e-06,
         "range": "1e-10 to 1e-4",
         "description": "Small constant for numerical stability"
       }
@@ -226,9 +226,9 @@ const optimizers = [
     },
     "popularity": 65,
     "tags": [
-      "adaptive",
-      "parameter-free",
-      "robust"
+      "Adaptive Learning Rate",
+      "Rolling Window",
+      "No Learning Rate"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adadelta.py"
   },
@@ -238,7 +238,7 @@ const optimizers = [
     "fullName": "Root Mean Square Propagation",
     "description": "Adaptive learning rates; suitable for non-stationary objectives",
     "year": 2012,
-    "category": "Adaptive",
+    "category": "First-order",
     "paper": {
       "title": "Lecture 6.5 - rmsprop, COURSERA: Neural Networks for Machine Learning",
       "url": "https://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf",
@@ -263,7 +263,7 @@ const optimizers = [
         "description": "Smoothing constant"
       },
       "eps": {
-        "default": 1e-8,
+        "default": 1e-08,
         "range": "1e-10 to 1e-6",
         "description": "Small constant for numerical stability"
       }
@@ -275,9 +275,9 @@ const optimizers = [
     },
     "popularity": 80,
     "tags": [
-      "adaptive",
-      "rnn",
-      "non-stationary"
+      "Adaptive Learning Rate",
+      "RNN",
+      "Non-stationary"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/rmsprop.py"
   },
@@ -287,7 +287,7 @@ const optimizers = [
     "fullName": "Adaptive Moment Estimation",
     "description": "Combines the best properties of AdaGrad and RMSprop with bias correction",
     "year": 2014,
-    "category": "Adaptive",
+    "category": "First-order",
     "paper": {
       "title": "Adam: A Method for Stochastic Optimization",
       "url": "https://arxiv.org/abs/1412.6980",
@@ -319,7 +319,7 @@ const optimizers = [
         "description": "Exponential decay rate for second moment estimates"
       },
       "eps": {
-        "default": 1e-8,
+        "default": 1e-08,
         "range": "1e-10 to 1e-6",
         "description": "Small constant for numerical stability"
       }
@@ -331,9 +331,9 @@ const optimizers = [
     },
     "popularity": 95,
     "tags": [
-      "adaptive",
-      "momentum",
-      "popular"
+      "Adaptive Learning Rate",
+      "Momentum",
+      "Bias Correction"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adam.py"
   },
@@ -343,7 +343,7 @@ const optimizers = [
     "fullName": "Adam based on infinity norm",
     "description": "Variant of Adam based on the infinity norm",
     "year": 2014,
-    "category": "Adaptive",
+    "category": "First-order",
     "paper": {
       "title": "Adam: A Method for Stochastic Optimization",
       "url": "https://arxiv.org/abs/1412.6980",
@@ -381,9 +381,9 @@ const optimizers = [
     },
     "popularity": 70,
     "tags": [
-      "adaptive",
-      "infinity-norm",
-      "stable"
+      "Infinity Norm",
+      "Adaptive",
+      "Sparse"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adamax.py"
   },
@@ -393,7 +393,7 @@ const optimizers = [
     "fullName": "Layer-wise Adaptive Rate Scaling",
     "description": "Enables large batch training with stability; improves training efficiency",
     "year": 2017,
-    "category": "Adaptive",
+    "category": "First-order",
     "paper": {
       "title": "Large Batch Training of Convolutional Networks",
       "url": "https://arxiv.org/abs/1708.03888",
@@ -432,9 +432,9 @@ const optimizers = [
     },
     "popularity": 75,
     "tags": [
-      "large-batch",
-      "layer-wise",
-      "scaling"
+      "Layer-wise",
+      "Large Batch",
+      "Scaling"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/lars.py"
   },
@@ -444,7 +444,7 @@ const optimizers = [
     "fullName": "Adam with Decoupled Weight Decay",
     "description": "Adam optimizer with decoupled weight decay regularization",
     "year": 2017,
-    "category": "Adaptive",
+    "category": "First-order",
     "paper": {
       "title": "Decoupled Weight Decay Regularization",
       "url": "https://arxiv.org/abs/1711.05101",
@@ -488,9 +488,9 @@ const optimizers = [
     },
     "popularity": 90,
     "tags": [
-      "adaptive",
-      "weight-decay",
-      "transformers"
+      "Weight Decay",
+      "Adaptive",
+      "Transformers"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adamw.py"
   },
@@ -500,7 +500,7 @@ const optimizers = [
     "fullName": "Switching from Adam to SGD",
     "description": "Hybrid approach combining Adam and SGD; improves generalization",
     "year": 2017,
-    "category": "Novel",
+    "category": "First-order",
     "paper": {
       "title": "Improving Generalization Performance by Switching from Adam to SGD",
       "url": "https://arxiv.org/abs/1712.07628",
@@ -538,9 +538,9 @@ const optimizers = [
     },
     "popularity": 65,
     "tags": [
-      "hybrid",
-      "switching",
-      "generalization"
+      "Switching",
+      "Hybrid",
+      "Generalization"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/swats.py"
   },
@@ -584,9 +584,9 @@ const optimizers = [
     },
     "popularity": 70,
     "tags": [
-      "second-order",
-      "preconditioning",
-      "tensor"
+      "Preconditioning",
+      "Tensor",
+      "Second-order"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/shampoo.py"
   },
@@ -596,7 +596,7 @@ const optimizers = [
     "fullName": "Quasi-Hyperbolic Adam",
     "description": "Combines quasi-hyperbolic terms with Adam; balances momentum and adaptivity",
     "year": 2018,
-    "category": "Adaptive",
+    "category": "First-order",
     "paper": {
       "title": "Quasi-hyperbolic momentum and Adam for deep learning",
       "url": "https://arxiv.org/abs/1810.06801",
@@ -644,9 +644,9 @@ const optimizers = [
     },
     "popularity": 68,
     "tags": [
-      "quasi-hyperbolic",
-      "adaptive",
-      "momentum"
+      "Quasi-Hyperbolic",
+      "Adaptive",
+      "Momentum"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/qhadam.py"
   },
@@ -656,7 +656,7 @@ const optimizers = [
     "fullName": "Quasi-Hyperbolic Momentum",
     "description": "Introduces quasi-hyperbolic momentum; balances Nesterov momentum and SGD",
     "year": 2018,
-    "category": "Momentum-based",
+    "category": "First-order",
     "paper": {
       "title": "Quasi-hyperbolic momentum and Adam for deep learning",
       "url": "https://arxiv.org/abs/1810.06801",
@@ -694,9 +694,9 @@ const optimizers = [
     },
     "popularity": 65,
     "tags": [
-      "quasi-hyperbolic",
-      "momentum",
-      "nesterov"
+      "Quasi-Hyperbolic",
+      "Momentum",
+      "Nesterov"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/qhm.py"
   },
@@ -706,7 +706,7 @@ const optimizers = [
     "fullName": "Yogi Optimizer",
     "description": "Improved update rule for adaptive methods; handles nonconvex optimization better",
     "year": 2018,
-    "category": "Adaptive",
+    "category": "First-order",
     "paper": {
       "title": "Adaptive Methods for Nonconvex Optimization",
       "url": "https://papers.nips.cc/paper/8186-adaptive-methods-for-nonconvex-optimization.pdf",
@@ -747,9 +747,9 @@ const optimizers = [
     },
     "popularity": 72,
     "tags": [
-      "adaptive",
-      "nonconvex",
-      "stable"
+      "Adaptive",
+      "Non-convex",
+      "Stability"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/yogi.py"
   },
@@ -759,7 +759,7 @@ const optimizers = [
     "fullName": "Adaptive Learning Rates with Sublinear Memory Cost",
     "description": "Reduces memory usage compared to Adam; suitable for large models",
     "year": 2018,
-    "category": "Adaptive",
+    "category": "First-order",
     "paper": {
       "title": "AdaFactor: Adaptive Learning Rates with Sublinear Memory Cost",
       "url": "https://arxiv.org/abs/1804.04235",
@@ -797,9 +797,9 @@ const optimizers = [
     },
     "popularity": 78,
     "tags": [
-      "memory-efficient",
-      "large-models",
-      "factorized"
+      "Memory Efficient",
+      "Factorization",
+      "Large Models"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adafactor.py"
   },
@@ -809,7 +809,7 @@ const optimizers = [
     "fullName": "Aggregated Momentum",
     "description": "Uses multiple momentum terms; improves stability and convergence",
     "year": 2018,
-    "category": "Momentum-based",
+    "category": "First-order",
     "paper": {
       "title": "Aggregated Momentum: Stability Through Passive Damping",
       "url": "https://arxiv.org/abs/1804.00325",
@@ -844,9 +844,9 @@ const optimizers = [
     },
     "popularity": 68,
     "tags": [
-      "aggregated",
-      "momentum",
-      "stability"
+      "Aggregated Momentum",
+      "Damping",
+      "Stability"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/aggmo.py"
   },
@@ -856,7 +856,7 @@ const optimizers = [
     "fullName": "PID Controller Approach",
     "description": "Employs PID control principles; improves convergence and stability",
     "year": 2018,
-    "category": "Novel",
+    "category": "First-order",
     "paper": {
       "title": "A PID Controller Approach for Stochastic Optimization of Deep Networks",
       "url": "https://arxiv.org/abs/1802.07640",
@@ -903,9 +903,9 @@ const optimizers = [
     },
     "popularity": 62,
     "tags": [
-      "pid-control",
-      "stability",
-      "convergence"
+      "Control Theory",
+      "PID",
+      "Feedback"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/pid.py"
   },
@@ -951,9 +951,9 @@ const optimizers = [
     },
     "popularity": 65,
     "tags": [
-      "accelerated",
-      "online-learning",
-      "adaptive"
+      "Accelerated",
+      "Online Learning",
+      "Optimization"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/accsgd.py"
   },
@@ -963,7 +963,7 @@ const optimizers = [
     "fullName": "Adaptive Gradient Methods with Dynamic Bound of Learning Rate",
     "description": "Bounds the learning rate dynamically; combines benefits of adaptive and SGD methods",
     "year": 2019,
-    "category": "Adaptive",
+    "category": "First-order",
     "paper": {
       "title": "Adaptive Gradient Methods with Dynamic Bound of Learning Rate",
       "url": "https://arxiv.org/abs/1902.09843",
@@ -1008,9 +1008,9 @@ const optimizers = [
     },
     "popularity": 75,
     "tags": [
-      "adaptive",
-      "bounded",
-      "generalization"
+      "Dynamic Bound",
+      "Adaptive",
+      "SGD-like"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adabound.py"
   },
@@ -1020,7 +1020,7 @@ const optimizers = [
     "fullName": "Layer-wise Adaptive Moments optimizer for Batch training",
     "description": "Enables large batch training for BERT; improves training efficiency",
     "year": 2019,
-    "category": "Adaptive",
+    "category": "First-order",
     "paper": {
       "title": "Large Batch Optimization for Deep Learning: Training BERT in 76 minutes",
       "url": "https://arxiv.org/abs/1904.00962",
@@ -1071,9 +1071,9 @@ const optimizers = [
     },
     "popularity": 82,
     "tags": [
-      "large-batch",
-      "layer-wise",
-      "bert"
+      "Large Batch",
+      "Layer-wise",
+      "BERT"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/lamb.py"
   },
@@ -1083,7 +1083,7 @@ const optimizers = [
     "fullName": "Lookahead Optimizer: k steps forward, 1 step back",
     "description": "Combines with other optimizers to improve convergence and stability",
     "year": 2019,
-    "category": "Novel",
+    "category": "First-order",
     "paper": {
       "title": "Lookahead Optimizer: k steps forward, 1 step back",
       "url": "https://arxiv.org/abs/1907.08610",
@@ -1118,9 +1118,9 @@ const optimizers = [
     },
     "popularity": 78,
     "tags": [
-      "lookahead",
-      "wrapper",
-      "stability"
+      "Wrapper",
+      "Slow Weights",
+      "Exploration"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/lookahead.py"
   },
@@ -1130,7 +1130,7 @@ const optimizers = [
     "fullName": "Rectified Adam",
     "description": "Rectifies variance of the adaptive learning rate; improves stability",
     "year": 2019,
-    "category": "Adaptive",
+    "category": "First-order",
     "paper": {
       "title": "On the Variance of the Adaptive Learning Rate and Beyond",
       "url": "https://arxiv.org/abs/1908.03265",
@@ -1173,9 +1173,9 @@ const optimizers = [
     },
     "popularity": 80,
     "tags": [
-      "rectified",
-      "adaptive",
-      "stable"
+      "Rectified",
+      "Variance Reduction",
+      "Warm-up"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/radam.py"
   },
@@ -1185,7 +1185,7 @@ const optimizers = [
     "fullName": "Adaptive Momentum Method for Stochastic Gradient Descent",
     "description": "Modulates the momentum term adaptively; improves stability and convergence",
     "year": 2019,
-    "category": "Adaptive",
+    "category": "First-order",
     "paper": {
       "title": "AdaMod: An Adaptive Momentum Method for Stochastic Gradient Descent",
       "url": "https://arxiv.org/abs/1910.12249",
@@ -1223,9 +1223,9 @@ const optimizers = [
     },
     "popularity": 70,
     "tags": [
-      "adaptive",
-      "momentum",
-      "modulation"
+      "Momentum Modulation",
+      "Adaptive",
+      "Stability"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adamod.py"
   },
@@ -1235,7 +1235,7 @@ const optimizers = [
     "fullName": "RAdam + Lookahead",
     "description": "Combines RAdam and Lookahead; improves convergence and generalization",
     "year": 2019,
-    "category": "Novel",
+    "category": "First-order",
     "paper": {
       "title": "Ranger: A Hybrid Optimizer for Deep Learning",
       "url": "https://medium.com/@lessw/new-deep-learning-optimizer-ranger-synergistic-combination-of-radam-lookahead-for-the-best-of-2dc83f79a48d",
@@ -1282,9 +1282,9 @@ const optimizers = [
     },
     "popularity": 85,
     "tags": [
-      "hybrid",
-      "radam",
-      "lookahead"
+      "RAdam",
+      "Lookahead",
+      "Hybrid"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/ranger.py"
   },
@@ -1294,7 +1294,7 @@ const optimizers = [
     "fullName": "Nesterov-accelerated Adaptive Moment Estimation",
     "description": "Combines Nesterov momentum with Adam; improves convergence",
     "year": 2019,
-    "category": "Adaptive",
+    "category": "First-order",
     "paper": {
       "title": "Incorporating Nesterov Momentum into Adam",
       "url": "https://openreview.net/forum?id=OM0jvwB8jIp57ZJjtNEZ",
@@ -1331,9 +1331,9 @@ const optimizers = [
     },
     "popularity": 75,
     "tags": [
-      "nesterov",
-      "adaptive",
-      "momentum"
+      "Nesterov",
+      "Adam",
+      "Adaptive"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/nadam.py"
   },
@@ -1343,7 +1343,7 @@ const optimizers = [
     "fullName": "Stochastic Gradient Methods with Layer-wise Adaptive Moments",
     "description": "Uses layer-wise adaptive moments; efficient for deep networks",
     "year": 2019,
-    "category": "Adaptive",
+    "category": "First-order",
     "paper": {
       "title": "Stochastic Gradient Methods with Layer-wise Adaptive Moments for Training of Deep Networks",
       "url": "https://arxiv.org/abs/1905.11286",
@@ -1388,9 +1388,9 @@ const optimizers = [
     },
     "popularity": 72,
     "tags": [
-      "layer-wise",
-      "adaptive",
-      "deep-networks"
+      "Layer-wise",
+      "Adaptive",
+      "Deep Networks"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/novograd.py"
   },
@@ -1400,7 +1400,7 @@ const optimizers = [
     "fullName": "Differentiating the Gradient History",
     "description": "Differentiates the gradient history; improves convergence",
     "year": 2019,
-    "category": "Novel",
+    "category": "First-order",
     "paper": {
       "title": "DiffGrad: An Optimization Method for Convolutional Neural Networks",
       "url": "https://arxiv.org/abs/1909.11015",
@@ -1439,9 +1439,9 @@ const optimizers = [
     },
     "popularity": 68,
     "tags": [
-      "gradient-history",
-      "cnn",
-      "convergence"
+      "Gradient Difference",
+      "Adaptive",
+      "CNN"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/diffgrad.py"
   },
@@ -1493,9 +1493,9 @@ const optimizers = [
     },
     "popularity": 75,
     "tags": [
-      "second-order",
-      "hessian",
-      "nonconvex"
+      "Hessian",
+      "Second-order",
+      "Adaptive"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adahessian.py"
   },
@@ -1505,7 +1505,7 @@ const optimizers = [
     "fullName": "Adapting Stepsizes by the Belief in Observed Gradients",
     "description": "Adapts stepsizes based on the belief in observed gradients; improves convergence",
     "year": 2020,
-    "category": "Adaptive",
+    "category": "First-order",
     "paper": {
       "title": "AdaBelief Optimizer: Adapting Stepsizes by the Belief in Observed Gradients",
       "url": "https://arxiv.org/abs/2010.07468",
@@ -1548,9 +1548,9 @@ const optimizers = [
     },
     "popularity": 78,
     "tags": [
-      "belief",
-      "adaptive",
-      "generalization"
+      "Gradient Belief",
+      "Adaptive",
+      "Stability"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adabelief.py"
   },
@@ -1560,7 +1560,7 @@ const optimizers = [
     "fullName": "Slowing Down the Weight Norm Increase in Momentum-based Optimizers",
     "description": "Mitigates weight norm increase; improves generalization",
     "year": 2020,
-    "category": "Adaptive",
+    "category": "First-order",
     "paper": {
       "title": "Slowing Down the Weight Norm Increase in Momentum-based Optimizers",
       "url": "https://arxiv.org/abs/2006.08217",
@@ -1608,9 +1608,9 @@ const optimizers = [
     },
     "popularity": 76,
     "tags": [
-      "weight-norm",
-      "generalization",
-      "stability"
+      "Projection",
+      "Weight Norm",
+      "Generalization"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adamp.py"
   },
@@ -1663,9 +1663,9 @@ const optimizers = [
     },
     "popularity": 70,
     "tags": [
-      "projection",
-      "weight-norm",
-      "stability"
+      "Projection",
+      "Weight Norm",
+      "SGD"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/sgdp.py"
   },
@@ -1714,9 +1714,9 @@ const optimizers = [
     },
     "popularity": 72,
     "tags": [
-      "quasi-newton",
-      "parameter-wise",
-      "nonconvex"
+      "Quasi-Newton",
+      "Non-convex",
+      "Parameter-wise"
     ],
     "githubUrl": "https://github.com/zhuhanqing/APOLLO"
   },
@@ -1726,7 +1726,7 @@ const optimizers = [
     "fullName": "Sharpness-Aware Minimization",
     "description": "Minimizes sharpness of the loss landscape; improves generalization",
     "year": 2020,
-    "category": "Novel",
+    "category": "First-order",
     "paper": {
       "title": "Sharpness-Aware Minimization for Efficiently Improving Generalization",
       "url": "https://arxiv.org/abs/2010.01412",
@@ -1761,9 +1761,9 @@ const optimizers = [
     },
     "popularity": 85,
     "tags": [
-      "sharpness-aware",
-      "generalization",
-      "flat-minima"
+      "Sharpness Aware",
+      "Regularization",
+      "Generalization"
     ],
     "githubUrl": "https://github.com/google-research/sam"
   },
@@ -1773,7 +1773,7 @@ const optimizers = [
     "fullName": "A Momentumized, Adaptive, Dual Averaged Gradient Method",
     "description": "Combines momentum, adaptivity, and dual averaging; improves stability",
     "year": 2021,
-    "category": "Adaptive",
+    "category": "First-order",
     "paper": {
       "title": "Adaptive Gradient Methods with Dynamic Bound of Learning Rate",
       "url": "https://arxiv.org/abs/2101.11075",
@@ -1799,7 +1799,7 @@ const optimizers = [
         "description": "Momentum factor"
       },
       "eps": {
-        "default": 0.000001,
+        "default": 1e-06,
         "range": "1e-8 to 1e-4",
         "description": "Regularization parameter"
       }
@@ -1811,9 +1811,9 @@ const optimizers = [
     },
     "popularity": 75,
     "tags": [
-      "momentum",
-      "adaptive",
-      "dual-averaged"
+      "Dual Averaging",
+      "Momentum",
+      "Adaptive"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/madgrad.py"
   },
@@ -1823,7 +1823,7 @@ const optimizers = [
     "fullName": "Adaptive Nesterov Momentum Algorithm",
     "description": "Adaptive Nesterov momentum; faster optimization for deep models",
     "year": 2022,
-    "category": "Adaptive",
+    "category": "First-order",
     "paper": {
       "title": "Adaptive Nesterov Momentum Algorithm for Faster Optimizing Deep Models",
       "url": "https://arxiv.org/abs/2208.06677",
@@ -1869,9 +1869,9 @@ const optimizers = [
     },
     "popularity": 80,
     "tags": [
-      "adaptive",
-      "nesterov",
-      "deep-models"
+      "Nesterov",
+      "Multi-moment",
+      "Adaptive"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adan.py"
   },
@@ -1881,7 +1881,7 @@ const optimizers = [
     "fullName": "Confidence-guided Adaptive Memory Efficient Optimization",
     "description": "Adaptive and memory-efficient; improves optimization with confidence guidance",
     "year": 2023,
-    "category": "Adaptive",
+    "category": "First-order",
     "paper": {
       "title": "CAME: Confidence-guided Adaptive Memory Efficient Optimization",
       "url": "https://arxiv.org/abs/2307.02047",
@@ -1925,9 +1925,9 @@ const optimizers = [
     },
     "popularity": 75,
     "tags": [
-      "confidence-guided",
-      "memory-efficient",
-      "adaptive"
+      "Confidence-guided",
+      "Memory Efficient",
+      "Large Models"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/came.py"
   },
@@ -1978,9 +1978,9 @@ const optimizers = [
     },
     "popularity": 82,
     "tags": [
-      "second-order",
-      "scalable",
-      "language-models"
+      "Hessian Diagonal",
+      "Scalable",
+      "LLM Pre-training"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/sophia.py"
   },
@@ -1997,7 +1997,7 @@ const optimizers = [
       "authors": [
         "Yida Yin",
         "Zheng Qu",
-        "Peter Richtárik"
+        "Peter Richt\u00e1rik"
       ]
     },
     "advantages": [
@@ -2024,9 +2024,9 @@ const optimizers = [
     },
     "popularity": 70,
     "tags": [
-      "variance-reduction",
-      "confidence-guided",
-      "convergence"
+      "Variance Reduction",
+      "Stochastic",
+      "Convex"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/svrg.py"
   },
@@ -2036,7 +2036,7 @@ const optimizers = [
     "fullName": "Expeditiously Adaptive Parameter-Free Learner",
     "description": "Parameter-free optimizer that dynamically adjusts learning rate by estimating distance to optimal solution",
     "year": 2024,
-    "category": "Adaptive",
+    "category": "First-order",
     "paper": {
       "title": "Prodigy: An Expeditiously Adaptive Parameter-Free Learner",
       "url": "https://arxiv.org/abs/2306.06101",
@@ -2074,9 +2074,9 @@ const optimizers = [
     },
     "popularity": 78,
     "tags": [
-      "parameter-free",
-      "adaptive",
-      "distance-estimation"
+      "Parameter-free",
+      "Distance Estimation",
+      "Adaptive"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/prodigy.py"
   },
@@ -2086,7 +2086,7 @@ const optimizers = [
     "fullName": "Adam with Fewer Learning Rates",
     "description": "Memory-efficient Adam variant that reduces the number of learning rates to gain more performance",
     "year": 2024,
-    "category": "Adaptive",
+    "category": "First-order",
     "paper": {
       "title": "Adam-mini: Use Fewer Learning Rates To Gain More",
       "url": "https://arxiv.org/abs/2406.16793",
@@ -2124,7 +2124,7 @@ const optimizers = [
         "description": "Exponential decay rate for second moment"
       },
       "eps": {
-        "default": 1e-8,
+        "default": 1e-08,
         "range": "1e-10 to 1e-6",
         "description": "Small constant for numerical stability"
       }
@@ -2136,9 +2136,9 @@ const optimizers = [
     },
     "popularity": 78,
     "tags": [
-      "adaptive",
-      "memory-efficient",
-      "simplified"
+      "Memory Efficient",
+      "Learning Rate Reduction",
+      "LLM"
     ],
     "githubUrl": "https://github.com/zyushun/Adam-mini"
   },
@@ -2148,7 +2148,7 @@ const optimizers = [
     "fullName": "Muon Optimizer with Orthogonal Updates",
     "description": "Orthogonal weight updates via Newton-Schulz iteration for improved training dynamics",
     "year": 2024,
-    "category": "Novel",
+    "category": "Second-order",
     "paper": {
       "title": "Muon: Orthogonal Weight Updates via Newton-Schulz Iteration",
       "url": "https://arxiv.org/abs/2502.16982",
@@ -2187,9 +2187,9 @@ const optimizers = [
     },
     "popularity": 82,
     "tags": [
-      "novel",
-      "orthogonal",
-      "newton-schulz"
+      "Orthogonal Updates",
+      "Newton-Schulz",
+      "Second-order"
     ],
     "githubUrl": "https://github.com/KellerJordan/Muon"
   },
@@ -2199,7 +2199,7 @@ const optimizers = [
     "fullName": "EvoLved Sign Momentum",
     "description": "Evolved optimizer using sign-based updates; memory efficient",
     "year": 2023,
-    "category": "Novel",
+    "category": "First-order",
     "paper": {
       "title": "Symbolic Discovery of Optimization Algorithms",
       "url": "https://arxiv.org/abs/2302.06675",
@@ -2247,9 +2247,9 @@ const optimizers = [
     },
     "popularity": 88,
     "tags": [
-      "evolved",
-      "sign-based",
-      "memory-efficient"
+      "Sign-based",
+      "Memory Efficient",
+      "Evolutionary"
     ],
     "githubUrl": "https://github.com/google-research/lion"
   },
@@ -2297,9 +2297,9 @@ const optimizers = [
     },
     "popularity": 72,
     "tags": [
-      "weight-decay",
-      "sgd",
-      "baseline"
+      "Decoupled Weight Decay",
+      "SGD",
+      "Baselines"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/sgdw.py"
   },
@@ -2359,10 +2359,9 @@ const optimizers = [
     },
     "popularity": 85,
     "tags": [
-      "second-order",
-      "preconditioning",
-      "efficient",
-      "large-batch"
+      "Preconditioning",
+      "Eigenbasis",
+      "Efficient"
     ],
     "githubUrl": "https://github.com/nikhilvyas/SOAP/tree/main"
   },
@@ -2372,7 +2371,7 @@ const optimizers = [
     "fullName": "Make vAriance Reduction Shine",
     "description": "Unified optimization framework that reconciles preconditioned gradient methods with variance reduction for efficient training of large models",
     "year": 2024,
-    "category": "Novel",
+    "category": "First-order",
     "paper": {
       "title": "MARS: Unleashing the Power of Variance Reduction for Training Large Models",
       "url": "https://arxiv.org/abs/2411.10438",
@@ -2419,10 +2418,9 @@ const optimizers = [
     },
     "popularity": 82,
     "tags": [
-      "variance-reduction",
-      "unified-framework",
-      "large-models",
-      "preconditioning"
+      "Variance Reduction",
+      "Preconditioning",
+      "Large Models"
     ],
     "githubUrl": "https://github.com/AGI-Arena/MARS"
   },
@@ -2432,7 +2430,7 @@ const optimizers = [
     "fullName": "SPAM Optimizer",
     "description": "Novel optimization algorithm for improved training efficiency and convergence in deep learning",
     "year": 2025,
-    "category": "Novel",
+    "category": "First-order",
     "paper": {
       "title": "SPAM: A Novel Optimization Algorithm",
       "url": "https://arxiv.org/abs/2501.06842",
@@ -2465,10 +2463,9 @@ const optimizers = [
     },
     "popularity": 70,
     "tags": [
-      "novel",
-      "efficient",
-      "convergence",
-      "deep-learning"
+      "Novel",
+      "Optimization",
+      "Deep Learning"
     ],
     "githubUrl": "https://github.com/TianjinYellow/SPAM-Optimizer"
   },
@@ -2478,7 +2475,7 @@ const optimizers = [
     "fullName": "Adaptive Muon Optimizer",
     "description": "Adaptive optimization algorithm with improved convergence and stability for large-scale machine learning",
     "year": 2025,
-    "category": "Adaptive",
+    "category": "Second-order",
     "paper": {
       "title": "AdaMuon: An Adaptive Optimization Algorithm",
       "url": "https://arxiv.org/abs/2507.11005",
@@ -2516,10 +2513,9 @@ const optimizers = [
     },
     "popularity": 75,
     "tags": [
-      "adaptive",
-      "convergence",
-      "stability",
-      "large-scale"
+      "Adaptive",
+      "Muon Variant",
+      "Optimization"
     ],
     "githubUrl": "https://github.com/Chongjie-Si/AdaMuon"
   },
@@ -2529,7 +2525,7 @@ const optimizers = [
     "fullName": "Conda Optimizer",
     "description": "Advanced optimization algorithm designed for efficient training of modern deep learning models",
     "year": 2025,
-    "category": "Adaptive",
+    "category": "First-order",
     "paper": {
       "title": "Conda: An Advanced Optimization Algorithm",
       "url": "https://arxiv.org/abs/2509.24218",
@@ -2567,10 +2563,9 @@ const optimizers = [
     },
     "popularity": 78,
     "tags": [
-      "advanced",
-      "modern-deep-learning",
-      "efficient",
-      "generalization"
+      "Advanced",
+      "Optimization",
+      "Deep Learning"
     ],
     "githubUrl": "https://github.com/jie040109/Conda"
   },
@@ -2580,13 +2575,13 @@ const optimizers = [
     "fullName": "Low-memory Optimization with Adaptive Learning Rate",
     "description": "Memory-efficient optimizer that provides adaptive learning rates for each parameter while maintaining low memory footprint through non-negative matrix factorization",
     "year": 2023,
-    "category": "Adaptive",
+    "category": "First-order",
     "paper": {
       "title": "AdaLomo: Low-memory Optimization with Adaptive Learning Rate",
       "url": "https://arxiv.org/abs/2310.10195",
       "authors": [
         "Kai Lv",
-        "Hang Yan", 
+        "Hang Yan",
         "Qipeng Guo",
         "Haijun Lv",
         "Xipeng Qiu"
@@ -2601,7 +2596,7 @@ const optimizers = [
     ],
     "hyperparameters": {
       "lr": {
-        "default": 1e-4,
+        "default": 0.0001,
         "range": "1e-5 to 1e-2",
         "description": "Base learning rate"
       },
@@ -2616,7 +2611,7 @@ const optimizers = [
         "description": "Exponential decay rate for second moment estimates"
       },
       "eps": {
-        "default": 1e-8,
+        "default": 1e-08,
         "range": "1e-10 to 1e-6",
         "description": "Small constant for numerical stability"
       },
@@ -2633,13 +2628,9 @@ const optimizers = [
     },
     "popularity": 75,
     "tags": [
-      "memory-efficient",
-      "adaptive",
-      "large-language-models",
-      "low-memory",
-      "matrix-factorization",
-      "instruction-tuning",
-      "pre-training"
+      "Low Memory",
+      "Adaptive",
+      "LLM Tuning"
     ],
     "githubUrl": "https://github.com/OpenLMLab/LOMO"
   },
@@ -2649,7 +2640,7 @@ const optimizers = [
     "fullName": "Block-wise Adam",
     "description": "Block-wise adaptive optimizer that applies Adam updates to parameter blocks rather than individual parameters, improving memory efficiency and convergence",
     "year": 2024,
-    "category": "Adaptive",
+    "category": "First-order",
     "paper": {
       "title": "BAdam: Block-wise Adaptive Optimization for Large Language Models",
       "url": "https://arxiv.org/abs/2404.02827",
@@ -2667,7 +2658,7 @@ const optimizers = [
     ],
     "hyperparameters": {
       "lr": {
-        "default": 1e-4,
+        "default": 0.0001,
         "range": "1e-5 to 1e-2",
         "description": "Base learning rate"
       },
@@ -2682,7 +2673,7 @@ const optimizers = [
         "description": "Exponential decay rate for second moment estimates"
       },
       "eps": {
-        "default": 1e-8,
+        "default": 1e-08,
         "range": "1e-10 to 1e-6",
         "description": "Small constant for numerical stability"
       },
@@ -2699,12 +2690,9 @@ const optimizers = [
     },
     "popularity": 60,
     "tags": [
-      "block-wise",
-      "adaptive",
-      "memory-efficient",
-      "large-language-models",
-      "convergence",
-      "optimization"
+      "Block-wise",
+      "Memory Efficient",
+      "LLM"
     ],
     "githubUrl": "https://github.com/Ledzy/BAdam"
   },
@@ -2714,7 +2702,7 @@ const optimizers = [
     "fullName": "Adaptive Exponential Moving Average Mixture",
     "description": "A modification of Adam that uses a mixture of two EMAs to better leverage past gradients, showing that gradients can stay relevant for tens of thousands of steps",
     "year": 2024,
-    "category": "Adaptive",
+    "category": "First-order",
     "paper": {
       "title": "The AdEMAMix Optimizer: Better, Faster, Older",
       "url": "https://arxiv.org/abs/2409.03137",
@@ -2734,12 +2722,16 @@ const optimizers = [
     ],
     "hyperparameters": {
       "lr": {
-        "default": 1e-3,
+        "default": 0.001,
         "range": "1e-5 to 1e-2",
         "description": "Learning rate"
       },
       "betas": {
-        "default": [0.9, 0.999, 0.9999],
+        "default": [
+          0.9,
+          0.999,
+          0.9999
+        ],
         "range": "0.0 to 1.0",
         "description": "Coefficients for computing running averages of gradient and its square, plus third EMA"
       },
@@ -2771,16 +2763,245 @@ const optimizers = [
     },
     "popularity": 70,
     "tags": [
-      "adaptive",
-      "exponential-moving-average",
-      "mixture",
-      "past-gradients",
-      "convergence",
-      "forgetting",
-      "language-modeling",
-      "image-classification"
+      "EMA Mixture",
+      "Long-term Memory",
+      "Forgetfulness"
     ],
     "githubUrl": "https://github.com/apple/ml-ademamix"
+  },
+  {
+    "id": "root",
+    "name": "ROOT",
+    "fullName": "Robust Orthogonalized Optimizer for Neural Network Training",
+    "description": "Enhances training stability through dimension-robust orthogonalization using adaptive Newton iterations and an optimization-robust framework via proximal optimization.",
+    "year": 2025,
+    "category": "Second-order",
+    "paper": {
+      "title": "ROOT: Robust Orthogonalized Optimizer for Neural Network Training",
+      "url": "https://arxiv.org/abs/2511.20626",
+      "authors": [
+        "Wei He",
+        "Kai Han",
+        "Hang Zhou",
+        "Hanting Chen",
+        "Zhicheng Liu",
+        "Xinghao Chen",
+        "Yunhe Wang"
+      ]
+    },
+    "advantages": [
+      "Dimension-robust orthogonalization",
+      "Suppresses outlier-induced noise",
+      "Consistent precision across architectures",
+      "Superior performance in noisy scenarios"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.001,
+        "range": "1e-4 to 1e-2",
+        "description": "Learning rate"
+      },
+      "beta1": {
+        "default": 0.9,
+        "range": "0.8 to 0.99",
+        "description": "Momentum factor"
+      },
+      "weight_decay": {
+        "default": 0.01,
+        "range": "0.0 to 0.1",
+        "description": "Weight decay"
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 60,
+    "tags": [
+      "Robustness",
+      "Orthogonalization",
+      "Newton Iterations",
+      "Large Models"
+    ],
+    "githubUrl": "https://github.com/huawei-noah/noah-research/tree/master/ROOT"
+  },
+  {
+    "id": "gluon",
+    "name": "Gluon",
+    "fullName": "Gluon: Making Muon & Scion Great Again!",
+    "description": "LMO-based optimizer that introduces a refined generalized smoothness model to capture layer-wise geometry, bridging the gap between theory and practice for Muon and Scion.",
+    "year": 2025,
+    "category": "Second-order",
+    "paper": {
+      "title": "Gluon: Making Muon & Scion Great Again! (Bridging Theory and Practice of LMO-based Optimizers for LLMs)",
+      "url": "https://arxiv.org/abs/2505.13416",
+      "authors": [
+        "Artem Riabinin",
+        "Egor Shulgin",
+        "Kaja Gruntkowska",
+        "Peter Richt\u00e1rik"
+      ]
+    },
+    "advantages": [
+      "Bridges theory and practice for LMO methods",
+      "Captures layer-wise geometry",
+      "Improved theoretical step sizes",
+      "Strong practical predictive power"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.02,
+        "range": "1e-3 to 1e-1",
+        "description": "Learning rate"
+      },
+      "momentum": {
+        "default": 0.95,
+        "range": "0.9 to 0.99",
+        "description": "Momentum coefficient"
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 65,
+    "tags": [
+      "LMO-based",
+      "Layer-wise Geometry",
+      "Theoretical Analysis",
+      "LLM"
+    ],
+    "githubUrl": ""
+  },
+  {
+    "id": "dion",
+    "name": "Dion",
+    "fullName": "Distributed Orthonormalized Updates",
+    "description": "Scalable optimizer using amortized power iterations on momentum buffers for orthonormalized updates, reducing wall-clock time for large-scale training.",
+    "year": 2025,
+    "category": "Second-order",
+    "paper": {
+      "title": "Dion: Distributed Orthonormalized Updates",
+      "url": "https://arxiv.org/abs/2504.05295",
+      "authors": [
+        "Kushal Tirumala",
+        "Sourabh Garg",
+        "Zaid Harchaoui",
+        "Ross Girshick",
+        "Sewoong Oh",
+        "Armand Joulin",
+        "Ludwig Schmidt"
+      ]
+    },
+    "advantages": [
+      "Efficient distributed training",
+      "Amortized power iterations",
+      "Reduced wall-clock time",
+      "Compatible with weight sharding"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.02,
+        "range": "1e-3 to 1e-1",
+        "description": "Learning rate"
+      },
+      "momentum": {
+        "default": 0.95,
+        "range": "0.9 to 0.99",
+        "description": "Momentum coefficient"
+      },
+      "rank_fraction": {
+        "default": 1.0,
+        "range": "0.1 to 1.0",
+        "description": "Rank fraction for updates"
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 70,
+    "tags": [
+      "Distributed",
+      "Orthonormalized",
+      "Power Iterations",
+      "Efficient"
+    ],
+    "githubUrl": "https://github.com/microsoft/dion/"
+  },
+  {
+    "id": "stable-spam",
+    "name": "Stable-SPAM",
+    "fullName": "Stable-SPAM: How to Train in 4-Bit More Stably than 16-Bit Adam",
+    "description": "Enhances SPAM with adaptive gradient clipping, matrix normalization, and momentum reset to enable stable and efficient 4-bit LLM training.",
+    "year": 2025,
+    "category": "First-order",
+    "paper": {
+      "title": "Stable-SPAM: How to Train in 4-Bit More Stably than 16-Bit Adam",
+      "url": "https://arxiv.org/abs/2502.17055",
+      "authors": [
+        "Tianjin Huang",
+        "Haotian Hu",
+        "Zhenyu Zhang",
+        "Gaojie Jin",
+        "Xiang Li",
+        "Li Shen",
+        "Tianlong Chen",
+        "Lu Liu",
+        "Qingsong Wen",
+        "Zhangyang Wang",
+        "Shiwei Liu"
+      ]
+    },
+    "advantages": [
+      "Stabilizes gradient norms in 4-bit training",
+      "Outperforms BF16 Adam with 4-bit training",
+      "Faster convergence than Adam",
+      "Effective for low-bit LLM training"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.001,
+        "range": "1e-4 to 1e-2",
+        "description": "Learning rate"
+      },
+      "gamma1": {
+        "default": 0.7,
+        "range": "0.5 to 0.9",
+        "description": "Hyperparameter for momentum reset"
+      },
+      "gamma2": {
+        "default": 0.9,
+        "range": "0.8 to 0.99",
+        "description": "Hyperparameter for momentum reset"
+      },
+      "gamma3": {
+        "default": 0.999,
+        "range": "0.9 to 0.9999",
+        "description": "Hyperparameter for momentum reset"
+      },
+      "update_proj_gap": {
+        "default": 1000,
+        "range": "100 to 2000",
+        "description": "Gap for updating projection"
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 50,
+    "tags": [
+      "4-bit Training",
+      "Quantization",
+      "Stability",
+      "LLM"
+    ],
+    "githubUrl": "https://github.com/TianjinYellow/StableSPAM"
   }
 ];
 
