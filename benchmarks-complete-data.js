@@ -1191,27 +1191,6 @@ const c4Data = [
     }
   },
   {
-    optimizer: 'SAC+AdamW',
-    venue: 'Ours',
-    betas: '(0.9, 0.99)',
-    eps: '1e-8',
-    background: 'bg-purple-100',
-    data: {
-      '60M-PPL': { value: '28.63', highlight: 'green' },
-      '60M-Mem': { value: '0.25', highlight: 'none' },
-      '60M-Time': { value: '0.0169', highlight: 'none' },
-      '130M-PPL': { value: '21.85', highlight: 'green' },
-      '130M-Mem': { value: '0.55', highlight: 'none' },
-      '130M-Time': { value: '0.0213', highlight: 'none' },
-      '350M-PPL': { value: '16.16', highlight: 'green' },
-      '350M-Mem': { value: '1.43', highlight: 'none' },
-      '350M-Time': { value: '0.0401', highlight: 'none' },
-      '1B-PPL': { value: '13.58', highlight: 'green' },
-      '1B-Mem': { value: '5.11', highlight: 'none' },
-      '1B-Time': { value: '0.1089', highlight: 'none' }
-    }
-  },
-  {
     optimizer: 'Adam8bit',
     venue: 'ICLR\'22',
     betas: '(0.9, 0.99)',
@@ -1256,11 +1235,11 @@ const c4Data = [
   {
     optimizer: 'AdaFactor',
     venue: 'ICML\'18',
-    betas: '(0.9,)',
+    betas: '(0.9,0.99)',
     eps: '1e-30',
     background: 'bg-gray-100',
     data: {
-      '60M-PPL': { value: '29.07', highlight: 'green' },
+      '60M-PPL': { value: '29.07', highlight: 'none' },
       '60M-Mem': { value: '0.24', highlight: 'none' },
       '60M-Time': { value: '0.0059', highlight: 'none' },
       '130M-PPL': { value: '22.38', highlight: 'none' },
@@ -1305,13 +1284,13 @@ const c4Data = [
       '60M-PPL': { value: '29.82', highlight: 'none' },
       '60M-Mem': { value: '0.24', highlight: 'none' },
       '60M-Time': { value: '0.0061', highlight: 'none' },
-      '130M-PPL': { value: '22.18', highlight: 'green' },
+      '130M-PPL': { value: '22.18', highlight: 'none' },
       '130M-Mem': { value: '0.52', highlight: 'none' },
       '130M-Time': { value: '0.0090', highlight: 'none' },
-      '350M-PPL': { value: '16.54', highlight: 'green' },
+      '350M-PPL': { value: '16.54', highlight: 'none' },
       '350M-Mem': { value: '1.22', highlight: 'none' },
       '350M-Time': { value: '0.0453', highlight: 'none' },
-      '1B-PPL': { value: '13.91', highlight: 'green' },
+      '1B-PPL': { value: '13.91', highlight: 'none' },
       '1B-Mem': { value: '4.38', highlight: 'none' },
       '1B-Time': { value: '0.1809', highlight: 'none' }
     }
@@ -1380,27 +1359,6 @@ const c4Data = [
     }
   },
   {
-    optimizer: 'SAC+Adam-mini',
-    venue: 'Ours',
-    betas: '(0.9, 0.99)',
-    eps: '1e-8',
-    background: 'bg-purple-100',
-    data: {
-      '60M-PPL': { value: '29.49', highlight: 'none' },
-      '60M-Mem': { value: '0.14', highlight: 'none' },
-      '60M-Time': { value: '0.0131', highlight: 'none' },
-      '130M-PPL': { value: '22.62', highlight: 'none' },
-      '130M-Mem': { value: '0.30', highlight: 'none' },
-      '130M-Time': { value: '0.0157', highlight: 'none' },
-      '350M-PPL': { value: '16.66', highlight: 'none' },
-      '350M-Mem': { value: '0.75', highlight: 'none' },
-      '350M-Time': { value: '0.0605', highlight: 'none' },
-      '1B-PPL': { value: '14.23', highlight: 'none' },
-      '1B-Mem': { value: '2.62', highlight: 'none' },
-      '1B-Time': { value: '0.1873', highlight: 'none' }
-    }
-  },
-  {
     optimizer: 'Shampoo',
     venue: 'arXiv\'18',
     betas: '(0.9, 0.999)',
@@ -1449,7 +1407,7 @@ const c4Data = [
     eps: '1e-8',
     background: 'bg-gray-100',
     data: {
-      '60M-PPL': { value: '28.60', highlight: 'green' },
+      '60M-PPL': { value: '28.60', highlight: 'none' },
       '60M-Mem': { value: '0.17', highlight: 'none' },
       '60M-Time': { value: '0.0747', highlight: 'none' },
       '130M-PPL': { value: '22.15', highlight: 'none' },
@@ -1473,36 +1431,15 @@ const c4Data = [
       '60M-PPL': { value: '29.13', highlight: 'none' },
       '60M-Mem': { value: '0.32', highlight: 'none' },
       '60M-Time': { value: '0.0491', highlight: 'none' },
-      '130M-PPL': { value: '21.96', highlight: 'green' },
+      '130M-PPL': { value: '21.96', highlight: 'none' },
       '130M-Mem': { value: '0.75', highlight: 'none' },
       '130M-Time': { value: '0.0768', highlight: 'none' },
-      '350M-PPL': { value: '16.49', highlight: 'green' },
+      '350M-PPL': { value: '16.49', highlight: 'none' },
       '350M-Mem': { value: '2.06', highlight: 'none' },
       '350M-Time': { value: '0.1537', highlight: 'none' },
-      '1B-PPL': { value: '13.75', highlight: 'green' },
+      '1B-PPL': { value: '13.75', highlight: 'none' },
       '1B-Mem': { value: '7.48', highlight: 'none' },
       '1B-Time': { value: '0.8823', highlight: 'none' }
-    }
-  },
-  {
-    optimizer: 'SAC+Shampoo',
-    venue: 'Ours',
-    betas: '(0.9, 0.999)',
-    eps: '1e-8',
-    background: 'bg-purple-100',
-    data: {
-      '60M-PPL': { value: '29.22', highlight: 'none' },
-      '60M-Mem': { value: '0.18', highlight: 'none' },
-      '60M-Time': { value: '0.0376', highlight: 'none' },
-      '130M-PPL': { value: '21.96', highlight: 'green' },
-      '130M-Mem': { value: '0.35', highlight: 'none' },
-      '130M-Time': { value: '0.0541', highlight: 'none' },
-      '350M-PPL': { value: '16.61', highlight: 'none' },
-      '350M-Mem': { value: '1.37', highlight: 'none' },
-      '350M-Time': { value: '0.1481', highlight: 'none' },
-      '1B-PPL': { value: '14.07', highlight: 'none' },
-      '1B-Mem': { value: '4.77', highlight: 'none' },
-      '1B-Time': { value: '0.8785', highlight: 'none' }
     }
   }
 ];
