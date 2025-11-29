@@ -1,5 +1,17 @@
 const papers = [
   {
+    id: 'learning-rate-decay-curriculum-2025',
+    title: 'How Learning Rate Decay Wastes Your Best Data in Curriculum-Based LLM Pretraining',
+    authors: ['Kairong Luo', 'Zhenbo Sun', 'Haodong Wen', 'Xinyu Shi', 'Jiarui Cui', 'Chenyi Dang', 'Kaifeng Lyu', 'Wenguang Chen'],
+    year: 2025,
+    venue: 'arXiv preprint',
+    category: 'Analysis',
+    abstract: 'Due to the scarcity of high-quality data, large language models (LLMs) are often trained on mixtures of data with varying quality levels, even after sophisticated data curation. A natural approach to better leverage high-quality data is curriculum-based pretraining, where the model is trained on data sorted in ascending order of quality as determined by a quality metric. However, prior studies have reported limited improvements from such curriculum-based pretraining strategies. This work identifies a critical factor constraining these methods: the incompatibility between the ascending data quality order and the decaying learning rate (LR) schedule. We find that while curriculum-based training substantially outperforms random shuffling when using a constant LR, its advantage diminishes under standard LR decay schedules. Our experiments show this incompatibility can be mitigated by two simple strategies: (1) employing a more moderate LR decay schedule, where the final LR is only moderately smaller than the peak LR, and (2) replacing LR decay with model averaging, i.e., computing a weighted average of the final few checkpoints. By combining these strategies, we improve the average score on a suite of standard benchmarks by 1.64% over random shuffling, without additional data refinement. Validated on 1.5B-parameter models trained over 30B tokens with various data-quality metrics, our findings call for a re-evaluation of curriculum-based LLM pretraining and underscore the potential of co-designing data curricula with optimization methods.',
+    arxivUrl: 'https://arxiv.org/abs/2511.18903',
+    tags: ['LLM Pretraining', 'Curriculum Learning', 'Learning Rate Schedule', 'Data Quality', 'Model Averaging'],
+    featured: true
+  },
+  {
     id: 'adaptive-optimizers-quantization-2025',
     title: 'A Convergence Analysis of Adaptive Optimizers under Floating-point Quantization',
     authors: ['Xuan Tang', 'Jichu Li', 'Difan Zou'],
