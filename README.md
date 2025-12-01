@@ -1,5 +1,5 @@
 # ScalingOpt - Optimization Community
-<img width="768" height="512" alt="3e2f35d1e9a1b528c399e3926d0a8ecc" src="https://github.com/user-attachments/assets/7ccfcc61-1386-4539-bdba-74841865da08" />
+<img width="384" height="256" alt="3e2f35d1e9a1b528c399e3926d0a8ecc" src="https://github.com/user-attachments/assets/7ccfcc61-1386-4539-bdba-74841865da08" />
 
 [![GitHub](https://img.shields.io/badge/GitHub-ScalingOpt-blue?style=flat-square&logo=github)](https://github.com/tianshijing/ScalingOpt)
 [![Awesome](https://awesome.re/badge.svg)](https://awesome.re)
