@@ -16,7 +16,7 @@
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     
     <!-- Custom Styles -->
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 font-inter">
     <div class="flex flex-col min-h-screen">
@@ -25,14 +25,14 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
-                        <a href="index.html" class="flex items-center">
+                        <a href="../index.html" class="flex items-center">
                             <span class="text-xl font-bold text-blue-900">ScalingOpt</span>
                         </a>
                     </div>
 
                     <!-- Desktop Navigation -->
                     <div class="hidden md:flex items-center space-x-8">
-                        <a href="index.html" class="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">Home</a>
+                        <a href="../index.html" class="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">Home</a>
                         <a href="optimizers.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
                             <i data-lucide="search" class="w-4 h-4"></i>
                             <span>Optimizers</span>
@@ -75,7 +75,7 @@
             <!-- Mobile Navigation -->
             <div id="mobile-menu" class="md:hidden bg-white border-t border-gray-200 hidden">
                 <div class="px-2 pt-2 pb-3 space-y-1">
-                    <a href="index.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">Home</a>
+                    <a href="../index.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">Home</a>
                     <a href="optimizers.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
                         <i data-lucide="search" class="w-4 h-4"></i>
                         <span>Optimizers</span>
@@ -142,25 +142,7 @@
                         </div>
                         
                         <!-- Filter Controls -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <div class="space-y-2">
-                                <label class="block text-sm font-semibold text-gray-700">Difficulty Level</label>
-                                <div class="relative">
-                                    <select
-                                        id="level-filter"
-                                        class="w-full px-4 py-3 pr-10 text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white transition-all duration-200 shadow-sm appearance-none cursor-pointer"
-                                    >
-                                        <option value="All">All Levels</option>
-                                        <option value="Beginner">Beginner</option>
-                                        <option value="Intermediate">Intermediate</option>
-                                        <option value="Advanced">Advanced</option>
-                                    </select>
-                                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                        <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
                             <div class="space-y-2">
                                 <label class="block text-sm font-semibold text-gray-700">Content Type</label>
                                 <div class="relative">
@@ -532,23 +514,23 @@
 
         function getPdfUrl(tutorialId) {
             const pdfMap = {
-                'data-centric-methods': '/Tutorial/Presentation___Data-centric_Methods__mobile.pdf',
-                'optimizer-preconditioners-main': '/Tutorial/Presentation___Optimizer_Preconditioners__main.pdf',
-                'optimizer-preconditioners-mobile': '/Tutorial/Presentation___Optimizer_Preconditioners__mobile.pdf',
-                'optimization-machine-learning': '/Tutorial/slides-summer-school.pdf',
-                'epfl-optml-notes': '/Tutorial/EPFL_optML/lecture-notes.pdf',
-                'epfl-optml-lecture01': '/Tutorial/EPFL_optML/lecture01.pdf',
-                'epfl-optml-lecture02': '/Tutorial/EPFL_optML/lecture02.pdf',
-                'epfl-optml-lecture03': '/Tutorial/EPFL_optML/lecture03.pdf',
-                'epfl-optml-lecture04': '/Tutorial/EPFL_optML/lecture04.pdf',
-                'epfl-optml-lecture05': '/Tutorial/EPFL_optML/lecture05.pdf',
-                'epfl-optml-lecture06': '/Tutorial/EPFL_optML/lecture06.pdf',
-                'epfl-optml-lecture07': '/Tutorial/EPFL_optML/lecture07.pdf',
-                'epfl-optml-lecture08': '/Tutorial/EPFL_optML/lecture08.pdf',
-                'epfl-optml-lecture09': '/Tutorial/EPFL_optML/lecture09.pdf',
-                'epfl-optml-lecture10': '/Tutorial/EPFL_optML/lecture10.pdf',
-                'epfl-optml-lecture11': '/Tutorial/EPFL_optML/lecture11.pdf',
-                'epfl-optml-lecture12': '/Tutorial/EPFL_optML/lecture12.pdf'
+                'data-centric-methods': '../Tutorial/Presentation___Data-centric_Methods__mobile.pdf',
+                'optimizer-preconditioners-main': '../Tutorial/Presentation___Optimizer_Preconditioners__main.pdf',
+                'optimizer-preconditioners-mobile': '../Tutorial/Presentation___Optimizer_Preconditioners__mobile.pdf',
+                'optimization-machine-learning': '../Tutorial/slides-summer-school.pdf',
+                'epfl-optml-notes': '../Tutorial/EPFL_optML/lecture-notes.pdf',
+                'epfl-optml-lecture01': '../Tutorial/EPFL_optML/lecture01.pdf',
+                'epfl-optml-lecture02': '../Tutorial/EPFL_optML/lecture02.pdf',
+                'epfl-optml-lecture03': '../Tutorial/EPFL_optML/lecture03.pdf',
+                'epfl-optml-lecture04': '../Tutorial/EPFL_optML/lecture04.pdf',
+                'epfl-optml-lecture05': '../Tutorial/EPFL_optML/lecture05.pdf',
+                'epfl-optml-lecture06': '../Tutorial/EPFL_optML/lecture06.pdf',
+                'epfl-optml-lecture07': '../Tutorial/EPFL_optML/lecture07.pdf',
+                'epfl-optml-lecture08': '../Tutorial/EPFL_optML/lecture08.pdf',
+                'epfl-optml-lecture09': '../Tutorial/EPFL_optML/lecture09.pdf',
+                'epfl-optml-lecture10': '../Tutorial/EPFL_optML/lecture10.pdf',
+                'epfl-optml-lecture11': '../Tutorial/EPFL_optML/lecture11.pdf',
+                'epfl-optml-lecture12': '../Tutorial/EPFL_optML/lecture12.pdf'
             };
             return pdfMap[tutorialId] || '#';
         }
@@ -634,19 +616,6 @@
                             ${tutorial.description}
                         </p>
 
-                        <!-- Meta info -->
-                        <div class="flex items-center justify-between mb-4">
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${getLevelColor(tutorial.level)}">
-                                ${tutorial.level}
-                            </span>
-                            <div class="flex items-center text-sm text-gray-500">
-                                <span class="flex items-center">
-                                    <i data-lucide="clock" class="w-4 h-4 mr-1"></i>
-                                    ${tutorial.duration}
-                                </span>
-                            </div>
-                        </div>
-
                         <!-- Topics -->
                         <div class="mb-4">
                             <div class="flex flex-wrap gap-1">
@@ -691,7 +660,7 @@
 
         function filterTutorials() {
             const searchTerm = document.getElementById('search-input').value.toLowerCase();
-            const selectedLevel = document.getElementById('level-filter').value;
+            // const selectedLevel = document.getElementById('level-filter').value;
             const selectedType = document.getElementById('type-filter').value;
             const selectedSeries = document.getElementById('series-filter').value;
 
@@ -700,10 +669,10 @@
                                      tutorial.description.toLowerCase().includes(searchTerm) ||
                                      tutorial.topics.some(topic => topic.toLowerCase().includes(searchTerm)) ||
                                      tutorial.author.toLowerCase().includes(searchTerm);
-                const matchesLevel = selectedLevel === 'All' || tutorial.level === selectedLevel;
+                // const matchesLevel = selectedLevel === 'All' || tutorial.level === selectedLevel;
                 const matchesType = selectedType === 'All' || tutorial.type === selectedType;
                 const matchesSeries = selectedSeries === 'All' || tutorial.series === selectedSeries;
-                return matchesSearch && matchesLevel && matchesType && matchesSeries;
+                return matchesSearch && matchesType && matchesSeries;
             });
 
             renderTutorials(filteredTutorials);
@@ -712,7 +681,7 @@
         // Clear filters function
         function clearFilters() {
             document.getElementById('search-input').value = '';
-            document.getElementById('level-filter').value = 'All';
+            // document.getElementById('level-filter').value = 'All';
             document.getElementById('type-filter').value = 'All';
             document.getElementById('series-filter').value = 'All';
             filterTutorials();
@@ -720,7 +689,7 @@
 
         // Add event listeners
         document.getElementById('search-input').addEventListener('input', filterTutorials);
-        document.getElementById('level-filter').addEventListener('change', filterTutorials);
+        // document.getElementById('level-filter').addEventListener('change', filterTutorials);
         document.getElementById('type-filter').addEventListener('change', filterTutorials);
         document.getElementById('series-filter').addEventListener('change', filterTutorials);
         document.getElementById('clear-filters').addEventListener('click', clearFilters);

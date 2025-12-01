@@ -1235,7 +1235,7 @@ const c4Data = [
   {
     optimizer: 'AdaFactor',
     venue: 'ICML\'18',
-    betas: '(0.9,0.99)',
+    betas: '(0.9, 0.99)',
     eps: '1e-30',
     background: 'bg-gray-100',
     data: {

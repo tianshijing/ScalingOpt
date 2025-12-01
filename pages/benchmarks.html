@@ -16,7 +16,7 @@
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     
     <!-- Custom Styles -->
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 font-inter">
     <div class="flex flex-col min-h-screen">
@@ -25,14 +25,14 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
-                        <a href="index.html" class="flex items-center">
+                        <a href="../index.html" class="flex items-center">
                             <span class="text-xl font-bold text-blue-900">ScalingOpt</span>
                         </a>
                     </div>
 
                     <!-- Desktop Navigation -->
                     <div class="hidden md:flex items-center space-x-8">
-                        <a href="index.html" class="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">Home</a>
+                        <a href="../index.html" class="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">Home</a>
                         <a href="optimizers.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
                             <i data-lucide="search" class="w-4 h-4"></i>
                             <span>Optimizers</span>
@@ -75,7 +75,7 @@
             <!-- Mobile Navigation -->
             <div id="mobile-menu" class="md:hidden bg-white border-t border-gray-200 hidden">
                 <div class="px-2 pt-2 pb-3 space-y-1">
-                    <a href="index.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">Home</a>
+                    <a href="../index.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">Home</a>
                     <a href="optimizers.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
                         <i data-lucide="search" class="w-4 h-4"></i>
                         <span>Optimizers</span>
@@ -134,6 +134,20 @@
                                     All benchmark results are derived from these research papers. Please cite these work when using these results:
                                 </p>
                                 <div class="space-y-4">
+                                    <div class="bg-white rounded-lg p-4 border border-amber-200">
+                                        <p class="text-sm text-gray-700 font-mono">
+                                            "Benchmarking Neural Network Training Algorithms"
+                                        </p>
+                                        <a 
+                                            href="https://arxiv.org/abs/2306.07179" 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            class="inline-flex items-center text-blue-600 hover:text-blue-700 text-sm mt-2"
+                                        >
+                                            <i data-lucide="external-link" class="w-4 h-4 mr-1"></i>
+                                            arXiv:2306.07179
+                                        </a>
+                                    </div>
                                     <div class="bg-white rounded-lg p-4 border border-amber-200">
                                         <p class="text-sm text-gray-700 font-mono">
                                             "Unveiling the Backbone-Optimizer Coupling Bias in Visual Representation Learning"
@@ -428,7 +442,7 @@
     </div>
 
     <!-- Complete Benchmark Data -->
-    <script src="benchmarks-complete-data.js"></script>
+    <script src="../assets/js/benchmarks-complete-data.js"></script>
     
     <!-- JavaScript -->
     <script>

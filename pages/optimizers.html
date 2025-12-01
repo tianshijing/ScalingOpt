@@ -16,7 +16,7 @@
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     
     <!-- Custom Styles -->
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 font-inter">
     <div class="flex flex-col min-h-screen">
@@ -25,14 +25,14 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
-                        <a href="index.html" class="flex items-center">
+                        <a href="../index.html" class="flex items-center">
                             <span class="text-xl font-bold text-blue-900">ScalingOpt</span>
                         </a>
                     </div>
 
                     <!-- Desktop Navigation -->
                     <div class="hidden md:flex items-center space-x-8">
-                        <a href="index.html" class="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">Home</a>
+                        <a href="../index.html" class="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">Home</a>
                         <a href="optimizers.html" class="flex items-center space-x-1 text-blue-700 hover:text-blue-900 transition-colors duration-200 font-medium">
                             <i data-lucide="search" class="w-4 h-4"></i>
                             <span>Optimizers</span>
@@ -75,7 +75,7 @@
             <!-- Mobile Navigation -->
             <div id="mobile-menu" class="md:hidden bg-white border-t border-gray-200 hidden">
                 <div class="px-2 pt-2 pb-3 space-y-1">
-                    <a href="index.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">Home</a>
+                    <a href="../index.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">Home</a>
                     <a href="optimizers.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
                         <i data-lucide="search" class="w-4 h-4"></i>
                         <span>Optimizers</span>
@@ -117,10 +117,30 @@
                         Optimizer <span class="gradient-text">Library</span>
                     </h1>
                     <p class="text-xl text-blue-700 max-w-3xl mx-auto">
-                        Explore our comprehensive collection of <span id="total-optimizers">50</span> optimization algorithms. 
+                        Explore our comprehensive collection of <span id="total-optimizers">50+</span> optimization algorithms. 
                         Find the perfect optimizer for your large-scale machine learning project.
                     </p>
                 </div>
+
+                <!-- Timeline Section -->
+                <section class="mb-16 relative">
+                    <div class="text-center mb-12">
+                        <button id="toggle-timeline" class="inline-flex items-center justify-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                            <h2 class="text-3xl font-bold text-gray-900">Evolution <span class="text-blue-600">Trajectory</span></h2>
+                            <i data-lucide="chevron-down" class="w-8 h-8 text-blue-600 transform transition-transform duration-300" id="timeline-icon"></i>
+                        </button>
+                        <p class="text-lg text-gray-600 mt-2">A chronological journey through the history of optimization</p>
+                    </div>
+                    
+                    <div class="relative max-w-5xl mx-auto px-4 overflow-hidden transition-all duration-500 ease-in-out" id="timeline-wrapper" style="max-height: 0; opacity: 0;">
+                        <div class="relative" id="timeline-container">
+                            <!-- Timeline line -->
+                            <div class="absolute left-4 md:left-1/2 transform md:-translate-x-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-50 via-blue-300 to-blue-50"></div>
+                            
+                            <!-- Items will be rendered here -->
+                        </div>
+                    </div>
+                </section>
 
                 <!-- Filters -->
                 <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
@@ -271,7 +291,7 @@
     </div>
 
     <!-- JavaScript -->
-    <script src="optimizers-data.js"></script>
+    <script src="../assets/js/optimizers-data.js"></script>
     <script>
         // Initialize Lucide icons
         lucide.createIcons();
@@ -311,7 +331,74 @@
             // Filter and search functionality
             let filteredOptimizers = [...optimizers];
 
-        function getCategoryColor(category) {
+            function getMonthNumber(month) {
+                const months = {
+                    'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5, 'June': 6,
+                    'July': 7, 'August': 8, 'September': 9, 'October': 10, 'November': 11, 'December': 12
+                };
+                return months[month] || 0;
+            }
+
+            function renderTimeline() {
+                const container = document.getElementById('timeline-container');
+                // Clear existing items except the line
+                const line = container.querySelector('div.absolute');
+                container.innerHTML = '';
+                container.appendChild(line);
+
+                // Sort all optimizers chronologically
+                const sortedOptimizers = [...optimizers].sort((a, b) => {
+                    if (a.year !== b.year) return a.year - b.year;
+                    return getMonthNumber(a.month) - getMonthNumber(b.month);
+                });
+
+                let currentYear = null;
+
+                sortedOptimizers.forEach((opt, index) => {
+                    const isLeft = index % 2 === 0;
+                    const yearChanged = opt.year !== currentYear;
+                    currentYear = opt.year;
+
+                    const itemHtml = `
+                        <div class="relative flex items-center justify-between md:justify-normal mb-8 ${isLeft ? 'md:flex-row-reverse' : ''} group">
+                            <!-- Date/Year Marker (Mobile: Left side, Desktop: Center) -->
+                            <div class="absolute left-4 md:left-1/2 transform -translate-x-1/2 flex items-center justify-center w-4 h-4 rounded-full bg-blue-500 border-4 border-white shadow-sm z-10 group-hover:scale-125 transition-transform duration-300"></div>
+
+                            <!-- Content Card -->
+                            <div class="ml-12 md:ml-0 md:w-[45%] ${isLeft ? 'md:mr-auto md:pr-8 text-left md:text-right' : 'md:ml-auto md:pl-8 text-left'}">
+                                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 group-hover:-translate-y-1 relative overflow-hidden">
+                                    <!-- Decorative background gradient -->
+                                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${getCategoryColor(opt.category).includes('blue') ? 'from-blue-400 to-blue-600' : 'from-purple-400 to-purple-600'}"></div>
+                                    
+                                    <div class="flex items-center gap-2 mb-2 ${isLeft ? 'md:justify-end' : 'md:justify-start'} justify-start">
+                                        <span class="text-xs font-semibold tracking-wider text-blue-600 uppercase bg-blue-50 px-2 py-0.5 rounded-full">
+                                            ${opt.month || ''} ${opt.year}
+                                        </span>
+                                    </div>
+                                    
+                                    <h3 class="text-lg font-bold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
+                                        ${opt.name}
+                                    </h3>
+                                    <p class="text-xs text-gray-500 mb-3 line-clamp-2">
+                                        ${opt.description}
+                                    </p>
+                                    
+                                    <div class="flex flex-wrap gap-1.5 ${isLeft ? 'md:justify-end' : 'md:justify-start'}">
+                                        ${opt.tags.slice(0, 2).map(tag => `
+                                            <span class="text-[10px] px-1.5 py-0.5 bg-gray-50 text-gray-600 rounded border border-gray-100">
+                                                ${tag}
+                                            </span>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    container.insertAdjacentHTML('beforeend', itemHtml);
+                });
+            }
+
+            function getCategoryColor(category) {
             const colors = {
                 'First-order': 'bg-blue-100 text-blue-800',
                 'Second-order': 'bg-purple-100 text-purple-800'
@@ -449,8 +536,36 @@
         document.getElementById('year-filter').addEventListener('change', filterOptimizers);
         document.getElementById('sort-select').addEventListener('change', filterOptimizers);
 
+        // Timeline toggle functionality
+        const timelineBtn = document.getElementById('toggle-timeline');
+        const timelineWrapper = document.getElementById('timeline-wrapper');
+        const timelineIcon = document.getElementById('timeline-icon');
+        let isTimelineExpanded = false;
+
+        timelineBtn.addEventListener('click', () => {
+            isTimelineExpanded = !isTimelineExpanded;
+            
+            if (isTimelineExpanded) {
+                timelineWrapper.style.maxHeight = timelineWrapper.scrollHeight + "px";
+                timelineWrapper.style.opacity = "1";
+                timelineIcon.style.transform = "rotate(180deg)";
+            } else {
+                timelineWrapper.style.maxHeight = "0";
+                timelineWrapper.style.opacity = "0";
+                timelineIcon.style.transform = "rotate(0deg)";
+            }
+        });
+
+        // Update max-height on window resize if expanded
+        window.addEventListener('resize', () => {
+            if (isTimelineExpanded) {
+                timelineWrapper.style.maxHeight = timelineWrapper.scrollHeight + "px";
+            }
+        });
+
             // Initial render
             renderOptimizers(filteredOptimizers);
+            renderTimeline();
         }
 
         // Initialize when page loads

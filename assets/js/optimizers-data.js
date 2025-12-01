@@ -6,6 +6,7 @@ const optimizers = [
     "fullName": "Stochastic Gradient Descent",
     "description": "Simple and effective foundational optimizer for many other algorithms",
     "year": 1999,
+    "month": "January",
     "category": "First-order",
     "paper": {
       "title": "On the importance of initialization and momentum in deep learning",
@@ -59,6 +60,7 @@ const optimizers = [
     "fullName": "Nesterov Accelerated Gradient",
     "description": "Accelerated gradient method with momentum",
     "year": 1983,
+    "month": "January",
     "category": "First-order",
     "paper": {
       "title": "A method for solving the convex programming problem with convergence rate O(1/k^2)",
@@ -103,6 +105,7 @@ const optimizers = [
     "fullName": "Resilient Backpropagation",
     "description": "Adaptive step sizes per parameter; fast convergence for small networks",
     "year": 2000,
+    "month": "January",
     "category": "First-order",
     "paper": {
       "title": "Rprop - A Fast Adaptive Learning Algorithm",
@@ -148,6 +151,7 @@ const optimizers = [
     "fullName": "Adaptive Gradient Algorithm",
     "description": "Adaptive learning rates; effective for sparse data",
     "year": 2011,
+    "month": "February",
     "category": "First-order",
     "paper": {
       "title": "Adaptive Subgradient Methods for Online Learning and Stochastic Optimization",
@@ -194,6 +198,7 @@ const optimizers = [
     "fullName": "Adaptive Delta",
     "description": "Adaptive learning rates without manual tuning; addresses AdaGrad's diminishing learning rates",
     "year": 2012,
+    "month": "December",
     "category": "First-order",
     "paper": {
       "title": "ADADELTA: An Adaptive Learning Rate Method",
@@ -238,6 +243,7 @@ const optimizers = [
     "fullName": "Root Mean Square Propagation",
     "description": "Adaptive learning rates; suitable for non-stationary objectives",
     "year": 2012,
+    "month": "May",
     "category": "First-order",
     "paper": {
       "title": "Lecture 6.5 - rmsprop, COURSERA: Neural Networks for Machine Learning",
@@ -287,6 +293,7 @@ const optimizers = [
     "fullName": "Adaptive Moment Estimation",
     "description": "Combines the best properties of AdaGrad and RMSprop with bias correction",
     "year": 2014,
+    "month": "December",
     "category": "First-order",
     "paper": {
       "title": "Adam: A Method for Stochastic Optimization",
@@ -343,6 +350,7 @@ const optimizers = [
     "fullName": "Adam based on infinity norm",
     "description": "Variant of Adam based on the infinity norm",
     "year": 2014,
+    "month": "December",
     "category": "First-order",
     "paper": {
       "title": "Adam: A Method for Stochastic Optimization",
@@ -393,6 +401,7 @@ const optimizers = [
     "fullName": "Layer-wise Adaptive Rate Scaling",
     "description": "Enables large batch training with stability; improves training efficiency",
     "year": 2017,
+    "month": "August",
     "category": "First-order",
     "paper": {
       "title": "Large Batch Training of Convolutional Networks",
@@ -444,6 +453,7 @@ const optimizers = [
     "fullName": "Adam with Decoupled Weight Decay",
     "description": "Adam optimizer with decoupled weight decay regularization",
     "year": 2017,
+    "month": "November",
     "category": "First-order",
     "paper": {
       "title": "Decoupled Weight Decay Regularization",
@@ -500,6 +510,7 @@ const optimizers = [
     "fullName": "Switching from Adam to SGD",
     "description": "Hybrid approach combining Adam and SGD; improves generalization",
     "year": 2017,
+    "month": "December",
     "category": "First-order",
     "paper": {
       "title": "Improving Generalization Performance by Switching from Adam to SGD",
@@ -550,6 +561,7 @@ const optimizers = [
     "fullName": "Shampoo Preconditioned Stochastic Tensor Optimization",
     "description": "Preconditions stochastic tensor optimization; improves convergence",
     "year": 2018,
+    "month": "February",
     "category": "Second-order",
     "paper": {
       "title": "Shampoo: Preconditioned Stochastic Tensor Optimization",
@@ -596,6 +608,7 @@ const optimizers = [
     "fullName": "Quasi-Hyperbolic Adam",
     "description": "Combines quasi-hyperbolic terms with Adam; balances momentum and adaptivity",
     "year": 2018,
+    "month": "October",
     "category": "First-order",
     "paper": {
       "title": "Quasi-hyperbolic momentum and Adam for deep learning",
@@ -656,6 +669,7 @@ const optimizers = [
     "fullName": "Quasi-Hyperbolic Momentum",
     "description": "Introduces quasi-hyperbolic momentum; balances Nesterov momentum and SGD",
     "year": 2018,
+    "month": "October",
     "category": "First-order",
     "paper": {
       "title": "Quasi-hyperbolic momentum and Adam for deep learning",
@@ -706,6 +720,7 @@ const optimizers = [
     "fullName": "Yogi Optimizer",
     "description": "Improved update rule for adaptive methods; handles nonconvex optimization better",
     "year": 2018,
+    "month": "December",
     "category": "First-order",
     "paper": {
       "title": "Adaptive Methods for Nonconvex Optimization",
@@ -759,6 +774,7 @@ const optimizers = [
     "fullName": "Adaptive Learning Rates with Sublinear Memory Cost",
     "description": "Reduces memory usage compared to Adam; suitable for large models",
     "year": 2018,
+    "month": "April",
     "category": "First-order",
     "paper": {
       "title": "AdaFactor: Adaptive Learning Rates with Sublinear Memory Cost",
@@ -809,6 +825,7 @@ const optimizers = [
     "fullName": "Aggregated Momentum",
     "description": "Uses multiple momentum terms; improves stability and convergence",
     "year": 2018,
+    "month": "April",
     "category": "First-order",
     "paper": {
       "title": "Aggregated Momentum: Stability Through Passive Damping",
@@ -856,6 +873,7 @@ const optimizers = [
     "fullName": "PID Controller Approach",
     "description": "Employs PID control principles; improves convergence and stability",
     "year": 2018,
+    "month": "February",
     "category": "First-order",
     "paper": {
       "title": "A PID Controller Approach for Stochastic Optimization of Deep Networks",
@@ -915,6 +933,7 @@ const optimizers = [
     "fullName": "Accelerated SGD via Online Learning to Learn",
     "description": "Accelerates SGD by learning to adapt the learning rate online",
     "year": 2018,
+    "month": "July",
     "category": "First-order",
     "paper": {
       "title": "Accelerating Stochastic Gradient Descent via Online Learning to Learn",
@@ -963,6 +982,7 @@ const optimizers = [
     "fullName": "Adaptive Gradient Methods with Dynamic Bound of Learning Rate",
     "description": "Bounds the learning rate dynamically; combines benefits of adaptive and SGD methods",
     "year": 2019,
+    "month": "February",
     "category": "First-order",
     "paper": {
       "title": "Adaptive Gradient Methods with Dynamic Bound of Learning Rate",
@@ -1020,6 +1040,7 @@ const optimizers = [
     "fullName": "Layer-wise Adaptive Moments optimizer for Batch training",
     "description": "Enables large batch training for BERT; improves training efficiency",
     "year": 2019,
+    "month": "April",
     "category": "First-order",
     "paper": {
       "title": "Large Batch Optimization for Deep Learning: Training BERT in 76 minutes",
@@ -1083,6 +1104,7 @@ const optimizers = [
     "fullName": "Lookahead Optimizer: k steps forward, 1 step back",
     "description": "Combines with other optimizers to improve convergence and stability",
     "year": 2019,
+    "month": "July",
     "category": "First-order",
     "paper": {
       "title": "Lookahead Optimizer: k steps forward, 1 step back",
@@ -1130,6 +1152,7 @@ const optimizers = [
     "fullName": "Rectified Adam",
     "description": "Rectifies variance of the adaptive learning rate; improves stability",
     "year": 2019,
+    "month": "August",
     "category": "First-order",
     "paper": {
       "title": "On the Variance of the Adaptive Learning Rate and Beyond",
@@ -1185,6 +1208,7 @@ const optimizers = [
     "fullName": "Adaptive Momentum Method for Stochastic Gradient Descent",
     "description": "Modulates the momentum term adaptively; improves stability and convergence",
     "year": 2019,
+    "month": "October",
     "category": "First-order",
     "paper": {
       "title": "AdaMod: An Adaptive Momentum Method for Stochastic Gradient Descent",
@@ -1235,6 +1259,7 @@ const optimizers = [
     "fullName": "RAdam + Lookahead",
     "description": "Combines RAdam and Lookahead; improves convergence and generalization",
     "year": 2019,
+    "month": "August",
     "category": "First-order",
     "paper": {
       "title": "Ranger: A Hybrid Optimizer for Deep Learning",
@@ -1293,7 +1318,8 @@ const optimizers = [
     "name": "NAdam",
     "fullName": "Nesterov-accelerated Adaptive Moment Estimation",
     "description": "Combines Nesterov momentum with Adam; improves convergence",
-    "year": 2019,
+    "year": 2016,
+    "month": "March",
     "category": "First-order",
     "paper": {
       "title": "Incorporating Nesterov Momentum into Adam",
@@ -1343,6 +1369,7 @@ const optimizers = [
     "fullName": "Stochastic Gradient Methods with Layer-wise Adaptive Moments",
     "description": "Uses layer-wise adaptive moments; efficient for deep networks",
     "year": 2019,
+    "month": "May",
     "category": "First-order",
     "paper": {
       "title": "Stochastic Gradient Methods with Layer-wise Adaptive Moments for Training of Deep Networks",
@@ -1400,6 +1427,7 @@ const optimizers = [
     "fullName": "Differentiating the Gradient History",
     "description": "Differentiates the gradient history; improves convergence",
     "year": 2019,
+    "month": "September",
     "category": "First-order",
     "paper": {
       "title": "DiffGrad: An Optimization Method for Convolutional Neural Networks",
@@ -1451,6 +1479,7 @@ const optimizers = [
     "fullName": "Adaptive Second Order Optimizer",
     "description": "Uses Hessian information adaptively; suitable for nonconvex optimization",
     "year": 2020,
+    "month": "June",
     "category": "Second-order",
     "paper": {
       "title": "ADAHESSIAN: An Adaptive Second Order Optimizer for Machine Learning",
@@ -1505,6 +1534,7 @@ const optimizers = [
     "fullName": "Adapting Stepsizes by the Belief in Observed Gradients",
     "description": "Adapts stepsizes based on the belief in observed gradients; improves convergence",
     "year": 2020,
+    "month": "October",
     "category": "First-order",
     "paper": {
       "title": "AdaBelief Optimizer: Adapting Stepsizes by the Belief in Observed Gradients",
@@ -1560,6 +1590,7 @@ const optimizers = [
     "fullName": "Slowing Down the Weight Norm Increase in Momentum-based Optimizers",
     "description": "Mitigates weight norm increase; improves generalization",
     "year": 2020,
+    "month": "June",
     "category": "First-order",
     "paper": {
       "title": "Slowing Down the Weight Norm Increase in Momentum-based Optimizers",
@@ -1620,6 +1651,7 @@ const optimizers = [
     "fullName": "SGD with Projection",
     "description": "Prevents excessive weight norm increase; improves stability",
     "year": 2020,
+    "month": "June",
     "category": "First-order",
     "paper": {
       "title": "Slowing Down the Weight Norm Increase in Momentum-based Optimizers",
@@ -1671,18 +1703,17 @@ const optimizers = [
   },
   {
     "id": "apollo",
-    "name": "Apollo",
+    "name": "Apollo (1)",
     "fullName": "Adaptive Parameter-wise Diagonal Quasi-Newton Method",
     "description": "Adaptive quasi-Newton method; efficient for nonconvex optimization",
     "year": 2020,
+    "month": "September",
     "category": "Second-order",
     "paper": {
       "title": "Apollo: An Adaptive Parameter-wise Diagonal Quasi-Newton Method for Nonconvex Stochastic Optimization",
       "url": "https://arxiv.org/abs/2009.13586",
       "authors": [
-        "Xuezhi Wang",
-        "Xiang Wang",
-        "Hao Yu"
+        "Xuezhe Ma"
       ]
     },
     "advantages": [
@@ -1718,6 +1749,62 @@ const optimizers = [
       "Non-convex",
       "Parameter-wise"
     ],
+    "githubUrl": "https://github.com/XuezheMax/apollo"
+  },
+  {
+    "id": "apollo-2",
+    "name": "Apollo (2)",
+    "fullName": "APOLLO: SGD-like Memory, AdamW-level Performance",
+    "description": "A memory-efficient optimizer achieving AdamW-level performance with SGD-like memory usage.",
+    "year": 2024,
+    "month": "December",
+    "category": "First-order",
+    "paper": {
+      "title": "APOLLO: SGD-like Memory, AdamW-level Performance",
+      "url": "https://arxiv.org/abs/2412.05270",
+      "authors": [
+        "Hanqing Zhu",
+        "et al."
+      ]
+    },
+    "advantages": [
+      "Memory efficient (SGD-like)",
+      "AdamW-level performance",
+      "Suitable for LLMs"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.001,
+        "range": "1e-5 to 1e-2",
+        "description": "Learning rate"
+      },
+      "beta1": {
+        "default": 0.9,
+        "range": "0.8 to 0.99",
+        "description": "Exponential decay rate for first moment"
+      },
+      "beta2": {
+        "default": 0.999,
+        "range": "0.99 to 0.9999",
+        "description": "Exponential decay rate for second moment"
+      },
+      "eps": {
+        "default": 1e-08,
+        "range": "1e-10 to 1e-6",
+        "description": "Small constant for numerical stability"
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 80,
+    "tags": [
+      "Memory Efficient",
+      "LLM",
+      "Adaptive"
+    ],
     "githubUrl": "https://github.com/zhuhanqing/APOLLO"
   },
   {
@@ -1726,6 +1813,7 @@ const optimizers = [
     "fullName": "Sharpness-Aware Minimization",
     "description": "Minimizes sharpness of the loss landscape; improves generalization",
     "year": 2020,
+    "month": "October",
     "category": "First-order",
     "paper": {
       "title": "Sharpness-Aware Minimization for Efficiently Improving Generalization",
@@ -1773,6 +1861,7 @@ const optimizers = [
     "fullName": "A Momentumized, Adaptive, Dual Averaged Gradient Method",
     "description": "Combines momentum, adaptivity, and dual averaging; improves stability",
     "year": 2021,
+    "month": "January",
     "category": "First-order",
     "paper": {
       "title": "Adaptive Gradient Methods with Dynamic Bound of Learning Rate",
@@ -1823,6 +1912,7 @@ const optimizers = [
     "fullName": "Adaptive Nesterov Momentum Algorithm",
     "description": "Adaptive Nesterov momentum; faster optimization for deep models",
     "year": 2022,
+    "month": "August",
     "category": "First-order",
     "paper": {
       "title": "Adaptive Nesterov Momentum Algorithm for Faster Optimizing Deep Models",
@@ -1881,6 +1971,7 @@ const optimizers = [
     "fullName": "Confidence-guided Adaptive Memory Efficient Optimization",
     "description": "Adaptive and memory-efficient; improves optimization with confidence guidance",
     "year": 2023,
+    "month": "July",
     "category": "First-order",
     "paper": {
       "title": "CAME: Confidence-guided Adaptive Memory Efficient Optimization",
@@ -1937,6 +2028,7 @@ const optimizers = [
     "fullName": "Scalable Stochastic Second-order Optimizer",
     "description": "Scalable second-order optimizer; efficient for large-scale pre-training",
     "year": 2023,
+    "month": "May",
     "category": "Second-order",
     "paper": {
       "title": "Sophia: A Scalable Stochastic Second-order Optimizer for Language Model Pre-training",
@@ -1986,10 +2078,11 @@ const optimizers = [
   },
   {
     "id": "svrg",
-    "name": "SVRG",
+    "name": "SVRG (Variant)",
     "fullName": "Stochastic Variance Reduced Gradient",
     "description": "Variance reduction technique; enhances optimization with confidence-guided adjustment",
     "year": 2023,
+    "month": "November",
     "category": "First-order",
     "paper": {
       "title": "A Coefficient Makes SVRG Effective",
@@ -2035,7 +2128,8 @@ const optimizers = [
     "name": "Prodigy",
     "fullName": "Expeditiously Adaptive Parameter-Free Learner",
     "description": "Parameter-free optimizer that dynamically adjusts learning rate by estimating distance to optimal solution",
-    "year": 2024,
+    "year": 2023,
+    "month": "June",
     "category": "First-order",
     "paper": {
       "title": "Prodigy: An Expeditiously Adaptive Parameter-Free Learner",
@@ -2086,6 +2180,7 @@ const optimizers = [
     "fullName": "Adam with Fewer Learning Rates",
     "description": "Memory-efficient Adam variant that reduces the number of learning rates to gain more performance",
     "year": 2024,
+    "month": "June",
     "category": "First-order",
     "paper": {
       "title": "Adam-mini: Use Fewer Learning Rates To Gain More",
@@ -2147,7 +2242,8 @@ const optimizers = [
     "name": "Muon",
     "fullName": "Muon Optimizer with Orthogonal Updates",
     "description": "Orthogonal weight updates via Newton-Schulz iteration for improved training dynamics",
-    "year": 2024,
+    "year": 2025,
+    "month": "February",
     "category": "Second-order",
     "paper": {
       "title": "Muon: Orthogonal Weight Updates via Newton-Schulz Iteration",
@@ -2199,6 +2295,7 @@ const optimizers = [
     "fullName": "EvoLved Sign Momentum",
     "description": "Evolved optimizer using sign-based updates; memory efficient",
     "year": 2023,
+    "month": "February",
     "category": "First-order",
     "paper": {
       "title": "Symbolic Discovery of Optimization Algorithms",
@@ -2259,6 +2356,7 @@ const optimizers = [
     "fullName": "SGD with Weight Decay",
     "description": "SGD with proper weight decay implementation",
     "year": 2017,
+    "month": "November",
     "category": "First-order",
     "paper": {
       "title": "Decoupled Weight Decay Regularization",
@@ -2309,6 +2407,7 @@ const optimizers = [
     "fullName": "Shampoo with Adam in the Preconditioner's eigenbasis",
     "description": "Improves and stabilizes Shampoo by running Adam in the preconditioner's eigenbasis; reduces computational overhead while maintaining performance",
     "year": 2024,
+    "month": "September",
     "category": "Second-order",
     "paper": {
       "title": "SOAP: Improving and Stabilizing Shampoo using Adam",
@@ -2371,6 +2470,7 @@ const optimizers = [
     "fullName": "Make vAriance Reduction Shine",
     "description": "Unified optimization framework that reconciles preconditioned gradient methods with variance reduction for efficient training of large models",
     "year": 2024,
+    "month": "November",
     "category": "First-order",
     "paper": {
       "title": "MARS: Unleashing the Power of Variance Reduction for Training Large Models",
@@ -2430,6 +2530,7 @@ const optimizers = [
     "fullName": "SPAM Optimizer",
     "description": "Novel optimization algorithm for improved training efficiency and convergence in deep learning",
     "year": 2025,
+    "month": "January",
     "category": "First-order",
     "paper": {
       "title": "SPAM: A Novel Optimization Algorithm",
@@ -2475,6 +2576,7 @@ const optimizers = [
     "fullName": "Adaptive Muon Optimizer",
     "description": "Adaptive optimization algorithm with improved convergence and stability for large-scale machine learning",
     "year": 2025,
+    "month": "July",
     "category": "Second-order",
     "paper": {
       "title": "AdaMuon: An Adaptive Optimization Algorithm",
@@ -2525,6 +2627,7 @@ const optimizers = [
     "fullName": "Conda Optimizer",
     "description": "Advanced optimization algorithm designed for efficient training of modern deep learning models",
     "year": 2025,
+    "month": "September",
     "category": "First-order",
     "paper": {
       "title": "Conda: An Advanced Optimization Algorithm",
@@ -2575,6 +2678,7 @@ const optimizers = [
     "fullName": "Low-memory Optimization with Adaptive Learning Rate",
     "description": "Memory-efficient optimizer that provides adaptive learning rates for each parameter while maintaining low memory footprint through non-negative matrix factorization",
     "year": 2023,
+    "month": "October",
     "category": "First-order",
     "paper": {
       "title": "AdaLomo: Low-memory Optimization with Adaptive Learning Rate",
@@ -2640,6 +2744,7 @@ const optimizers = [
     "fullName": "Block-wise Adam",
     "description": "Block-wise adaptive optimizer that applies Adam updates to parameter blocks rather than individual parameters, improving memory efficiency and convergence",
     "year": 2024,
+    "month": "April",
     "category": "First-order",
     "paper": {
       "title": "BAdam: Block-wise Adaptive Optimization for Large Language Models",
@@ -2702,6 +2807,7 @@ const optimizers = [
     "fullName": "Adaptive Exponential Moving Average Mixture",
     "description": "A modification of Adam that uses a mixture of two EMAs to better leverage past gradients, showing that gradients can stay relevant for tens of thousands of steps",
     "year": 2024,
+    "month": "September",
     "category": "First-order",
     "paper": {
       "title": "The AdEMAMix Optimizer: Better, Faster, Older",
@@ -2775,6 +2881,7 @@ const optimizers = [
     "fullName": "Robust Orthogonalized Optimizer for Neural Network Training",
     "description": "Enhances training stability through dimension-robust orthogonalization using adaptive Newton iterations and an optimization-robust framework via proximal optimization.",
     "year": 2025,
+    "month": "November",
     "category": "Second-order",
     "paper": {
       "title": "ROOT: Robust Orthogonalized Optimizer for Neural Network Training",
@@ -2832,6 +2939,7 @@ const optimizers = [
     "fullName": "Gluon: Making Muon & Scion Great Again!",
     "description": "LMO-based optimizer that introduces a refined generalized smoothness model to capture layer-wise geometry, bridging the gap between theory and practice for Muon and Scion.",
     "year": 2025,
+    "month": "May",
     "category": "Second-order",
     "paper": {
       "title": "Gluon: Making Muon & Scion Great Again! (Bridging Theory and Practice of LMO-based Optimizers for LLMs)",
@@ -2881,6 +2989,7 @@ const optimizers = [
     "fullName": "Distributed Orthonormalized Updates",
     "description": "Scalable optimizer using amortized power iterations on momentum buffers for orthonormalized updates, reducing wall-clock time for large-scale training.",
     "year": 2025,
+    "month": "April",
     "category": "Second-order",
     "paper": {
       "title": "Dion: Distributed Orthonormalized Updates",
@@ -2938,6 +3047,7 @@ const optimizers = [
     "fullName": "Stable-SPAM: How to Train in 4-Bit More Stably than 16-Bit Adam",
     "description": "Enhances SPAM with adaptive gradient clipping, matrix normalization, and momentum reset to enable stable and efficient 4-bit LLM training.",
     "year": 2025,
+    "month": "February",
     "category": "First-order",
     "paper": {
       "title": "Stable-SPAM: How to Train in 4-Bit More Stably than 16-Bit Adam",
