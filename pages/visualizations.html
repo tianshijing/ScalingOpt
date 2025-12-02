@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizations - ScalingOpt</title>
+    <meta name="description" content="Visualize how different optimization algorithms behave on benchmark functions like Rosenbrock and Rastrigin.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 font-inter">
+    <div class="flex flex-col min-h-screen">
+        <!-- Navbar -->
+        <nav class="bg-white/95 backdrop-blur-md border-b border-blue-100 sticky top-0 z-50 shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <a href="../index.html" class="flex items-center gap-3">
+                            <img src="../assets/img/scalingopt.png" alt="ScalingOpt Logo" class="w-10 h-10 object-contain">
+                            <span class="text-xl font-bold text-blue-900">ScalingOpt</span>
+                        </a>
+                    </div>
+
+                    <!-- Desktop Navigation -->
+                    <div class="hidden md:flex items-center space-x-8">
+                        <a href="../index.html" class="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">Home</a>
+                        <a href="optimizers.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="search" class="w-4 h-4"></i>
+                            <span>Optimizers</span>
+                        </a>
+                        <a href="visualizations.html" class="flex items-center space-x-1 text-blue-700 hover:text-blue-900 transition-colors duration-200 font-medium">
+                            <i data-lucide="activity" class="w-4 h-4"></i>
+                            <span>Visualizations</span>
+                        </a>
+                        <a href="benchmarks.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                            <span>Benchmarks</span>
+                        </a>
+                        <a href="papers.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                            <span>Papers</span>
+                        </a>
+                        <a href="tutorials.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="book-open" class="w-4 h-4"></i>
+                            <span>Tutorials</span>
+                        </a>
+                        <a href="blogs.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="file-text" class="w-4 h-4"></i>
+                            <span>Blogs</span>
+                        </a>
+                        <a href="community.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="users" class="w-4 h-4"></i>
+                            <span>Community</span>
+                        </a>
+                        <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200">
+                            <i data-lucide="github" class="w-5 h-5"></i>
+                            <span class="hidden lg:inline">GitHub</span>
+                        </a>
+                    </div>
+
+                    <!-- Mobile menu button -->
+                    <div class="md:hidden flex items-center">
+                        <button id="mobile-menu-button" class="text-gray-700 hover:text-blue-600 transition-colors duration-200">
+                            <i data-lucide="menu" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Navigation -->
+            <div id="mobile-menu" class="md:hidden bg-white border-t border-gray-200 hidden">
+                <div class="px-2 pt-2 pb-3 space-y-1">
+                    <a href="../index.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">Home</a>
+                    <a href="optimizers.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="search" class="w-4 h-4"></i>
+                        <span>Optimizers</span>
+                    </a>
+                    <a href="visualizations.html" class="flex items-center space-x-2 px-3 py-2 text-blue-700 hover:text-blue-900 hover:bg-blue-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="activity" class="w-4 h-4"></i>
+                        <span>Visualizations</span>
+                    </a>
+                    <a href="benchmarks.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                        <span>Benchmarks</span>
+                    </a>
+                    <a href="papers.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                        <span>Papers</span>
+                    </a>
+                    <a href="tutorials.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="book-open" class="w-4 h-4"></i>
+                        <span>Tutorials</span>
+                    </a>
+                    <a href="blogs.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="file-text" class="w-4 h-4"></i>
+                        <span>Blogs</span>
+                    </a>
+                    <a href="community.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="users" class="w-4 h-4"></i>
+                        <span>Community</span>
+                    </a>
+                    <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="github" class="w-4 h-4"></i>
+                        <span>GitHub</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="flex-grow py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Header -->
+                <div class="text-center mb-16">
+                    <h1 class="text-4xl md:text-5xl font-bold text-blue-900 mb-6">
+                        Optimizer <span class="gradient-text">Visualizations</span>
+                    </h1>
+                    <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                        Visualizations help us see how different algorithms deal with simple situations like: saddle points, local minima, valleys etc, and may provide interesting insights into the inner workings of an algorithm.
+                    </p>
+                </div>
+
+                <!-- Rosenbrock Function Section -->
+                <section class="mb-20">
+                    <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                            <div>
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="p-2 bg-blue-100 rounded-lg">
+                                        <i data-lucide="mountain" class="w-6 h-6 text-blue-600"></i>
+                                    </div>
+                                    <h2 class="text-2xl font-bold text-gray-900">Rosenbrock Function</h2>
+                                </div>
+                                <p class="text-gray-600 mb-6 leading-relaxed">
+                                    The Rosenbrock function, also known as the banana function, is a non-convex function used as a performance test problem for optimization algorithms.
+                                </p>
+                                <div class="bg-gray-50 rounded-xl p-6 border border-gray-200 mb-6">
+                                    <h3 class="font-semibold text-gray-900 mb-2">Characteristics</h3>
+                                    <ul class="space-y-2 text-gray-600">
+                                        <li class="flex items-start gap-2">
+                                            <i data-lucide="check-circle-2" class="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5"></i>
+                                            <span>Global minimum at (1.0, 1.0)</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <i data-lucide="check-circle-2" class="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5"></i>
+                                            <span>Located inside a long, narrow, parabolic shaped flat valley</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <i data-lucide="check-circle-2" class="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5"></i>
+                                            <span>Finding the valley is trivial, but converging to the global minimum is difficult</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <p class="text-sm text-gray-500 italic">
+                                    Optimization algorithms might pay a lot of attention to one coordinate, and struggle following the valley which is relatively flat.
+                                </p>
+                            </div>
+                            <div class="relative group">
+                                <div class="absolute inset-0 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
+                                <img 
+                                    src="../assets/img/rosenbrock.jpg" 
+                                    alt="Rosenbrock Function Visualization" 
+                                    class="relative rounded-2xl shadow-md w-full object-cover hover:scale-[1.02] transition-transform duration-300"
+                                >
+                                <div class="absolute bottom-4 right-4 bg-black/50 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full">
+                                    Visualization of Rosenbrock Function
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Rastrigin Function Section -->
+                <section class="mb-20">
+                    <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                            <div class="order-2 md:order-1 relative group">
+                                <div class="absolute inset-0 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
+                                <img 
+                                    src="../assets/img/rastrigin.png" 
+                                    alt="Rastrigin Function Visualization" 
+                                    class="relative rounded-2xl shadow-md w-full object-cover hover:scale-[1.02] transition-transform duration-300"
+                                >
+                                <div class="absolute bottom-4 left-4 bg-black/50 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full">
+                                    Visualization of Rastrigin Function
+                                </div>
+                            </div>
+                            <div class="order-1 md:order-2">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="p-2 bg-purple-100 rounded-lg">
+                                        <i data-lucide="waves" class="w-6 h-6 text-purple-600"></i>
+                                    </div>
+                                    <h2 class="text-2xl font-bold text-gray-900">Rastrigin Function</h2>
+                                </div>
+                                <p class="text-gray-600 mb-6 leading-relaxed">
+                                    The Rastrigin function is a non-convex function used as a performance test problem for optimization algorithms. It is a typical example of non-linear multimodal function.
+                                </p>
+                                <div class="bg-gray-50 rounded-xl p-6 border border-gray-200 mb-6">
+                                    <h3 class="font-semibold text-gray-900 mb-2">Characteristics</h3>
+                                    <ul class="space-y-2 text-gray-600">
+                                        <li class="flex items-start gap-2">
+                                            <i data-lucide="check-circle-2" class="w-5 h-5 text-purple-500 flex-shrink-0 mt-0.5"></i>
+                                            <span>Global minimum at (0.0, 0.0)</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <i data-lucide="check-circle-2" class="w-5 h-5 text-purple-500 flex-shrink-0 mt-0.5"></i>
+                                            <span>Large search space with a large number of local minima</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <i data-lucide="check-circle-2" class="w-5 h-5 text-purple-500 flex-shrink-0 mt-0.5"></i>
+                                            <span>Highly multimodal, making it difficult for local optimization algorithms</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <p class="text-sm text-gray-500 italic">
+                                    Finding the minimum of this function is a fairly difficult problem due to its large search space and its large number of local minima.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Code Section -->
+                <section class="mb-12">
+                    <div class="bg-gray-900 rounded-2xl shadow-xl overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-800 flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-white flex items-center gap-2">
+                                <i data-lucide="code-2" class="w-5 h-5 text-blue-400"></i>
+                                Visualization Script
+                            </h3>
+                            <a href="../scripts/viz_optimizers.py" download class="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors">
+                                <i data-lucide="download" class="w-4 h-4"></i>
+                                Download Script
+                            </a>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-400 mb-4 text-sm">
+                                You can use the following Python script to generate visualizations for different optimizers. 
+                                Make sure to install the required dependencies: <code>torch</code>, <code>hyperopt</code>, <code>torch-optimizer</code>, <code>matplotlib</code>, <code>numpy</code>.
+                            </p>
+                            <pre class="bg-gray-950 rounded-lg p-4 overflow-x-auto text-sm text-gray-300 font-mono"><code># Example usage:
+# python scripts/viz_optimizers.py
+
+# This script will generate visualization plots in the 'docs/' directory
+# showing how different optimizers traverse the loss landscape.</code></pre>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-gradient-to-br from-blue-900 to-blue-800 text-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <!-- Brand -->
+                    <div class="col-span-1 md:col-span-2">
+                        <div class="flex items-center mb-4">
+                            <span class="text-xl font-bold text-white">ScalingOpt</span>
+                        </div>
+                        <p class="text-blue-100 mb-4 max-w-md">
+                            A comprehensive platform for scaling optimization algorithms. 
+                            Discover, compare, and contribute to cutting-edge optimizers for large-scale machine learning.
+                        </p>
+                        <div class="flex space-x-4">
+                            <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors duration-200">
+                                <i data-lucide="github" class="w-5 h-5"></i>
+                            </a>
+                            <a href="mailto:juanxitian1031@gmail.com" class="text-gray-400 hover:text-white transition-colors duration-200">
+                                <i data-lucide="mail" class="w-5 h-5"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                        <ul class="space-y-2">
+                            <li><a href="optimizers.html" class="text-gray-300 hover:text-white transition-colors duration-200">Browse Optimizers</a></li>
+                            <li><a href="visualizations.html" class="text-white font-medium transition-colors duration-200">Visualizations</a></li>
+                            <li><a href="benchmarks.html" class="text-gray-300 hover:text-white transition-colors duration-200">Benchmarks</a></li>
+                            <li><a href="papers.html" class="text-gray-300 hover:text-white transition-colors duration-200">Papers</a></li>
+                            <li><a href="tutorials.html" class="text-gray-300 hover:text-white transition-colors duration-200">Tutorials</a></li>
+                            <li><a href="blogs.html" class="text-gray-300 hover:text-white transition-colors duration-200">Blogs</a></li>
+                            <li><a href="community.html" class="text-gray-300 hover:text-white transition-colors duration-200">Community</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Resources -->
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Resources</h3>
+                        <ul class="space-y-2">
+                            <li><a href="about_us.html" class="text-gray-300 hover:text-white transition-colors duration-200">About Us</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-400 text-sm">
+                        © 2025 ScalingOpt Community. All rights reserved.
+                    </p>
+                    <div class="flex items-center space-x-1 text-gray-400 text-sm mt-4 md:mt-0">
+                        <span>Made with</span>
+                        <i data-lucide="heart" class="w-4 h-4 text-red-500"></i>
+                        <span>by the community</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const icon = this.querySelector('i');
+            
+            if (mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.remove('hidden');
+                icon.setAttribute('data-lucide', 'x');
+            } else {
+                mobileMenu.classList.add('hidden');
+                icon.setAttribute('data-lucide', 'menu');
+            }
+            
+            lucide.createIcons();
+        });
+
+        // Close mobile menu when clicking on links
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', function() {
+                document.getElementById('mobile-menu').classList.add('hidden');
+                document.querySelector('#mobile-menu-button i').setAttribute('data-lucide', 'menu');
+                lucide.createIcons();
+            });
+        });
+    </script>
+</body>
+</html>
+

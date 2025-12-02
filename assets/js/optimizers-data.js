@@ -5,17 +5,15 @@ const optimizers = [
     "name": "SGD",
     "fullName": "Stochastic Gradient Descent",
     "description": "Simple and effective foundational optimizer for many other algorithms",
-    "year": 1999,
-    "month": "January",
+    "year": 1951,
+    "month": "September",
     "category": "First-order",
     "paper": {
-      "title": "On the importance of initialization and momentum in deep learning",
-      "url": "https://www.cs.toronto.edu/~hinton/absps/momentum.pdf",
+      "title": "A Stochastic Approximation Method",
+      "url": "https://projecteuclid.org/journals/annals-of-mathematical-statistics/volume-22/issue-3/A-Stochastic-Approximation-Method/10.1214/aoms/1177729586.full",
       "authors": [
-        "Ilya Sutskever",
-        "James Martens",
-        "George Dahl",
-        "Geoffrey Hinton"
+        "Herbert Robbins",
+        "Sutton Monro"
       ]
     },
     "advantages": [
@@ -3112,6 +3110,245 @@ const optimizers = [
       "LLM"
     ],
     "githubUrl": "https://github.com/TianjinYellow/StableSPAM"
+  },
+  {
+    "id": "kfac",
+    "name": "K-FAC",
+    "fullName": "Kronecker-Factored Approximate Curvature",
+    "description": "Efficient method for approximating natural gradient descent in neural networks by approximating the Fisher information matrix with Kronecker products.",
+    "year": 2015,
+    "month": "March",
+    "category": "Second-order",
+    "paper": {
+      "title": "Optimizing Neural Networks with Kronecker-factored Approximate Curvature",
+      "url": "https://arxiv.org/abs/1503.05671",
+      "authors": [
+        "James Martens",
+        "Roger Grosse"
+      ]
+    },
+    "advantages": [
+      "Approximates natural gradient",
+      "Efficient inversion via Kronecker factors",
+      "Faster convergence than SGD"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.001,
+        "range": "1e-4 to 1e-1",
+        "description": "Learning rate"
+      },
+      "damping": {
+        "default": 0.001,
+        "range": "1e-4 to 1e-1",
+        "description": "Damping parameter"
+      },
+      "cov_ema_decay": {
+        "default": 0.95,
+        "range": "0.9 to 0.99",
+        "description": "Covariance moving average decay"
+      },
+      "invert_freq": {
+        "default": 10,
+        "range": "1 to 100",
+        "description": "Inverse update frequency"
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 80,
+    "tags": [
+      "Second-order",
+      "Natural Gradient",
+      "Approximation"
+    ],
+    "githubUrl": "https://github.com/gpauloski/kfac-pytorch"
+  },
+  {
+    "id": "signsgd",
+    "name": "signSGD",
+    "fullName": "signSGD: Compressed Optimisation for Non-Convex Problems",
+    "description": "Transmits just the sign of each minibatch stochastic gradient, enabling compressed worker-server communication.",
+    "year": 2018,
+    "month": "February",
+    "category": "First-order",
+    "paper": {
+      "title": "signSGD: Compressed Optimisation for Non-Convex Problems",
+      "url": "https://arxiv.org/abs/1802.04434",
+      "authors": [
+        "Jeremy Bernstein",
+        "Yu-Xiang Wang",
+        "Kamyar Azizzadenesheli",
+        "Anima Anandkumar"
+      ]
+    },
+    "advantages": [
+      "Compressed gradients (1-bit)",
+      "Efficient communication",
+      "SGD-level convergence rate"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.001,
+        "range": "1e-4 to 1e-1",
+        "description": "Learning rate"
+      },
+      "momentum": {
+        "default": 0.9,
+        "range": "0.0 to 1.0",
+        "description": "Momentum factor (optional)"
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 75,
+    "tags": [
+      "Compressed",
+      "Sign-based",
+      "Communication Efficient"
+    ],
+    "githubUrl": "https://github.com/jxbz/signSGD"
+  },
+  {
+    "id": "adashift",
+    "name": "AdaShift",
+    "fullName": "AdaShift: Decorrelation and Convergence of Adaptive Learning Rate Methods",
+    "description": "Decouples the calculation of adaptive learning rates from the current gradient to address correlation issues in Adam.",
+    "year": 2018,
+    "month": "October",
+    "category": "First-order",
+    "paper": {
+      "title": "AdaShift: Decorrelation and Convergence of Adaptive Learning Rate Methods",
+      "url": "https://arxiv.org/abs/1810.00143",
+      "authors": [
+        "Zhiming Zhou",
+        "Qingru Zhang",
+        "Guansong Lu",
+        "Hongwei Wang",
+        "Weinan Zhang",
+        "Yong Yu"
+      ]
+    },
+    "advantages": [
+      "Addresses correlation issue in Adam",
+      "Improved convergence",
+      "Adaptive learning rates"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.001,
+        "range": "1e-5 to 1e-2",
+        "description": "Learning rate"
+      },
+      "n": {
+        "default": 10,
+        "range": "1 to 20",
+        "description": "Shift size"
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 70,
+    "tags": [
+      "Adaptive",
+      "Decorrelation",
+      "Adam Variant"
+    ],
+    "githubUrl": "https://github.com/QingruZhang/AdaShift_Release"
+  },
+  {
+    "id": "lomo",
+    "name": "LOMO",
+    "fullName": "LOw-Memory Optimization",
+    "description": "Fuses gradient computation and parameter update in one step to reduce memory usage, enabling full parameter fine-tuning of LLMs on limited resources.",
+    "year": 2023,
+    "month": "June",
+    "category": "First-order",
+    "paper": {
+      "title": "Full Parameter Fine-tuning for Large Language Models with Limited Resources",
+      "url": "https://arxiv.org/abs/2306.09782",
+      "authors": [
+        "Kai Lv",
+        "Hang Yan",
+        "Qipeng Guo",
+        "Haijun Lv",
+        "Xipeng Qiu"
+      ]
+    },
+    "advantages": [
+      "Extremely low memory usage",
+      "Enables full fine-tuning of LLMs",
+      "Fused gradient update"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.001,
+        "range": "1e-5 to 1e-2",
+        "description": "Learning rate"
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 85,
+    "tags": [
+      "Low Memory",
+      "LLM Fine-tuning",
+      "SGD-based"
+    ],
+    "githubUrl": "https://github.com/OpenLMLab/LOMO"
+  },
+  {
+    "id": "dowg",
+    "name": "DoWG",
+    "fullName": "Distance over Weighted Gradients",
+    "description": "Parameter-free gradient descent method that adapts to the distance to the optimum over weighted gradients.",
+    "year": 2023,
+    "month": "May",
+    "category": "First-order",
+    "paper": {
+      "title": "DoWG Unleashed: An Efficient Universal Parameter-Free Gradient Descent Method",
+      "url": "https://arxiv.org/abs/2305.16284",
+      "authors": [
+        "Aaron Defazio",
+        "Konstantin Mishchenko"
+      ]
+    },
+    "advantages": [
+      "Parameter-free",
+      "No learning rate tuning",
+      "Efficient and universal"
+    ],
+    "hyperparameters": {
+      "epsilon": {
+        "default": 1e-8,
+        "range": "1e-10 to 1e-6",
+        "description": "Small constant for stability"
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 80,
+    "tags": [
+      "Parameter-free",
+      "Adaptive",
+      "Universal"
+    ],
+    "githubUrl": "https://github.com/rka97/dowg"
   }
 ];
 
