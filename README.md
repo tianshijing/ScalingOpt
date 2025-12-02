@@ -58,6 +58,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🙏 Acknowledgments
 
 We thank the optimization research community for their groundbreaking work and contributions. Special thanks to:
-
 - All researchers who developed the optimization algorithms featured in this platform
 ---
