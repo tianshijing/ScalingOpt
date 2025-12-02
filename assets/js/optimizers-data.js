@@ -3349,6 +3349,67 @@ const optimizers = [
       "Universal"
     ],
     "githubUrl": "https://github.com/rka97/dowg"
+  },
+  {
+    "id": "schedule_free_adamw",
+    "name": "Schedule-Free AdamW",
+    "fullName": "Schedule-Free Optimization (AdamW)",
+    "description": "Replaces the learning rate schedule with a novel iterate averaging scheme. Requires no stopping time T and no additional hyperparameters.",
+    "year": 2024,
+    "month": "May",
+    "category": "First-order",
+    "paper": {
+      "title": "The Road Less Scheduled",
+      "url": "https://arxiv.org/abs/2405.15682",
+      "authors": [
+        "Aaron Defazio",
+        "Xingyu Alice Yang",
+        "Harsh Mehta",
+        "Konstantin Mishchenko",
+        "Ahmed Khaled",
+        "Ashok Cutkosky"
+      ]
+    },
+    "advantages": [
+      "No learning rate schedule needed",
+      "State-of-the-art performance",
+      "No extra hyperparameters",
+      "Unifies scheduling and averaging"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.01,
+        "range": "1x-10x larger than standard",
+        "description": "Learning rate (larger than standard)"
+      },
+      "beta1": {
+        "default": 0.9,
+        "range": "0.9 to 0.99",
+        "description": "Momentum factor (increase for long training)"
+      },
+      "beta2": {
+        "default": 0.999,
+        "range": "0.99 to 0.9999",
+        "description": "Exponential decay rate for second moment"
+      },
+      "warmup_steps": {
+        "default": 0,
+        "range": ">= 0",
+        "description": "Number of warmup steps (recommended)"
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 85,
+    "tags": [
+      "Schedule-Free",
+      "Iterate Averaging",
+      "AdamW"
+    ],
+    "githubUrl": "https://github.com/facebookresearch/schedule_free"
   }
 ];
 

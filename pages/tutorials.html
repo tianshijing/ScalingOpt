@@ -600,10 +600,17 @@
             const grid = document.getElementById('tutorials-grid');
 
             grid.innerHTML = tutorialsToRender.map(tutorial => `
-                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 overflow-hidden">
-                    <!-- Thumbnail placeholder -->
-                    <div class="h-48 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                        <i data-lucide="${getTypeIcon(tutorial.type)}" class="w-16 h-16 text-white"></i>
+                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 overflow-hidden group">
+                    <!-- Thumbnail -->
+                    <div class="h-48 overflow-hidden bg-gray-100 border-b border-gray-100 relative">
+                        <img 
+                            src="../assets/img/tutorials/${tutorial.id}.png" 
+                            alt="${tutorial.title}" 
+                            class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                            onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center\'><i data-lucide=\'${getTypeIcon(tutorial.type)}\' class=\'w-16 h-16 text-white\'></i></div>'; lucide.createIcons();"
+                        />
+                        <!-- Overlay -->
+                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 pointer-events-none"></div>
                     </div>
                     
                     <div class="p-6">
