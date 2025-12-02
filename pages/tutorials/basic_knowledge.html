@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Optimization Knowledge - ScalingOpt</title>
+    <meta name="description" content="A comprehensive, academic-grade guide to optimization fundamentals for machine learning, from foundational concepts to advanced techniques.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <!-- MathJax -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+    
+    <style>
+        /* Enhanced Typography & Spacing */
+        body {
+            color: #1f2937; /* Gray 800 */
+        }
+        h2 {
+            margin-top: 4rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #e5e7eb;
+            scroll-margin-top: 6rem;
+            color: #1e3a8a; /* Blue 900 */
+            letter-spacing: -0.025em;
+        }
+        h3 {
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            scroll-margin-top: 6rem;
+            color: #111827; /* Gray 900 */
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+        h4 {
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: #374151;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        p {
+            margin-bottom: 1.5rem;
+            line-height: 1.85;
+            color: #374151; /* Gray 700 */
+            text-align: justify;
+            font-size: 1.05rem;
+        }
+        ul {
+            margin-bottom: 1.75rem;
+            line-height: 1.75;
+        }
+        li {
+            margin-bottom: 0.75rem;
+        }
+        
+        /* Table of Contents */
+        .toc-link {
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        .toc-link.active {
+            color: #2563EB;
+            border-left-color: #2563EB;
+            font-weight: 600;
+            background-color: #EFF6FF;
+        }
+        
+        /* Figures */
+        figure {
+            margin: 3rem 0;
+            text-align: center;
+            background: #fafafa;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            border: 1px solid #e5e7eb;
+        }
+        figcaption {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #4b5563;
+            font-style: italic;
+        }
+        img {
+            transition: transform 0.3s ease;
+            max-width: 100%;
+            height: auto;
+        }
+        
+        /* Definition Boxes - Academic Style */
+        .definition-box {
+            background-color: #f8fafc; /* Slate 50 */
+            border-left: 4px solid #3b82f6; /* Blue 500 */
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 0.5rem 0.5rem 0;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            color: #000000;
+        }
+        .definition-box h4 {
+            font-weight: 700;
+            color: #1e3a8a; /* Blue 900 */
+            margin-bottom: 0.75rem;
+            font-size: 1.0rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        /* Example Boxes */
+        .example-box {
+            background-color: #f0fdf4;
+            border-left: 4px solid #22c55e;
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+        .example-box h4 {
+            font-weight: 600;
+            color: #166534;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+        
+        /* Ensure MathJax equations are strictly black */
+        .mjx-chtml, .MathJax_Display, .MathJax {
+            color: #000000 !important;
+        }
+        
+        .note-box {
+            background-color: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50 font-inter">
+    <div class="flex flex-col min-h-screen">
+        <!-- Navbar -->
+        <nav class="bg-white/95 backdrop-blur-md border-b border-blue-100 sticky top-0 z-50 shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <a href="../../index.html" class="flex items-center">
+                            <span class="text-xl font-bold text-blue-900">ScalingOpt</span>
+                        </a>
+                    </div>
+
+                    <!-- Desktop Navigation -->
+                    <div class="hidden md:flex items-center space-x-8">
+                        <a href="../../index.html" class="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">Home</a>
+                        <a href="../optimizers.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="search" class="w-4 h-4"></i>
+                            <span>Optimizers</span>
+                        </a>
+                        <a href="../visualizations.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="activity" class="w-4 h-4"></i>
+                            <span>Visualizations</span>
+                        </a>
+                        <a href="../benchmarks.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                            <span>Benchmarks</span>
+                        </a>
+                        <a href="../papers.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                            <span>Papers</span>
+                        </a>
+                        <a href="../tutorials.html" class="flex items-center space-x-1 text-blue-700 hover:text-blue-900 transition-colors duration-200 font-medium">
+                            <i data-lucide="book-open" class="w-4 h-4"></i>
+                            <span>Tutorials</span>
+                        </a>
+                        <a href="../blogs.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="file-text" class="w-4 h-4"></i>
+                            <span>Blogs</span>
+                        </a>
+                        <a href="../community.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="users" class="w-4 h-4"></i>
+                            <span>Community</span>
+                        </a>
+                        <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200">
+                            <i data-lucide="github" class="w-5 h-5"></i>
+                            <span class="hidden lg:inline">GitHub</span>
+                        </a>
+                    </div>
+
+                    <!-- Mobile menu button -->
+                    <div class="md:hidden flex items-center">
+                        <button id="mobile-menu-button" class="text-gray-700 hover:text-blue-600 transition-colors duration-200">
+                            <i data-lucide="menu" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Navigation -->
+            <div id="mobile-menu" class="md:hidden bg-white border-t border-gray-200 hidden">
+                <div class="px-2 pt-2 pb-3 space-y-1">
+                    <a href="../../index.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">Home</a>
+                    <a href="../optimizers.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="search" class="w-4 h-4"></i>
+                        <span>Optimizers</span>
+                    </a>
+                    <a href="../visualizations.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="activity" class="w-4 h-4"></i>
+                        <span>Visualizations</span>
+                    </a>
+                    <a href="../benchmarks.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                        <span>Benchmarks</span>
+                    </a>
+                    <a href="../papers.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                        <span>Papers</span>
+                    </a>
+                    <a href="../tutorials.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="book-open" class="w-4 h-4"></i>
+                        <span>Tutorials</span>
+                    </a>
+                    <a href="../blogs.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="file-text" class="w-4 h-4"></i>
+                        <span>Blogs</span>
+                    </a>
+                    <a href="../community.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="users" class="w-4 h-4"></i>
+                        <span>Community</span>
+                    </a>
+                    <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="github" class="w-4 h-4"></i>
+                        <span>GitHub</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="flex-grow py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col lg:flex-row gap-12">
+                    
+                    <!-- Sidebar / TOC -->
+                    <div class="lg:w-1/4">
+                        <div class="sticky top-24 bg-white rounded-xl shadow-sm border border-gray-200 p-6 max-h-[calc(100vh-8rem)] overflow-y-auto">
+                            <h4 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Contents</h4>
+                            <nav class="space-y-1" id="toc-nav">
+                                <a href="#gradient-descent" class="toc-link block px-3 py-2 text-sm text-gray-600 border-l-2 border-transparent hover:text-blue-600 hover:border-blue-300 transition-colors duration-200">1. Gradient & Gradient Descent</a>
+                                <a href="#momentum" class="toc-link block px-3 py-2 text-sm text-gray-600 border-l-2 border-transparent hover:text-blue-600 hover:border-blue-300 transition-colors duration-200">2. Momentum & Nesterov</a>
+                                <a href="#adaptive-methods" class="toc-link block px-3 py-2 text-sm text-gray-600 border-l-2 border-transparent hover:text-blue-600 hover:border-blue-300 transition-colors duration-200">3. Adaptive Learning Rates</a>
+                                <a href="#lipschitz" class="toc-link block px-3 py-2 text-sm text-gray-600 border-l-2 border-transparent hover:text-blue-600 hover:border-blue-300 transition-colors duration-200">4. Lipschitz Smoothness</a>
+                                <a href="#normalization" class="toc-link block px-3 py-2 text-sm text-gray-600 border-l-2 border-transparent hover:text-blue-600 hover:border-blue-300 transition-colors duration-200">5. Normalization</a>
+                                <a href="#regularization" class="toc-link block px-3 py-2 text-sm text-gray-600 border-l-2 border-transparent hover:text-blue-600 hover:border-blue-300 transition-colors duration-200">6. Regularization</a>
+                                <a href="#hessians" class="toc-link block px-3 py-2 text-sm text-gray-600 border-l-2 border-transparent hover:text-blue-600 hover:border-blue-300 transition-colors duration-200">7. Hessian Matrix</a>
+                                <a href="#newton-methods" class="toc-link block px-3 py-2 text-sm text-gray-600 border-l-2 border-transparent hover:text-blue-600 hover:border-blue-300 transition-colors duration-200">8. Newton & Quasi-Newton</a>
+                                <a href="#loss-landscape" class="toc-link block px-3 py-2 text-sm text-gray-600 border-l-2 border-transparent hover:text-blue-600 hover:border-blue-300 transition-colors duration-200">9. Loss Landscape</a>
+                                <a href="#saddle-points" class="toc-link block px-3 py-2 text-sm text-gray-600 border-l-2 border-transparent hover:text-blue-600 hover:border-blue-300 transition-colors duration-200">10. Saddle Points</a>
+                                <a href="#sharpness-generalization" class="toc-link block px-3 py-2 text-sm text-gray-600 border-l-2 border-transparent hover:text-blue-600 hover:border-blue-300 transition-colors duration-200">11. Sharpness & Generalization</a>
+                                <a href="#other-concepts" class="toc-link block px-3 py-2 text-sm text-gray-600 border-l-2 border-transparent hover:text-blue-600 hover:border-blue-300 transition-colors duration-200">12. Other Concepts</a>
+                            </nav>
+                        </div>
+                    </div>
+
+                    <!-- Content Area -->
+                    <div class="lg:w-3/4">
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 md:p-12">
+                            <!-- Article Header -->
+                            <div class="border-b border-gray-100 pb-8 mb-8">
+                                <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mb-4">
+                                    Optimization Fundamentals
+                                </div>
+                                <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-4">Basic Optimization Knowledge</h1>
+                                <p class="text-lg text-gray-600 mb-4">A comprehensive academic guide to optimization algorithms in machine learning, from foundational mathematical concepts to advanced techniques.</p>
+                                <div class="flex items-center text-gray-600 space-x-4 text-sm">
+                                    <span class="flex items-center">
+                                        <i data-lucide="clock" class="w-4 h-4 mr-1"></i>
+                                        60 min read
+                                    </span>
+                                    <span class="flex items-center">
+                                        <i data-lucide="user" class="w-4 h-4 mr-1"></i>
+                                        ScalingOpt Community
+                                    </span>
+                                    <span class="flex items-center">
+                                        <i data-lucide="calendar" class="w-4 h-4 mr-1"></i>
+                                        Last Updated: Dec 2025
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Content -->
+                            <div class="prose prose-blue max-w-none">
+                                <section id="gradient-descent">
+                                    <h2 class="text-2xl font-bold text-gray-900">1. Gradient (Gradient Descent)</h2>
+                                    
+                                    <h3 class="text-xl font-semibold text-gray-900">The Gradient: Mathematical Foundation</h3>
+                                    <p>
+                                        In optimization, we aim to minimize a scalar-valued function \( J(\theta) \), where \( \theta \in \mathbb{R}^d \) represents the model parameters. The <strong>gradient</strong> \( \nabla_\theta J(\theta) \) is the vector of partial derivatives:
+                                        \[ \nabla_\theta J(\theta) = \begin{bmatrix} \frac{\partial J}{\partial \theta_1} \\ \frac{\partial J}{\partial \theta_2} \\ \vdots \\ \frac{\partial J}{\partial \theta_d} \end{bmatrix} \]
+                                    </p>
+                                    <p>
+                                        <strong>Geometric Interpretation:</strong> The gradient points in the direction of steepest ascent of the function. Conversely, the negative gradient \( -\nabla J(\theta) \) points in the direction of steepest descent. This directional property is the foundation of gradient descent optimization.
+                                    </p>
+                                    
+                                    <h3 class="text-xl font-semibold text-gray-900">Theoretical Foundation: Taylor's Theorem</h3>
+                                    <p>
+                                        By Taylor's theorem, for a small step \( \Delta \theta \), the change in the function value is approximately:
+                                        \[ J(\theta + \Delta \theta) \approx J(\theta) + \nabla J(\theta)^T \Delta \theta + \frac{1}{2} \Delta \theta^T H \Delta \theta \]
+                                        where \( H \) is the Hessian matrix. For sufficiently small steps, the second-order term can be neglected, giving us the first-order approximation:
+                                        \[ J(\theta + \Delta \theta) \approx J(\theta) + \nabla J(\theta)^T \Delta \theta \]
+                                    </p>
+                                    <p>
+                                        To decrease the function value (\( J(\theta + \Delta \theta) < J(\theta) \)), we need \( \nabla J(\theta)^T \Delta \theta < 0 \). Setting \( \Delta \theta = -\eta \nabla J(\theta) \) (where \( \eta > 0 \)) guarantees this, as:
+                                        \[ \nabla J(\theta)^T (-\eta \nabla J(\theta)) = -\eta \|\nabla J(\theta)\|^2 \le 0 \]
+                                    </p>
+                                    
+                                    <div class="definition-box">
+                                        <h4 class="font-bold text-gray-900 mb-2">Update Rule</h4>
+                                        \[ \theta_{t+1} = \theta_t - \eta \nabla_\theta J(\theta_t) \]
+                                        where \( \eta \) is the <strong>learning rate</strong>, controlling the step size.
+                                    </div>
+
+                                    <h3 class="text-xl font-semibold text-gray-900">Batch vs. Stochastic vs. Mini-batch</h3>
+                                    <p>
+                                        In machine learning, the loss function is typically an empirical average over training data: \( J(\theta) = \frac{1}{N} \sum_{i=1}^N \ell(f_\theta(x_i), y_i) \), where \( \ell \) is a per-sample loss. The "true" gradient requires summing over all \( N \) samples.
+                                    </p>
+                                    <ul class="list-disc pl-6 space-y-2 mb-4 text-gray-600">
+                                        <li><strong>Batch Gradient Descent:</strong> Computes the gradient using the entire training set. It is deterministic and follows the true gradient trajectory but is computationally expensive for large datasets (\( O(Nd) \) per iteration).</li>
+                                        <li><strong>Stochastic Gradient Descent (SGD):</strong> Estimates the gradient using a single sample \( \nabla J_i(\theta) \). This estimator is unbiased (\( \mathbb{E}[\nabla J_i] = \nabla J \)) but has high variance. The noise can help escape shallow local minima but prevents exact convergence to the optimum (the parameters oscillate in a "noise ball").</li>
+                                        <li><strong>Mini-batch Gradient Descent:</strong> Uses a batch of \( B \) samples. The variance of the gradient estimate scales as \( 1/B \). This strikes a balance between computational efficiency (GPU parallelism) and update stability.</li>
+                                    </ul>
+                                    
+                                    <div class="example-box">
+                                        <h4 class="font-bold text-green-900 mb-2">Example: Linear Regression</h4>
+                                        <p class="text-sm text-gray-700 mb-0">
+                                            For mean squared error loss \( J(\theta) = \frac{1}{N} \sum_{i=1}^N (y_i - \theta^T x_i)^2 \), the gradient is:
+                                            \[ \nabla_\theta J = -\frac{2}{N} \sum_{i=1}^N (y_i - \theta^T x_i) x_i = -\frac{2}{N} X^T (y - X\theta) \]
+                                        </p>
+                                    </div>
+                                    
+                                    <figure>
+                                        <img src="../../assets/img/tutorials/gradient_descent.png" alt="Gradient Descent Visualization" class="rounded-lg shadow-md mx-auto max-w-lg border border-gray-200">
+                                        <figcaption>Figure 1: Illustration of Gradient Descent traversing a loss surface.</figcaption>
+                                    </figure>
+                                </section>
+
+                                <section id="momentum">
+                                    <h2 class="text-2xl font-bold text-gray-900">2. Momentum & Nesterov Momentum</h2>
+                                    
+                                    <h3 class="text-xl font-semibold text-gray-900">The Problem with Standard SGD</h3>
+                                    <p>
+                                        In regions where the loss surface forms a narrow ravine (high curvature in one direction, low in another), SGD oscillates across the ravine's walls, making slow progress along the valley floor. This is quantified by the condition number of the Hessian: \( \kappa = \lambda_{\max} / \lambda_{\min} \). For ill-conditioned problems (\( \kappa \gg 1 \)), convergence can be extremely slow.
+                                    </p>
+                                    
+                                    <h3 class="text-xl font-semibold text-gray-900">Momentum (Polyak's Heavy Ball)</h3>
+                                    <p>
+                                        <strong>Momentum</strong> methods dampen these oscillations by accumulating a velocity vector \( v_t \), effectively acting as a low-pass filter on the gradient updates. This is modeled after a physical particle with mass moving in a potential field with friction.
+                                    </p>
+                                    <p>
+                                        <strong>Physical Interpretation:</strong> Imagine a ball rolling down a hill. The ball accumulates velocity as it rolls, allowing it to overcome small bumps and oscillations. The momentum term \( \gamma v_t \) represents this accumulated velocity from past gradients.
+                                    </p>
+                                    
+                                    <div class="definition-box">
+                                        <h4 class="font-bold text-gray-900 mb-2">Momentum Update Rule</h4>
+                                        \[ \begin{aligned}
+                                        v_{t+1} &= \gamma v_t + \eta \nabla_\theta J(\theta_t) \\
+                                        \theta_{t+1} &= \theta_t - v_{t+1}
+                                        \end{aligned} \]
+                                        where \( \gamma \in [0, 1) \) is the momentum coefficient (typically 0.9).
+                                    </div>
+                                    
+                                    <p>
+                                        <strong>Mathematical Insight:</strong> Expanding the recursion, we see that the current update is a weighted sum of all past gradients:
+                                        \[ v_t = \eta \sum_{\tau=0}^{t-1} \gamma^\tau \nabla_\theta J(\theta_{t-1-\tau}) \]
+                                        Gradients from \( \tau \) steps ago are weighted by \( \gamma^\tau \), giving an exponentially decaying influence. This creates directional persistence: if gradients consistently point in the same direction, velocity builds up; if gradients oscillate, they cancel out.
+                                    </p>
+
+                                    <h3 class="text-xl font-semibold text-gray-900">Nesterov Accelerated Gradient (NAG)</h3>
+                                    <p>
+                                        NAG improves upon standard momentum by evaluating the gradient at the <strong>lookahead position</strong> \( \tilde{\theta} = \theta_t - \gamma v_t \). This provides a "correction" term based on the future curvature.
+                                    </p>
+                                    
+                                    <div class="definition-box">
+                                        <h4 class="font-bold text-gray-900 mb-2">Nesterov Update Rule</h4>
+                                        \[ \begin{aligned}
+                                        v_{t+1} &= \gamma v_t + \eta \nabla_\theta J(\theta_t - \gamma v_t) \\
+                                        \theta_{t+1} &= \theta_t - v_{t+1}
+                                        \end{aligned} \]
+                                    </div>
+                                    
+                                    <p>
+                                        <strong>Why is NAG Better?</strong> Standard momentum "blindly" follows the accumulated velocity. NAG, however, first looks ahead to where the momentum would take us, then computes the gradient there. This allows NAG to "slow down" before hitting a hill (positive curvature), improving convergence rates for convex functions from \( O(1/k) \) to \( O(1/k^2) \).
+                                    </p>
+                                    
+                                    <div class="note-box">
+                                        <p class="text-sm text-gray-700 mb-0"><strong>Historical Note:</strong> Yurii Nesterov introduced this method in 1983, proving it achieves optimal convergence rates for first-order methods on convex smooth problems.</p>
+                                    </div>
+                                </section>
+
+                                <section id="adaptive-methods">
+                                    <h2 class="text-2xl font-bold text-gray-900">3. Adaptive Learning Rate Methods</h2>
+                                    
+                                    <h3 class="text-xl font-semibold text-gray-900">Motivation</h3>
+                                    <p>
+                                        A single global learning rate \( \eta \) is suboptimal when parameters have vastly different scales or update frequencies. For example, in natural language processing with sparse features (e.g., word embeddings), rare words appear infrequently in training data. A global learning rate would result in tiny, ineffective updates to their embeddings.
+                                    </p>
+                                    <p>
+                                        Adaptive methods scale the learning rate for each parameter individually, performing smaller updates (low learning rates) for parameters with high cumulative gradients and larger updates (high learning rates) for parameters with small cumulative gradients.
+                                    </p>
+
+                                    <h3 class="text-xl font-semibold text-gray-900">AdaGrad</h3>
+                                    <p>
+                                        AdaGrad accumulates the sum of squared gradients \( G_t = \sum_{\tau=1}^t g_\tau^2 \) (element-wise). The update is then scaled by \( 1/\sqrt{G_t} \):
+                                    </p>
+                                    <div class="definition-box">
+                                        <h4 class="font-bold text-gray-900 mb-2">AdaGrad Update</h4>
+                                        \[ G_t = G_{t-1} + g_t \odot g_t \]
+                                        \[ \theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{G_t + \epsilon}} \odot g_t \]
+                                        where \( \odot \) denotes element-wise multiplication, and \( \epsilon \approx 10^{-8} \) prevents division by zero.
+                                    </div>
+                                    <p>
+                                        <strong>Limitation:</strong> \( G_t \) grows monotonically without bound. Eventually, \( \sqrt{G_t} \) becomes very large, causing the learning rate to vanish, and learning stops prematurely. This is particularly problematic for non-convex objectives.
+                                    </p>
+
+                                    <h3 class="text-xl font-semibold text-gray-900">RMSprop</h3>
+                                    <p>
+                                        RMSprop solves AdaGrad's issue by using an <strong>Exponential Moving Average (EMA)</strong> of squared gradients instead of cumulative sum. This restricts the accumulation to a local window, allowing the algorithm to "forget" ancient history.
+                                    </p>
+                                    <div class="definition-box">
+                                        <h4 class="font-bold text-gray-900 mb-2">RMSprop Update</h4>
+                                        \[ E[g^2]_t = \beta E[g^2]_{t-1} + (1 - \beta) g_t^2 \]
+                                        \[ \theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{E[g^2]_t + \epsilon}} g_t \]
+                                        Typical value: \( \beta = 0.9 \).
+                                    </div>
+
+                                    <h3 class="text-xl font-semibold text-gray-900">Adam (Adaptive Moment Estimation)</h3>
+                                    <p>
+                                        Adam combines the best of both worlds: momentum (first moment \( m_t \)) and adaptive learning rates (second moment \( v_t \)). It maintains estimates of both the first moment (mean) and second moment (uncentered variance) of the gradients.
+                                    </p>
+                                    
+                                    <div class="definition-box">
+                                        <h4 class="font-bold text-gray-900 mb-2">Adam Algorithm</h4>
+                                        \[ \begin{aligned}
+                                        m_t &= \beta_1 m_{t-1} + (1 - \beta_1) g_t \\
+                                        v_t &= \beta_2 v_{t-1} + (1 - \beta_2) g_t^2 \\
+                                        \hat{m}_t &= \frac{m_t}{1 - \beta_1^t}, \quad \hat{v}_t = \frac{v_t}{1 - \beta_2^t} \\
+                                        \theta_{t+1} &= \theta_t - \eta \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon}
+                                        \end{aligned} \]
+                                        Standard values: \( \beta_1 = 0.9, \beta_2 = 0.999, \epsilon = 10^{-8} \).
+                                    </div>
+                                    
+                                    <p>
+                                        <strong>Bias Correction:</strong> The moving averages \( m_t, v_t \) are initialized at 0, leading to a bias towards 0 early in training (especially when \( \beta_1, \beta_2 \) are close to 1). The correction terms \( \hat{m}_t, \hat{v}_t \) compensate for this initialization bias.
+                                    </p>
+                                    
+                                    <div class="example-box">
+                                        <h4 class="font-bold text-green-900 mb-2">Why Bias Correction Matters</h4>
+                                        <p class="text-sm text-gray-700 mb-0">
+                                            At \( t=1 \), if \( \beta_1 = 0.9 \), then \( m_1 = 0.1 g_1 \), which is 10× smaller than the gradient. Without correction, early steps would be tiny. With correction: \( \hat{m}_1 = \frac{0.1 g_1}{1 - 0.9} = g_1 \).
+                                        </p>
+                                    </div>
+                                </section>
+
+                                <section id="lipschitz">
+                                    <h2 class="text-2xl font-bold text-gray-900">4. Lipschitz Smoothness</h2>
+                                    
+                                    <p>
+                                        Lipschitz smoothness is a fundamental assumption in convergence analysis of gradient descent. It essentially says that the gradient doesn't change too fast.
+                                    </p>
+                                    
+                                    <div class="definition-box">
+                                        <h4 class="font-bold text-gray-900 mb-2">Definition</h4>
+                                        A function \( f \) is \( L \)-smooth if \( \|\nabla^2 f(x)\| \le L \) (the spectral norm of the Hessian is bounded), or equivalently:
+                                        \[ \| \nabla f(x) - \nabla f(y) \| \le L \| x - y \| \]
+                                    </div>
+                                    
+                                    <h3 class="text-xl font-semibold text-gray-900">Implications for Optimization</h3>
+                                    <p>
+                                        <strong>Quadratic Upper Bound:</strong> This property allows us to bound the function with a quadratic:
+                                        \[ f(y) \le f(x) + \nabla f(x)^T (y-x) + \frac{L}{2} \|y-x\|^2 \]
+                                        This is a local approximation that's always an upper bound. Minimizing the right-hand side with respect to \( y \) yields:
+                                        \[ y^* = x - \frac{1}{L} \nabla f(x) \]
+                                        This suggests the optimal step size is \( \eta = 1/L \).
+                                    </p>
+                                    
+                                    <p>
+                                        <strong>Convergence Guarantee:</strong> For convex \( L \)-smooth functions, gradient descent with \( \eta \le 2/L \) is guaranteed to converge. Steps larger than \( 2/L \) can lead to divergence (overshooting the minimum).
+                                    </p>
+                                    
+                                    <div class="note-box">
+                                        <p class="text-sm text-gray-700 mb-0"><strong>Practical Note:</strong> In deep learning, \( L \) is unknown and can be extremely large. This is why adaptive methods (which implicitly estimate local curvature) often outperform SGD with fixed learning rates.</p>
+                                    </div>
+                                </section>
+
+                                <section id="normalization">
+                                    <h2 class="text-2xl font-bold text-gray-900">5. Normalization</h2>
+                                    
+                                    <p>
+                                        Normalization techniques stabilize training by re-centering and re-scaling layer inputs. While initially motivated by reducing "Internal Covariate Shift", recent work (Santurkar et al., 2018) suggests normalization's primary benefit is that it significantly <strong>smooths the optimization landscape</strong> (reduces the Lipschitz constant \( L \)), allowing for higher learning rates and faster convergence.
+                                    </p>
+                                    
+                                    <h3 class="text-xl font-semibold text-gray-900">Batch Normalization (BN)</h3>
+                                    <p>
+                                        Batch Normalization normalizes across the batch dimension \( B \). For each feature/channel, it computes the mean \( \mu_B \) and variance \( \sigma^2_B \) over the batch, then normalizes:
+                                    </p>
+                                    <div class="definition-box">
+                                        <h4 class="font-bold text-gray-900 mb-2">Batch Normalization</h4>
+                                        \[ \hat{x} = \frac{x - \mu_B}{\sqrt{\sigma^2_B + \epsilon}}, \quad y = \gamma \hat{x} + \beta \]
+                                        where \( \gamma, \beta \) are learnable parameters that restore representational power.
+                                    </div>
+                                    <p>
+                                        <strong>Why learnable \( \gamma, \beta \)?</strong> Normalization constrains the distribution. The learnable scale and shift allow the network to undo the normalization if necessary (e.g., if the optimal distribution is not zero-mean unit-variance).
+                                    </p>
+                                    
+                                    <h3 class="text-xl font-semibold text-gray-900">Layer Normalization (LN)</h3>
+                                    <p>
+                                        Layer Normalization normalizes across the feature dimension \( C \) for a single sample. It computes statistics independently for each sample, making it independent of batch size.
+                                    </p>
+                                    <p>
+                                        <strong>Use Case:</strong> LN is ideal for RNNs (where batch size can vary or be 1) and Transformers (where sequence length varies). BN's batch statistics would be unstable in these scenarios.
+                                    </p>
+                                    
+                                    <div class="example-box">
+                                        <h4 class="font-bold text-green-900 mb-2">Batch vs. Layer Normalization</h4>
+                                        <p class="text-sm text-gray-700 mb-0">
+                                            For a tensor of shape \( (B, C, H, W) \) (batch, channels, height, width):
+                                            <br>• BN normalizes over \( (B, H, W) \) for each channel independently.
+                                            <br>• LN normalizes over \( (C, H, W) \) for each sample independently.
+                                        </p>
+                                    </div>
+                                </section>
+
+                                <section id="regularization">
+                                    <h2 class="text-2xl font-bold text-gray-900">6. Regularization</h2>
+                                    
+                                    <p>
+                                        Regularization constrains the model capacity to prevent overfitting. From a Bayesian perspective, adding a regularization term \( R(\theta) \) to the loss corresponds to Maximum A Posteriori (MAP) estimation with a prior \( P(\theta) \propto \exp(-R(\theta)) \).
+                                    </p>
+                                    
+                                    <h3 class="text-xl font-semibold text-gray-900">L2 Regularization (Ridge)</h3>
+                                    <p>
+                                        Adds a penalty proportional to the squared magnitude of parameters:
+                                        \[ \min_\theta \; J(\theta) + \frac{\lambda}{2} \|\theta\|^2 \]
+                                        This corresponds to a Gaussian prior \( \theta \sim \mathcal{N}(0, 1/\lambda I) \). It penalizes large weights quadratically, keeping them small but non-zero.
+                                    </p>
+                                    
+                                    <h3 class="text-xl font-semibold text-gray-900">L1 Regularization (Lasso)</h3>
+                                    <p>
+                                        Adds a penalty proportional to the absolute magnitude:
+                                        \[ \min_\theta \; J(\theta) + \lambda \|\theta\|_1 \]
+                                        This corresponds to a Laplacian prior. The L1 norm's "diamond" geometry (sharp corners at axes) promotes <strong>sparsity</strong>: many weights are driven exactly to zero, effectively performing feature selection.
+                                    </p>
+                                    
+                                    <div class="example-box">
+                                        <h4 class="font-bold text-green-900 mb-2">Geometric Intuition</h4>
+                                        <p class="text-sm text-gray-700 mb-0">
+                                            Consider constrained optimization: \( \min J(\theta) \) subject to \( \|\theta\|_p \le C \).
+                                            <br>• L2 (\( p=2 \)): Constraint is a circle/sphere. The optimal solution is typically on a smooth curve.
+                                            <br>• L1 (\( p=1 \)): Constraint is a diamond. The optimal solution often lies at a corner (where some coordinates are zero).
+                                        </p>
+                                    </div>
+                                    
+                                    <h3 class="text-xl font-semibold text-gray-900">Weight Decay vs. L2: AdamW</h3>
+                                    <p>
+                                        In SGD, adding \( \lambda \theta \) to the gradient (L2 regularization) is mathematically equivalent to multiplying \( \theta \) by \( (1-\eta\lambda) \) before the update (weight decay):
+                                        \[ \theta \leftarrow \theta - \eta (\nabla J + \lambda \theta) = (1-\eta\lambda)\theta - \eta \nabla J \]
+                                    </p>
+                                    <p>
+                                        However, in Adam, adding \( \lambda \theta \) to the gradient means the decay term gets scaled by \( 1/\sqrt{v_t} \), which is undesirable. <strong>AdamW</strong> (Loshchilov & Hutter, 2017) decouples the weight decay, applying \( \theta \leftarrow \theta - \eta \lambda \theta \) separately from the adaptive gradient update, leading to better performance.
+                                    </p>
+                                </section>
+
+                                <section id="hessians">
+                                    <h2 class="text-2xl font-bold text-gray-900">7. Hessian Matrix</h2>
+                                    
+                                    <p>
+                                        The Hessian \( H \in \mathbb{R}^{d \times d} \) contains second-order partial derivatives:
+                                        \[ H_{ij} = \frac{\partial^2 J}{\partial \theta_i \partial \theta_j} \]
+                                        It captures the local curvature of the loss function. While first-order methods (GD, SGD) only use gradient information (slope), second-order methods use the Hessian (curvature).
+                                    </p>
+                                    
+                                    <h3 class="text-xl font-semibold text-gray-900">Eigenanalysis</h3>
+                                    <p>
+                                        The eigenvalues \( \lambda_i \) and eigenvectors \( v_i \) of the Hessian reveal the local geometry:
+                                    </p>
+                                    <ul class="list-disc pl-6 space-y-2 mb-4 text-gray-600">
+                                        <li>\( \lambda_i > 0 \): The function curves upward (is convex) in the direction \( v_i \).</li>
+                                        <li>\( \lambda_i < 0 \): The function curves downward (is concave) in direction \( v_i \).</li>
+                                        <li><strong>Positive Definite</strong> (all \( \lambda_i > 0 \)): Local minimum.</li>
+                                        <li><strong>Negative Definite</strong> (all \( \lambda_i < 0 \)): Local maximum.</li>
+                                        <li><strong>Indefinite</strong> (mixed signs): Saddle point.</li>
+                                    </ul>
+                                    
+                                    <h3 class="text-xl font-semibold text-gray-900">Condition Number</h3>
+                                    <p>
+                                        The <strong>condition number</strong> \( \kappa = \lambda_{\max} / \lambda_{\min} \) quantifies how "ill-conditioned" the problem is. A high \( \kappa \) means the loss surface is a narrow valley:
+                                        <br>• Progress is fast in the \( v_{\max} \) direction (steep slope).
+                                        <br>• Progress is slow in the \( v_{\min} \) direction (gentle slope).
+                                    </p>
+                                    <p>
+                                        For quadratic functions, the convergence rate of GD is \( \left(\frac{\kappa-1}{\kappa+1}\right)^2 \). As \( \kappa \to \infty \), convergence slows to a crawl.
+                                    </p>
+                                </section>
+
+                                <section id="newton-methods">
+                                    <h2 class="text-2xl font-bold text-gray-900">8. Newton's Method & Quasi-Newton's Method</h2>
+                                    
+                                    <h3 class="text-xl font-semibold text-gray-900">Newton's Method</h3>
+                                    <p>
+                                        Newton's method approximates the function locally as a quadratic using the Hessian and jumps to the minimum of that quadratic:
+                                    </p>
+                                    <div class="definition-box">
+                                        <h4 class="font-bold text-gray-900 mb-2">Newton Step</h4>
+                                        \[ \theta_{t+1} = \theta_t - H^{-1} \nabla_\theta J(\theta_t) \]
+                                    </div>
+                                    <p>
+                                        <strong>Intuition:</strong> Multiplying by \( H^{-1} \) rescales the gradient to correct for ill-conditioning. If the Hessian is \( H = \text{diag}(\lambda_1, \ldots, \lambda_d) \), then Newton's method takes steps of size \( 1/\lambda_i \) in direction \( i \). This transforms the elliptical contours of the loss into circles, enabling direct descent to the minimum.
+                                    </p>
+                                    <p>
+                                        <strong>Convergence:</strong> Near the optimum, Newton's method has <strong>quadratic convergence</strong>: the error \( \epsilon_{t+1} \approx C \epsilon_t^2 \). This is much faster than the linear convergence of GD (\( \epsilon_{t+1} \approx c \epsilon_t \)).
+                                    </p>
+                                    <p>
+                                        <strong>Constraint:</strong> Computing and storing \( H \) is \( O(d^2) \) memory and \( O(d^3) \) computation for inversion. For \( d \approx 10^9 \) (modern LLMs), this is computationally infeasible.
+                                    </p>
+                                    
+                                    <h3 class="text-xl font-semibold text-gray-900">Quasi-Newton (BFGS, L-BFGS)</h3>
+                                    <p>
+                                        Quasi-Newton methods approximate \( H^{-1} \) iteratively using the <strong>Secant Equation</strong>:
+                                        \[ B_{k+1} (x_{k+1} - x_k) = \nabla f_{k+1} - \nabla f_k \]
+                                        where \( B_k \approx H_k \). This relates the change in parameters to the change in gradients.
+                                    </p>
+                                    <p>
+                                        <strong>BFGS</strong> maintains a full \( d \times d \) matrix approximation. <strong>L-BFGS</strong> (Limited-memory BFGS) stores only the last \( m \) update vectors (\( m \approx 10-20 \)), reducing memory to \( O(md) \) while retaining most of the benefit.
+                                    </p>
+                                </section>
+
+                                <section id="loss-landscape">
+                                    <h2 class="text-2xl font-bold text-gray-900">9. The Shape of the Loss Landscape</h2>
+                                    
+                                    <p>
+                                        The optimization landscape of deep networks is highly non-convex, with countless critical points. Yet, empirical success suggests it has favorable properties.
+                                    </p>
+                                    
+                                    <h3 class="text-xl font-semibold text-gray-900">Key Observations</h3>
+                                    <ul class="list-disc pl-6 space-y-2 mb-4 text-gray-600">
+                                        <li><strong>No Bad Local Minima:</strong> For overparameterized networks (more parameters than data), most local minima have nearly identical loss values close to the global minimum.</li>
+                                        <li><strong>Gradient Independence:</strong> In high dimensions, gradients of individual samples are often nearly orthogonal initially, allowing parallel progress across multiple loss directions.</li>
+                                        <li><strong>Mode Connectivity:</strong> Different local minima found by SGD can often be connected by a low-loss path (curve in parameter space), suggesting they belong to the same "basin" or connected manifold.</li>
+                                    </ul>
+                                    
+                                    <figure>
+                                        <img src="../../assets/img/rastrigin.png" alt="Rastrigin Function" class="rounded-lg shadow-md mx-auto max-w-lg border border-gray-200">
+                                        <figcaption>Figure 2: A simplified view of a non-convex landscape. High-dimensional landscapes are even more complex but often navigable.</figcaption>
+                                    </figure>
+                                </section>
+
+                                <section id="saddle-points">
+                                    <h2 class="text-2xl font-bold text-gray-900">10. Saddle Points & Non-convex Optimization</h2>
+                                    
+                                    <p>
+                                        In high-dimensional spaces, critical points (\( \nabla J = 0 \)) are overwhelmingly likely to be <strong>Saddle Points</strong> rather than local minima.
+                                    </p>
+                                    
+                                    <h3 class="text-xl font-semibold text-gray-900">Why Saddle Points Dominate</h3>
+                                    <p>
+                                        For a critical point to be a minimum, all \( d \) eigenvalues of the Hessian must be positive. If eigenvalues are randomly distributed around zero, the probability of all being positive is approximately \( 2^{-d} \), which vanishes exponentially with dimension.
+                                    </p>
+                                    <p>
+                                        In contrast, saddle points (with mixed positive and negative eigenvalues) are exponentially more likely. In fact, the "index" (number of negative eigenvalues) of a random critical point is approximately \( d/2 \).
+                                    </p>
+                                    
+                                    <h3 class="text-xl font-semibold text-gray-900">Escaping Saddle Points</h3>
+                                    <p>
+                                        Fortunately, "strict" saddle points (with at least one significantly negative eigenvalue) are unstable for Gradient Descent. The noise inherent in SGD helps parameters "fall off" the saddle along the direction of negative curvature. Theoretical results show that SGD escapes strict saddle points in polynomial time.
+                                    </p>
+                                    
+                                    <figure>
+                                        <img src="../../assets/img/tutorials/saddle_point.png" alt="Saddle Point" class="rounded-lg shadow-md mx-auto max-w-lg border border-gray-200">
+                                        <figcaption>Figure 3: A saddle point visualization.</figcaption>
+                                    </figure>
+                                </section>
+
+                                <section id="sharpness-generalization">
+                                    <h2 class="text-2xl font-bold text-gray-900">11. Sharpness & Generalization</h2>
+                                    
+                                    <p>
+                                        Not all minima are equal. The <strong>geometry</strong> of the convergence point strongly correlates with generalization performance.
+                                    </p>
+                                    
+                                    <h3 class="text-xl font-semibold text-gray-900">Flat vs. Sharp Minima</h3>
+                                    <ul class="list-disc pl-6 space-y-2 mb-4 text-gray-600">
+                                        <li><strong>Flat Minima:</strong> Wide basins where the loss changes slowly with parameter perturbations. These are robust to the distributional shift between training and test data.</li>
+                                        <li><strong>Sharp Minima:</strong> Narrow valleys where small perturbations cause loss to explode. These overfit to the training data and generalize poorly.</li>
+                                    </ul>
+                                    
+                                    <h3 class="text-xl font-semibold text-gray-900">Theoretical Framework</h3>
+                                    <p>
+                                        PAC-Bayes theory provides generalization bounds that depend on the "volume" of the solution basin (flatness). Hochreiter & Schmidhuber (1997) first proposed this connection. Recent work by Keskar et al. (2016) empirically demonstrated that large-batch training converges to sharper minima than small-batch training.
+                                    </p>
+                                    
+                                    <h3 class="text-xl font-semibold text-gray-900">Sharpness-Aware Minimization (SAM)</h3>
+                                    <p>
+                                        SAM (Foret et al., 2020) explicitly optimizes for flatness by minimizing the worst-case loss in a neighborhood:
+                                        \[ \min_\theta \max_{\|\epsilon\| \le \rho} J(\theta + \epsilon) \]
+                                        This encourages convergence to flat minima, improving generalization.
+                                    </p>
+                                </section>
+
+                                <section id="other-concepts">
+                                    <h2 class="text-2xl font-bold text-gray-900">12. Other Common Optimization Knowledge</h2>
+                                    
+                                    <h3 class="text-xl font-semibold text-gray-900">Learning Rate Warmup</h3>
+                                    <p>
+                                        Adaptive optimizers (like Adam) have unstable variance estimates \( v_t \) at the start of training. Warmup linearly increases the learning rate from a small value to the target \( \eta \) over the first few thousand steps. This allows the second-moment statistics to stabilize before full-scale updates, preventing early divergence.
+                                    </p>
+                                    
+                                    <h3 class="text-xl font-semibold text-gray-900">Gradient Clipping</h3>
+                                    <p>
+                                        In RNNs or deep networks, gradients can grow exponentially through backpropagation (the "exploding gradient" problem). Gradient clipping rescales the gradient vector \( g \) if its norm exceeds a threshold \( C \):
+                                        \[ g \leftarrow g \cdot \min\left(1, \frac{C}{\|g\|_2}\right) \]
+                                        This preserves the direction but limits the magnitude, preventing unstable updates.
+                                    </p>
+                                    
+                                    <h3 class="text-xl font-semibold text-gray-900">Polyak Averaging (EMA)</h3>
+                                    <p>
+                                        Instead of using the final parameters \( \theta_T \), maintain a moving average:
+                                        \[ \theta_{EMA} = \alpha \theta_{EMA} + (1-\alpha)\theta_t \]
+                                        where \( \alpha \approx 0.999 \). This acts as a low-pass filter, smoothing out SGD noise and often converging to the center of a flat minimum, improving both convergence and generalization.
+                                    </p>
+                                </section>
+                            </div>
+                            
+                            <!-- Navigation Footer -->
+                            <div class="mt-12 pt-8 border-t border-gray-100 flex justify-between items-center">
+                                <a href="../tutorials.html" class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
+                                    <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>
+                                    Back to Tutorials
+                                </a>
+                                <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" class="text-gray-500 hover:text-gray-700 flex items-center text-sm">
+                                    <i data-lucide="edit" class="w-4 h-4 mr-1"></i>
+                                    Suggest Edits
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-gradient-to-br from-blue-900 to-blue-800 text-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <!-- Brand -->
+                    <div class="col-span-1 md:col-span-2">
+                        <div class="flex items-center mb-4">
+                            <span class="text-xl font-bold text-white">ScalingOpt</span>
+                        </div>
+                        <p class="text-blue-100 mb-4 max-w-md">
+                            A comprehensive platform for scaling optimization algorithms. 
+                            Discover, compare, and contribute to cutting-edge optimizers for large-scale machine learning.
+                        </p>
+                        <div class="flex space-x-4">
+                            <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors duration-200">
+                                <i data-lucide="github" class="w-5 h-5"></i>
+                            </a>
+                            <a href="mailto:juanxitian1031@gmail.com" class="text-gray-400 hover:text-white transition-colors duration-200">
+                                <i data-lucide="mail" class="w-5 h-5"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4 text-white">Quick Links</h3>
+                        <ul class="space-y-2">
+                            <li><a href="../optimizers.html" class="text-blue-200 hover:text-white transition-colors duration-200">Browse Optimizers</a></li>
+                            <li><a href="../benchmarks.html" class="text-blue-200 hover:text-white transition-colors duration-200">Benchmarks</a></li>
+                            <li><a href="../papers.html" class="text-blue-200 hover:text-white transition-colors duration-200">Papers</a></li>
+                            <li><a href="../tutorials.html" class="text-blue-200 hover:text-white transition-colors duration-200">Tutorials</a></li>
+                            <li><a href="../blogs.html" class="text-blue-200 hover:text-white transition-colors duration-200">Blogs</a></li>
+                            <li><a href="../community.html" class="text-blue-200 hover:text-white transition-colors duration-200">Community</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Resources -->
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4 text-white">Resources</h3>
+                        <ul class="space-y-2">
+                            <li><a href="../about_us.html" class="text-blue-200 hover:text-white transition-colors duration-200">About Us</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-400 text-sm">
+                        © 2025 ScalingOpt Community. All rights reserved.
+                    </p>
+                    <div class="flex items-center space-x-1 text-gray-400 text-sm mt-4 md:mt-0">
+                        <span>Made with</span>
+                        <i data-lucide="heart" class="w-4 h-4 text-red-500"></i>
+                        <span>by the community</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const icon = this.querySelector('i');
+            
+            if (mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.remove('hidden');
+                icon.setAttribute('data-lucide', 'x');
+            } else {
+                mobileMenu.classList.add('hidden');
+                icon.setAttribute('data-lucide', 'menu');
+            }
+            
+            lucide.createIcons();
+        });
+
+        // Close mobile menu when clicking on links
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', function() {
+                document.getElementById('mobile-menu').classList.add('hidden');
+                document.querySelector('#mobile-menu-button i').setAttribute('data-lucide', 'menu');
+                lucide.createIcons();
+            });
+        });
+
+        // Highlight active TOC item
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    document.querySelectorAll('.toc-link').forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === '#' + entry.target.id) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
