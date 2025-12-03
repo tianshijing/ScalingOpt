@@ -12,6 +12,9 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     
@@ -120,7 +123,7 @@
         <main class="flex-grow py-12">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <!-- Header -->
-                <div class="text-center mb-16">
+                <div class="text-center mb-16" data-aos="fade-up">
                     <h1 class="text-4xl md:text-5xl font-bold text-blue-900 mb-6">
                         Optimizer <span class="gradient-text">Visualizations</span>
                     </h1>
@@ -130,7 +133,7 @@
                 </div>
 
                 <!-- Rosenbrock Function Section -->
-                <section class="mb-20">
+                <section class="mb-20" data-aos="fade-up" data-aos-delay="100">
                     <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                             <div>
@@ -180,7 +183,7 @@
                 </section>
 
                 <!-- Rastrigin Function Section -->
-                <section class="mb-20">
+                <section class="mb-20" data-aos="fade-up" data-aos-delay="200">
                     <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                             <div class="order-2 md:order-1 relative group">
@@ -229,8 +232,110 @@
                     </div>
                 </section>
 
+                <!-- Hessian Matrix Information Section -->
+                <section class="mb-20" data-aos="fade-up" data-aos-delay="250">
+                    <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                            <div>
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="p-2 bg-indigo-100 rounded-lg">
+                                        <i data-lucide="brain-circuit" class="w-6 h-6 text-indigo-600"></i>
+                                    </div>
+                                    <h2 class="text-2xl font-bold text-gray-900">Hessian Matrix Information</h2>
+                                </div>
+                                <p class="text-gray-600 mb-6 leading-relaxed">
+                                    Analyzing the Hessian matrix provides deep insights into the loss landscape curvature and training dynamics. PyHessian is a powerful library for second-order based analysis.
+                                </p>
+                                <div class="bg-gray-50 rounded-xl p-6 border border-gray-200 mb-6">
+                                    <h3 class="font-semibold text-gray-900 mb-2">Key Capabilities</h3>
+                                    <ul class="space-y-2 text-gray-600">
+                                        <li class="flex items-start gap-2">
+                                            <i data-lucide="check-circle-2" class="w-5 h-5 text-indigo-500 flex-shrink-0 mt-0.5"></i>
+                                            <span>Compute top Hessian eigenvalues</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <i data-lucide="check-circle-2" class="w-5 h-5 text-indigo-500 flex-shrink-0 mt-0.5"></i>
+                                            <span>Estimate the trace of the Hessian matrix</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <i data-lucide="check-circle-2" class="w-5 h-5 text-indigo-500 flex-shrink-0 mt-0.5"></i>
+                                            <span>Visualize full Hessian Eigenvalues Spectral Density (ESD)</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <a href="https://github.com/amirgholami/PyHessian" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-indigo-600 hover:text-indigo-700 font-medium">
+                                    View PyHessian on GitHub
+                                    <i data-lucide="external-link" class="w-4 h-4 ml-1"></i>
+                                </a>
+                            </div>
+                            <div class="relative group">
+                                <div class="absolute inset-0 bg-gradient-to-br from-indigo-600 to-blue-600 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
+                                <img 
+                                    src="../assets/img/tutorials/hessian_eigenvalues.png" 
+                                    alt="Hessian Eigenvalues Visualization" 
+                                    class="relative rounded-2xl shadow-md w-full object-cover hover:scale-[1.02] transition-transform duration-300"
+                                >
+                                <div class="absolute bottom-4 right-4 bg-black/50 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full">
+                                    Visualization of Hessian Eigenvalues
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Loss Landscape Section -->
+                <section class="mb-20" data-aos="fade-up" data-aos-delay="300">
+                    <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                            <div class="order-2 md:order-1 relative group">
+                                <div class="absolute inset-0 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
+                                <img 
+                                    src="../assets/img/tutorials/loss_landscape.png" 
+                                    alt="Loss Landscape Visualization" 
+                                    class="relative rounded-2xl shadow-md w-full object-cover hover:scale-[1.02] transition-transform duration-300"
+                                >
+                                <div class="absolute bottom-4 left-4 bg-black/50 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full">
+                                    Visualization of Loss Landscape
+                                </div>
+                            </div>
+                            <div class="order-1 md:order-2">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="p-2 bg-emerald-100 rounded-lg">
+                                        <i data-lucide="map" class="w-6 h-6 text-emerald-600"></i>
+                                    </div>
+                                    <h2 class="text-2xl font-bold text-gray-900">Loss Landscape</h2>
+                                </div>
+                                <p class="text-gray-600 mb-6 leading-relaxed">
+                                    Visualizing the loss landscape of neural networks helps researchers understand how network architecture and training parameters affect the geometry of the loss function.
+                                </p>
+                                <div class="bg-gray-50 rounded-xl p-6 border border-gray-200 mb-6">
+                                    <h3 class="font-semibold text-gray-900 mb-2">Key Capabilities</h3>
+                                    <ul class="space-y-2 text-gray-600">
+                                        <li class="flex items-start gap-2">
+                                            <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5"></i>
+                                            <span>Generate 1D and 2D plots of loss surfaces</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5"></i>
+                                            <span>Analyze sharpness/flatness of minimizers</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5"></i>
+                                            <span>Compare optimization trajectories</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <a href="https://github.com/tomgoldstein/loss-landscape" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-emerald-600 hover:text-emerald-700 font-medium">
+                                    View Loss Landscape on GitHub
+                                    <i data-lucide="external-link" class="w-4 h-4 ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- Code Section -->
-                <section class="mb-12">
+                <section class="mb-12" data-aos="fade-up" data-aos-delay="300">
                     <div class="bg-gray-900 rounded-2xl shadow-xl overflow-hidden">
                         <div class="px-6 py-4 border-b border-gray-800 flex items-center justify-between">
                             <h3 class="text-lg font-semibold text-white flex items-center gap-2">
@@ -258,6 +363,11 @@
 
             </div>
         </main>
+
+        <!-- Back to Top Button -->
+        <button id="back-to-top" class="fixed bottom-8 right-8 bg-blue-600 text-white p-3 rounded-full shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-blue-700 hover:-translate-y-1 z-50" aria-label="Back to top">
+            <i data-lucide="arrow-up" class="w-6 h-6"></i>
+        </button>
 
         <!-- Footer -->
         <footer class="bg-gradient-to-br from-blue-900 to-blue-800 text-white">
@@ -320,7 +430,16 @@
     </div>
 
     <!-- JavaScript -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100,
+            easing: 'ease-out-cubic'
+        });
+
         // Initialize Lucide icons
         lucide.createIcons();
 
@@ -346,6 +465,24 @@
                 document.getElementById('mobile-menu').classList.add('hidden');
                 document.querySelector('#mobile-menu-button i').setAttribute('data-lucide', 'menu');
                 lucide.createIcons();
+            });
+        });
+
+        // Back to Top Button Logic
+        const backToTopButton = document.getElementById('back-to-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopButton.classList.remove('opacity-0', 'invisible');
+            } else {
+                backToTopButton.classList.add('opacity-0', 'invisible');
+            }
+        });
+
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
             });
         });
     </script>

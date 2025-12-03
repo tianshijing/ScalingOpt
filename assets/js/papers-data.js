@@ -1114,5 +1114,31 @@ const papers = [
     arxivUrl: 'https://arxiv.org/abs/2510.14717v1',
     tags: ['Seesaw', 'Batch Size Scheduling', 'Learning Rate Scheduling', 'Training Acceleration', 'Adam', 'SGD', 'Large Language Models', 'Chinchilla Scale'],
     featured: true
+  },
+  {
+    id: 'switch-ema-2024',
+    title: 'Switch EMA: A Free Lunch for Better Flatness and Sharpness',
+    authors: ['Siyuan Li', 'Zicheng Liu', 'Juanxi Tian', 'Ge Wang', 'Zedong Wang', 'Weiyang Jin', 'Di Wu', 'Cheng Tan', 'Tao Lin', 'Yang Liu', 'Baigui Sun', 'Stan Z. Li'],
+    year: 2024,
+    venue: 'arXiv preprint',
+    category: 'New Optimizer',
+    abstract: 'Exponential Moving Average (EMA) is a widely used weight averaging (WA) regularization to learn flat optima for better generalizations without extra cost in deep neural network (DNN) optimization. Despite achieving better flatness, existing WA methods might fall into worse final performances or require extra test-time computations. This work unveils the full potential of EMA with a single line of modification, i.e., switching the EMA parameters to the original model after each epoch, dubbed as Switch EMA (SEMA). From both theoretical and empirical aspects, we demonstrate that SEMA can help DNNs to reach generalization optima that better trade-off between flatness and sharpness. To verify the effectiveness of SEMA, we conduct comparison experiments with discriminative, generative, and regression tasks on vision and language datasets, including image classification, self-supervised learning, object detection and segmentation, image generation, video prediction, attribute regression, and language modeling. Comprehensive results with popular optimizers and networks show that SEMA is a free lunch for DNN training by improving performances and boosting convergence speeds.',
+    arxivUrl: 'https://arxiv.org/abs/2402.09240',
+    githubUrl: 'https://github.com/Westlake-AI/SEMA',
+    tags: ['EMA', 'Weight Averaging', 'Flatness', 'Sharpness', 'Regularization', 'Generalization', 'Image Classification', 'Object Detection', 'Language Modeling'],
+    featured: true
+  },
+  {
+    id: 'backbone-optimizer-coupling-bias-2024',
+    title: 'Unveiling the Backbone-Optimizer Coupling Bias in Visual Representation Learning',
+    authors: ['Siyuan Li', 'Juanxi Tian', 'Zedong Wang', 'Luyuan Zhang', 'Zicheng Liu', 'Weiyang Jin', 'Yang Liu', 'Baigui Sun', 'Stan Z. Li'],
+    year: 2024,
+    venue: 'arXiv preprint',
+    category: 'Analysis',
+    abstract: 'This paper delves into the interplay between vision backbones and optimizers, unvealing an inter-dependent phenomenon termed backbone-optimizer coupling bias (BOCB). We observe that canonical CNNs, such as VGG and ResNet, exhibit a marked co-dependency with SGD families, while recent architectures like ViTs and ConvNeXt share a tight coupling with the adaptive learning rate ones. We further show that BOCB can be introduced by both optimizers and certain backbone designs and may significantly impact the pre-training and downstream fine-tuning of vision models. Through in-depth empirical analysis, we summarize takeaways on recommended optimizers and insights into robust vision backbone architectures. We hope this work can inspire the community to question long-held assumptions on backbones and optimizers, stimulate further explorations, and thereby contribute to more robust vision systems.',
+    arxivUrl: 'https://arxiv.org/abs/2410.06373',
+    projectUrl: 'https://bocb-ai.github.io/',
+    tags: ['BOCB', 'Backbone-Optimizer Coupling', 'Vision Architectures', 'CNNs', 'ViT', 'ConvNeXt', 'SGD', 'Adaptive Learning Rate', 'Pre-training', 'Fine-tuning', 'Visual Representation Learning'],
+    featured: true
   }
 ];

@@ -12,6 +12,9 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     
@@ -120,7 +123,7 @@
         <main class="flex-grow">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <!-- Header -->
-                <div class="text-center mb-12">
+                <div class="text-center mb-12" data-aos="fade-up">
                     <h1 class="text-4xl md:text-5xl font-bold text-blue-900 mb-4">
                         Research <span class="gradient-text">Papers</span>
                     </h1>
@@ -131,7 +134,7 @@
                 </div>
 
                 <!-- Search and Filter -->
-                <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <div class="bg-white rounded-xl shadow-lg p-6 mb-8" data-aos="fade-up" data-aos-delay="100">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <label for="search" class="block text-sm font-medium text-gray-700 mb-2">Search Papers</label>
@@ -213,7 +216,7 @@
                 </div>
 
                 <!-- CTA Section -->
-                <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 text-white text-center mt-12">
+                <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 text-white text-center mt-12" data-aos="fade-up">
                     <h3 class="text-2xl font-bold mb-4">Have a Paper to Recommend?</h3>
                     <p class="text-blue-100 mb-6 max-w-2xl mx-auto">
                         Help us grow our library! Suggest important research papers on optimization algorithms.
@@ -230,6 +233,11 @@
                 </div>
             </div>
         </main>
+
+        <!-- Back to Top Button -->
+        <button id="back-to-top" class="fixed bottom-8 right-8 bg-blue-600 text-white p-3 rounded-full shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-blue-700 hover:-translate-y-1 z-50" aria-label="Back to top">
+            <i data-lucide="arrow-up" class="w-6 h-6"></i>
+        </button>
 
         <!-- Footer -->
         <footer class="bg-gradient-to-br from-blue-900 to-blue-800 text-white">
@@ -292,9 +300,18 @@
 
     <!-- Papers Data -->
     <script src="../assets/js/papers-data.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
     <!-- JavaScript -->
     <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100,
+            easing: 'ease-out-cubic'
+        });
+
         // Initialize Lucide icons
         lucide.createIcons();
 
@@ -320,6 +337,24 @@
                 document.getElementById('mobile-menu').classList.add('hidden');
                 document.querySelector('#mobile-menu-button i').setAttribute('data-lucide', 'menu');
                 lucide.createIcons();
+            });
+        });
+
+        // Back to Top Button Logic
+        const backToTopButton = document.getElementById('back-to-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopButton.classList.remove('opacity-0', 'invisible');
+            } else {
+                backToTopButton.classList.add('opacity-0', 'invisible');
+            }
+        });
+
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
             });
         });
 

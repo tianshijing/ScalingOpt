@@ -12,11 +12,24 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     
     <!-- Custom Styles -->
     <link rel="stylesheet" href="../assets/css/styles.css">
+
+    <!-- MathJax for mathematical notation -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 font-inter">
     <div class="flex flex-col min-h-screen">
@@ -120,7 +133,7 @@
         <main class="flex-grow py-8">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <!-- Header -->
-                <div class="text-center mb-12">
+                <div class="text-center mb-12" data-aos="fade-up">
                     <h1 class="text-4xl md:text-5xl font-bold text-blue-900 mb-4">
                         Optimizer <span class="gradient-text">Library</span>
                     </h1>
@@ -131,7 +144,7 @@
                 </div>
 
                 <!-- Timeline Section -->
-                <section class="mb-16 relative">
+                <section class="mb-8 relative" data-aos="fade-up" data-aos-delay="100">
                     <div class="text-center mb-12">
                         <button id="toggle-timeline" class="inline-flex items-center justify-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
                             <h2 class="text-3xl font-bold text-gray-900">Evolution <span class="text-blue-600">Trajectory</span></h2>
@@ -150,8 +163,177 @@
                     </div>
                 </section>
 
+                <!-- Custom Optimizer Section -->
+                <section class="mb-16 relative" data-aos="fade-up" data-aos-delay="200">
+                    <div class="text-center mb-12">
+                        <button id="toggle-custom-optimizer" class="inline-flex items-center justify-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
+                            <h2 class="text-3xl font-bold text-gray-900">
+                                Custom <span class="gradient-text">Optimizer</span>
+                            </h2>
+                            <i data-lucide="chevron-down" class="w-8 h-8 text-blue-600 transform transition-transform duration-300" id="custom-optimizer-icon"></i>
+                        </button>
+                        <p class="text-lg text-gray-600 mt-2 max-w-3xl mx-auto">
+                            Understanding the anatomy and building blocks of modern optimization algorithms. 
+                            Most optimizers follow this four-step pipeline.
+                        </p>
+                    </div>
+
+                    <div class="relative overflow-hidden transition-all duration-500 ease-in-out" id="custom-optimizer-wrapper" style="max-height: 0; opacity: 0;">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+                        <!-- Anatomy Card -->
+                        <div class="bg-white p-8 rounded-2xl shadow-lg border border-blue-100 hover:shadow-xl transition-shadow duration-300">
+                            <h3 class="text-xl font-bold text-gray-900 mb-8 flex items-center">
+                                <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center mr-3 text-blue-600">
+                                    <i data-lucide="layers" class="w-6 h-6"></i>
+                                </div>
+                                Optimization Pipeline
+                            </h3>
+                            
+                            <div class="relative space-y-8">
+                                <!-- Connecting Line -->
+                                <div class="absolute left-[11px] top-4 bottom-4 w-0.5 bg-gray-100"></div>
+
+                                <!-- Step 1 -->
+                                <div class="relative pl-10 group">
+                                    <div class="absolute left-0 top-1 w-6 h-6 rounded-full bg-blue-100 border-2 border-blue-500 z-10 flex items-center justify-center text-xs font-bold text-blue-700 group-hover:scale-110 transition-transform">1</div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900 text-lg">Gradient Computation</h4>
+                                        <p class="text-gray-600 text-sm mt-1 mb-2">
+                                            The backward pass calculates gradients (\(\nabla \mathcal{L}\)) for all parameters.
+                                        </p>
+                                        <div class="bg-slate-900 rounded-lg p-3 font-mono text-xs text-green-400 overflow-x-auto">
+                                            loss.backward()
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Step 2 -->
+                                <div class="relative pl-10 group">
+                                    <div class="absolute left-0 top-1 w-6 h-6 rounded-full bg-purple-100 border-2 border-purple-500 z-10 flex items-center justify-center text-xs font-bold text-purple-700 group-hover:scale-110 transition-transform">2</div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900 text-lg">Gradient Estimation</h4>
+                                        <p class="text-gray-600 text-sm mt-1 mb-2">
+                                            Refining raw gradients using momentum or variance reduction to smooth updates.
+                                        </p>
+                                        <div class="bg-slate-900 rounded-lg p-3 font-mono text-xs text-green-400 overflow-x-auto">
+                                            <span class="text-purple-400"># Momentum update</span><br>
+                                            m_t = beta1 * m_{t-1} + (1-beta1) * g_t
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Step 3 -->
+                                <div class="relative pl-10 group">
+                                    <div class="absolute left-0 top-1 w-6 h-6 rounded-full bg-orange-100 border-2 border-orange-500 z-10 flex items-center justify-center text-xs font-bold text-orange-700 group-hover:scale-110 transition-transform">3</div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900 text-lg">Learning Rate Calculation</h4>
+                                        <p class="text-gray-600 text-sm mt-1 mb-2">
+                                            Adjusting step size dynamically (e.g., adaptive methods like Adam) or via schedules.
+                                        </p>
+                                        <div class="bg-slate-900 rounded-lg p-3 font-mono text-xs text-green-400 overflow-x-auto">
+                                            <span class="text-purple-400"># Adaptive scaling</span><br>
+                                            step_size = lr / (sqrt(v_t) + eps)
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Step 4 -->
+                                <div class="relative pl-10 group">
+                                    <div class="absolute left-0 top-1 w-6 h-6 rounded-full bg-green-100 border-2 border-green-500 z-10 flex items-center justify-center text-xs font-bold text-green-700 group-hover:scale-110 transition-transform">4</div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900 text-lg">Parameter Update</h4>
+                                        <p class="text-gray-600 text-sm mt-1 mb-2">
+                                            Applying the calculated step to update model weights.
+                                        </p>
+                                        <div class="bg-slate-900 rounded-lg p-3 font-mono text-xs text-green-400 overflow-x-auto">
+                                            p.data.add_(-step_size * m_t)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Variants Card -->
+                        <div class="bg-gradient-to-br from-slate-50 to-blue-50 p-8 rounded-2xl shadow-lg border border-blue-100 hover:shadow-xl transition-shadow duration-300 flex flex-col">
+                            <h3 class="text-xl font-bold text-gray-900 mb-8 flex items-center">
+                                <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center mr-3 text-purple-600">
+                                    <i data-lucide="git-branch" class="w-6 h-6"></i>
+                                </div>
+                                Modern Strategies
+                            </h3>
+
+                            <div class="space-y-6 flex-grow">
+                                <!-- Strategy 1 -->
+                                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:border-blue-300 transition-all hover:-translate-y-1 group">
+                                    <div class="flex items-start gap-4">
+                                        <div class="bg-blue-100 p-2 rounded-lg text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                            <i data-lucide="hard-drive" class="w-5 h-5"></i>
+                                        </div>
+                                        <div class="flex-grow">
+                                            <div class="flex justify-between items-center mb-1">
+                                                <h4 class="font-bold text-gray-900">Memory Efficiency</h4>
+                                                <span class="text-[10px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-1 rounded-full">Key Trend</span>
+                                            </div>
+                                            <p class="text-sm text-gray-600 mb-3">Optimizer memory efficiency is improved by reducing the state memory through factorization and gradient projection.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Strategy 2 -->
+                                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:border-green-300 transition-all hover:-translate-y-1 group">
+                                    <div class="flex items-start gap-4">
+                                        <div class="bg-green-100 p-2 rounded-lg text-green-600 group-hover:bg-green-600 group-hover:text-white transition-colors">
+                                            <i data-lucide="zap" class="w-5 h-5"></i>
+                                        </div>
+                                        <div class="flex-grow">
+                                            <div class="flex justify-between items-center mb-1">
+                                                <h4 class="font-bold text-gray-900">Acceleration</h4>
+                                                <span class="text-[10px] font-bold uppercase tracking-wider text-green-600 bg-green-50 px-2 py-1 rounded-full">Performance</span>
+                                            </div>
+                                            <p class="text-sm text-gray-600 mb-3">Acceleration is achieved through adaptive update mechanisms that are guided by gradient direction and magnitude.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Strategy 3 -->
+                                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:border-orange-300 transition-all hover:-translate-y-1 group">
+                                    <div class="flex items-start gap-4">
+                                        <div class="bg-orange-100 p-2 rounded-lg text-orange-600 group-hover:bg-orange-600 group-hover:text-white transition-colors">
+                                            <i data-lucide="scale" class="w-5 h-5"></i>
+                                        </div>
+                                        <div class="flex-grow">
+                                            <div class="flex justify-between items-center mb-1">
+                                                <h4 class="font-bold text-gray-900">Stability</h4>
+                                                <span class="text-[10px] font-bold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-1 rounded-full">Scale</span>
+                                            </div>
+                                            <p class="text-sm text-gray-600 mb-3">Stability is maintained by addressing numerical instability under extreme training conditions, such as large batch sizes or low precision.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Strategy 4 -->
+                                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:border-purple-300 transition-all hover:-translate-y-1 group">
+                                    <div class="flex items-start gap-4">
+                                        <div class="bg-purple-100 p-2 rounded-lg text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                                            <i data-lucide="gem" class="w-5 h-5"></i>
+                                        </div>
+                                        <div class="flex-grow">
+                                            <div class="flex justify-between items-center mb-1">
+                                                <h4 class="font-bold text-gray-900">Orthogonal Updates</h4>
+                                                <span class="text-[10px] font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-2 py-1 rounded-full">Emerging</span>
+                                            </div>
+                                            <p class="text-sm text-gray-600 mb-3">Applying orthogonal transformations to weight updates for better feature learning and training stability.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </section>
+
                 <!-- Filters -->
-                <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <div class="bg-white rounded-xl shadow-lg p-6 mb-8" data-aos="fade-up" data-aos-delay="200">
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <!-- Search -->
                         <div class="relative">
@@ -242,6 +424,11 @@
             </div>
         </main>
 
+        <!-- Back to Top Button -->
+        <button id="back-to-top" class="fixed bottom-8 right-8 bg-blue-600 text-white p-3 rounded-full shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-blue-700 hover:-translate-y-1 z-50" aria-label="Back to top">
+            <i data-lucide="arrow-up" class="w-6 h-6"></i>
+        </button>
+
         <!-- Footer -->
         <footer class="bg-gradient-to-br from-blue-900 to-blue-800 text-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -303,7 +490,16 @@
 
     <!-- JavaScript -->
     <script src="../assets/js/optimizers-data.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100,
+            easing: 'ease-out-cubic'
+        });
+
         // Initialize Lucide icons
         lucide.createIcons();
 
@@ -329,6 +525,24 @@
                 document.getElementById('mobile-menu').classList.add('hidden');
                 document.querySelector('#mobile-menu-button i').setAttribute('data-lucide', 'menu');
                 lucide.createIcons();
+            });
+        });
+
+        // Back to Top Button Logic
+        const backToTopButton = document.getElementById('back-to-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopButton.classList.remove('opacity-0', 'invisible');
+            } else {
+                backToTopButton.classList.add('opacity-0', 'invisible');
+            }
+        });
+
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
             });
         });
 
@@ -571,10 +785,33 @@
             }
         });
 
+        // Custom Optimizer toggle functionality
+        const customOptimizerBtn = document.getElementById('toggle-custom-optimizer');
+        const customOptimizerWrapper = document.getElementById('custom-optimizer-wrapper');
+        const customOptimizerIcon = document.getElementById('custom-optimizer-icon');
+        let isCustomOptimizerExpanded = false;
+
+        customOptimizerBtn.addEventListener('click', () => {
+            isCustomOptimizerExpanded = !isCustomOptimizerExpanded;
+            
+            if (isCustomOptimizerExpanded) {
+                customOptimizerWrapper.style.maxHeight = customOptimizerWrapper.scrollHeight + "px";
+                customOptimizerWrapper.style.opacity = "1";
+                customOptimizerIcon.style.transform = "rotate(180deg)";
+            } else {
+                customOptimizerWrapper.style.maxHeight = "0";
+                customOptimizerWrapper.style.opacity = "0";
+                customOptimizerIcon.style.transform = "rotate(0deg)";
+            }
+        });
+
         // Update max-height on window resize if expanded
         window.addEventListener('resize', () => {
             if (isTimelineExpanded) {
                 timelineWrapper.style.maxHeight = timelineWrapper.scrollHeight + "px";
+            }
+            if (isCustomOptimizerExpanded) {
+                customOptimizerWrapper.style.maxHeight = customOptimizerWrapper.scrollHeight + "px";
             }
         });
 

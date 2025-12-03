@@ -1,6 +1,6 @@
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 
 ::-webkit-scrollbar-track {
@@ -8,12 +8,13 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
+  background: #cbd5e1;
+  border-radius: 6px;
+  border: 2px solid #f1f1f1;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a1a1a1;
+  background: #94a3b8;
 }
 
 /* Code syntax highlighting */
@@ -70,9 +71,9 @@
 /* Grid pattern background */
 .bg-grid-pattern {
   background-image: 
-    linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px);
-  background-size: 20px 20px;
+    linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px);
+  background-size: 30px 30px;
 }
 
 @keyframes blob {
@@ -145,7 +146,8 @@
 }
 
 .search-input:focus {
-  transform: scale(1.02);
+  transform: scale(1.01);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .filter-select {
@@ -231,4 +233,17 @@
     -webkit-text-fill-color: initial !important;
     color: #1e40af !important;
   }
+}
+
+/* Mobile Menu Transitions */
+#mobile-menu {
+    transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+}
+
+#mobile-menu:not(.hidden) {
+    max-height: 500px; /* Adjust based on content height */
+    opacity: 1;
 }

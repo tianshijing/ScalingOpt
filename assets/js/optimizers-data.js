@@ -3410,6 +3410,73 @@ const optimizers = [
       "AdamW"
     ],
     "githubUrl": "https://github.com/facebookresearch/schedule_free"
+  },
+  {
+    "id": "adai",
+    "name": "Adai",
+    "fullName": "Adaptive Inertia",
+    "description": "Disentangles the effects of adaptive learning rate and momentum. Uses adaptive inertia to escape saddle points efficiently while selecting flat minima like SGD.",
+    "year": 2022,
+    "month": "June",
+    "category": "First-order",
+    "paper": {
+      "title": "Adaptive Inertia: Disentangling the Effects of Adaptive Learning Rate and Momentum",
+      "url": "https://arxiv.org/abs/2006.15815",
+      "authors": [
+        "Zeke Xie",
+        "Xinrui Wang",
+        "Huishuai Zhang",
+        "Issei Sato",
+        "Masashi Sugiyama"
+      ]
+    },
+    "advantages": [
+      "Fast saddle-point escaping",
+      "Selects flat minima for better generalization",
+      "Balances adaptive learning rate and momentum",
+      "Better generalization than Adam",
+      "Faster convergence than SGD"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.001,
+        "range": "1e-5 to 1e-2",
+        "description": "Learning rate"
+      },
+      "beta1": {
+        "default": 0.1,
+        "range": "0.0 to 0.5",
+        "description": "Exponential decay rate for first moment (adaptive inertia)"
+      },
+      "beta2": {
+        "default": 0.99,
+        "range": "0.9 to 0.999",
+        "description": "Exponential decay rate for second moment estimates"
+      },
+      "eps": {
+        "default": 1e-08,
+        "range": "1e-10 to 1e-6",
+        "description": "Small constant for numerical stability"
+      },
+      "weight_decay": {
+        "default": 0.0,
+        "range": "0.0 to 0.1",
+        "description": "Weight decay coefficient"
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 78,
+    "tags": [
+      "Adaptive Inertia",
+      "Flat Minima",
+      "Generalization",
+      "Momentum"
+    ],
+    "githubUrl": "https://github.com/zeke-xie/adaptive-inertia-adai"
   }
 ];
 

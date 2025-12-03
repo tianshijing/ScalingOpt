@@ -26,6 +26,9 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     
@@ -142,18 +145,18 @@
                 <div class="absolute -bottom-8 left-20 w-72 h-72 bg-cyan-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
                 
                 <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-                    <div class="text-center">
+                    <div class="text-center" data-aos="fade-up" data-aos-duration="1000">
                         <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 text-gray-900 tracking-tight">
                             ScalingOpt
-                            <span class="block text-2xl md:text-4xl lg:text-5xl text-blue-600 font-light mt-4">
+                            <span class="block text-2xl md:text-4xl lg:text-5xl text-blue-600 font-light mt-4" data-aos="fade-up" data-aos-delay="200">
                                 Optimization at Scale
                             </span>
                         </h1>
-                        <p class="text-xl md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed">
+                        <p class="text-xl md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed" data-aos="fade-up" data-aos-delay="400">
                             Discover, compare, and contribute to cutting-edge optimization algorithms designed for
                             <span class="text-blue-600 font-semibold"> large-scale deep learning</span>. 
                         </p>
-                        <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                        <div class="flex flex-col sm:flex-row gap-6 justify-center items-center" data-aos="fade-up" data-aos-delay="600">
                             <a href="pages/optimizers.html" class="group inline-flex items-center px-8 py-4 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-blue-500/30 hover:-translate-y-1">
                                 <i data-lucide="zap" class="mr-2 w-5 h-5"></i>
                                 Explore Optimizers
@@ -172,15 +175,15 @@
             <!-- Stats Section -->
             <section class="py-20 bg-white border-y border-gray-100">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="text-center mb-16">
+                    <div class="text-center mb-16" data-aos="fade-up">
                         <h2 class="text-3xl font-bold text-gray-900 mb-4">
                             Platform Statistics
                         </h2>
                         <p class="text-lg text-gray-600">Real-time data from our comprehensive optimizer database</p>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                        <div class="group">
-                            <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300">
+                        <div class="group" data-aos="fade-up" data-aos-delay="0">
+                            <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
                                 <div class="text-center">
                                     <div class="inline-flex items-center justify-center w-16 h-16 rounded-xl mb-6 bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
                                         <i data-lucide="zap" class="w-8 h-8"></i>
@@ -195,14 +198,14 @@
                             </div>
                         </div>
                         
-                        <div class="group">
-                            <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300">
+                        <div class="group" data-aos="fade-up" data-aos-delay="100">
+                            <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
                                 <div class="text-center">
                                     <div class="inline-flex items-center justify-center w-16 h-16 rounded-xl mb-6 bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
                                         <i data-lucide="book-open" class="w-8 h-8"></i>
                                     </div>
-                                    <div class="text-4xl font-bold text-gray-900 mb-2">
-                                        93
+                                    <div class="text-4xl font-bold text-gray-900 mb-2" id="papers-count">
+                                        95
                                     </div>
                                     <div class="text-sm font-medium text-gray-500 uppercase tracking-wide">
                                         Research Papers
@@ -211,14 +214,14 @@
                             </div>
                         </div>
                         
-                        <div class="group">
-                            <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300">
+                        <div class="group" data-aos="fade-up" data-aos-delay="200">
+                            <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
                                 <div class="text-center">
                                     <div class="inline-flex items-center justify-center w-16 h-16 rounded-xl mb-6 bg-cyan-50 text-cyan-600 group-hover:bg-cyan-600 group-hover:text-white transition-colors duration-300">
                                         <i data-lucide="bar-chart-3" class="w-8 h-8"></i>
                                     </div>
-                                    <div class="text-4xl font-bold text-gray-900 mb-2">
-                                        3
+                                    <div class="text-4xl font-bold text-gray-900 mb-2" id="benchmarks-count">
+                                        5
                                     </div>
                                     <div class="text-sm font-medium text-gray-500 uppercase tracking-wide">
                                         Benchmarks
@@ -227,8 +230,8 @@
                             </div>
                         </div>
                         
-                        <div class="group">
-                            <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300">
+                        <div class="group" data-aos="fade-up" data-aos-delay="300">
+                            <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
                                 <div class="text-center">
                                     <div class="inline-flex items-center justify-center w-16 h-16 rounded-xl mb-6 bg-teal-50 text-teal-600 group-hover:bg-teal-600 group-hover:text-white transition-colors duration-300">
                                         <i data-lucide="users" class="w-8 h-8"></i>
@@ -249,7 +252,7 @@
             <!-- Featured Optimizers Section -->
             <section class="py-24 bg-slate-50 relative overflow-hidden">
                 <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="text-center mb-16">
+                    <div class="text-center mb-16" data-aos="fade-up">
                         <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
                             Featured Optimizers
                         </h2>
@@ -259,8 +262,8 @@
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                         <!-- SGD -->
-                        <div class="group relative">
-                            <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-lg hover:border-blue-200 transition-all duration-300 hover:-translate-y-1">
+                        <div class="group relative" data-aos="fade-up" data-aos-delay="100">
+                            <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-xl hover:border-blue-200 transition-all duration-300 hover:-translate-y-2">
                                 <div class="flex items-center justify-between mb-4">
                                     <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
                                         SGD
@@ -285,8 +288,8 @@
                         </div>
 
                         <!-- AdamW -->
-                        <div class="group relative">
-                            <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-lg hover:border-blue-200 transition-all duration-300 hover:-translate-y-1">
+                        <div class="group relative" data-aos="fade-up" data-aos-delay="200">
+                            <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-xl hover:border-blue-200 transition-all duration-300 hover:-translate-y-2">
                                 <div class="flex items-center justify-between mb-4">
                                     <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
                                         AdamW
@@ -311,8 +314,8 @@
                         </div>
 
                         <!-- Adam-mini -->
-                        <div class="group relative">
-                            <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-lg hover:border-blue-200 transition-all duration-300 hover:-translate-y-1">
+                        <div class="group relative" data-aos="fade-up" data-aos-delay="300">
+                            <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-xl hover:border-blue-200 transition-all duration-300 hover:-translate-y-2">
                                 <div class="flex items-center justify-between mb-4">
                                     <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
                                         Adam-mini
@@ -337,8 +340,8 @@
                         </div>
 
                         <!-- Muon -->
-                        <div class="group relative">
-                            <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-lg hover:border-blue-200 transition-all duration-300 hover:-translate-y-1">
+                        <div class="group relative" data-aos="fade-up" data-aos-delay="400">
+                            <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-xl hover:border-blue-200 transition-all duration-300 hover:-translate-y-2">
                                 <div class="flex items-center justify-between mb-4">
                                     <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
                                         Muon
@@ -362,12 +365,81 @@
                             </div>
                         </div>
                     </div>
-                    <div class="text-center mt-16">
+                    <div class="text-center mt-16" data-aos="fade-up" data-aos-delay="500">
                         <a href="pages/optimizers.html" class="group inline-flex items-center px-8 py-4 bg-white text-blue-600 font-semibold rounded-xl border border-blue-200 hover:border-blue-400 hover:bg-blue-50 transition-all duration-300 shadow-sm hover:shadow-md">
                             <i data-lucide="star" class="mr-2 w-5 h-5"></i>
                             View All Optimizers
                             <i data-lucide="arrow-right" class="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
                         </a>
+                    </div>
+
+                    <!-- Industry Optimized Section -->
+                    <div class="mt-24 border-t border-gray-200 pt-16">
+                        <div class="text-center mb-12" data-aos="fade-up">
+                            <h3 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+                                Industry-Optimized Implementations
+                            </h3>
+                            <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                                Production-ready libraries with improved distributed support and hardware optimization
+                            </p>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <!-- Hugging Face -->
+                            <a href="https://huggingface.co/docs/transformers/main/optimizers" target="_blank" class="group relative block h-full" data-aos="fade-up" data-aos-delay="100">
+                                <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-xl hover:border-yellow-400 transition-all duration-300 hover:-translate-y-2 h-full flex flex-col">
+                                    <div class="flex items-center mb-4">
+                                        <span class="text-2xl mr-3">🤗</span>
+                                        <h4 class="text-lg font-bold text-gray-900 group-hover:text-yellow-600 transition-colors">
+                                            Hugging Face
+                                        </h4>
+                                    </div>
+                                    <p class="text-gray-600 text-sm leading-relaxed mb-4 flex-grow">
+                                        Optimizers integrated into Transformers (AdamW, AdaFactor) with native support for distributed training and mixed precision.
+                                    </p>
+                                    <div class="flex items-center text-sm text-yellow-600 font-medium mt-auto">
+                                        View Documentation
+                                        <i data-lucide="external-link" class="ml-2 w-4 h-4"></i>
+                                    </div>
+                                </div>
+                            </a>
+
+                            <!-- Meta Research -->
+                            <a href="https://github.com/facebookresearch/optimizers" target="_blank" class="group relative block h-full" data-aos="fade-up" data-aos-delay="200">
+                                <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-xl hover:border-blue-400 transition-all duration-300 hover:-translate-y-2 h-full flex flex-col">
+                                    <div class="flex items-center mb-4">
+                                        <h4 class="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                                            Meta Research
+                                        </h4>
+                                    </div>
+                                    <p class="text-gray-600 text-sm leading-relaxed mb-4 flex-grow">
+                                        Cutting-edge optimization algorithms like Distributed Shampoo developed by Meta for large-scale model training.
+                                    </p>
+                                    <div class="flex items-center text-sm text-blue-600 font-medium mt-auto">
+                                        View Repository
+                                        <i data-lucide="external-link" class="ml-2 w-4 h-4"></i>
+                                    </div>
+                                </div>
+                            </a>
+
+                            <!-- NVIDIA -->
+                            <a href="https://github.com/NVIDIA/TensorRT-Model-Optimizer" target="_blank" class="group relative block h-full" data-aos="fade-up" data-aos-delay="300">
+                                <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-xl hover:border-green-400 transition-all duration-300 hover:-translate-y-2 h-full flex flex-col">
+                                    <div class="flex items-center mb-4">
+                                        <h4 class="text-lg font-bold text-gray-900 group-hover:text-green-600 transition-colors">
+                                            NVIDIA TensorRT
+                                        </h4>
+                                    </div>
+                                    <p class="text-gray-600 text-sm leading-relaxed mb-4 flex-grow">
+                                        Advanced model optimization toolkit for NVIDIA GPUs, focusing on quantization and inference acceleration.
+                                    </p>
+                                    <div class="flex items-center text-sm text-green-600 font-medium mt-auto">
+                                        View Toolkit
+                                        <i data-lucide="external-link" class="ml-2 w-4 h-4"></i>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -376,7 +448,7 @@
             <section class="py-24 bg-white relative">
                 <div class="absolute inset-0 bg-grid-pattern opacity-5"></div>
                 <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="text-center mb-20">
+                    <div class="text-center mb-20" data-aos="fade-up">
                         <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
                             Why Choose <span class="text-blue-600">ScalingOpt</span>?
                         </h2>
@@ -385,8 +457,8 @@
                         </p>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-                        <div class="group relative">
-                            <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                        <div class="group relative" data-aos="fade-up" data-aos-delay="100">
+                            <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
                                 <div class="text-center">
                                     <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-50 text-blue-600 rounded-xl mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
                                         <i data-lucide="search" class="w-8 h-8"></i>
@@ -401,8 +473,8 @@
                             </div>
                         </div>
                         
-                        <div class="group relative">
-                            <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                        <div class="group relative" data-aos="fade-up" data-aos-delay="200">
+                            <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
                                 <div class="text-center">
                                     <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-50 text-indigo-600 rounded-xl mb-6 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
                                         <i data-lucide="graduation-cap" class="w-8 h-8"></i>
@@ -417,8 +489,8 @@
                             </div>
                         </div>
                         
-                        <div class="group relative">
-                            <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                        <div class="group relative" data-aos="fade-up" data-aos-delay="300">
+                            <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
                                 <div class="text-center">
                                     <div class="inline-flex items-center justify-center w-16 h-16 bg-teal-50 text-teal-600 rounded-xl mb-6 group-hover:bg-teal-600 group-hover:text-white transition-colors duration-300">
                                         <i data-lucide="github" class="w-8 h-8"></i>
@@ -437,12 +509,12 @@
             </section>
 
             <!-- CTA Section -->
-            <section class="py-24 bg-blue-600 relative overflow-hidden">
+            <section class="py-24 bg-blue-600 relative overflow-hidden" data-aos="fade-up">
                 <div class="absolute inset-0 bg-grid-pattern opacity-10"></div>
                 
                 <!-- Abstract shapes -->
-                <div class="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-white opacity-10 rounded-full blur-3xl"></div>
-                <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-indigo-500 opacity-50 rounded-full blur-3xl"></div>
+                <div class="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-white opacity-10 rounded-full blur-3xl animate-pulse"></div>
+                <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-indigo-500 opacity-50 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
                 
                 <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <div>
@@ -470,6 +542,11 @@
                 </div>
             </section>
         </main>
+
+        <!-- Back to Top Button -->
+        <button id="back-to-top" class="fixed bottom-8 right-8 bg-blue-600 text-white p-3 rounded-full shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-blue-700 hover:-translate-y-1 z-50" aria-label="Back to top">
+            <i data-lucide="arrow-up" class="w-6 h-6"></i>
+        </button>
 
         <!-- Footer -->
         <footer class="bg-white border-t border-gray-100">
@@ -530,10 +607,53 @@
         </footer>
     </div>
 
+    <!-- Load data files -->
+    <script src="assets/js/optimizers-data.js"></script>
+    <script src="assets/js/papers-data.js"></script>
+    
+    <!-- AOS Library -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
     <!-- JavaScript -->
     <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100,
+            easing: 'ease-out-cubic'
+        });
+
         // Initialize Lucide icons
         lucide.createIcons();
+
+        // Load and update statistics
+        function updateStatistics() {
+            // Update optimizer count
+            if (typeof optimizers !== 'undefined') {
+                const optimizerCount = optimizers.length;
+                const optimizerElement = document.getElementById('optimizer-count');
+                if (optimizerElement) {
+                    animateCountUp('optimizer-count', optimizerCount);
+                }
+            }
+
+            // Update papers count
+            if (typeof papers !== 'undefined') {
+                const papersCount = papers.length;
+                const papersElement = document.getElementById('papers-count');
+                if (papersElement) {
+                    animateCountUp('papers-count', papersCount);
+                }
+            }
+
+            // Count benchmark files
+            const benchmarkCount = 5; // Based on files in benchmark folder
+            const benchmarksElement = document.getElementById('benchmarks-count');
+            if (benchmarksElement) {
+                benchmarksElement.textContent = benchmarkCount;
+            }
+        }
 
         // Visitor counter functionality
         function updateVisitorCount() {
@@ -549,25 +669,27 @@
             
             // If this is a new visitor or a new day, increment the count
             if (isNewVisitor || isNewDay) {
-                let currentCount = parseInt(localStorage.getItem(visitCountKey)) || 0;
+                let currentCount = parseInt(localStorage.getItem(visitCountKey)) || 100;
                 currentCount++;
                 localStorage.setItem(visitCountKey, currentCount.toString());
                 localStorage.setItem(visitorKey, 'true');
                 localStorage.setItem(lastVisitKey, today);
                 
                 // Update the display with animation
-                animateCountUp(currentCount);
+                animateCountUp('visitor-count', currentCount);
             } else {
                 // Just display the current count
-                const currentCount = parseInt(localStorage.getItem(visitCountKey)) || 0;
+                const currentCount = parseInt(localStorage.getItem(visitCountKey)) || 100;
                 document.getElementById('visitor-count').textContent = currentCount;
             }
         }
         
-        function animateCountUp(targetCount) {
-            const element = document.getElementById('visitor-count');
+        function animateCountUp(elementId, targetCount) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
             const startCount = parseInt(element.textContent) || 0;
-            const duration = 2000; // 2 seconds
+            const duration = 1500; // 1.5 seconds
             const startTime = performance.now();
             
             function updateCount(currentTime) {
@@ -582,14 +704,21 @@
                 
                 if (progress < 1) {
                     requestAnimationFrame(updateCount);
+                } else {
+                    element.textContent = targetCount;
                 }
             }
             
             requestAnimationFrame(updateCount);
         }
 
-        // Initialize visitor count when page loads
-        updateVisitorCount();
+        // Initialize all statistics when page loads
+        window.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                updateStatistics();
+                updateVisitorCount();
+            }, 100); // Small delay to ensure data files are loaded
+        });
 
         // Mobile menu toggle
         document.getElementById('mobile-menu-button').addEventListener('click', function() {
@@ -613,6 +742,24 @@
                 document.getElementById('mobile-menu').classList.add('hidden');
                 document.querySelector('#mobile-menu-button i').setAttribute('data-lucide', 'menu');
                 lucide.createIcons();
+            });
+        });
+
+        // Back to Top Button Logic
+        const backToTopButton = document.getElementById('back-to-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopButton.classList.remove('opacity-0', 'invisible');
+            } else {
+                backToTopButton.classList.add('opacity-0', 'invisible');
+            }
+        });
+
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
             });
         });
     </script>

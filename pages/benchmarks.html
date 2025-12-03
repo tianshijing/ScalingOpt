@@ -12,6 +12,9 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     
@@ -120,7 +123,7 @@
         <main class="flex-grow">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <!-- Header -->
-                <div class="text-center mb-12">
+                <div class="text-center mb-12" data-aos="fade-up">
                     <div class="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-4">
                         <i data-lucide="bar-chart-3" class="w-4 h-4 mr-2"></i>
                         Research-Based Benchmarks
@@ -133,7 +136,7 @@
                     </p>
                     
                     <!-- Citation Notice -->
-                    <div class="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-6 max-w-4xl mx-auto mb-8">
+                    <div class="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-6 max-w-4xl mx-auto mb-8" data-aos="fade-up" data-aos-delay="100">
                         <div class="flex items-start space-x-3">
                             <i data-lucide="info" class="w-6 h-6 text-amber-600 mt-1 flex-shrink-0"></i>
                             <div class="text-left">
@@ -205,7 +208,7 @@
                 </div>
 
                 <!-- Benchmark Suite Selector -->
-                <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <div class="bg-white rounded-xl shadow-lg p-6 mb-8" data-aos="fade-up" data-aos-delay="200">
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
                         <h2 class="text-2xl font-bold text-gray-900 mb-4 md:mb-0">Benchmark Suites</h2>
                         <div class="flex space-x-2">
@@ -230,7 +233,7 @@
                 <!-- CV Benchmark Content -->
                 <div id="cv-benchmark-content">
                     <!-- CIFAR-100 Benchmark -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8" data-aos="fade-up" data-aos-delay="300">
                         <div 
                             class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 cursor-pointer"
                             id="cifar100-header"
@@ -261,7 +264,7 @@
                     </div>
 
                     <!-- ImageNet Benchmark -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8" data-aos="fade-up" data-aos-delay="400">
                         <div 
                             class="bg-gradient-to-r from-purple-600 to-purple-700 px-6 py-4 cursor-pointer"
                             id="imagenet-header"
@@ -292,7 +295,7 @@
                     </div>
 
                     <!-- COCO Benchmark -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8" data-aos="fade-up" data-aos-delay="500">
                         <div 
                             class="bg-gradient-to-r from-green-600 to-green-700 px-6 py-4 cursor-pointer"
                             id="coco-header"
@@ -361,7 +364,7 @@
                 </div>
 
                 <!-- CTA Section -->
-                <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 text-white text-center">
+                <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 text-white text-center" data-aos="fade-up">
                     <h3 class="text-2xl font-bold mb-4">Want to Contribute Benchmarks?</h3>
                     <p class="text-blue-100 mb-6 max-w-2xl mx-auto">
                         Help us expand our benchmark suite! Submit your optimization results and contribute to the community knowledge base.
@@ -389,6 +392,11 @@
                 </div>
             </div>
         </main>
+
+        <!-- Back to Top Button -->
+        <button id="back-to-top" class="fixed bottom-8 right-8 bg-blue-600 text-white p-3 rounded-full shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-blue-700 hover:-translate-y-1 z-50" aria-label="Back to top">
+            <i data-lucide="arrow-up" class="w-6 h-6"></i>
+        </button>
 
         <!-- Footer -->
         <footer class="bg-gradient-to-br from-blue-900 to-blue-800 text-white">
@@ -451,9 +459,18 @@
 
     <!-- Complete Benchmark Data -->
     <script src="../assets/js/benchmarks-complete-data.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     
     <!-- JavaScript -->
     <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100,
+            easing: 'ease-out-cubic'
+        });
+
         // Initialize Lucide icons
         lucide.createIcons();
 
@@ -506,6 +523,24 @@
                 document.getElementById('mobile-menu').classList.add('hidden');
                 document.querySelector('#mobile-menu-button i').setAttribute('data-lucide', 'menu');
                 lucide.createIcons();
+            });
+        });
+
+        // Back to Top Button Logic
+        const backToTopButton = document.getElementById('back-to-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopButton.classList.remove('opacity-0', 'invisible');
+            } else {
+                backToTopButton.classList.add('opacity-0', 'invisible');
+            }
+        });
+
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
             });
         });
 

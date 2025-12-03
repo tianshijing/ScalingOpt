@@ -21,6 +21,9 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     
@@ -134,7 +137,7 @@
                 <div class="absolute bottom-0 left-0 w-72 h-72 bg-indigo-50 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
                 
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative">
-                    <div class="max-w-3xl">
+                    <div class="max-w-3xl" data-aos="fade-up">
                         <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 tracking-tight">
                             About <span class="text-blue-600">ScalingOpt</span>
                         </h1>
@@ -149,7 +152,7 @@
             <section class="py-20 bg-white">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-                        <div>
+                        <div data-aos="fade-right">
                             <h2 class="text-3xl font-bold text-gray-900 mb-6">Our Mission</h2>
                             <div class="prose prose-lg text-gray-600">
                                 <p class="mb-6">
@@ -160,7 +163,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="bg-slate-50 rounded-2xl p-8 border border-gray-100 shadow-sm">
+                        <div class="bg-slate-50 rounded-2xl p-8 border border-gray-100 shadow-sm" data-aos="fade-left">
                             <h3 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
                                 <i data-lucide="target" class="w-5 h-5 text-blue-600 mr-2"></i>
                                 Core Objectives
@@ -191,15 +194,15 @@
             <!-- Academic Focus -->
             <section class="py-20 bg-slate-50 border-y border-gray-200">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="text-center mb-16">
+                    <div class="text-center mb-16" data-aos="fade-up">
                         <h2 class="text-3xl font-bold text-gray-900 mb-4">Research & Development</h2>
                         <p class="text-xl text-gray-600 max-w-3xl mx-auto">
                             We operate at the intersection of academic research and engineering practice.
                         </p>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-                        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-10" data-aos="fade-up" data-aos-delay="100">
+                        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
                             <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mb-6">
                                 <i data-lucide="microscope" class="w-6 h-6"></i>
                             </div>
@@ -209,7 +212,7 @@
                             </p>
                         </div>
 
-                        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+                        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
                             <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center mb-6">
                                 <i data-lucide="scale" class="w-6 h-6"></i>
                             </div>
@@ -219,7 +222,7 @@
                             </p>
                         </div>
 
-                        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+                        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
                             <div class="w-12 h-12 bg-teal-100 text-teal-600 rounded-lg flex items-center justify-center mb-6">
                                 <i data-lucide="book-open-check" class="w-6 h-6"></i>
                             </div>
@@ -234,7 +237,7 @@
 
             <!-- Community -->
             <section class="py-20 bg-white">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center" data-aos="fade-up">
                     <h2 class="text-3xl font-bold text-gray-900 mb-8">Community Driven</h2>
                     <p class="text-xl text-gray-600 max-w-3xl mx-auto mb-12">
                         ScalingOpt is an open initiative built by and for the machine learning community. We welcome contributions from researchers and developers worldwide.
@@ -247,7 +250,7 @@
                     </div>
 
                     <div>
-                        <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-8 py-4 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-blue-500/30">
+                        <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-8 py-4 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-blue-500/30 hover:-translate-y-1">
                             <i data-lucide="github" class="mr-2 w-5 h-5"></i>
                             Join us on GitHub
                         </a>
@@ -255,6 +258,11 @@
                 </div>
             </section>
         </main>
+
+        <!-- Back to Top Button -->
+        <button id="back-to-top" class="fixed bottom-8 right-8 bg-blue-600 text-white p-3 rounded-full shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-blue-700 hover:-translate-y-1 z-50" aria-label="Back to top">
+            <i data-lucide="arrow-up" class="w-6 h-6"></i>
+        </button>
 
         <!-- Footer -->
         <footer class="bg-white border-t border-gray-100">
@@ -316,7 +324,16 @@
     </div>
 
     <!-- JavaScript -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100,
+            easing: 'ease-out-cubic'
+        });
+
         // Initialize Lucide icons
         lucide.createIcons();
 
@@ -342,6 +359,24 @@
                 document.getElementById('mobile-menu').classList.add('hidden');
                 document.querySelector('#mobile-menu-button i').setAttribute('data-lucide', 'menu');
                 lucide.createIcons();
+            });
+        });
+
+        // Back to Top Button Logic
+        const backToTopButton = document.getElementById('back-to-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopButton.classList.remove('opacity-0', 'invisible');
+            } else {
+                backToTopButton.classList.add('opacity-0', 'invisible');
+            }
+        });
+
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
             });
         });
     </script>

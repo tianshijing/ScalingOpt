@@ -12,6 +12,9 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     
@@ -120,7 +123,7 @@
         <main class="flex-grow">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <!-- Header -->
-                <div class="text-center mb-12">
+                <div class="text-center mb-12" data-aos="fade-up">
                     <h1 class="text-4xl md:text-5xl font-bold text-blue-900 mb-4">
                         Learning <span class="gradient-text">Tutorials</span>
                     </h1>
@@ -131,7 +134,7 @@
                 </div>
 
                 <!-- Featured: Basic Knowledge Section -->
-                <div class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl shadow-2xl p-8 md:p-10 mb-12 border border-blue-400">
+                <div class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl shadow-2xl p-8 md:p-10 mb-12 border border-blue-400" data-aos="fade-up" data-aos-delay="100">
                     <div class="flex flex-col md:flex-row items-center gap-8">
                         <div class="flex-shrink-0">
                             <div class="w-20 h-20 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
@@ -163,7 +166,7 @@
                 </div>
 
                 <!-- Filters -->
-                <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <div class="bg-white rounded-xl shadow-lg p-8 mb-8" data-aos="fade-up" data-aos-delay="200">
                     <div class="mb-6">
                         <h2 class="text-xl font-semibold text-gray-900 mb-2">Filter & Search</h2>
                         <p class="text-gray-600 text-sm">Find the perfect tutorial for your learning journey</p>
@@ -238,7 +241,7 @@
                 </div>
 
                 <!-- Learning Path -->
-                <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <div class="bg-white rounded-xl shadow-lg p-8 mb-8" data-aos="fade-up">
                     <div class="flex items-center mb-6">
                         <i data-lucide="lightbulb" class="w-6 h-6 text-yellow-500 mr-3"></i>
                         <h2 class="text-2xl font-bold text-gray-900">Recommended Learning Path</h2>
@@ -278,7 +281,7 @@
                 </div>
 
                 <!-- CTA -->
-                <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 text-white text-center">
+                <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 text-white text-center" data-aos="fade-up">
                     <h3 class="text-2xl font-bold mb-4">Want to Contribute a Tutorial?</h3>
                     <p class="text-blue-100 mb-6 max-w-2xl mx-auto">
                         Share your knowledge with the community! We welcome high-quality tutorials, 
@@ -304,6 +307,11 @@
                 </div>
             </div>
         </main>
+
+        <!-- Back to Top Button -->
+        <button id="back-to-top" class="fixed bottom-8 right-8 bg-blue-600 text-white p-3 rounded-full shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-blue-700 hover:-translate-y-1 z-50" aria-label="Back to top">
+            <i data-lucide="arrow-up" class="w-6 h-6"></i>
+        </button>
 
         <!-- Footer -->
         <footer class="bg-gradient-to-br from-blue-900 to-blue-800 text-white">
@@ -365,6 +373,7 @@
     </div>
 
     <!-- Tutorials Data -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         const tutorials = [
             {
@@ -578,6 +587,14 @@
 
     <!-- JavaScript -->
     <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100,
+            easing: 'ease-out-cubic'
+        });
+
         // Initialize Lucide icons
         lucide.createIcons();
 
@@ -603,6 +620,24 @@
                 document.getElementById('mobile-menu').classList.add('hidden');
                 document.querySelector('#mobile-menu-button i').setAttribute('data-lucide', 'menu');
                 lucide.createIcons();
+            });
+        });
+
+        // Back to Top Button Logic
+        const backToTopButton = document.getElementById('back-to-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopButton.classList.remove('opacity-0', 'invisible');
+            } else {
+                backToTopButton.classList.add('opacity-0', 'invisible');
+            }
+        });
+
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
             });
         });
 
