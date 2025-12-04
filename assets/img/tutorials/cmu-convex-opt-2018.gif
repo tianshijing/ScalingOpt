@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>Carnegie Mellon University</title>
+<link href="//www.cmu.edu/common/css/cmu-basic-full-width.css" rel="stylesheet" type="text/css" media="screen" />
+
+<style type="text/css">
+<!--
+.message p {padding: 5px 0px 10px 0px;}
+.note {width: 80%;margin: 30px 0px 60px 0px;}
+#searchform {margin-top: 30px;}
+#query {font-size: 11px;}
+#submit {font-size: 11px;}
+#searchlinks {margin-left:5px; font-size: 9px; display:inline-block;vertical-align: middle;}
+-->
+</style>
+<script type="text/javascript">
+function clear_search(s) {
+  if (s.defaultValue==s.value || s.value=='SEARCH') s.value = ""
+}
+</script>
+</head>
+<body>
+<div id="pageHeader"><a href="http://www.cmu.edu/"><img src="//www.cmu.edu/common/standard-v4/images/wordmark.gif" alt="Carnegie Mellon University"/></a></div>
+<div class="content">
+  <div class="message">
+    <h1>File Not Found</h1>
+    <p><strong>Sorry, the page you are trying to reach was not found.</strong></p>
+    <p>Suggestions:</p>
+    <ul><li>Check the address for a typo.</li>
+      <li>Start with our <a href="http://www.cmu.edu/">homepage</a>.</li>
+      <li>Search our site below.</li>
+    </ul>
+  </div>
+ <div id="searchform">
+   <form name="gs" method="get" action="https://search.cmu.edu">
+ <input id="query" type="text" name="q" size="40" maxlength="256" value="SEARCH" onfocus="clear_search(this)"/>
+ <input id="submit" type="submit" name="btnG" value="Search"/>
+
+<div id="searchlinks"><a href="https://search.cmu.edu/advancedcse">Advanced Search</a><br/><a href="https://www.cmu.edu/search/tips">Search Tips</a></div>
+
+
+ </form>
+</div>
+
+<div class="note">
+<strong>Note</strong>: Carnegie Mellon web pages are maintained by many separate and distinct persons, departments, and divisions. If you need assistance with a website, we invite you to contact the corresponding individual or department.
+</div>
+
+
+  
+<!-- Footer -->
+	<div style="text-align: center; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 11px; color: #333333;">
+         			CARNEGIE MELLON UNIVERSITY&nbsp;|&nbsp;5000 FORBES AVENUE&nbsp;|&nbsp;PITTSBURGH, PA 15213
+<br/>         			
+         			<br/><a href="http://www.cmu.edu/sitemap/index.shtml" style="color:; text-decoration:underline;">SITE MAP</a> | <a href="http://www.cmu.edu/contact/index.shtml" style="color:; text-decoration:underline;">CONTACT US</a></div>
+		<!-- Footer -->
+
+</div>
+</body>
+</html>

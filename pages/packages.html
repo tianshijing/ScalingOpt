@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open-source Packages - ScalingOpt</title>
+    <meta name="description" content="A collection of open-source optimization packages and tools for machine learning and deep learning.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 font-inter">
+    <div class="flex flex-col min-h-screen">
+        <!-- Navbar -->
+        <nav class="bg-white/95 backdrop-blur-md border-b border-blue-100 sticky top-0 z-50 shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <a href="../index.html" class="flex items-center">
+                            <span class="text-xl font-bold text-blue-900">ScalingOpt</span>
+                        </a>
+                    </div>
+
+                    <!-- Desktop Navigation -->
+                    <div class="hidden md:flex items-center space-x-8">
+                        <a href="../index.html" class="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">Home</a>
+                        <a href="optimizers.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="search" class="w-4 h-4"></i>
+                            <span>Optimizers</span>
+                        </a>
+                        <div class="relative group">
+                            <button class="flex items-center space-x-1 text-blue-700 hover:text-blue-900 transition-colors duration-200 font-medium">
+                                <i data-lucide="layers" class="w-4 h-4"></i>
+                                <span>Collection</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                            </button>
+                            <div class="absolute left-0 mt-2 w-56 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-100">
+                                <div class="py-1">
+                                    <a href="visualizations.html" class="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">
+                                        <i data-lucide="activity" class="w-4 h-4"></i>
+                                        <span>Visualizations</span>
+                                    </a>
+                                    <a href="packages.html" class="flex items-center space-x-2 px-4 py-2 text-sm text-blue-700 bg-blue-50 font-medium">
+                                        <i data-lucide="package" class="w-4 h-4"></i>
+                                        <span>Open-source Package</span>
+                                    </a>
+                                    <a href="experiments.html" class="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">
+                                        <i data-lucide="flask-conical" class="w-4 h-4"></i>
+                                        <span>Experiments & Analysis</span>
+                                    </a>
+                                    <a href="conferences.html" class="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">
+                                        <i data-lucide="calendar" class="w-4 h-4"></i>
+                                        <span>Conferences & Journals</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="benchmarks.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                            <span>Benchmarks</span>
+                        </a>
+                        <a href="papers.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                            <span>Papers</span>
+                        </a>
+                        <a href="tutorials.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="book-open" class="w-4 h-4"></i>
+                            <span>Tutorials</span>
+                        </a>
+                        <a href="blogs.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="file-text" class="w-4 h-4"></i>
+                            <span>Blogs</span>
+                        </a>
+                        <a href="community.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                            <i data-lucide="users" class="w-4 h-4"></i>
+                            <span>Community</span>
+                        </a>
+                        <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200">
+                            <i data-lucide="github" class="w-5 h-5"></i>
+                            <span class="hidden lg:inline">GitHub</span>
+                        </a>
+                    </div>
+
+                    <!-- Mobile menu button -->
+                    <div class="md:hidden flex items-center">
+                        <button id="mobile-menu-button" class="text-gray-700 hover:text-blue-600 transition-colors duration-200">
+                            <i data-lucide="menu" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Navigation -->
+            <div id="mobile-menu" class="md:hidden bg-white border-t border-gray-200 hidden">
+                <div class="px-2 pt-2 pb-3 space-y-1">
+                    <a href="../index.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">Home</a>
+                    <a href="optimizers.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="search" class="w-4 h-4"></i>
+                        <span>Optimizers</span>
+                    </a>
+                    <div class="space-y-1">
+                        <button onclick="document.getElementById('mobile-collection-menu').classList.toggle('hidden')" class="w-full flex items-center justify-between px-3 py-2 text-blue-700 hover:text-blue-900 hover:bg-blue-50 rounded-md transition-colors duration-200">
+                            <div class="flex items-center space-x-2">
+                                <i data-lucide="layers" class="w-4 h-4"></i>
+                                <span>Collection</span>
+                            </div>
+                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </button>
+                        <div id="mobile-collection-menu" class="hidden pl-4">
+                            <a href="visualizations.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                                <i data-lucide="activity" class="w-4 h-4"></i>
+                                <span>Visualizations</span>
+                            </a>
+                            <a href="packages.html" class="flex items-center space-x-2 px-3 py-2 text-blue-700 hover:text-blue-900 hover:bg-blue-50 rounded-md transition-colors duration-200">
+                                <i data-lucide="package" class="w-4 h-4"></i>
+                                <span>Open-source Package</span>
+                            </a>
+                            <a href="experiments.html" class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                                <i data-lucide="flask-conical" class="w-4 h-4"></i>
+                                <span>Experiments & Analysis</span>
+                            </a>
+                            <a href="conferences.html" class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                                <i data-lucide="calendar" class="w-4 h-4"></i>
+                                <span>Conferences & Journals</span>
+                            </a>
+                        </div>
+                    </div>
+                    <a href="benchmarks.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                        <span>Benchmarks</span>
+                    </a>
+                    <a href="papers.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                        <span>Papers</span>
+                    </a>
+                    <a href="tutorials.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="book-open" class="w-4 h-4"></i>
+                        <span>Tutorials</span>
+                    </a>
+                    <a href="blogs.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="file-text" class="w-4 h-4"></i>
+                        <span>Blogs</span>
+                    </a>
+                    <a href="community.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="users" class="w-4 h-4"></i>
+                        <span>Community</span>
+                    </a>
+                    <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                        <i data-lucide="github" class="w-4 h-4"></i>
+                        <span>GitHub</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="flex-grow py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Header -->
+                <div class="text-center mb-16" data-aos="fade-up">
+                    <h1 class="text-4xl md:text-5xl font-bold text-blue-900 mb-6">
+                        Open-source <span class="gradient-text">Packages</span>
+                    </h1>
+                    <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                        Discover essential open-source tools and libraries for optimization, deep learning, and hyperparameter tuning.
+                    </p>
+                </div>
+
+                <!-- Packages Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    
+                    <!-- Transformers -->
+                    <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden group" data-aos="fade-up" data-aos-delay="100">
+                        <div class="p-6 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center text-yellow-600 mr-4 group-hover:scale-110 transition-transform">
+                                    <span class="text-2xl">🤗</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">Transformers</h3>
+                                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Hugging Face</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 mb-6 flex-grow">
+                                State-of-the-art Machine Learning for PyTorch, TensorFlow, and JAX. Provides thousands of pre-trained models and integrated optimization tools.
+                            </p>
+                            <div class="space-y-3">
+                                <a href="https://github.com/huggingface/transformers" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="github" class="w-4 h-4 mr-2"></i> GitHub</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                                <a href="https://huggingface.co/docs/transformers/index" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="book-open" class="w-4 h-4 mr-2"></i> Documentation</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TorchOpt -->
+                    <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden group" data-aos="fade-up" data-aos-delay="150">
+                        <div class="p-6 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center text-red-600 mr-4 group-hover:scale-110 transition-transform">
+                                    <i data-lucide="flame" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">TorchOpt</h3>
+                                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">MetaOpt</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 mb-6 flex-grow">
+                                An efficient library for differentiable optimization in PyTorch. It enables gradient-based meta-learning and hyperparameter optimization.
+                            </p>
+                            <div class="space-y-3">
+                                <a href="https://github.com/metaopt/torchopt" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="github" class="w-4 h-4 mr-2"></i> GitHub</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                                <a href="https://torchopt.readthedocs.io/en/latest/" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="book-open" class="w-4 h-4 mr-2"></i> Documentation</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DeepSpeed -->
+                    <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden group" data-aos="fade-up" data-aos-delay="200">
+                        <div class="p-6 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 mr-4 group-hover:scale-110 transition-transform">
+                                    <i data-lucide="zap" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">DeepSpeed</h3>
+                                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Microsoft</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 mb-6 flex-grow">
+                                A deep learning optimization library that makes distributed training easy, efficient, and effective. Features ZeRO technology for massive model scaling.
+                            </p>
+                            <div class="space-y-3">
+                                <a href="https://github.com/microsoft/DeepSpeed" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="github" class="w-4 h-4 mr-2"></i> GitHub</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                                <a href="https://www.deepspeed.ai/" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="globe" class="w-4 h-4 mr-2"></i> Website</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Optax -->
+                    <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden group" data-aos="fade-up" data-aos-delay="250">
+                        <div class="p-6 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center text-indigo-600 mr-4 group-hover:scale-110 transition-transform">
+                                    <i data-lucide="layers" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">Optax</h3>
+                                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">DeepMind</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 mb-6 flex-grow">
+                                A gradient processing and optimization library for JAX. Designed to facilitate research by providing composable building blocks.
+                            </p>
+                            <div class="space-y-3">
+                                <a href="https://github.com/deepmind/optax" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="github" class="w-4 h-4 mr-2"></i> GitHub</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                                <a href="https://optax.readthedocs.io/" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="book-open" class="w-4 h-4 mr-2"></i> Documentation</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Horovod -->
+                    <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden group" data-aos="fade-up" data-aos-delay="300">
+                        <div class="p-6 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center text-green-600 mr-4 group-hover:scale-110 transition-transform">
+                                    <i data-lucide="network" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">Horovod</h3>
+                                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Uber</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 mb-6 flex-grow">
+                                A distributed deep learning training framework for TensorFlow, Keras, PyTorch, and Apache MXNet. Makes distributed training easy and fast.
+                            </p>
+                            <div class="space-y-3">
+                                <a href="https://github.com/horovod/horovod" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="github" class="w-4 h-4 mr-2"></i> GitHub</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                                <a href="https://horovod.ai/" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="globe" class="w-4 h-4 mr-2"></i> Website</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Optuna -->
+                    <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden group" data-aos="fade-up" data-aos-delay="350">
+                        <div class="p-6 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600 mr-4 group-hover:scale-110 transition-transform">
+                                    <i data-lucide="sliders" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">Optuna</h3>
+                                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Preferred Networks</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 mb-6 flex-grow">
+                                An automatic hyperparameter optimization software framework, particularly designed for machine learning. Featuring an define-by-run API.
+                            </p>
+                            <div class="space-y-3">
+                                <a href="https://github.com/optuna/optuna" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="github" class="w-4 h-4 mr-2"></i> GitHub</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                                <a href="https://optuna.org/" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="globe" class="w-4 h-4 mr-2"></i> Website</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ray Tune -->
+                    <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden group" data-aos="fade-up" data-aos-delay="400">
+                        <div class="p-6 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-cyan-100 rounded-lg flex items-center justify-center text-cyan-600 mr-4 group-hover:scale-110 transition-transform">
+                                    <i data-lucide="cpu" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">Ray Tune</h3>
+                                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Anyscale</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 mb-6 flex-grow">
+                                A scalable hyperparameter tuning library. It is compatible with any machine learning framework and provides state-of-the-art search algorithms.
+                            </p>
+                            <div class="space-y-3">
+                                <a href="https://github.com/ray-project/ray" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="github" class="w-4 h-4 mr-2"></i> GitHub</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                                <a href="https://docs.ray.io/en/latest/tune/index.html" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="book-open" class="w-4 h-4 mr-2"></i> Documentation</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                     <!-- OpenBox -->
+                     <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden group" data-aos="fade-up" data-aos-delay="450">
+                        <div class="p-6 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center text-orange-600 mr-4 group-hover:scale-110 transition-transform">
+                                    <i data-lucide="box" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">OpenBox</h3>
+                                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">PKU-DAIR</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 mb-6 flex-grow">
+                                An efficient and generalized black-box optimization system. It supports multiple optimization tasks including hyperparameter optimization and neural architecture search.
+                            </p>
+                            <div class="space-y-3">
+                                <a href="https://github.com/PKU-DAIR/open-box" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="github" class="w-4 h-4 mr-2"></i> GitHub</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                                <a href="https://open-box.readthedocs.io/en/latest/" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="book-open" class="w-4 h-4 mr-2"></i> Documentation</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Nevergrad -->
+                    <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden group" data-aos="fade-up" data-aos-delay="500">
+                        <div class="p-6 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center text-teal-600 mr-4 group-hover:scale-110 transition-transform">
+                                    <i data-lucide="git-merge" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">Nevergrad</h3>
+                                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Meta Research</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 mb-6 flex-grow">
+                                A gradient-free optimization platform. It contains a wide range of algorithms for parameter tuning and works well for non-differentiable or noisy functions.
+                            </p>
+                            <div class="space-y-3">
+                                <a href="https://github.com/facebookresearch/nevergrad" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="github" class="w-4 h-4 mr-2"></i> GitHub</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                                <a href="https://facebookresearch.github.io/nevergrad/" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="book-open" class="w-4 h-4 mr-2"></i> Documentation</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- JAXopt -->
+                    <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden group" data-aos="fade-up" data-aos-delay="550">
+                        <div class="p-6 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 mr-4 group-hover:scale-110 transition-transform">
+                                    <i data-lucide="cpu" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">JAXopt</h3>
+                                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Google Research</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 mb-6 flex-grow">
+                                Hardware accelerated, batchable and differentiable optimizers in JAX. Enforces distinct separation between objective functions and solvers.
+                            </p>
+                            <div class="space-y-3">
+                                <a href="https://github.com/google/jaxopt" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="github" class="w-4 h-4 mr-2"></i> GitHub</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                                <a href="https://jaxopt.github.io/" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="book-open" class="w-4 h-4 mr-2"></i> Documentation</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cooper -->
+                    <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden group" data-aos="fade-up" data-aos-delay="600">
+                        <div class="p-6 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center text-orange-600 mr-4 group-hover:scale-110 transition-transform">
+                                    <i data-lucide="scale" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">Cooper</h3>
+                                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Cooper Org</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 mb-6 flex-grow">
+                                A toolkit for Lagrangian-based constrained optimization in PyTorch. Handles formulation and solving of constrained optimization problems.
+                            </p>
+                            <div class="space-y-3">
+                                <a href="https://github.com/cooper-org/cooper" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="github" class="w-4 h-4 mr-2"></i> GitHub</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                                <a href="https://cooper.readthedocs.io/" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="book-open" class="w-4 h-4 mr-2"></i> Documentation</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Betty -->
+                    <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden group" data-aos="fade-up" data-aos-delay="650">
+                        <div class="p-6 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600 mr-4 group-hover:scale-110 transition-transform">
+                                    <i data-lucide="git-branch" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">Betty</h3>
+                                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Leopard AI</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 mb-6 flex-grow">
+                                An automatic differentiation library for multilevel optimization. It provides a unified framework for generalized meta-learning and hyperparameter optimization.
+                            </p>
+                            <div class="space-y-3">
+                                <a href="https://github.com/leopard-ai/betty" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="github" class="w-4 h-4 mr-2"></i> GitHub</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                                <a href="https://betty.readthedocs.io/" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="book-open" class="w-4 h-4 mr-2"></i> Documentation</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CVXPY -->
+                    <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden group" data-aos="fade-up" data-aos-delay="700">
+                        <div class="p-6 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center text-green-600 mr-4 group-hover:scale-110 transition-transform">
+                                    <i data-lucide="code" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">CVXPY</h3>
+                                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">CVX Research</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 mb-6 flex-grow">
+                                A Python-embedded modeling language for convex optimization problems. It allows you to express problems in a natural way that follows the math.
+                            </p>
+                            <div class="space-y-3">
+                                <a href="https://github.com/cvxpy/cvxpy" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="github" class="w-4 h-4 mr-2"></i> GitHub</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                                <a href="https://www.cvxpy.org/" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="globe" class="w-4 h-4 mr-2"></i> Website</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Higher -->
+                    <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden group" data-aos="fade-up" data-aos-delay="750">
+                        <div class="p-6 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center text-indigo-600 mr-4 group-hover:scale-110 transition-transform">
+                                    <i data-lucide="repeat" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">Higher</h3>
+                                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Meta Research</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 mb-6 flex-grow">
+                                A library for higher-order optimization in PyTorch. It facilitates the implementation of "unrolled" optimization loops for meta-learning.
+                            </p>
+                            <div class="space-y-3">
+                                <a href="https://github.com/facebookresearch/higher" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="github" class="w-4 h-4 mr-2"></i> GitHub</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                                <a href="https://higher.readthedocs.io/" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="book-open" class="w-4 h-4 mr-2"></i> Documentation</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PyTorch Optimizer -->
+                    <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden group" data-aos="fade-up" data-aos-delay="800">
+                        <div class="p-6 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center text-red-600 mr-4 group-hover:scale-110 transition-transform">
+                                    <i data-lucide="zap" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">PyTorch Optimizer</h3>
+                                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Community</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 mb-6 flex-grow">
+                                A comprehensive collection of optimizer implementations for PyTorch, including AdaBound, diffGrad, LAMB, and many others not in the official library.
+                            </p>
+                            <div class="space-y-3">
+                                <a href="https://github.com/jettify/pytorch-optimizer" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="github" class="w-4 h-4 mr-2"></i> GitHub</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                                <a href="https://pytorch-optimizer.readthedocs.io/" target="_blank" class="flex items-center justify-between text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50">
+                                    <span class="flex items-center"><i data-lucide="book-open" class="w-4 h-4 mr-2"></i> Documentation</span>
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+
+        <!-- Back to Top Button -->
+        <button id="back-to-top" class="fixed bottom-8 right-8 bg-blue-600 text-white p-3 rounded-full shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-blue-700 hover:-translate-y-1 z-50" aria-label="Back to top">
+            <i data-lucide="arrow-up" class="w-6 h-6"></i>
+        </button>
+
+        <!-- Footer -->
+        <footer class="bg-gradient-to-br from-blue-900 to-blue-800 text-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <!-- Brand -->
+                    <div class="col-span-1 md:col-span-2">
+                        <div class="flex items-center mb-4">
+                            <span class="text-xl font-bold text-white">ScalingOpt</span>
+                        </div>
+                        <p class="text-blue-100 mb-4 max-w-md">
+                            A comprehensive platform for scaling optimization algorithms. 
+                            Discover, compare, and contribute to cutting-edge optimizers for large-scale machine learning.
+                        </p>
+                        <div class="flex space-x-4">
+                            <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors duration-200">
+                                <i data-lucide="github" class="w-5 h-5"></i>
+                            </a>
+                            <a href="mailto:juanxitian1031@gmail.com" class="text-gray-400 hover:text-white transition-colors duration-200">
+                                <i data-lucide="mail" class="w-5 h-5"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                        <ul class="space-y-2">
+                            <li><a href="optimizers.html" class="text-gray-300 hover:text-white transition-colors duration-200">Browse Optimizers</a></li>
+                            <li><a href="visualizations.html" class="text-gray-300 hover:text-white transition-colors duration-200">Visualizations</a></li>
+                            <li><a href="packages.html" class="text-white font-medium transition-colors duration-200">Open-source Packages</a></li>
+                            <li><a href="benchmarks.html" class="text-gray-300 hover:text-white transition-colors duration-200">Benchmarks</a></li>
+                            <li><a href="papers.html" class="text-gray-300 hover:text-white transition-colors duration-200">Papers</a></li>
+                            <li><a href="tutorials.html" class="text-gray-300 hover:text-white transition-colors duration-200">Tutorials</a></li>
+                            <li><a href="blogs.html" class="text-gray-300 hover:text-white transition-colors duration-200">Blogs</a></li>
+                            <li><a href="community.html" class="text-gray-300 hover:text-white transition-colors duration-200">Community</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Resources -->
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Resources</h3>
+                        <ul class="space-y-2">
+                            <li><a href="about_us.html" class="text-gray-300 hover:text-white transition-colors duration-200">About Us</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-400 text-sm">
+                        © 2025 ScalingOpt Community. All rights reserved.
+                    </p>
+                    <div class="flex items-center space-x-1 text-gray-400 text-sm mt-4 md:mt-0">
+                        <span>Made with</span>
+                        <i data-lucide="heart" class="w-4 h-4 text-red-500"></i>
+                        <span>by the community</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100,
+            easing: 'ease-out-cubic'
+        });
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const icon = this.querySelector('i');
+            
+            if (mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.remove('hidden');
+                icon.setAttribute('data-lucide', 'x');
+            } else {
+                mobileMenu.classList.add('hidden');
+                icon.setAttribute('data-lucide', 'menu');
+            }
+            
+            lucide.createIcons();
+        });
+
+        // Close mobile menu when clicking on links
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', function() {
+                document.getElementById('mobile-menu').classList.add('hidden');
+                document.querySelector('#mobile-menu-button i').setAttribute('data-lucide', 'menu');
+                lucide.createIcons();
+            });
+        });
+
+        // Back to Top Button Logic
+        const backToTopButton = document.getElementById('back-to-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopButton.classList.remove('opacity-0', 'invisible');
+            } else {
+                backToTopButton.classList.add('opacity-0', 'invisible');
+            }
+        });
+
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    </script>
+</body>
+</html>
+

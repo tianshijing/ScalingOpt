@@ -40,10 +40,33 @@
                             <i data-lucide="search" class="w-4 h-4"></i>
                             <span>Optimizers</span>
                         </a>
-                        <a href="visualizations.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
-                            <i data-lucide="activity" class="w-4 h-4"></i>
-                            <span>Visualizations</span>
-                        </a>
+                        <div class="relative group">
+                            <button class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
+                                <i data-lucide="layers" class="w-4 h-4"></i>
+                                <span>Collection</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                            </button>
+                            <div class="absolute left-0 mt-2 w-56 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-100">
+                                <div class="py-1">
+                                    <a href="visualizations.html" class="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">
+                                        <i data-lucide="activity" class="w-4 h-4"></i>
+                                        <span>Visualizations</span>
+                                    </a>
+                                    <a href="packages.html" class="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">
+                                        <i data-lucide="package" class="w-4 h-4"></i>
+                                        <span>Open-source Package</span>
+                                    </a>
+                                    <a href="experiments.html" class="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">
+                                        <i data-lucide="flask-conical" class="w-4 h-4"></i>
+                                        <span>Experiments & Analysis</span>
+                                    </a>
+                                    <a href="conferences.html" class="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">
+                                        <i data-lucide="calendar" class="w-4 h-4"></i>
+                                        <span>Conferences & Journals</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                         <a href="benchmarks.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
                             <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
                             <span>Benchmarks</span>
@@ -87,10 +110,33 @@
                         <i data-lucide="search" class="w-4 h-4"></i>
                         <span>Optimizers</span>
                     </a>
-                    <a href="visualizations.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
-                        <i data-lucide="activity" class="w-4 h-4"></i>
-                        <span>Visualizations</span>
-                    </a>
+                    <div class="space-y-1">
+                        <button onclick="document.getElementById('mobile-collection-menu').classList.toggle('hidden')" class="w-full flex items-center justify-between px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                            <div class="flex items-center space-x-2">
+                                <i data-lucide="layers" class="w-4 h-4"></i>
+                                <span>Collection</span>
+                            </div>
+                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </button>
+                        <div id="mobile-collection-menu" class="hidden pl-4">
+                            <a href="visualizations.html" class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                                <i data-lucide="activity" class="w-4 h-4"></i>
+                                <span>Visualizations</span>
+                            </a>
+                            <a href="packages.html" class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                                <i data-lucide="package" class="w-4 h-4"></i>
+                                <span>Open-source Package</span>
+                            </a>
+                            <a href="experiments.html" class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                                <i data-lucide="flask-conical" class="w-4 h-4"></i>
+                                <span>Experiments & Analysis</span>
+                            </a>
+                            <a href="conferences.html" class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                                <i data-lucide="calendar" class="w-4 h-4"></i>
+                                <span>Conferences & Journals</span>
+                            </a>
+                        </div>
+                    </div>
                     <a href="benchmarks.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
                         <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
                         <span>Benchmarks</span>
@@ -558,6 +604,72 @@
                 topics: ['Recent Advances', 'New Algorithms', 'Theoretical Developments'],
                 author: 'Nicolas Flammarion, EPFL',
                 series: 'Optimization for Machine Learning'
+            },
+            {
+                id: 'stanford-ee364a',
+                title: 'Stanford EE364A: Convex Optimization I',
+                description: 'Convex optimization I by Stephen Boyd. Covers the basics of convex optimization, including convex sets, functions, and optimization problems. Course Website: https://web.stanford.edu/class/ee364a/',
+                level: 'Advanced',
+                duration: 'Series',
+                type: 'Video',
+                topics: ['Convex Optimization', 'Stanford', 'Stephen Boyd'],
+                author: 'Stephen Boyd, Stanford',
+                useTextCover: true
+            },
+            {
+                id: 'stanford-ee364b',
+                title: 'Stanford EE364b: Convex Optimization II',
+                description: 'Convex optimization II by Stephen Boyd. Continuation of 364A, covering advanced topics in convex optimization. Course Website: https://web.stanford.edu/class/ee364b/',
+                level: 'Advanced',
+                duration: 'Series',
+                type: 'Video',
+                topics: ['Convex Optimization', 'Stanford', 'Stephen Boyd'],
+                author: 'Stephen Boyd, Stanford',
+                useTextCover: true
+            },
+            {
+                id: 'cmu-convex-opt-2018',
+                title: 'CMU: Convex Optimization (Fall 2018)',
+                description: 'Convex Optimization course by Ryan Tibshirani at CMU.',
+                level: 'Advanced',
+                duration: 'Series',
+                type: 'Video',
+                topics: ['Convex Optimization', 'CMU', 'Ryan Tibshirani'],
+                author: 'Ryan Tibshirani, CMU',
+                useTextCover: true
+            },
+            {
+                id: 'convex-optimization-ahmad-bazzi',
+                title: 'Convex Optimization',
+                description: 'Convex Optimization tutorial series by Ahmad Bazzi.',
+                level: 'Intermediate',
+                duration: 'Series',
+                type: 'Video',
+                topics: ['Convex Optimization', 'Ahmad Bazzi'],
+                author: 'Ahmad Bazzi',
+                useTextCover: true
+            },
+            {
+                id: 'optimization-algorithms-ut-austin',
+                title: 'Optimization Algorithms',
+                description: 'Optimization Algorithms course by Constantine Caramanis at UT Austin.',
+                level: 'Advanced',
+                duration: 'Series',
+                type: 'Video',
+                topics: ['Optimization Algorithms', 'UT Austin', 'Constantine Caramanis'],
+                author: 'Constantine Caramanis, UT Austin',
+                useTextCover: true
+            },
+            {
+                id: 'optimization-methods-kit',
+                title: 'Optimization Methods for ML and Engineering',
+                description: 'Optimization Methods for Machine Learning and Engineering (KIT Winter Term 20/21) by Julius Pfrommer.',
+                level: 'Advanced',
+                duration: 'Series',
+                type: 'Video',
+                topics: ['Optimization Methods', 'Machine Learning', 'KIT', 'Julius Pfrommer'],
+                author: 'Julius Pfrommer, KIT',
+                useTextCover: true
             }
         ];
 
@@ -579,7 +691,13 @@
                 'epfl-optml-lecture09': '../Tutorial/EPFL_optML/lecture09.pdf',
                 'epfl-optml-lecture10': '../Tutorial/EPFL_optML/lecture10.pdf',
                 'epfl-optml-lecture11': '../Tutorial/EPFL_optML/lecture11.pdf',
-                'epfl-optml-lecture12': '../Tutorial/EPFL_optML/lecture12.pdf'
+                'epfl-optml-lecture12': '../Tutorial/EPFL_optML/lecture12.pdf',
+                'stanford-ee364a': 'https://www.youtube.com/playlist?list=PLoROMvodv4rMJqxxviPa4AmDClvcbHi6h',
+                'stanford-ee364b': 'https://www.youtube.com/playlist?list=PL3940DD956CDF0622',
+                'cmu-convex-opt-2018': 'https://www.youtube.com/watch?v=Di9f47LAzHQ&list=PLRPU00LaonXQ27RBcq6jFJnyIbGw5azOI&index=2',
+                'convex-optimization-ahmad-bazzi': 'https://www.youtube.com/playlist?list=PL-DDW8QIRjNOVxrU2efygBw0xADVOgpmw',
+                'optimization-algorithms-ut-austin': 'https://www.youtube.com/playlist?list=PLXsmhnDvpjORzPelSDs0LSDrfJcqyLlZc',
+                'optimization-methods-kit': 'https://www.youtube.com/playlist?list=PLdkTDauaUnQpzuOCZyUUZc0lxf4-PXNR5'
             };
             return pdfMap[tutorialId] || '#';
         }
@@ -670,12 +788,18 @@
                 <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 overflow-hidden group">
                     <!-- Thumbnail -->
                     <div class="h-48 overflow-hidden bg-gray-100 border-b border-gray-100 relative">
-                        <img 
-                            src="../assets/img/tutorials/${tutorial.id}.png" 
-                            alt="${tutorial.title}" 
-                            class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                            onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center\'><i data-lucide=\'${getTypeIcon(tutorial.type)}\' class=\'w-16 h-16 text-white\'></i></div>'; lucide.createIcons();"
-                        />
+                        ${tutorial.useTextCover ? `
+                            <div class="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center p-6 text-center">
+                                <span class="text-white font-bold text-lg leading-snug">${tutorial.title}</span>
+                            </div>
+                        ` : `
+                            <img 
+                                src="../assets/img/tutorials/${tutorial.id}.png" 
+                                alt="${tutorial.title}" 
+                                class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                                onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center\'><i data-lucide=\'${getTypeIcon(tutorial.type)}\' class=\'w-16 h-16 text-white\'></i></div>'; lucide.createIcons();"
+                            />
+                        `}
                         <!-- Overlay -->
                         <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 pointer-events-none"></div>
                     </div>
