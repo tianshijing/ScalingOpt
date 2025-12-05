@@ -1164,7 +1164,7 @@ const optimizers = [
       "Exploration"
     ],
     "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/lookahead.py",
-    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\text{Optimizer } \\mathcal{A}, k, \\alpha \\\\\n        &\\textbf{Initialize:} \\phi_0 \\leftarrow \\theta_0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad \\text{Synchronize: } \\theta_{t,0} \\leftarrow \\phi_{t-1} \\\\\n        &\\quad \\textbf{for } i=1 \\text{ to } k \\text{ do} \\\\\n        &\\quad \\quad \\theta_{t,i} \\leftarrow \\theta_{t,i-1} + \\mathcal{A}(g_{t,i}) \\\\\n        &\\quad \\textbf{end for} \\\\\n        &\\quad \\phi_t \\leftarrow \\phi_{t-1} + \\alpha (\\theta_{t,k} - \\phi_{t-1}) \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\text{Optimizer } \\mathcal{A}, k, \\alpha \\\\\n        &\\textbf{Initialize:} \\phi_0 \\leftarrow \\theta_0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad \\text{Synchronize: } \\theta_{t,0} \\leftarrow \\phi_{t-1} \\\\\n        &\\quad \\textbf{for } i=1 \\text{ to } k \\text{ do} \\\\\n        &\\quad \\quad g_{t,i} \\leftarrow \\nabla f_t(\\theta_{t,i-1}) \\\\\n        &\\quad \\quad \\theta_{t,i} \\leftarrow \\mathcal{A}(\\theta_{t,i-1}, g_{t,i}) \\\\\n        &\\quad \\textbf{end for} \\\\\n        &\\quad \\phi_t \\leftarrow \\phi_{t-1} + \\alpha (\\theta_{t,k} - \\phi_{t-1}) \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "radam",
@@ -1886,7 +1886,7 @@ const optimizers = [
       "Generalization"
     ],
     "githubUrl": "https://github.com/google-research/sam",
-    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\rho \\\\\n        &\\textbf{Initialize:} \\theta_0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad \\epsilon_t \\leftarrow \\rho \\frac{\\nabla_{\\theta} f_t(\\theta_{t-1})}{\\|\\nabla_{\\theta} f_t(\\theta_{t-1})\\|_2} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1} + \\epsilon_t) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta g_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\theta_0, \\rho, \\eta, \\text{Optimizer } \\mathcal{A} \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f_t(\\theta_{t-1}) \\\\\n        &\\quad \\epsilon_t \\leftarrow \\rho \\frac{g_t}{\\|g_t\\|_2} \\\\\n        &\\quad \\tilde{g}_t \\leftarrow \\nabla f_t(\\theta_{t-1} + \\epsilon_t) \\\\\n        &\\quad \\theta_t \\leftarrow \\mathcal{A}(\\theta_{t-1}, \\tilde{g}_t) \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "madgrad",
@@ -2614,7 +2614,7 @@ const optimizers = [
       "Deep Learning"
     ],
     "githubUrl": "https://github.com/TianjinYellow/SPAM-Optimizer",
-    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta \\\\\n        &\\textbf{Initialize:} \\theta_0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad \\theta_{t-1/2} \\leftarrow \\theta_{t-1} - \\eta g_t \\\\\n        &\\quad \\theta_t \\leftarrow \\text{prox}_{\\lambda \\eta}(\\theta_{t-1/2}) \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2, \\epsilon, \\tau \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad \\textbf{if } \\|g_t\\| > \\tau \\textbf{ then} \\\\\n        &\\quad \\quad m_{t-1} \\leftarrow 0 \\quad \\text{// Momentum Reset} \\\\\n        &\\quad \\quad g_t \\leftarrow \\text{Clip}(g_t, \\tau) \\\\\n        &\\quad \\textbf{end if} \\\\\n        &\\quad m_t \\leftarrow \\beta_1 m_{t-1} + (1-\\beta_1) g_t \\\\\n        &\\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g_t^2 \\\\\n        &\\quad \\hat{m}_t \\leftarrow m_t / (1-\\beta_1^t), \\hat{v}_t \\leftarrow v_t / (1-\\beta_2^t) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\hat{m}_t / (\\sqrt{\\hat{v}_t} + \\epsilon) \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "adamuon",
@@ -2666,7 +2666,7 @@ const optimizers = [
       "Optimization"
     ],
     "githubUrl": "https://github.com/Chongjie-Si/AdaMuon",
-    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\mu, \\text{ns\\_steps} \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\mu m_{t-1} + g_t \\\\\n        &\\quad v_t \\leftarrow \\text{RMSProp-like variance}(g_t) \\\\\n        &\\quad \\text{Precond} \\leftarrow \\text{NewtonSchulz}(m_t) \\odot (1/\\sqrt{v_t}) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\cdot \\text{Precond} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\mu, \\beta_2, \\epsilon, K \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\mu m_{t-1} + g_t \\\\\n        &\\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g_t^2 \\\\\n        &\\quad O_t \\leftarrow \\text{NewtonSchulz}(m_t, K) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta (O_t \\odot \\frac{1}{\sqrt{v_t} + \\epsilon}) \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "conda",
@@ -2718,7 +2718,7 @@ const optimizers = [
       "Deep Learning"
     ],
     "githubUrl": "https://github.com/jie040109/Conda",
-    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta \\\\\n        &\\textbf{Initialize:} \\theta_0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\beta m_{t-1} + (1-\\beta) g_t \\\\\n        &\\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g_t^2 \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\frac{m_t}{\\sqrt{v_t} + \\epsilon} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2, \\epsilon \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\beta_1 m_{t-1} + (1-\\beta_1) g_t \\\\\n        &\\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) \\text{ColMean}(g_t^2) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\frac{m_t}{\\sqrt{v_t} + \\epsilon} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "adalomo",
@@ -3166,7 +3166,7 @@ const optimizers = [
       "LLM"
     ],
     "githubUrl": "https://github.com/TianjinYellow/StableSPAM",
-    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta \\\\\n        &\\textbf{Initialize:} \\theta_0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad g_t^Q \\leftarrow \\text{Quantize}(g_t, \\text{4-bit}) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\cdot g_t^Q \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2, \\epsilon, \\tau_0 \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad \\tau_t \\leftarrow \\text{UpdateThreshold}(\\tau_{t-1}, g_t) \\\\\n        &\\quad g_t \\leftarrow \\text{MatrixNorm}(\\text{Clip}(g_t, \\tau_t)) \\\\\n        &\\quad \\textbf{if } \\text{Spike}(g_t) \\textbf{ then } m_{t-1} \\leftarrow 0 \\\\\n        &\\quad m_t \\leftarrow \\beta_1 m_{t-1} + (1-\\beta_1) g_t \\\\\n        &\\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g_t^2 \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\text{Quantize}\\left(\\frac{m_t}{\\sqrt{v_t} + \\epsilon}, \\text{4-bit}\\right) \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "kfac",
