@@ -1140,5 +1140,77 @@ const papers = [
     projectUrl: 'https://bocb-ai.github.io/',
     tags: ['BOCB', 'Backbone-Optimizer Coupling', 'Vision Architectures', 'CNNs', 'ViT', 'ConvNeXt', 'SGD', 'Adaptive Learning Rate', 'Pre-training', 'Fine-tuning', 'Visual Representation Learning'],
     featured: true
+  },
+  {
+    id: 'rethinking-generalization-2016',
+    title: 'Understanding deep learning requires rethinking generalization',
+    authors: ['Chiyuan Zhang', 'Samy Bengio', 'Moritz Hardt', 'Benjamin Recht', 'Oriol Vinyals'],
+    year: 2016,
+    venue: 'arXiv preprint',
+    category: 'Analysis',
+    abstract: 'Despite their massive size, successful deep artificial neural networks can exhibit a remarkably small difference between training and test performance. Conventional wisdom attributes small generalization error either to properties of the model family, or to the regularization techniques used during training. Through extensive systematic experiments, we show how these traditional approaches fail to explain why large neural networks generalize well in practice. Specifically, our experiments establish that state-of-the-art convolutional networks for image classification trained with stochastic gradient methods easily fit a random labeling of the training data. This phenomenon is qualitatively unaffected by explicit regularization, and occurs even if we replace the true images by completely unstructured random noise. We corroborate these experimental findings with a theoretical construction showing that simple depth two neural networks already have perfect finite sample expressivity as soon as the number of parameters exceeds the number of data points as it usually does in practice.',
+    arxivUrl: 'https://arxiv.org/abs/1611.03530',
+    tags: ['Generalization', 'Deep Learning Theory', 'Overparameterization', 'Random Labels'],
+    featured: false
+  },
+  {
+    id: 'loss-surfaces-multilayer-2014',
+    title: 'The Loss Surfaces of Multilayer Networks',
+    authors: ['Anna Choromanska', 'Mikael Henaff', 'Michaël Mathieu', 'Gérard Ben Arous', 'Yann LeCun'],
+    year: 2014,
+    venue: 'arXiv preprint',
+    category: 'Analysis',
+    abstract: 'We study the connection between the highly non-convex loss function of a simple model of the fully-connected feed-forward neural network and the Hamiltonian of the spherical spin-glass model under the assumptions of: i) variable independence, ii) redundancy in network parametrization, and iii) uniformity. These assumptions enable us to explain the complexity of the fully decoupled neural network through the prism of the results from random matrix theory. We show that for large-size decoupled networks the lowest critical values of the random loss function form a layered structure and they are located in a well-defined band lower-bounded by the global minimum. The number of local minima outside that band diminishes exponentially with the size of the network. We empirically verify that the mathematical model exhibits similar behavior as the computer simulations, despite the presence of high dependencies in real networks.',
+    arxivUrl: 'https://arxiv.org/abs/1412.0233',
+    tags: ['Loss Landscape', 'Spin Glass', 'Random Matrix Theory', 'Non-convex Optimization'],
+    featured: false
+  },
+  {
+    id: 'loss-surface-deep-linear-2018',
+    title: 'The loss surface of deep linear networks viewed through the algebraic geometry lens',
+    authors: ['Dhagash Mehta', 'Tianran Chen', 'Tingting Tang', 'Jonathan D. Hauenstein'],
+    year: 2018,
+    venue: 'arXiv preprint',
+    category: 'Analysis',
+    abstract: 'By using the viewpoint of modern computational algebraic geometry, we explore properties of the optimization landscapes of the deep linear neural network models. After clarifying on the various definitions of "flat" minima, we show that the geometrically flat minima, which are merely artifacts of residual continuous symmetries of the deep linear networks, can be straightforwardly removed by a generalized L2 regularization. Then, we establish upper bounds on the number of isolated stationary points of these networks with the help of algebraic geometry. Using these upper bounds and utilizing a numerical algebraic geometry method, we find all stationary points of modest depth and matrix size. We show that in the presence of the non-zero regularization, deep linear networks indeed possess local minima which are not global.',
+    arxivUrl: 'https://arxiv.org/abs/1810.07716',
+    tags: ['Deep Linear Networks', 'Algebraic Geometry', 'Loss Landscape', 'Regularization'],
+    featured: false
+  },
+  {
+    id: 'asymmetric-valleys-2019',
+    title: 'Asymmetric Valleys: Beyond Sharp and Flat Local Minima',
+    authors: ['Haowei He', 'Gao Huang', 'Yang Yuan'],
+    year: 2019,
+    venue: 'NeurIPS',
+    category: 'Analysis',
+    abstract: 'We observe that for modern deep networks, the local minima are not simply flat or sharp, but rather asymmetric, where the loss increases rapidly along some directions and slowly along others. We define such minima as Asymmetric Valleys. We theoretically and empirically show that in such valleys, the solutions that are biased towards the flatter side generalize better than the exact empirical minimizers. We further analyze how Stochastic Gradient Descent (SGD) with weight averaging implicitly biases the optimization towards these flatter solutions, thereby improving generalization.',
+    arxivUrl: 'https://papers.nips.cc/paper/2019/file/01d8bae291b1e4724443375634ccfa0e-Paper.pdf',
+    tags: ['Local Minima', 'Generalization', 'Sharpness', 'Asymmetric Valleys', 'SGD'],
+    featured: false
+  },
+  {
+    id: 'simple-weight-decay-1992',
+    title: 'A Simple Weight Decay Can Improve Generalization',
+    authors: ['Anders Krogh', 'John A. Hertz'],
+    year: 1992,
+    venue: 'NIPS',
+    category: 'Analysis',
+    abstract: 'We show that weight decay can improve generalization in feed-forward neural networks. We prove that for a linear network, weight decay suppresses components of the weight vector that are irrelevant for the learning task, effectively reducing the number of parameters. We also show that a similar effect occurs in non-linear networks. Our analysis suggests that the optimal weight decay parameter is related to the signal-to-noise ratio of the training data.',
+    arxivUrl: 'https://papers.nips.cc/paper/1991/file/8eefcfdf5990e441f0fb6f3fad709e21-Paper.pdf',
+    tags: ['Weight Decay', 'Generalization', 'Regularization', 'Neural Networks'],
+    featured: false
+  },
+  {
+    id: 'generalization-error-deep-learning-2018',
+    title: 'Generalization Error in Deep Learning',
+    authors: ['Daniel Jakubovitz', 'Raja Giryes', 'Miguel R. D. Rodrigues'],
+    year: 2018,
+    venue: 'arXiv preprint',
+    category: 'Analysis',
+    abstract: 'This work analyzes the generalization error of deep learning models. We provide a theoretical framework that relates the generalization error to the model complexity, the number of training samples, and the properties of the optimization algorithm. We derive bounds on the generalization error for deep neural networks and discuss the implications of our results for understanding the success of deep learning.',
+    arxivUrl: 'https://arxiv.org/abs/1808.01174',
+    tags: ['Generalization Error', 'Deep Learning Theory', 'Model Complexity'],
+    featured: false
   }
 ];
