@@ -50,7 +50,8 @@ const optimizers = [
       "Stochastic",
       "Baselines"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/sgd.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/sgd.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\text{ learning rate } \\eta_t \\\\\n        &\\textbf{Initialize:} \\theta_0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta_t g_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "nag",
@@ -95,7 +96,8 @@ const optimizers = [
       "Nesterov",
       "Acceleration"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/NAG.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/NAG.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\mu \\\\\n        &\\textbf{Initialize:} \\theta_0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad \\hat{\\theta}_t \\leftarrow \\theta_{t-1} - \\eta \\mu v_{t-1} \\\\\n        &\\quad g_t \\leftarrow \\nabla f_t(\\hat{\\theta}_t) \\\\\n        &\\quad v_t \\leftarrow \\mu v_{t-1} + g_t \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta v_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "rprop",
@@ -141,7 +143,8 @@ const optimizers = [
       "Full Batch",
       "Gradient Sign"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/rprop.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/rprop.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\text{ step sizes } \\Delta_0, \\eta^+ > 1, \\eta^- < 1, \\Delta_{\\min}, \\Delta_{\\max} \\\\\n        &\\textbf{Initialize:} \\theta_0, g_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad \\textbf{for } i \\text{ in params do} \\\\\n        &\\quad \\quad \\text{if } g_{t,i} \\cdot g_{t-1,i} > 0 \\text{ then} \\\\\n        &\\quad \\quad \\quad \\Delta_{t,i} \\leftarrow \\min(\\Delta_{t-1,i} \\cdot \\eta^+, \\Delta_{\\max}) \\\\\n        &\\quad \\quad \\quad \\Delta\\theta_{t,i} \\leftarrow -\\text{sgn}(g_{t,i}) \\cdot \\Delta_{t,i} \\\\\n        &\\quad \\quad \\text{else if } g_{t,i} \\cdot g_{t-1,i} < 0 \\text{ then} \\\\\n        &\\quad \\quad \\quad \\Delta_{t,i} \\leftarrow \\max(\\Delta_{t-1,i} \\cdot \\eta^-, \\Delta_{\\min}) \\\\\n        &\\quad \\quad \\quad \\Delta\\theta_{t,i} \\leftarrow 0 \\\\\n        &\\quad \\quad \\text{else} \\\\\n        &\\quad \\quad \\quad \\Delta_{t,i} \\leftarrow \\Delta_{t-1,i} \\\\\n        &\\quad \\quad \\quad \\Delta\\theta_{t,i} \\leftarrow -\\text{sgn}(g_{t,i}) \\cdot \\Delta_{t,i} \\\\\n        &\\quad \\quad \\theta_{t,i} \\leftarrow \\theta_{t-1,i} + \\Delta\\theta_{t,i} \\\\\n        &\\quad \\textbf{end for} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "adagrad",
@@ -188,7 +191,8 @@ const optimizers = [
       "Sparse Data",
       "Convex"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adagrad.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adagrad.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\text{ learning rate } \\eta, \\text{ constant } \\epsilon \\\\\n        &\\textbf{Initialize:} \\theta_0, G_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad G_t \\leftarrow G_{t-1} + g_t \\odot g_t \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\frac{\\eta}{\\sqrt{G_t} + \\epsilon} \\odot g_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "adadelta",
@@ -233,7 +237,8 @@ const optimizers = [
       "Rolling Window",
       "No Learning Rate"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adadelta.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adadelta.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\text{ decay rate } \\rho, \\text{ constant } \\epsilon \\\\\n        &\\textbf{Initialize:} \\theta_0, E[g^2]_0 \\leftarrow 0, E[\\Delta\\theta^2]_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad E[g^2]_t \\leftarrow \\rho E[g^2]_{t-1} + (1-\\rho) g_t^2 \\\\\n        &\\quad \\text{RMS}[g]_t \\leftarrow \\sqrt{E[g^2]_t + \\epsilon} \\\\\n        &\\quad \\Delta\\theta_t \\leftarrow - \\frac{\\sqrt{E[\\Delta\\theta^2]_{t-1} + \\epsilon}}{\\text{RMS}[g]_t} g_t \\\\\n        &\\quad E[\\Delta\\theta^2]_t \\leftarrow \\rho E[\\Delta\\theta^2]_{t-1} + (1-\\rho) \\Delta\\theta_t^2 \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} + \\Delta\\theta_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "rmsprop",
@@ -283,7 +288,8 @@ const optimizers = [
       "RNN",
       "Non-stationary"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/rmsprop.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/rmsprop.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\text{ learning rate } \\eta, \\text{ decay rate } \\alpha, \\text{ constant } \\epsilon \\\\\n        &\\textbf{Initialize:} \\theta_0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad v_t \\leftarrow \\alpha v_{t-1} + (1-\\alpha) g_t^2 \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\frac{\\eta}{\\sqrt{v_t} + \\epsilon} \\odot g_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "adam",
@@ -340,7 +346,8 @@ const optimizers = [
       "Momentum",
       "Bias Correction"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adam.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adam.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2, \\epsilon \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\beta_1 m_{t-1} + (1-\\beta_1) g_t \\\\\n        &\\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g_t^2 \\\\\n        &\\quad \\hat{m}_t \\leftarrow m_t / (1-\\beta_1^t) \\\\\n        &\\quad \\hat{v}_t \\leftarrow v_t / (1-\\beta_2^t) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\frac{\\hat{m}_t}{\\sqrt{\\hat{v}_t} + \\epsilon} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "adamax",
@@ -391,7 +398,8 @@ const optimizers = [
       "Adaptive",
       "Sparse"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adamax.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adamax.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2 \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, u_0 \\leftarrow 0, t \\leftarrow 0 \\\\\n        &\\textbf{while } \\theta_t \\text{ not converged} \\textbf{ do} \\\\\n        &\\quad t \\leftarrow t + 1 \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\beta_1 m_{t-1} + (1-\\beta_1) g_t \\\\\n        &\\quad u_t \\leftarrow \\max(\\beta_2 u_{t-1}, |g_t|) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\frac{\\eta}{1-\\beta_1^t} \\frac{m_t}{u_t} \\\\\n        &\\textbf{end while}\n    \\end{aligned}"
   },
   {
     "id": "lars",
@@ -443,7 +451,8 @@ const optimizers = [
       "Large Batch",
       "Scaling"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/lars.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/lars.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\mu, \\lambda, \\epsilon \\\\\n        &\\textbf{Initialize:} \\theta_0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad \\eta_t \\leftarrow \\eta \\times \\frac{\\|\\theta_{t-1}\\|}{\\|g_t\\| + \\lambda \\|\\theta_{t-1}\\| + \\epsilon} \\\\\n        &\\quad v_t \\leftarrow \\mu v_{t-1} + \\eta_t (g_t + \\lambda \\theta_{t-1}) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - v_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "adamw",
@@ -500,7 +509,8 @@ const optimizers = [
       "Adaptive",
       "Transformers"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adamw.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adamw.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2, \\epsilon, \\lambda \\text{ (weight decay)} \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\lambda \\theta_{t-1} \\\\\n        &\\quad m_t \\leftarrow \\beta_1 m_{t-1} + (1-\\beta_1) g_t \\\\\n        &\\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g_t^2 \\\\\n        &\\quad \\hat{m}_t \\leftarrow m_t / (1-\\beta_1^t) \\\\\n        &\\quad \\hat{v}_t \\leftarrow v_t / (1-\\beta_2^t) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_t - \\eta \\frac{\\hat{m}_t}{\\sqrt{\\hat{v}_t} + \\epsilon} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "swats",
@@ -551,7 +561,8 @@ const optimizers = [
       "Hybrid",
       "Generalization"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/swats.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/swats.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2, \\epsilon \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0, \\text{phase} \\leftarrow \\text{ADAM} \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad \\text{if phase is ADAM:} \\\\\n        &\\quad \\quad m_t \\leftarrow \\beta_1 m_{t-1} + (1-\\beta_1) g_t \\\\\n        &\\quad \\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g_t^2 \\\\\n        &\\quad \\quad \\hat{m}_t \\leftarrow m_t / (1-\\beta_1^t), \\hat{v}_t \\leftarrow v_t / (1-\\beta_2^t) \\\\\n        &\\quad \\quad p_t \\leftarrow -\\eta \\frac{\\hat{m}_t}{\\sqrt{\\hat{v}_t} + \\epsilon} \\\\\n        &\\quad \\quad \\gamma_t \\leftarrow \\frac{p_t^T p_t}{-p_t^T g_t} \\\\\n        &\\quad \\quad \\text{if } |\\gamma_t - \\gamma_{t-1}| < \\epsilon \\text{ then phase} \\leftarrow \\text{SGD} \\\\\n        &\\quad \\quad \\theta_t \\leftarrow \\theta_{t-1} + p_t \\\\\n        &\\quad \\text{else (SGD):} \\\\\n        &\\quad \\quad \\theta_t \\leftarrow \\theta_{t-1} - \\gamma_t g_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "shampoo",
@@ -598,7 +609,8 @@ const optimizers = [
       "Tensor",
       "Second-order"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/shampoo.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/shampoo.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\epsilon \\\\\n        &\\textbf{Initialize:} \\theta_0, L_0 \\leftarrow \\epsilon I, R_0 \\leftarrow \\epsilon I \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad L_t \\leftarrow L_{t-1} + g_t g_t^T \\\\\n        &\\quad R_t \\leftarrow R_{t-1} + g_t^T g_t \\\\\n        &\\quad \\tilde{g}_t \\leftarrow L_t^{-1/4} g_t R_t^{-1/4} \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\tilde{g}_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "qhadam",
@@ -659,7 +671,8 @@ const optimizers = [
       "Adaptive",
       "Momentum"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/qhadam.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/qhadam.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2, \\nu_1, \\nu_2, \\epsilon \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\beta_1 m_{t-1} + (1-\\beta_1) g_t \\\\\n        &\\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g_t^2 \\\\\n        &\\quad \\hat{m}_t \\leftarrow m_t / (1-\\beta_1^t), \\hat{v}_t \\leftarrow v_t / (1-\\beta_2^t) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\frac{(1-\\nu_1) m_t + \\nu_1 g_t}{\\sqrt{(1-\\nu_2) v_t + \\nu_2 g_t^2} + \\epsilon} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "qhm",
@@ -710,7 +723,8 @@ const optimizers = [
       "Momentum",
       "Nesterov"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/qhm.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/qhm.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta, \\nu \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f_t(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\beta m_{t-1} + (1-\\beta) g_t \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta [(1-\\nu) m_t + \\nu g_t] \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "yogi",
@@ -764,7 +778,8 @@ const optimizers = [
       "Non-convex",
       "Stability"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/yogi.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/yogi.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2, \\epsilon \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\beta_1 m_{t-1} + (1-\\beta_1) g_t \\\\\n        &\\quad v_t \\leftarrow v_{t-1} - (1-\\beta_2) \\text{sgn}(v_{t-1} - g_t^2) \\odot g_t^2 \\\\\n        &\\quad \\hat{m}_t \\leftarrow m_t / (1-\\beta_1^t), \\hat{v}_t \\leftarrow v_t / (1-\\beta_2^t) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\frac{\\hat{m}_t}{\\sqrt{\\hat{v}_t} + \\epsilon} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "adafactor",
@@ -815,7 +830,8 @@ const optimizers = [
       "Factorization",
       "Large Models"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adafactor.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adafactor.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta_t, \\beta_2 \\\\\n        &\\textbf{Initialize:} \\theta_0, \\hat{v}_0 \\leftarrow 0, R_0 \\leftarrow 0, C_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad \\hat{v}_t \\leftarrow \\hat{v}_{t-1} + (1-\\beta_2) (g_t^2 - \\hat{v}_{t-1}) \\\\\n        &\\quad R_t \\leftarrow \\beta_2 R_{t-1} + (1-\\beta_2) (g_t^2 + \\epsilon_1) \\\\\n        &\\quad C_t \\leftarrow \\beta_2 C_{t-1} + (1-\\beta_2) (g_t^2 + \\epsilon_1) \\\\\n        &\\quad \\hat{u}_t \\leftarrow g_t / \\sqrt{R_t C_t} \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta_t \\hat{u}_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "aggmo",
@@ -863,7 +879,8 @@ const optimizers = [
       "Damping",
       "Stability"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/aggmo.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/aggmo.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\dots, \\beta_K \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0^{(k)} \\leftarrow 0 \\text{ for } k=1\\dots K \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad \\textbf{for } k=1 \\text{ to } K \\text{ do} \\\\\n        &\\quad \\quad m_t^{(k)} \\leftarrow \\beta_k m_{t-1}^{(k)} + g_t \\\\\n        &\\quad \\textbf{end for} \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\frac{\\eta}{K} \\sum_{k=1}^K m_t^{(k)} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "pid",
@@ -923,7 +940,8 @@ const optimizers = [
       "PID",
       "Feedback"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/pid.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/pid.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, K_P, K_I, K_D, \\beta \\\\\n        &\\textbf{Initialize:} \\theta_0, I_0 \\leftarrow 0, D_0 \\leftarrow 0, g_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad I_t \\leftarrow \\beta I_{t-1} + (1-\\beta) g_t \\\\\n        &\\quad D_t \\leftarrow \\beta D_{t-1} + (1-\\beta) (g_t - g_{t-1}) \\\\\n        &\\quad \\Delta \\theta_t \\leftarrow K_P g_t + K_I I_t + K_D D_t \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\Delta \\theta_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "accsgd",
@@ -972,7 +990,8 @@ const optimizers = [
       "Online Learning",
       "Optimization"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/accsgd.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/accsgd.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\kappa, \\xi, \\delta \\\\\n        &\\textbf{Initialize:} \\theta_0, v_0 \\leftarrow 0, \\xi_0 \\leftarrow \\xi \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad \\xi_t \\leftarrow \\xi + \\delta^t \\\\\n        &\\quad v_t \\leftarrow \\kappa v_{t-1} + g_t \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta (g_t + \\xi_t v_t) \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "adabound",
@@ -1030,7 +1049,8 @@ const optimizers = [
       "Adaptive",
       "SGD-like"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adabound.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adabound.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2, \\eta_L(t), \\eta_U(t) \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\beta_1 m_{t-1} + (1-\\beta_1) g_t \\\\\n        &\\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g_t^2 \\\\\n        &\\quad \\hat{\\eta}_t \\leftarrow \\text{Clip}\\left(\\frac{\\eta}{\\sqrt{v_t}+\\epsilon}, \\eta_L(t), \\eta_U(t)\\right) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\hat{\\eta}_t m_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "lamb",
@@ -1094,7 +1114,8 @@ const optimizers = [
       "Layer-wise",
       "BERT"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/lamb.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/lamb.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2, \\lambda, \\epsilon \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\beta_1 m_{t-1} + (1-\\beta_1) g_t \\\\\n        &\\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g_t^2 \\\\\n        &\\quad \\hat{m}_t \\leftarrow m_t / (1-\\beta_1^t), \\hat{v}_t \\leftarrow v_t / (1-\\beta_2^t) \\\\\n        &\\quad r_t \\leftarrow \\frac{\\hat{m}_t}{\\sqrt{\\hat{v}_t} + \\epsilon} + \\lambda \\theta_{t-1} \\\\\n        &\\quad \\phi_t \\leftarrow \\frac{\\|\\theta_{t-1}\\|}{\\|r_t\\|} \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\phi_t r_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "lookahead",
@@ -1142,7 +1163,8 @@ const optimizers = [
       "Slow Weights",
       "Exploration"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/lookahead.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/lookahead.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\text{Optimizer } \\mathcal{A}, k, \\alpha \\\\\n        &\\textbf{Initialize:} \\phi_0 \\leftarrow \\theta_0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad \\text{Synchronize: } \\theta_{t,0} \\leftarrow \\phi_{t-1} \\\\\n        &\\quad \\textbf{for } i=1 \\text{ to } k \\text{ do} \\\\\n        &\\quad \\quad \\theta_{t,i} \\leftarrow \\theta_{t,i-1} + \\mathcal{A}(g_{t,i}) \\\\\n        &\\quad \\textbf{end for} \\\\\n        &\\quad \\phi_t \\leftarrow \\phi_{t-1} + \\alpha (\\theta_{t,k} - \\phi_{t-1}) \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "radam",
@@ -1198,7 +1220,8 @@ const optimizers = [
       "Variance Reduction",
       "Warm-up"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/radam.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/radam.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2 \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\beta_1 m_{t-1} + (1-\\beta_1) g_t \\\\\n        &\\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g_t^2 \\\\\n        &\\quad \\rho_t \\leftarrow \\rho_{\\infty} - 2 t \\beta_2^t / (1-\\beta_2^t) \\\\\n        &\\quad \\text{if } \\rho_t > 4 \\text{ then compute } l_t \\text{ and update } \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta l_t \\frac{m_t}{\\sqrt{v_t} + \\epsilon} \\\\\n        &\\quad \\text{else update as SGD with momentum} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "adamod",
@@ -1249,7 +1272,8 @@ const optimizers = [
       "Adaptive",
       "Stability"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adamod.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adamod.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2, \\beta_3 \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0, s_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\beta_1 m_{t-1} + (1-\\beta_1) g_t \\\\\n        &\\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g_t^2 \\\\\n        &\\quad \\eta_t \\leftarrow \\eta / (\\sqrt{v_t} + \\epsilon) \\\\\n        &\\quad s_t \\leftarrow \\beta_3 s_{t-1} + (1-\\beta_3) \\eta_t \\\\\n        &\\quad \\hat{\\eta}_t \\leftarrow \\min(\\eta_t, s_t) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\hat{\\eta}_t m_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "ranger",
@@ -1309,7 +1333,8 @@ const optimizers = [
       "Lookahead",
       "Hybrid"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/ranger.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/ranger.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, k, \\alpha \\\\\n        &\\textbf{Initialize:} \\theta_0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad \\text{Gradient Centralization: } g_t \\leftarrow g_t - \\text{mean}(g_t) \\\\\n        &\\quad \\theta_{\\text{temp}} \\leftarrow \\text{RAdamStep}(\\theta_{t-1}, g_t) \\\\\n        &\\quad \\text{if } t \\mod k = 0 \\text{ then} \\\\\n        &\\quad \\quad \\theta_{\\text{slow}} \\leftarrow \\theta_{\\text{slow}} + \\alpha (\\theta_{\\text{temp}} - \\theta_{\\text{slow}}) \\\\\n        &\\quad \\quad \\theta_t \\leftarrow \\theta_{\\text{slow}} \\\\\n        &\\quad \\text{else } \\theta_t \\leftarrow \\theta_{\\text{temp}} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "nadam",
@@ -1359,7 +1384,8 @@ const optimizers = [
       "Adam",
       "Adaptive"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/nadam.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/nadam.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2, \\epsilon \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0, t \\leftarrow 0 \\\\\n        &\\textbf{while } \\theta_t \\text{ not converged} \\textbf{ do} \\\\\n        &\\quad t \\leftarrow t + 1 \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\beta_1 m_{t-1} + (1-\\beta_1) g_t \\\\\n        &\\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g_t^2 \\\\\n        &\\quad \\hat{m}_t \\leftarrow \\frac{m_t}{1-\\beta_1^t} \\\\\n        &\\quad \\hat{v}_t \\leftarrow \\frac{v_t}{1-\\beta_2^t} \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\frac{\\eta}{\\sqrt{\\hat{v}_t} + \\epsilon} (\\beta_1 \\hat{m}_t + \\frac{1-\\beta_1}{1-\\beta_1^t} g_t) \\\\\n        &\\textbf{end while}\n    \\end{aligned}"
   },
   {
     "id": "novograd",
@@ -1417,7 +1443,8 @@ const optimizers = [
       "Adaptive",
       "Deep Networks"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/novograd.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/novograd.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2 \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) \\|g_t\\|^2 \\\\\n        &\\quad m_t \\leftarrow \\beta_1 m_{t-1} + \\frac{g_t}{\\sqrt{v_t} + \\epsilon} \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta m_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "diffgrad",
@@ -1469,7 +1496,8 @@ const optimizers = [
       "Adaptive",
       "CNN"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/diffgrad.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/diffgrad.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2 \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad \\xi_t \\leftarrow \\frac{1}{1 + e^{-|g_t - g_{t-1}|}} \\\\\n        &\\quad m_t \\leftarrow \\beta_1 m_{t-1} + (1-\\beta_1) g_t \\\\\n        &\\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g_t^2 \\\\\n        &\\quad \\hat{m}_t \\leftarrow \\xi_t m_t \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\frac{\\eta}{\\sqrt{v_t}+\\epsilon} \\hat{m}_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "adahessian",
@@ -1524,7 +1552,8 @@ const optimizers = [
       "Second-order",
       "Adaptive"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adahessian.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adahessian.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2 \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}), D_t \\leftarrow \\text{diag}(H_t) \\\\\n        &\\quad m_t \\leftarrow \\beta_1 m_{t-1} + (1-\\beta_1) g_t \\\\\n        &\\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) D_t^2 \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\frac{\\eta}{\\sqrt{v_t} + \\epsilon} m_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "adabelief",
@@ -1580,7 +1609,8 @@ const optimizers = [
       "Adaptive",
       "Stability"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adabelief.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adabelief.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2 \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, s_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\beta_1 m_{t-1} + (1-\\beta_1) g_t \\\\\n        &\\quad s_t \\leftarrow \\beta_2 s_{t-1} + (1-\\beta_2) (g_t - m_t)^2 + \\epsilon \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\frac{m_t}{\\sqrt{s_t} + \\epsilon} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "adamp",
@@ -1641,7 +1671,8 @@ const optimizers = [
       "Weight Norm",
       "Generalization"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adamp.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adamp.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2, \\delta \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\beta_1 m_{t-1} + (1-\\beta_1) g_t \\\\\n        &\\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g_t^2 \\\\\n        &\\quad \\eta_t \\leftarrow \\text{Projection}(m_t, v_t, \\theta_{t-1}, \\delta) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\eta_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "sgdp",
@@ -1697,7 +1728,8 @@ const optimizers = [
       "Weight Norm",
       "SGD"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/sgdp.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/sgdp.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\delta \\\\\n        &\\textbf{Initialize:} \\theta_0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad \\eta_t \\leftarrow \\text{Projection}(g_t, \\theta_{t-1}, \\delta) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\eta_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "apollo",
@@ -1747,7 +1779,8 @@ const optimizers = [
       "Non-convex",
       "Parameter-wise"
     ],
-    "githubUrl": "https://github.com/XuezheMax/apollo"
+    "githubUrl": "https://github.com/XuezheMax/apollo",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta \\\\\n        &\\textbf{Initialize:} \\theta_0, B_0 \\leftarrow \\epsilon I \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad s_t \\leftarrow \\theta_t - \\theta_{t-1} \\\\\n        &\\quad y_t \\leftarrow g_t - g_{t-1} \\\\\n        &\\quad B_t \\leftarrow B_{t-1} + \\frac{y_t y_t^T}{y_t^T s_t} - \\frac{B_{t-1} s_t s_t^T B_{t-1}}{s_t^T B_{t-1} s_t} \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta B_t^{-1} g_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "apollo-2",
@@ -1803,7 +1836,8 @@ const optimizers = [
       "LLM",
       "Adaptive"
     ],
-    "githubUrl": "https://github.com/zhuhanqing/APOLLO"
+    "githubUrl": "https://github.com/zhuhanqing/APOLLO",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta, \\beta_2 \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\beta m_{t-1} + (1-\\beta) g_t \\\\\n        &\\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) \\text{mean}(g_t^2) \\text{ (channel-wise)} \\\\\n        &\\quad \\alpha_t \\leftarrow \\text{ComputeWarmupLearningRate}(t) \\\\\n        &\\quad w_t \\leftarrow \\frac{1}{\\sqrt{v_t} + \\epsilon} \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\alpha_t w_t \\odot m_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "sam",
@@ -1851,7 +1885,8 @@ const optimizers = [
       "Regularization",
       "Generalization"
     ],
-    "githubUrl": "https://github.com/google-research/sam"
+    "githubUrl": "https://github.com/google-research/sam",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\rho \\\\\n        &\\textbf{Initialize:} \\theta_0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad \\epsilon_t \\leftarrow \\rho \\frac{\\nabla_{\\theta} f_t(\\theta_{t-1})}{\\|\\nabla_{\\theta} f_t(\\theta_{t-1})\\|_2} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1} + \\epsilon_t) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta g_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "madgrad",
@@ -1902,7 +1937,8 @@ const optimizers = [
       "Momentum",
       "Adaptive"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/madgrad.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/madgrad.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2, \\epsilon \\\\\n        &\\textbf{Initialize:} \\theta_0, s_0 \\leftarrow 0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=0 \\text{ to } T-1 \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_t) \\\\\n        &\\quad s_{t+1} \\leftarrow s_t + \\lambda g_t \\\\\n        &\\quad v_{t+1} \\leftarrow v_t + \\lambda g_t^2 \\\\\n        &\\quad z_{t+1} \\leftarrow z_t - \\frac{\\lambda}{\\sqrt[3]{v_{t+1}} + \\epsilon} (g_t + s_t) \\\\\n        &\\quad \\theta_{t+1} \\leftarrow (1 - \\tau) \\theta_t + \\tau z_{t+1} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "adan",
@@ -1961,7 +1997,8 @@ const optimizers = [
       "Multi-moment",
       "Adaptive"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adan.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/adan.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2, \\beta_3, \\epsilon \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0, n_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow (1-\\beta_1)m_{t-1} + \\beta_1 g_t \\\\\n        &\\quad v_t \\leftarrow (1-\\beta_2)v_{t-1} + \\beta_2 (g_t - g_{t-1}) \\\\\n        &\\quad n_t \\leftarrow (1-\\beta_3)n_{t-1} + \\beta_3 (g_t + (1-\\beta_2)(g_t - g_{t-1}))^2 \\\\\n        &\\quad \\eta_t \\leftarrow \\eta / (\\sqrt{n_t} + \\epsilon) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta_t (m_t + (1-\\beta_2)v_t) \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "came",
@@ -2018,7 +2055,8 @@ const optimizers = [
       "Memory Efficient",
       "Large Models"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/came.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/came.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2, \\beta_3 \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0, n_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow (1-\\beta_1)m_{t-1} + \\beta_1 g_t \\\\\n        &\\quad v_t \\leftarrow (1-\\beta_2)v_{t-1} + \\beta_2 (g_t - g_{t-1}) \\\\\n        &\\quad n_t \\leftarrow (1-\\beta_3)n_{t-1} + \\beta_3 [g_t + (1-\\beta_2)(g_t - g_{t-1})]^2 \\\\\n        &\\quad \\hat{m}_t \\leftarrow m_t + (1-\\beta_2)v_t \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\hat{m}_t / (\\sqrt{n_t} + \\epsilon) \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "sophia",
@@ -2072,7 +2110,8 @@ const optimizers = [
       "Scalable",
       "LLM Pre-training"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/sophia.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/sophia.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2, \\rho, \\epsilon \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, h_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad u_t \\leftarrow \\text{EstHessianDiag}(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\beta_1 m_{t-1} + (1-\\beta_1) g_t \\\\\n        &\\quad h_t \\leftarrow \\beta_2 h_{t-1} + (1-\\beta_2) u_t \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\cdot \\text{clip}\\left(\\frac{m_t}{\\max(h_t, \\epsilon)}, \\rho\\right) \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "svrg",
@@ -2119,7 +2158,8 @@ const optimizers = [
       "Stochastic",
       "Convex"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/svrg.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/svrg.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2 \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0, h_0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad \\text{Estimate Hessian Diagonal } H_t \\\\\n        &\\quad h_t \\leftarrow \\beta_2 h_{t-1} + (1-\\beta_2) H_t \\\\\n        &\\quad m_t \\leftarrow \\beta_1 m_{t-1} + (1-\\beta_1) g_t \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\frac{m_t}{\\max(h_t, \\epsilon)} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "prodigy",
@@ -2170,7 +2210,8 @@ const optimizers = [
       "Distance Estimation",
       "Adaptive"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/prodigy.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/prodigy.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\text{Growth rate } d, \\beta \\\\\n        &\\textbf{Initialize:} x_1, s_1 \\leftarrow d, \\eta_1 \\leftarrow 1 \\\\\n        &\\textbf{for } k=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad \\eta_k \\leftarrow \\min(\\eta_k, d / \\sqrt{s_k}) \\\\\n        &\\quad x_{k+1} \\leftarrow x_k - \\eta_k g_k \\\\\n        &\\quad s_{k+1} \\leftarrow s_k + \\beta \\eta_k \\langle g_k, x_0 - x_k \\rangle \\\\\n        &\\quad \\eta_{k+1} \\leftarrow \\eta_k \\cdot \\text{GrowthFactor} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "adam-mini",
@@ -2233,7 +2274,8 @@ const optimizers = [
       "Learning Rate Reduction",
       "LLM"
     ],
-    "githubUrl": "https://github.com/zyushun/Adam-mini"
+    "githubUrl": "https://github.com/zyushun/Adam-mini",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2 \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{Partition:} \\text{Assign parameters to blocks } B_1, \\dots, B_k \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\beta_1 m_{t-1} + (1-\\beta_1) g_t \\\\\n        &\\quad \\textbf{for } j=1 \\text{ to } k \\text{ do} \\\\\n        &\\quad \\quad \\hat{v}_{t,j} \\leftarrow \\text{mean}(g_{t, B_j}^2) \\\\\n        &\\quad \\quad v_{t,j} \\leftarrow \\beta_2 v_{t-1,j} + (1-\\beta_2) \\hat{v}_{t,j} \\\\\n        &\\quad \\quad \\theta_{t, B_j} \\leftarrow \\theta_{t-1, B_j} - \\frac{\\eta}{\\sqrt{v_{t,j}} + \\epsilon} m_{t, B_j} \\\\\n        &\\quad \\textbf{end for} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "muon",
@@ -2285,7 +2327,8 @@ const optimizers = [
       "Newton-Schulz",
       "Second-order"
     ],
-    "githubUrl": "https://github.com/KellerJordan/Muon"
+    "githubUrl": "https://github.com/KellerJordan/Muon",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\mu, K \\text{ (NS steps)} \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\mu m_{t-1} + g_t \\\\\n        &\\quad O_t \\leftarrow \\text{NewtonSchulz}(m_t, K) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta O_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "lion",
@@ -2346,7 +2389,8 @@ const optimizers = [
       "Memory Efficient",
       "Evolutionary"
     ],
-    "githubUrl": "https://github.com/google-research/lion"
+    "githubUrl": "https://github.com/google-research/lion",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2, \\lambda \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad c_t \\leftarrow \\beta_1 m_{t-1} + (1-\\beta_1) g_t \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta (\\text{sign}(c_t) + \\lambda \\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\beta_2 m_{t-1} + (1-\\beta_2) g_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "sgdw",
@@ -2397,7 +2441,8 @@ const optimizers = [
       "SGD",
       "Baselines"
     ],
-    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/sgdw.py"
+    "githubUrl": "https://github.com/tianshijing/ScalingOpt/blob/main/Optimizers/sgdw.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\mu, \\lambda \\\\\n        &\\textbf{Initialize:} \\theta_0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\lambda \\theta_{t-1} \\\\\n        &\\quad v_t \\leftarrow \\mu v_{t-1} + g_t \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_t - \\eta v_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "soap",
@@ -2460,7 +2505,8 @@ const optimizers = [
       "Eigenbasis",
       "Efficient"
     ],
-    "githubUrl": "https://github.com/nikhilvyas/SOAP/tree/main"
+    "githubUrl": "https://github.com/nikhilvyas/SOAP/tree/main",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2 \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad \\text{Update Preconditioner } L_t, R_t \\\\\n        &\\quad \\text{Run Adam in Eigenbasis of } L_t, R_t \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\cdot \\text{Update} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "mars",
@@ -2520,7 +2566,8 @@ const optimizers = [
       "Preconditioning",
       "Large Models"
     ],
-    "githubUrl": "https://github.com/AGI-Arena/MARS"
+    "githubUrl": "https://github.com/AGI-Arena/MARS",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2, \\gamma, \\epsilon \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0, c_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad c_t \\leftarrow (1-\\gamma)c_{t-1} + \\gamma g_t + (1-\\gamma)(g_t - g_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\beta_1 m_{t-1} + (1-\\beta_1) c_t \\\\\n        &\\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) c_t^2 \\\\\n        &\\quad \\hat{m}_t \\leftarrow m_t / (1-\\beta_1^t), \\hat{v}_t \\leftarrow v_t / (1-\\beta_2^t) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\hat{m}_t / (\\sqrt{\\hat{v}_t} + \\epsilon) \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "spam",
@@ -2566,7 +2613,8 @@ const optimizers = [
       "Optimization",
       "Deep Learning"
     ],
-    "githubUrl": "https://github.com/TianjinYellow/SPAM-Optimizer"
+    "githubUrl": "https://github.com/TianjinYellow/SPAM-Optimizer",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta \\\\\n        &\\textbf{Initialize:} \\theta_0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad \\theta_{t-1/2} \\leftarrow \\theta_{t-1} - \\eta g_t \\\\\n        &\\quad \\theta_t \\leftarrow \\text{prox}_{\\lambda \\eta}(\\theta_{t-1/2}) \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "adamuon",
@@ -2617,7 +2665,8 @@ const optimizers = [
       "Muon Variant",
       "Optimization"
     ],
-    "githubUrl": "https://github.com/Chongjie-Si/AdaMuon"
+    "githubUrl": "https://github.com/Chongjie-Si/AdaMuon",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\mu, \\text{ns\\_steps} \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\mu m_{t-1} + g_t \\\\\n        &\\quad v_t \\leftarrow \\text{RMSProp-like variance}(g_t) \\\\\n        &\\quad \\text{Precond} \\leftarrow \\text{NewtonSchulz}(m_t) \\odot (1/\\sqrt{v_t}) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\cdot \\text{Precond} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "conda",
@@ -2668,7 +2717,8 @@ const optimizers = [
       "Optimization",
       "Deep Learning"
     ],
-    "githubUrl": "https://github.com/jie040109/Conda"
+    "githubUrl": "https://github.com/jie040109/Conda",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta \\\\\n        &\\textbf{Initialize:} \\theta_0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\beta m_{t-1} + (1-\\beta) g_t \\\\\n        &\\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g_t^2 \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\frac{m_t}{\\sqrt{v_t} + \\epsilon} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "adalomo",
@@ -2734,7 +2784,8 @@ const optimizers = [
       "Adaptive",
       "LLM Tuning"
     ],
-    "githubUrl": "https://github.com/OpenLMLab/LOMO"
+    "githubUrl": "https://github.com/OpenLMLab/LOMO",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta \\\\\n        &\\textbf{Initialize:} \\theta_0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad \\text{Update NMF factors } U_t, V_t \\text{ of second moment } \\hat{v}_t \\approx g_t^2 \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\frac{g_t}{\\sqrt{U_t V_t^T} + \\epsilon} \\\\\n        &\\quad \\text{Free } g_t \\text{ immediately} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "badam",
@@ -2797,7 +2848,8 @@ const optimizers = [
       "Memory Efficient",
       "LLM"
     ],
-    "githubUrl": "https://github.com/Ledzy/BAdam"
+    "githubUrl": "https://github.com/Ledzy/BAdam",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta \\\\\n        &\\textbf{Initialize:} \\theta_0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad \\text{Block-wise Adam Update} \\\\\n        &\\quad \\text{Partition } \\theta \\text{ into blocks } B_i \\\\\n        &\\quad \\text{For each } B_i: \\theta_{B_i} \\leftarrow \\text{Adam}(\\theta_{B_i}, g_{B_i}) \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "ademamix",
@@ -2871,7 +2923,8 @@ const optimizers = [
       "Long-term Memory",
       "Forgetfulness"
     ],
-    "githubUrl": "https://github.com/apple/ml-ademamix"
+    "githubUrl": "https://github.com/apple/ml-ademamix",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2, \\beta_3, \\alpha, \\lambda \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, m_0^{(s)} \\leftarrow 0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\beta_1 m_{t-1} + (1-\\beta_1)g_t \\\\\n        &\\quad m_t^{(s)} \\leftarrow \\beta_3 m_{t-1}^{(s)} + (1-\\beta_3)g_t \\\\\n        &\\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2)g_t^2 \\\\\n        &\\quad \\text{Bias-correct } \\hat{m}_t, \\hat{m}_t^{(s)}, \\hat{v}_t \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\left(\\frac{\\hat{m}_t + \\alpha \\hat{m}_t^{(s)}}{\\sqrt{\\hat{v}_t} + \\epsilon} + \\lambda \\theta_{t-1}\\right) \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "root",
@@ -2929,7 +2982,8 @@ const optimizers = [
       "Newton Iterations",
       "Large Models"
     ],
-    "githubUrl": "https://github.com/huawei-noah/noah-research/tree/master/ROOT"
+    "githubUrl": "https://github.com/huawei-noah/noah-research/tree/master/ROOT",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\rho \\\\\n        &\\textbf{Initialize:} \\theta_0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad \\text{Update } \\hat{v}_t \\text{ (RMSProp-like)} \\\\\n        &\\quad \\text{Update } M_t \\text{ via Newton-Schulz} \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\frac{M_t}{\\sqrt{\\hat{v}_t} + \\epsilon} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "gluon",
@@ -2979,7 +3033,8 @@ const optimizers = [
       "Theoretical Analysis",
       "LLM"
     ],
-    "githubUrl": ""
+    "githubUrl": "",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta \\\\\n        &\\textbf{Initialize:} \\theta_0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad \\text{Apply Generalized LMO (Gluon)} \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\cdot \\text{Update} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "dion",
@@ -3037,7 +3092,8 @@ const optimizers = [
       "Power Iterations",
       "Efficient"
     ],
-    "githubUrl": "https://github.com/microsoft/dion/"
+    "githubUrl": "https://github.com/microsoft/dion/",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta \\\\\n        &\\textbf{Initialize:} \\theta_0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad \\text{Distributed Power Iteration (Dion)} \\\\\n        &\\quad O_t \\leftarrow \\text{PowerIter}(g_t) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta O_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "stable-spam",
@@ -3109,7 +3165,8 @@ const optimizers = [
       "Stability",
       "LLM"
     ],
-    "githubUrl": "https://github.com/TianjinYellow/StableSPAM"
+    "githubUrl": "https://github.com/TianjinYellow/StableSPAM",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta \\\\\n        &\\textbf{Initialize:} \\theta_0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad g_t^Q \\leftarrow \\text{Quantize}(g_t, \\text{4-bit}) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\cdot g_t^Q \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "kfac",
@@ -3165,7 +3222,8 @@ const optimizers = [
       "Natural Gradient",
       "Approximation"
     ],
-    "githubUrl": "https://github.com/gpauloski/kfac-pytorch"
+    "githubUrl": "https://github.com/gpauloski/kfac-pytorch",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\epsilon_{\\text{damp}} \\\\\n        &\\textbf{Initialize:} \\theta_0, A_0, G_0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad \\text{Update curvature factors } A_t, G_t \\text{ (Kronecker)} \\\\\n        &\\quad \\Delta \\theta \\leftarrow (A_t \\otimes G_t + \\lambda I)^{-1} g_t \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\cdot \\Delta \\theta \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "signsgd",
@@ -3213,7 +3271,8 @@ const optimizers = [
       "Sign-based",
       "Communication Efficient"
     ],
-    "githubUrl": "https://github.com/jxbz/signSGD"
+    "githubUrl": "https://github.com/jxbz/signSGD",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\text{momentum } \\beta \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\beta m_{t-1} + (1-\\beta) g_t \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\cdot \\text{sign}(m_t) \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "adashift",
@@ -3263,7 +3322,8 @@ const optimizers = [
       "Decorrelation",
       "Adam Variant"
     ],
-    "githubUrl": "https://github.com/QingruZhang/AdaShift_Release"
+    "githubUrl": "https://github.com/QingruZhang/AdaShift_Release",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta \\\\\n        &\\textbf{Initialize:} \\theta_0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\cdot \\text{sgn}(g_t) \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "lomo",
@@ -3307,7 +3367,8 @@ const optimizers = [
       "LLM Fine-tuning",
       "SGD-based"
     ],
-    "githubUrl": "https://github.com/OpenLMLab/LOMO"
+    "githubUrl": "https://github.com/OpenLMLab/LOMO",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta \\\\\n        &\\textbf{Initialize:} \\theta_0 \\\\\n        &\\textbf{for } i=1 \\text{ to } L \\text{ (layers) do} \\\\\n        &\\quad g_i \\leftarrow \\nabla_{\\theta_i} f(\\theta) \\\\\n        &\\quad \\theta_i \\leftarrow \\theta_i - \\eta g_i \\\\\n        &\\quad \\text{Free } g_i \\text{ immediately to save memory} \\\\\n        &\\textbf{end for} \\\\\n        &\\text{(Full-Parameter Fine-Tuning with O(1) Memory)} \\\\\n    \\end{aligned}"
   },
   {
     "id": "dowg",
@@ -3332,7 +3393,7 @@ const optimizers = [
     ],
     "hyperparameters": {
       "epsilon": {
-        "default": 1e-8,
+        "default": 1e-08,
         "range": "1e-10 to 1e-6",
         "description": "Small constant for stability"
       }
@@ -3348,7 +3409,8 @@ const optimizers = [
       "Adaptive",
       "Universal"
     ],
-    "githubUrl": "https://github.com/rka97/dowg"
+    "githubUrl": "https://github.com/rka97/dowg",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\epsilon \\\\\n        &\\textbf{Initialize:} x_0, r_0 \\leftarrow \\epsilon, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(x_{t-1}) \\\\\n        &\\quad r_t \\leftarrow \\max(r_{t-1}, \\|g_t\\|) \\\\\n        &\\quad v_t \\leftarrow v_{t-1} + g_t^2 \\\\\n        &\\quad x_t \\leftarrow x_{t-1} - \\frac{r_t^2}{\\sqrt{v_t}} g_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "schedule_free_adamw",
@@ -3409,7 +3471,8 @@ const optimizers = [
       "Iterate Averaging",
       "AdamW"
     ],
-    "githubUrl": "https://github.com/facebookresearch/schedule_free"
+    "githubUrl": "https://github.com/facebookresearch/schedule_free",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2, \\lambda \\\\\n        &\\textbf{Initialize:} \\theta_0, z_0 \\leftarrow \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad y_t \\leftarrow (1-\\beta_1) z_{t-1} + \\beta_1 \\theta_{t-1} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(y_t) \\\\\n        &\\quad m_t \\leftarrow \\beta_1 m_{t-1} + (1-\\beta_1) g_t \\\\\n        &\\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g_t^2 \\\\\n        &\\quad \\hat{m}_t \\leftarrow m_t / (1-\\beta_1^t), \\hat{v}_t \\leftarrow v_t / (1-\\beta_2^t) \\\\\n        &\\quad z_t \\leftarrow z_{t-1} - \\eta (\\frac{\\hat{m}_t}{\\sqrt{\\hat{v}_t} + \\epsilon} + \\lambda z_{t-1}) \\\\\n        &\\quad \\theta_t \\leftarrow (1-\\frac{1}{t+1})\\theta_{t-1} + \\frac{1}{t+1} z_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "adai",
@@ -3476,7 +3539,8 @@ const optimizers = [
       "Generalization",
       "Momentum"
     ],
-    "githubUrl": "https://github.com/zeke-xie/adaptive-inertia-adai"
+    "githubUrl": "https://github.com/zeke-xie/adaptive-inertia-adai",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1 \\\\\n        &\\textbf{Initialize:} \\theta_0, z_0 \\leftarrow \\theta_0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad z_t \\leftarrow \\beta_1 z_{t-1} + (1-\\beta_1) \\theta_{t-1} - \\eta g_t \\\\\n        &\\quad \\theta_t \\leftarrow (1-\\frac{1}{t}) \\theta_{t-1} + \\frac{1}{t} z_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   }
 ];
 

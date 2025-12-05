@@ -24,162 +24,7 @@
 <body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 font-inter">
     <div class="flex flex-col min-h-screen">
         <!-- Navbar -->
-        <nav class="bg-white/95 backdrop-blur-md border-b border-blue-100 sticky top-0 z-50 shadow-sm">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16">
-                    <div class="flex items-center">
-                        <a href="../index.html" class="flex items-center">
-                            <span class="text-xl font-bold text-blue-900">ScalingOpt</span>
-                        </a>
-                    </div>
-
-                    <!-- Desktop Navigation -->
-                    <div class="hidden md:flex items-center space-x-8">
-                        <a href="../index.html" class="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">Home</a>
-                        <a href="optimizers.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
-                            <i data-lucide="search" class="w-4 h-4"></i>
-                            <span>Optimizers</span>
-                        </a>
-                        <div class="relative group">
-                            <button class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
-                                <i data-lucide="layers" class="w-4 h-4"></i>
-                                <span>Collection</span>
-                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                            </button>
-                            <div class="absolute left-0 mt-2 w-56 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-100">
-                                <div class="py-1">
-                                    <a href="training_strategy.html" class="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">
-                                        <i data-lucide="brain-circuit" class="w-4 h-4"></i>
-                                        <span>Training Strategy</span>
-                                    </a>
-                                    <a href="precision.html" class="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">
-                                        <i data-lucide="cpu" class="w-4 h-4"></i>
-                                        <span>Precision & Quantization</span>
-                                    </a>
-                                    <a href="visualizations.html" class="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">
-                                        <i data-lucide="activity" class="w-4 h-4"></i>
-                                        <span>Visualizations</span>
-                                    </a>
-                                    <a href="packages.html" class="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">
-                                        <i data-lucide="package" class="w-4 h-4"></i>
-                                        <span>Open-source Package</span>
-                                    </a>
-                                    <a href="experiments.html" class="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">
-                                        <i data-lucide="flask-conical" class="w-4 h-4"></i>
-                                        <span>Experiments & Analysis</span>
-                                    </a>
-                                    <a href="conferences.html" class="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">
-                                        <i data-lucide="calendar" class="w-4 h-4"></i>
-                                        <span>Conferences & Journals</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <a href="benchmarks.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
-                            <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
-                            <span>Benchmarks</span>
-                        </a>
-                        <a href="papers.html" class="flex items-center space-x-1 text-blue-700 hover:text-blue-900 transition-colors duration-200 font-medium">
-                            <i data-lucide="graduation-cap" class="w-4 h-4"></i>
-                            <span>Papers</span>
-                        </a>
-                        <a href="tutorials.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
-                            <i data-lucide="book-open" class="w-4 h-4"></i>
-                            <span>Tutorials</span>
-                        </a>
-                        <a href="blogs.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
-                            <i data-lucide="file-text" class="w-4 h-4"></i>
-                            <span>Blogs</span>
-                        </a>
-                        <a href="community.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium">
-                            <i data-lucide="users" class="w-4 h-4"></i>
-                            <span>Community</span>
-                        </a>
-                        <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200">
-                            <i data-lucide="github" class="w-5 h-5"></i>
-                            <span class="hidden lg:inline">GitHub</span>
-                        </a>
-                    </div>
-
-                    <!-- Mobile menu button -->
-                    <div class="md:hidden flex items-center">
-                        <button id="mobile-menu-button" class="text-gray-700 hover:text-blue-600 transition-colors duration-200">
-                            <i data-lucide="menu" class="w-6 h-6"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Mobile Navigation -->
-            <div id="mobile-menu" class="md:hidden bg-white border-t border-gray-200 hidden">
-                <div class="px-2 pt-2 pb-3 space-y-1">
-                    <a href="../index.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">Home</a>
-                    <a href="optimizers.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
-                        <i data-lucide="search" class="w-4 h-4"></i>
-                        <span>Optimizers</span>
-                    </a>
-                    <div class="space-y-1">
-                        <button onclick="document.getElementById('mobile-collection-menu').classList.toggle('hidden')" class="w-full flex items-center justify-between px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
-                            <div class="flex items-center space-x-2">
-                                <i data-lucide="layers" class="w-4 h-4"></i>
-                                <span>Collection</span>
-                            </div>
-                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                        </button>
-                        <div id="mobile-collection-menu" class="hidden pl-4">
-                            <a href="training_strategy.html" class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
-                                <i data-lucide="brain-circuit" class="w-4 h-4"></i>
-                                <span>Training Strategy</span>
-                            </a>
-                            <a href="precision.html" class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
-                                <i data-lucide="cpu" class="w-4 h-4"></i>
-                                <span>Precision & Quantization</span>
-                            </a>
-                            <a href="visualizations.html" class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
-                                <i data-lucide="activity" class="w-4 h-4"></i>
-                                <span>Visualizations</span>
-                            </a>
-                            <a href="packages.html" class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
-                                <i data-lucide="package" class="w-4 h-4"></i>
-                                <span>Open-source Package</span>
-                            </a>
-                            <a href="experiments.html" class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
-                                <i data-lucide="flask-conical" class="w-4 h-4"></i>
-                                <span>Experiments & Analysis</span>
-                            </a>
-                            <a href="conferences.html" class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
-                                <i data-lucide="calendar" class="w-4 h-4"></i>
-                                <span>Conferences & Journals</span>
-                            </a>
-                        </div>
-                    </div>
-                    <a href="benchmarks.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
-                        <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
-                        <span>Benchmarks</span>
-                    </a>
-                    <a href="papers.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
-                        <i data-lucide="graduation-cap" class="w-4 h-4"></i>
-                        <span>Papers</span>
-                    </a>
-                    <a href="tutorials.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
-                        <i data-lucide="book-open" class="w-4 h-4"></i>
-                        <span>Tutorials</span>
-                    </a>
-                    <a href="blogs.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
-                        <i data-lucide="file-text" class="w-4 h-4"></i>
-                        <span>Blogs</span>
-                    </a>
-                    <a href="community.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
-                        <i data-lucide="users" class="w-4 h-4"></i>
-                        <span>Community</span>
-                    </a>
-                    <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
-                        <i data-lucide="github" class="w-4 h-4"></i>
-                        <span>GitHub</span>
-                    </a>
-                </div>
-            </div>
-        </nav>
+        <div id="navbar-placeholder"></div>
 
         <!-- Main Content -->
         <main class="flex-grow">
@@ -206,8 +51,11 @@
                                     type="text"
                                     id="search"
                                     placeholder="Search by title, author, or tag..."
-                                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    class="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 />
+                                <button id="clear-search" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 hidden transition-colors duration-200">
+                                    <i data-lucide="x" class="w-4 h-4"></i>
+                                </button>
                             </div>
                         </div>
 
@@ -265,7 +113,7 @@
                     </div>
 
                     <div class="mt-4 text-sm text-gray-600">
-                        Showing <span id="results-count">93</span> of 93 papers
+                        Showing <span id="results-count">101</span> of 101 papers
                     </div>
                 </div>
 
@@ -296,72 +144,18 @@
             </div>
         </main>
 
-        <!-- Back to Top Button -->
-        <button id="back-to-top" class="fixed bottom-8 right-8 bg-blue-600 text-white p-3 rounded-full shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-blue-700 hover:-translate-y-1 z-50" aria-label="Back to top">
-            <i data-lucide="arrow-up" class="w-6 h-6"></i>
-        </button>
-
         <!-- Footer -->
-        <footer class="bg-gradient-to-br from-blue-900 to-blue-800 text-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                    <!-- Brand -->
-                    <div class="col-span-1 md:col-span-2">
-                        <div class="flex items-center mb-4">
-                            <span class="text-xl font-bold text-white">ScalingOpt</span>
-                        </div>
-                        <p class="text-blue-100 mb-4 max-w-md">
-                            A comprehensive platform for scaling optimization algorithms. 
-                            Discover, compare, and contribute to cutting-edge optimizers for large-scale machine learning.
-                        </p>
-                        <div class="flex space-x-4">
-                            <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors duration-200">
-                                <i data-lucide="github" class="w-5 h-5"></i>
-                            </a>
-                            <a href="mailto:juanxitian1031@gmail.com" class="text-gray-400 hover:text-white transition-colors duration-200">
-                                <i data-lucide="mail" class="w-5 h-5"></i>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Quick Links -->
-                    <div>
-                        <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
-                        <ul class="space-y-2">
-                            <li><a href="optimizers.html" class="text-gray-300 hover:text-white transition-colors duration-200">Browse Optimizers</a></li>
-                            <li><a href="benchmarks.html" class="text-gray-300 hover:text-white transition-colors duration-200">Benchmarks</a></li>
-                            <li><a href="papers.html" class="text-gray-300 hover:text-white transition-colors duration-200">Papers</a></li>
-                            <li><a href="tutorials.html" class="text-gray-300 hover:text-white transition-colors duration-200">Tutorials</a></li>
-                            <li><a href="blogs.html" class="text-gray-300 hover:text-white transition-colors duration-200">Blogs</a></li>
-                            <li><a href="community.html" class="text-gray-300 hover:text-white transition-colors duration-200">Community</a></li>
-                        </ul>
-                    </div>
-
-                    <!-- Resources -->
-                    <div>
-                        <h3 class="text-lg font-semibold mb-4">Resources</h3>
-                        <ul class="space-y-2">
-                            <li><a href="about_us.html" class="text-gray-300 hover:text-white transition-colors duration-200">About Us</a></li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-                    <p class="text-gray-400 text-sm">
-                        © 2025 ScalingOpt Community. All rights reserved.
-                    </p>
-                    <div class="flex items-center space-x-1 text-gray-400 text-sm mt-4 md:mt-0">
-                        <span>Made with</span>
-                        <i data-lucide="heart" class="w-4 h-4 text-red-500"></i>
-                        <span>by the community</span>
-                    </div>
-                </div>
-            </div>
-        </footer>
+        <div id="footer-placeholder"></div>
     </div>
 
-    <!-- Papers Data -->
+    <!-- Load data files -->
     <script src="../assets/js/papers-data.js"></script>
+    
+    <!-- Utils and Layout -->
+    <script src="../assets/js/utils.js"></script>
+    <script src="../assets/js/layout.js"></script>
+    
+    <!-- AOS Library -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
     <!-- JavaScript -->
@@ -372,52 +166,6 @@
             once: true,
             offset: 100,
             easing: 'ease-out-cubic'
-        });
-
-        // Initialize Lucide icons
-        lucide.createIcons();
-
-        // Mobile menu toggle
-        document.getElementById('mobile-menu-button').addEventListener('click', function() {
-            const mobileMenu = document.getElementById('mobile-menu');
-            const icon = this.querySelector('i');
-            
-            if (mobileMenu.classList.contains('hidden')) {
-                mobileMenu.classList.remove('hidden');
-                icon.setAttribute('data-lucide', 'x');
-            } else {
-                mobileMenu.classList.add('hidden');
-                icon.setAttribute('data-lucide', 'menu');
-            }
-            
-            lucide.createIcons();
-        });
-
-        // Close mobile menu when clicking on links
-        document.querySelectorAll('#mobile-menu a').forEach(link => {
-            link.addEventListener('click', function() {
-                document.getElementById('mobile-menu').classList.add('hidden');
-                document.querySelector('#mobile-menu-button i').setAttribute('data-lucide', 'menu');
-                lucide.createIcons();
-            });
-        });
-
-        // Back to Top Button Logic
-        const backToTopButton = document.getElementById('back-to-top');
-        
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 300) {
-                backToTopButton.classList.remove('opacity-0', 'invisible');
-            } else {
-                backToTopButton.classList.add('opacity-0', 'invisible');
-            }
-        });
-
-        backToTopButton.addEventListener('click', () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
         });
 
         // Filter and search functionality
@@ -435,7 +183,7 @@
             return colors[category] || 'bg-gray-100 text-gray-800 border-gray-200';
         }
 
-        function renderPapers(papersToRender) {
+        function renderPapers(papersToRender, searchTerm = '') {
             const container = document.getElementById('papers-container');
             const resultsCount = document.getElementById('results-count');
 
@@ -453,7 +201,12 @@
                 return;
             }
 
-            container.innerHTML = papersToRender.map(paper => `
+            container.innerHTML = papersToRender.map(paper => {
+                // Use highlightText from utils.js
+                const highlightedTitle = highlightText(paper.title, searchTerm);
+                const highlightedAbstract = highlightText(paper.abstract, searchTerm);
+
+                return `
                 <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 p-6">
                     <div class="flex flex-col lg:flex-row lg:items-start lg:space-x-6">
                         <div class="flex-1">
@@ -467,24 +220,26 @@
                             </div>
 
                             <h3 class="text-xl font-bold text-blue-900 mb-2">
-                                ${paper.title}
+                                ${highlightedTitle}
                             </h3>
 
                             <p class="text-gray-700 mb-3 line-clamp-3">
-                                ${paper.abstract}
+                                ${highlightedAbstract}
                             </p>
 
                             <div class="flex flex-wrap gap-2 mb-4">
-                                ${paper.tags.map(tag => `
+                                ${paper.tags.map(tag => {
+                                    const highlightedTag = highlightText(tag, searchTerm);
+                                    return `
                                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
-                                        ${tag}
+                                        ${highlightedTag}
                                     </span>
-                                `).join('')}
+                                `}).join('')}
                             </div>
 
                             <div class="flex items-center justify-between pt-4 border-t border-gray-100">
                                 <div class="text-sm text-gray-600">
-                                    ${paper.authors.join(', ')} (${paper.venue})
+                                    ${paper.authors.map(author => highlightText(author, searchTerm)).join(', ')} (${paper.venue})
                                 </div>
                                 <a
                                     href="${paper.arxivUrl}"
@@ -499,10 +254,10 @@
                         </div>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
 
             // Re-initialize icons for the new content
-            lucide.createIcons();
+            if (window.lucide) lucide.createIcons();
         }
 
         function filterPapers() {
@@ -510,11 +265,32 @@
             const selectedCategory = document.getElementById('category').value;
             const selectedYear = document.getElementById('year').value;
             const sortBy = document.getElementById('sort').value;
+            const clearBtn = document.getElementById('clear-search');
+
+            // Toggle clear button
+            if (searchTerm) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+
+            // Update URL using utils.js
+            updateURLParams({
+                search: searchTerm,
+                category: selectedCategory,
+                year: selectedYear,
+                sort: sortBy
+            });
 
             filteredPapers = papers.filter(paper => {
-                const matchesSearch = paper.title.toLowerCase().includes(searchTerm) ||
-                                     paper.authors.some(author => author.toLowerCase().includes(searchTerm)) ||
-                                     paper.tags.some(tag => tag.toLowerCase().includes(searchTerm));
+                const terms = searchTerm.split(/\s+/).filter(t => t.length > 0);
+                
+                const matchesSearch = terms.length === 0 || terms.every(term => {
+                    return paper.title.toLowerCase().includes(term) ||
+                           paper.abstract.toLowerCase().includes(term) ||
+                           paper.authors.some(author => author.toLowerCase().includes(term)) ||
+                           paper.tags.some(tag => tag.toLowerCase().includes(term));
+                });
                 
                 const matchesCategory = selectedCategory === 'All' || paper.category === selectedCategory;
                 const matchesYear = selectedYear === 'All' || paper.year.toString() === selectedYear;
@@ -534,17 +310,34 @@
                 }
             });
 
-            renderPapers(filteredPapers);
+            renderPapers(filteredPapers, searchTerm);
         }
 
+        // Initialize filters from URL using utils.js
+        const initialParams = readURLParams();
+        document.getElementById('search').value = initialParams.search;
+        document.getElementById('category').value = initialParams.category;
+        document.getElementById('year').value = initialParams.year;
+        document.getElementById('sort').value = initialParams.sort;
+
         // Add event listeners
-        document.getElementById('search').addEventListener('input', filterPapers);
+        // Use debounce from utils.js
+        const debouncedFilter = debounce(filterPapers, 300);
+        document.getElementById('search').addEventListener('input', debouncedFilter);
+        
+        const clearBtn = document.getElementById('clear-search');
+        clearBtn.addEventListener('click', () => {
+            document.getElementById('search').value = '';
+            filterPapers();
+            document.getElementById('search').focus();
+        });
+
         document.getElementById('category').addEventListener('change', filterPapers);
         document.getElementById('year').addEventListener('change', filterPapers);
         document.getElementById('sort').addEventListener('change', filterPapers);
 
         // Initial render
-        renderPapers(filteredPapers);
+        filterPapers();
     </script>
 </body>
 </html>
