@@ -41,6 +41,10 @@ function injectLayout() {
                                     <i data-lucide="activity" class="w-4 h-4"></i>
                                     <span>Visualizations</span>
                                 </a>
+                                <a href="${rootPath}pages/implementations.html" class="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">
+                                    <i data-lucide="code-2" class="w-4 h-4"></i>
+                                    <span>Implementations</span>
+                                </a>
                                 <a href="${rootPath}pages/training_strategy.html" class="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">
                                     <i data-lucide="brain-circuit" class="w-4 h-4"></i>
                                     <span>Training Strategy</span>
@@ -123,6 +127,10 @@ function injectLayout() {
                         <a href="${rootPath}pages/visualizations.html" class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
                             <i data-lucide="activity" class="w-4 h-4"></i>
                             <span>Visualizations</span>
+                        </a>
+                        <a href="${rootPath}pages/implementations.html" class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                            <i data-lucide="code-2" class="w-4 h-4"></i>
+                            <span>Implementations</span>
                         </a>
                         <a href="${rootPath}pages/training_strategy.html" class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
                             <i data-lucide="brain-circuit" class="w-4 h-4"></i>
@@ -218,6 +226,7 @@ function injectLayout() {
                         <li><a href="${rootPath}pages/tutorials.html" class="text-gray-600 hover:text-blue-600 transition-colors duration-200">Tutorials</a></li>
                         <li><a href="${rootPath}pages/blogs.html" class="text-gray-600 hover:text-blue-600 transition-colors duration-200">Blogs</a></li>
                         <li><a href="${rootPath}pages/visualizations.html" class="text-gray-600 hover:text-blue-600 transition-colors duration-200">Visualizations</a></li>
+                        <li><a href="${rootPath}pages/implementations.html" class="text-gray-600 hover:text-blue-600 transition-colors duration-200">Implementations</a></li>
                     </ul>
                 </div>
 
