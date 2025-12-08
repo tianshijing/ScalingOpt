@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weight Decay and Learning Rate from a Moving Average Perspective | Scientific Spaces</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a6bca;
+            --primary-dark: #1357a8;
+            --primary-light: #e8f1fc;
+            --secondary: #2c3e50;
+            --accent: #3498db;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f5f7fa;
+            --gray-200: #e4e7eb;
+            --gray-300: #cbd2d9;
+            --gray-600: #7b8794;
+            --gray-700: #52606d;
+            --gray-900: #323f4b;
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 6px 24px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: #f0f5fc;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.8rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -8%;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.5rem;
+            line-height: 1.25;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            margin-bottom: 1.2rem;
+            max-width: 700px;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.9rem;
+        }
+
+        .meta-item i {
+            font-size: 0.9rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Translation Notice */
+        .translation-notice {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.5rem;
+            margin: 0;
+        }
+
+        .translation-notice-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .translation-text h3 {
+            color: var(--primary-dark);
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .translation-text p {
+            color: var(--gray-700);
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+
+        .translator-badge {
+            background: var(--primary);
+            color: white;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(26, 107, 202, 0.2);
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            gap: 1.5rem;
+            padding: 1.5rem 0;
+        }
+
+        @media (max-width: 800px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            padding-left: 1.2rem;
+        }
+
+        .toc {
+            position: sticky;
+            top: 1.2rem;
+        }
+
+        .toc-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 1rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .toc-header i {
+            font-size: 1rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .toc-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.85rem;
+            padding: 4px 0;
+            transition: var(--transition);
+            border-left: 2px solid transparent;
+            padding-left: 10px;
+        }
+
+        .toc-link:hover {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            transform: translateX(3px);
+        }
+
+        .toc-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .toc-number {
+            font-weight: 500;
+            color: var(--gray-600);
+            font-size: 0.8rem;
+            min-width: 18px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-right: 1.5rem;
+        }
+
+        @media (max-width: 800px) {
+            .sidebar {
+                padding: 0 1.2rem;
+            }
+            
+            .main-content {
+                padding: 0 1.2rem;
+            }
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: relative;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        h2 a {
+            color: var(--accent);
+            font-size: 0.75rem;
+            margin-left: 8px;
+            text-decoration: none;
+        }
+
+        h2 a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            color: var(--gray-900);
+            line-height: 1.7;
+        }
+
+        /* Equation Styling */
+        .equation-container {
+            margin: 1rem 0;
+        }
+
+        .equation {
+            background: var(--primary-light);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', serif;
+            font-size: 1rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .equation-number {
+            color: var(--primary);
+            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin-right: 8px;
+            display: inline-block;
+            min-width: 20px;
+        }
+
+        /* Image Container */
+        .image-container {
+            margin: 1.5rem auto;
+            max-width: 600px;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--gray-200);
+        }
+
+        .image-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: var(--transition);
+        }
+
+        .image-container:hover img {
+            transform: scale(1.01);
+        }
+
+        .caption {
+            padding: 0.8rem 1rem;
+            background: var(--gray-100);
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            line-height: 1.4;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        /* Reference Box */
+        .reference-box {
+            background: linear-gradient(to right, #f8fafc, var(--primary-light));
+            border: 1px solid var(--gray-200);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 1.2rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .reference-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 1rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .reference-header i {
+            font-size: 1rem;
+        }
+
+        .reference-list {
+            list-style: none;
+        }
+
+        .reference-item {
+            padding: 0.4rem 0 0.4rem 1rem;
+            position: relative;
+            margin-bottom: 0.5rem;
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .reference-item::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 0.7rem;
+        }
+
+        /* Citation Section */
+        .citation-section {
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .citation-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 1rem;
+            color: var(--primary-dark);
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .citation-box {
+            background: var(--white);
+            padding: 1rem;
+            border-radius: 6px;
+            border: 1px solid var(--gray-300);
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            margin-top: 0.8rem;
+            overflow-x: auto;
+            color: var(--gray-900);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--secondary);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .translation-credit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 8px 20px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 8px rgba(26, 107, 202, 0.2);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.8rem;
+            margin-top: 0.8rem;
+        }
+
+        /* Utility Classes */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-light), #e8f2ff);
+            border-left: 3px solid var(--primary);
+            padding: 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.5rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.95rem;
+        }
+
+        .math {
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.1s ease;
+            z-index: 1000;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 1.2rem 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .subtitle {
+                font-size: 0.9rem;
+                margin-bottom: 0.8rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem 0;
+            }
+            
+            .main-content {
+                padding-right: 1rem;
+            }
+            
+            .sidebar {
+                padding-left: 1rem;
+            }
+            
+            .meta-info {
+                gap: 0.8rem;
+            }
+            
+            .meta-item {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Links styling */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footnote styling */
+        .footnote {
+            font-size: 0.85rem;
+            color: var(--gray-700);
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>Weight Decay and Learning Rate from a Moving Average Perspective</h1>
+                <div class="subtitle">A Theoretical Analysis of Optimal Scheduling in Large Language Model Pre-training</div>
+                
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>Jianlin Su</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-calendar"></i>
+                        <span>December 5, 2025</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <div class="tag">Mathematical Research</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Translation Notice -->
+        <div class="translation-notice">
+            <div class="translation-notice-content">
+                <div class="translation-text">
+                    <h3><i class="fas fa-language"></i> Academic Translation</h3>
+                    <p>This is an academic English translation maintaining technical accuracy while adapting to English academic conventions.</p>
+                </div>
+                <div class="translator-badge">
+                    <i class="fas fa-user-graduate"></i>
+                    Translated by Juanxi Tian (ScalingOpt Team)
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Sidebar Table of Contents -->
+            <aside class="sidebar">
+                <nav class="toc">
+                    <div class="toc-header">
+                        <i class="fas fa-list"></i>
+                        Contents
+                    </div>
+                    <ul class="toc-list">
+                        <li class="toc-item">
+                            <a href="#moving-average" class="toc-link">
+                                <span class="toc-number">1</span>
+                                <span>Moving Average</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#iterative-expansion" class="toc-link">
+                                <span class="toc-number">2</span>
+                                <span>Iterative Expansion</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#memory-period" class="toc-link">
+                                <span class="toc-number">3</span>
+                                <span>Memory Period</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#dynamic-version" class="toc-link">
+                                <span class="toc-number">4</span>
+                                <span>Dynamic Version</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#optimal-scheduling" class="toc-link">
+                                <span class="toc-number">5</span>
+                                <span>Optimal Scheduling</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#general-results" class="toc-link">
+                                <span class="toc-number">6</span>
+                                <span>General Results</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#assumptions-discussion" class="toc-link">
+                                <span class="toc-number">7</span>
+                                <span>Assumptions Discussion</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#summary" class="toc-link">
+                                <span class="toc-number">8</span>
+                                <span>Summary</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Article Content -->
+            <main class="main-content">
+                <p>Weight decay (Weight Decay) and learning rate (Learning Rate) are crucial components in LLM pre-training. Their proper configuration is one of the key factors determining the ultimate success or failure of the model. Since <a href="https://papers.cool/arxiv/1711.05101" target="_blank">AdamW</a>, the separation of Weight Decay from traditional L2 regularization has become standard practice. However, there has been limited theoretical progress on how to appropriately set Weight Decay and Learning Rate.</p>
+                
+                <p>This article aims to introduce new insights into this problem: viewing the training process as a moving average memory of the training data and exploring how to set Weight Decay and Learning Rate to make this memory more effective.</p>
+
+                <h2 id="moving-average">Moving Average<a href="#moving-average">#</a></h2>
+                
+                <p>The general form of weight decay is:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(1)</span>
+                        \(\boldsymbol{\theta}_t = \boldsymbol{\theta}_{t-1} - \eta_t (\boldsymbol{u}_t + \lambda_t \boldsymbol{\theta}_{t-1})\)
+                    </div>
+                </div>
+                
+                <p>where \(\boldsymbol{\theta}\) represents the parameters, \(\boldsymbol{u}\) is the update provided by the optimizer, and \(\lambda_t, \eta_t\) denote weight decay and learning rate, respectively. The sequences \(\{\lambda_t\}\) and \(\{\eta_t\}\) are referred to as the "WD Schedule" and "LR Schedule."</p>
+                
+                <p>Introducing the notation:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(2)</span>
+                        \[
+                        \begin{aligned}
+                        \boldsymbol{m}_t =&\, \beta_1 \boldsymbol{m}_{t-1} + \left(1 - \beta_1\right) \boldsymbol{g}_t, & \hat{\boldsymbol{m}}_t =&\, \boldsymbol{m}_t\left/\left(1 - \beta_1^t\right)\right. &\\[5pt]
+                        \boldsymbol{v}_t =&\, \beta_2 \boldsymbol{v}_{t-1} + \left(1 - \beta_2\right) \boldsymbol{g}_t^2,& \hat{\boldsymbol{v}}_t =&\, \boldsymbol{v}_t\left/\left(1 - \beta_2^t\right)\right. &
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>For SGDM, \(\boldsymbol{u}_t=\boldsymbol{m}_t\); for RMSProp, \(\boldsymbol{u}_t= \boldsymbol{g}_t/(\sqrt{\boldsymbol{v}_t} + \epsilon)\); for Adam, \(\boldsymbol{u}_t=\hat{\boldsymbol{m}}_t\left/\left(\sqrt{\hat{\boldsymbol{v}}_t} + \epsilon\right)\right.\); for SignSGDM, \(\boldsymbol{u}_t=\text{sign}(\boldsymbol{m}_t)\); and for Muon, \(\boldsymbol{u}_t=\text{msign}(\boldsymbol{m}_t)\). Among these examples, except for SGDM, the others are adaptive learning rate optimizers.</p>
+                
+                <p>Our starting point is the moving average (Exponential Moving Average, EMA) perspective, rewriting weight decay as:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(3)</span>
+                        \(\boldsymbol{\theta}_t = (1 - \lambda_t \eta_t)\boldsymbol{\theta}_{t-1} - \eta_t \boldsymbol{u}_t = (1 - \lambda_t \eta_t)\boldsymbol{\theta}_{t-1} + \lambda_t \eta_t ( -\boldsymbol{u}_t / \lambda_t)\)
+                    </div>
+                </div>
+                
+                <p>Here, weight decay appears as a weighted average between the model parameters and \(-\boldsymbol{u}_t / \lambda_t\). The moving average perspective is not new; it has been discussed in works such as <a href="https://papers.cool/arxiv/2405.13698" target="_blank">"How to set AdamW's weight decay as you scale model and dataset size"</a> and <a href="https://papers.cool/arxiv/2505.13738" target="_blank">"Power Lines: Scaling Laws for Weight Decay and Batch Size in LLM Pre-training"</a>. This article refines various aspects within this framework.</p>
+                
+                <p>The following discussion primarily focuses on Adam, with other optimizers considered later. The calculations overlap significantly with <a href="/archives/11307" target="_blank">"Asymptotic Estimation of Weight RMS in AdamW (Part 1)"</a> and <a href="/archives/11404" target="_blank">"Asymptotic Estimation of Weight RMS in AdamW (Part 2)"</a>, which readers may refer to for comparison.</p>
+
+                <h2 id="iterative-expansion">Iterative Expansion<a href="#iterative-expansion">#</a></h2>
+                
+                <p>For simplicity, assume constant \(\lambda,\eta\), and let \(\beta_3 = 1 - \lambda\eta\). Then, \(\boldsymbol{\theta}_t = \beta_3 \boldsymbol{\theta}_{t-1} + (1 - \beta_3)( -\boldsymbol{u}_t / \lambda)\). Direct iterative expansion yields:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(4)</span>
+                        \(\boldsymbol{\theta}_t = \beta_3^t \boldsymbol{\theta}_0 + (1 - \beta_3)\sum_{i=1}^t \beta_3^{t-i} (-\boldsymbol{u}_i / \lambda)\)
+                    </div>
+                </div>
+                
+                <p>For Adam, \(\boldsymbol{u}_t=\hat{\boldsymbol{m}}_t\left/\left(\sqrt{\hat{\boldsymbol{v}}_t} + \epsilon\right)\right.\). Typically, by the end of training, \(t\) is sufficiently large such that \(\beta_1^t,\beta_2^t\) are negligible, allowing us to ignore the distinction between \(\boldsymbol{m}_t\) and \(\hat{\boldsymbol{m}}_t\), \(\boldsymbol{v}_t\) and \(\hat{\boldsymbol{v}}_t\). Further simplifying with \(\epsilon=0\), we have \(\boldsymbol{u}_t=\boldsymbol{m}_t / \sqrt{\boldsymbol{v}_t}\). Applying the mean-field approximation:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(5)</span>
+                        \[
+                        \underbrace{\frac{1-\beta_3}{1-\beta_3^t}\sum_{i=1}^t \beta_3^{t-i} \boldsymbol{u}_i}_{\text{denoted as }\bar{\boldsymbol{u}}_t} = \frac{1-\beta_3}{1-\beta_3^t}\sum_{i=1}^t \beta_3^{t-i} \frac{\boldsymbol{m}_i}{\sqrt{\boldsymbol{v}_i}}\approx \frac{\bar{\boldsymbol{m}}_t \triangleq \frac{1-\beta_3}{1-\beta_3^t}\sum_{i=1}^t \beta_3^{t-i}\boldsymbol{m}_i}{\sqrt{\bar{\boldsymbol{v}}_t \triangleq \frac{1-\beta_3}{1-\beta_3^t}\sum_{i=1}^t \beta_3^{t-i}\boldsymbol{v}_i}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Expanding \(\boldsymbol{m}_t,\boldsymbol{v}_t\) gives \(\boldsymbol{m}_t = (1 - \beta_1)\sum_{i=1}^t \beta_1^{t-i}\boldsymbol{g}_i\) and \(\boldsymbol{v}_t = (1 - \beta_2)\sum_{i=1}^t \beta_2^{t-i}\boldsymbol{g}_i^2\). Substituting into the above:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(6)</span>
+                        \[
+                        \begin{aligned}
+                        \bar{\boldsymbol{m}}_t &= \frac{(1-\beta_3)(1 - \beta_1)}{1-\beta_3^t}\sum_{i=1}^t \beta_3^{t-i} \sum_{j=1}^i \beta_1^{i-j}\boldsymbol{g}_j = \frac{(1-\beta_3)(1 - \beta_1)}{(1-\beta_3^t)(\beta_3 - \beta_1)}\sum_{j=1}^t (\beta_3^{t-j+1} - \beta_1^{t-j+1})\boldsymbol{g}_j\\[6pt]
+                        \bar{\boldsymbol{v}}_t &= \frac{(1-\beta_3)(1 - \beta_2)}{1-\beta_3^t}\sum_{i=1}^t \beta_3^{t-i} \sum_{j=1}^i \beta_2^{i-j}\boldsymbol{g}_j^2 = \frac{(1-\beta_3)(1 - \beta_2)}{(1-\beta_3^t)(\beta_3 - \beta_2)}\sum_{j=1}^t (\beta_3^{t-j+1} - \beta_2^{t-j+1})\boldsymbol{g}_j^2
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>The summation interchange uses the identity \(\sum_{i=1}^t \sum_{j=1}^i a_i b_j = \sum_{j=1}^t \sum_{i=j}^t a_i b_j\). In summary:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(7)</span>
+                        \(\boldsymbol{\theta}_t = \beta_3^t \boldsymbol{\theta}_0 + (1 - \beta_3^t)(-\bar{\boldsymbol{u}}_t / \lambda)\)
+                    </div>
+                </div>
+                
+                <p>The weights \(\boldsymbol{\theta}_t\), representing the training outcome, are expressed as a weighted average of \(\boldsymbol{\theta}_0\) and \(-\bar{\boldsymbol{u}}_t / \lambda\). Here, \(\boldsymbol{\theta}_0\) is the initial weight, and \(\bar{\boldsymbol{u}}_t\) is data-dependent. Under the mean-field approximation, \(\bar{\boldsymbol{u}}_t \approx \bar{\boldsymbol{m}}_t/\sqrt{\bar{\boldsymbol{v}}_t}\), with \(\bar{\boldsymbol{m}}_t\) and \(\bar{\boldsymbol{v}}_t\) being weighted sums of gradients at each step. For \(\bar{\boldsymbol{m}}_t\), the weight for gradient at step \(j\) is proportional to \(\beta_3^{t-j+1} - \beta_1^{t-j+1}\).</p>
+
+                <h2 id="memory-period">Memory Period<a href="#memory-period">#</a></h2>
+                
+                <p>We are primarily concerned with pre-training, which is characterized by Single-Epoch training where most data are seen only once. Thus, a key to good performance is not forgetting early data. Assuming the training data are globally shuffled, each batch can be considered equally important.</p>
+                
+                <p>Data are linearly superimposed into \(\bar{\boldsymbol{m}}_t\) via gradients. Assuming each gradient contains only information from the current batch, a batch remains unforgotten if the coefficient \(\beta_3^{t-j+1} - \beta_1^{t-j+1}\) is not too small. Consider the function \(f(s) = \beta_3^s - \beta_1^s\), which increases then decreases. Since \(\beta_3\) is closer to 1 than \(\beta_1\), the increase is brief, and the function decays approximately exponentially at larger distances, as shown below:</p>
+                
+                <div class="image-container">
+                    <img src="https://kexue.fm/usr/uploads/2025/12/2468435175.png" alt="Gradient weight illustration">
+                    <div class="caption">Figure 1: Gradient weight as a function of distance. The coefficient decreases approximately exponentially with increasing distance from the current step.</div>
+                </div>
+                
+                <p>The trend shows that coefficients decrease with distance. To ensure the model remembers every batch, the coefficient at the farthest point must not be too small. Assuming a coefficient \(\geq c \in (0, 1)\) is required for memory, and for large \(s\), \(\beta_1^s \to 0\), so \(\beta_3^s - \beta_1^s\approx \beta_3^s\). Solving \(\beta_3^s\geq c\) gives \(s \leq \frac{\log c}{\log \beta_3} \approx \frac{-\log c}{\lambda\eta}\). This indicates the model can remember at most \(\mathcal{O}(1/\lambda\eta)\) steps of data, defining its memory period.</p>
+                
+                <p>Setting \(\lambda=0\) theoretically yields an infinite memory period, eliminating forgetting concerns. However, this is not ideal. Weight decay also helps the model forget initialization. From Equation (7), the weight of initialization \(\boldsymbol{\theta}_0\) is \(\beta_3^t\). If \(\beta_3\) is too large or training steps \(t\) are too few, initialization dominates, leaving the model underfitted.</p>
+                
+                <p>Additionally, weight decay stabilizes the model's "internal state." As derived in <a href="/archives/11307" target="_blank">"Asymptotic Estimation of Weight RMS in AdamW (Part 1)"</a>, the asymptotic weight RMS for AdamW is \(\sqrt{\eta/2\lambda}\). If \(\lambda=0\), weight RMS expands at a rate of \(\eta\sqrt{t}\), potentially causing weight explosion.</p>
+                
+                <p>Therefore, \(\beta_3\) should not be too small to avoid forgetting early data, nor too large to prevent underfitting or weight explosion. A suitable setting is to make \(1/\lambda\eta\) proportional to the number of training steps, or in multi-epoch training scenarios, proportional to the number of steps per epoch.</p>
+
+                <h2 id="dynamic-version">Dynamic Version<a href="#dynamic-version">#</a></h2>
+                
+                <p>In practice, dynamic LR schedules like Cosine Decay, Linear Decay, or WSD (Warmup-Stable-Decay) are more common. Thus, the static weight decay and learning rate results need extension to dynamic versions.</p>
+                
+                <p>Starting from Equation (3) and approximating \(1 - \lambda_t \eta_t\approx e^{-\lambda_t \eta_t}\), iterative expansion yields:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(8)</span>
+                        \(\boldsymbol{\theta}_t = (1 - \lambda_t \eta_t)\boldsymbol{\theta}_{t-1} - \eta_t \boldsymbol{u}_t \approx e^{-\lambda_t \eta_t}\boldsymbol{\theta}_{t-1} - \eta_t \boldsymbol{u}_t = e^{-\kappa_t}\left(\boldsymbol{\theta}_0 - \sum_{i=1}^t e^{\kappa_i}\eta_i\boldsymbol{u}_i\right)\)
+                    </div>
+                </div>
+                
+                <p>where \(\kappa_t = \sum_{i=1}^t \eta_i\lambda_i\). Defining \(z_t = \sum_{i=1}^t e^{\kappa_i}\eta_i\), the same mean-field approximation holds:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(9)</span>
+                        \[
+                        \bar{\boldsymbol{u}}_t\triangleq\frac{1}{z_t}\sum_{i=1}^t e^{\kappa_i}\eta_i \boldsymbol{u}_i = \frac{1}{z_t}\sum_{i=1}^t e^{\kappa_i}\eta_i \frac{\boldsymbol{m}_i}{\sqrt{\boldsymbol{v}_i}}\approx \frac{\bar{\boldsymbol{m}}_t \triangleq \frac{1}{z_t}\sum_{i=1}^t e^{\kappa_i}\eta_i\boldsymbol{m}_i}{\sqrt{\bar{\boldsymbol{v}}_t \triangleq \frac{1}{z_t}\sum_{i=1}^t e^{\kappa_i}\eta_i\boldsymbol{v}_i}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Substituting expansions for \(\boldsymbol{m}_t,\boldsymbol{v}_t\):</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(10)</span>
+                        \[
+                        \begin{aligned}
+                        \bar{\boldsymbol{m}}_t &= \frac{1}{z_t}\sum_{i=1}^t e^{\kappa_i}\eta_i\boldsymbol{m}_i = \frac{1 - \beta_1}{z_t}\sum_{i=1}^t e^{\kappa_i}\eta_i\sum_{j=1}^i \beta_1^{i-j}\boldsymbol{g}_j = \sum_{j=1}^t\boldsymbol{g}_j\underbrace{\frac{1 - \beta_1}{z_t}\sum_{i=j}^t e^{\kappa_i}\beta_1^{i-j}\eta_i}_{\text{denoted as }\bar{\beta}_1(j,t)} \\
+                        \bar{\boldsymbol{v}}_t &= \frac{1}{z_t}\sum_{i=1}^t e^{\kappa_i}\eta_i\boldsymbol{v}_i = \frac{1 - \beta_2}{z_t}\sum_{i=1}^t e^{\kappa_i}\eta_i\sum_{j=1}^i \beta_2^{i-j}\boldsymbol{g}_j^2 = \sum_{j=1}^t\boldsymbol{g}_j^2\underbrace{\frac{1 - \beta_2}{z_t}\sum_{i=j}^t e^{\kappa_i}\beta_2^{i-j}\eta_i}_{\text{denoted as }\bar{\beta}_2(j,t)}
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Compared to static versions, the dynamic case retains a similar form, with gradient weights becoming more complex functions \(\bar{\beta}_1(j,t)\) and \(\bar{\beta}_2(j,t)\). For \(\beta_1,\beta_2\to 0\), they simplify to:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(11)</span>
+                        \(\bar{\beta}_1(j,t) = \bar{\beta}_2(j,t) = \frac{e^{\kappa_j}\eta_j}{z_t}\)
+                    </div>
+                </div>
+
+                <h2 id="optimal-scheduling">Optimal Scheduling<a href="#optimal-scheduling">#</a></h2>
+                
+                <p>Several analyses can follow, such as computing \(\bar{\beta}_1(j,t)\) and \(\bar{\beta}_2(j,t)\) for specific WD and LR schedules or estimating memory periods. However, we take a more ambitious approach: inversely deriving optimal WD and LR schedules.</p>
+                
+                <p>Specifically, assuming globally shuffled data implies each batch is equally important, but static coefficients \(\bar{\beta}_1(j,t)\propto\beta_3^{t-j+1} - \beta_1^{t-j+1}\) are not constant but vary with distance, conflicting with equal importance. Ideally, they should be constant. This expectation allows solving for corresponding \(\lambda_j,\eta_j\).</p>
+                
+                <p>For simplicity, consider the special case \(\beta_1,\beta_2\to 0\), where the equation to solve is \(e^{\kappa_j}\eta_j/z_t = c_t\), with \(c_t\) depending only on \(t\). Note that the "constant" is with respect to \(j\); \(t\) is the training endpoint, and the constant can depend on it. To simplify solving, we approximate sums with integrals, i.e., \(\kappa_s \approx \int_0^s \lambda_{\tau} \eta_{\tau} d\tau\), then the equation becomes \(\exp\left(\int_0^s \lambda_{\tau} \eta_{\tau} d\tau\right)\eta_s \approx c_t z_t\). Taking logarithms and differentiating with respect to \(s\) yields:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(12)</span>
+                        \(\lambda_s \eta_s + \frac{\dot{\eta}_s}{\eta_s} \approx 0\)
+                    </div>
+                </div>
+                
+                <p>If \(\lambda_s\) is constant \(\lambda\), solving gives:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(13)</span>
+                        \(\eta_s \approx \frac{\eta_{\max}}{\lambda\eta_{\max} s + 1}\)
+                    </div>
+                </div>
+                
+                <p>This is the optimal LR schedule for constant weight decay, requiring no preset endpoint \(t\) or minimum learning rate \(\eta_{\min}\), allowing infinite training similar to the stable phase of WSD while balancing gradient coefficients automatically. However, it has a drawback: as \(s\to\infty\), \(\eta_s\to 0\). From <a href="/archives/11404" target="_blank">"Asymptotic Estimation of Weight RMS in AdamW (Part 2)"</a>, weight RMS tends to \(\lim\limits_{s\to\infty} \frac{\eta_s}{2\lambda_s}\), so this drawback may risk weight collapse.</p>
+                
+                <p>To address this, consider \(\lambda_s = \alpha\eta_s\), where \(\alpha=\lambda_{\max}/\eta_{\max}\) is constant. Solving yields:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(14)</span>
+                        \(\eta_s \approx \frac{\eta_{\max}}{\sqrt{2\lambda_{\max}\eta_{\max} s + 1}},\qquad \lambda_s \approx \frac{\lambda_{\max}}{\sqrt{2\lambda_{\max}\eta_{\max} s + 1}}\)
+                    </div>
+                </div>
+                
+                <p>Correspondingly, \(e^{\kappa_s} \approx \sqrt{2\lambda_{\max}\eta_{\max} s + 1}, e^{\kappa_s}\eta_s \approx \eta_{\max}, z_t\approx \eta_{\max} t, \bar{\beta}_1(j,t) = \bar{\beta}_2(j,t) \approx 1/t\).</p>
+
+                <h2 id="general-results">General Results<a href="#general-results">#</a></h2>
+                
+                <p>Current results, such as Equations (13) and (14), assume \(\beta_1,\beta_2=0\). Do results change for non-zero \(\beta_1,\beta_2\)? More generally, to what extent do these results generalize to other optimizers?</p>
+                
+                <p>First, consider \(\beta_1,\beta_2\neq 0\). When \(t\) is sufficiently large, conclusions do not change significantly. For \(\bar{\beta}_1(j,t)\), under optimal scheduling, \(e^{\kappa_i}\eta_i\) is constant (relative to \(t\)). By definition:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(15)</span>
+                        \(\bar{\beta}_1(j,t) = \frac{1 - \beta_1}{z_t}\sum_{i=j}^t e^{\kappa_i}\beta_1^{i-j}\eta_i \propto \sum_{i=j}^t \beta_1^{i-j} = \frac{1 - \beta_1^{t-j+1}}{1 - \beta_1}\)
+                    </div>
+                </div>
+                
+                <p>When \(t\) is sufficiently large, \(\beta_1^{t-j+1}\to 0\), so this can also be considered constant with respect to \(j\). As mentioned earlier, for \(\beta_1,\beta_2\), "\(t\) sufficiently large" is almost always true, so results for \(\beta_1,\beta_2=0\) can be used directly.</p>
+                
+                <p>Regarding optimizers, previously mentioned ones (SGDM, RMSProp, Adam, SignSGDM, Muon) can be divided into two categories. SGDM is one category: its \(\bar{\boldsymbol{u}}_t\) is simply \(\bar{\boldsymbol{m}}_t\), requiring no mean-field approximation, so results up to Equation (12) apply. However, Equations (13) and (14) may not be optimal, as SGDM's asymptotic weight RMS also depends on gradient norm<sup><a href="https://papers.cool/arxiv/2305.17212" target="_blank">reference</a></sup>, making analysis more complex.</p>
+                
+                <p>The remaining optimizers (RMSProp, Adam, SignSGDM, Muon) belong to another category, all being adaptive learning rate optimizers with update rules of the homogeneous form \(\frac{\text{gradient}}{\sqrt{\text{gradient}^2}}\). In this case, if we still believe in the mean-field approximation, we obtain the same \(\bar{\boldsymbol{m}}_t\) and \(\beta_1(j,t)\), so results up to Equation (12) remain applicable. Moreover, for such homogeneous optimizers, weight RMS asymptotically scales as \(\sqrt{\eta/\lambda}\), so Equations (13) and (14) can also be reused.</p>
+
+                <div class="reference-box">
+                    <div class="reference-header">
+                        <i class="fas fa-book"></i>
+                        References
+                    </div>
+                    <ul class="reference-list">
+                        <li class="reference-item">
+                            Loshchilov, I., & Hutter, F. (2017). Decoupled Weight Decay Regularization. arXiv:1711.05101
+                        </li>
+                        <li class="reference-item">
+                            Zhai, X., et al. (2024). How to set AdamW's weight decay as you scale model and dataset size. arXiv:2405.13698
+                        </li>
+                        <li class="reference-item">
+                            Sharma, P., et al. (2025). Power Lines: Scaling Laws for Weight Decay and Batch Size in LLM Pre-training. arXiv:2505.13738
+                        </li>
+                        <li class="reference-item">
+                            Su, J. (2025). Asymptotic Estimation of Weight RMS in AdamW (Part 1). Scientific Spaces
+                        </li>
+                        <li class="reference-item">
+                            Su, J. (2025). Asymptotic Estimation of Weight RMS in AdamW (Part 2). Scientific Spaces
+                        </li>
+                        <li class="reference-item">
+                            Zhang, Y., et al. (2025). How Learning Rate Decay Wastes Your Best Data in Curriculum-Based LLM Pretraining. arXiv:2511.18903
+                        </li>
+                        <li class="reference-item">
+                            Unreferenced paper on gradient norm (2023). arXiv:2305.17212
+                        </li>
+                    </ul>
+                </div>
+
+                <h2 id="assumptions-discussion">Assumptions Discussion<a href="#assumptions-discussion">#</a></h2>
+                
+                <p>Our derivation is now complete. This section discusses the major assumptions underlying the derivation.</p>
+                
+                <p>Throughout the article, two major assumptions are worth discussing. The first is the mean-field approximation, introduced in <a href="/archives/11280" target="_blank">"Rethinking Learning Rate and Batch Size (Part 2): Mean Field"</a>. Mean-field approximation itself is not new—it is a classic approximation in physics—but its application to analyzing optimizer dynamics was first introduced by the author. It has been used to estimate optimizer <a href="/archives/11280" target="_blank">Batch Size</a>, <a href="/archives/11267" target="_blank">Update RMS</a>, <a href="/archives/11307" target="_blank">Weight RMS</a>, etc., with results appearing reasonable.</p>
+                
+                <p>Regarding the effectiveness of the mean-field approximation, we cannot comment too much; it embodies a form of belief. On one hand, based on the reasonableness of existing estimates, we believe it will continue to be reasonable, at least providing valid asymptotic estimates for some scalar metrics. On the other hand, for adaptive learning rate optimizers, due to the nonlinearity of update rules, analysis difficulty increases significantly, and apart from the mean-field approximation, we have few computational tools available.</p>
+                
+                <p>The most typical example is Muon, which involves non-element-wise operations. Previous component-wise computation methods like those used for SignSGD become ineffective, while the mean-field approximation still works (refer to <a href="/archives/11285" target="_blank">"Rethinking Learning Rate and Batch Size (Part 3): Muon"</a>). Thus, the mean-field approximation provides a unified, effective, and concise computational method for analyzing and estimating a large class of adaptive learning rate optimizers. Currently, no other method seems to achieve the same effect, so we must continue to trust it.</p>
+                
+                <p>The second major assumption is that "each gradient contains only current batch information." This assumption is fundamentally incorrect because gradients depend not only on current batch data but also on previous parameters, which naturally contain historical information. However, we can attempt to remedy this: theoretically, each batch brings new information; otherwise, the batch would be meaningless. Thus, the remedy is to change it to "each gradient contains roughly equal incremental information."</p>
+                
+                <p>Of course, upon careful thought, this statement is also debatable, as more learning leads to broader coverage, reducing the unique information of later batches. However, we can further argue by dividing knowledge into "patterns" and "facts." Factual knowledge—such as which mathematician discovered a particular theorem—must be memorized. Thus, we can consider changing it to "each gradient contains roughly equal factual knowledge." In practice, LR schedules derived from "treating all gradients equally" appear beneficial, so we can always attempt to construct an explanation for it.</p>
+                
+                <p>Recent paper <a href="https://papers.cool/arxiv/2511.18903" target="_blank">"How Learning Rate Decay Wastes Your Best Data in Curriculum-Based LLM Pretraining"</a> provides indirect evidence. It considers curriculum learning with increasing data quality and finds that aggressive LR decay eliminates curriculum learning advantages. Our result shows that each batch's weight is given by Equation (11), proportional to learning rate. If LR decay is too aggressive, later high-quality data receive smaller weights, leading to suboptimal performance. Being able to explain this phenomenon conversely demonstrates the reasonableness of our assumption.</p>
+
+                <h2 id="summary">Summary<a href="#summary">#</a></h2>
+                
+                <p>This article interprets weight decay (WD) and learning rate (LR) from a moving average perspective and explores optimal WD and LR schedules within this framework.</p>
+
+                <div class="citation-section">
+                    <div class="citation-header">
+                        <i class="fas fa-quote-right"></i>
+                        Citation Information
+                    </div>
+                    <p><strong>Original Article:</strong> Su Jianlin. (2025, December 5). Weight Decay and Learning Rate from a Moving Average Perspective. <em>Scientific Spaces</em>.</p>
+                    
+                    <p><strong>How to cite this translation:</strong></p>
+                    <div class="citation-box">
+                        Su, J. (2025). Weight Decay and Learning Rate from a Moving Average Perspective [Translated by Juanxi Tian]. 
+                        <em>Scientific Spaces</em>. Retrieved from https://kexue.fm/archives/11459
+                    </div>
+                    
+                    <p style="margin-top: 0.8rem;"><strong>BibTeX:</strong></p>
+                    <div class="citation-box">
+                        @article{su2025weight,
+                          title={Weight Decay and Learning Rate from a Moving Average Perspective},
+                          author={Su, Jianlin},
+                          year={2025},
+                          month={Dec},
+                          journal={Scientific Spaces},
+                          url={https://kexue.fm/archives/11459},
+                          note={Translated by Juanxi Tian}
+                        }
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="translation-credit">
+                <i class="fas fa-user-graduate"></i>
+                Academic Translation by Juanxi Tian (ScalingOpt Team)
+            </div>
+            <div class="copyright">
+                © 2009-2025 Scientific Spaces. All rights reserved.<br>
+                Original content licensed under Creative Commons BY-NC-ND 2.5 China
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript for Interactive Features -->
+    <script>
+        // Scroll Progress Bar
+        window.addEventListener('scroll', function() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            scrollProgress.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Table of Contents Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            const sections = document.querySelectorAll('h2[id]');
+            
+            // Set active section based on scroll position
+            function setActiveSection() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 60)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', setActiveSection);
+            setActiveSection(); // Initial call
+            
+            // Smooth scroll for TOC links
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 60,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // Add copy button for citation boxes
+            const citationBoxes = document.querySelectorAll('.citation-box');
+            citationBoxes.forEach(box => {
+                const copyBtn = document.createElement('button');
+                copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+                copyBtn.style.cssText = `
+                    position: absolute;
+                    top: 6px;
+                    right: 6px;
+                    background: var(--primary);
+                    color: white;
+                    border: none;
+                    padding: 4px 8px;
+                    border-radius: 3px;
+                    cursor: pointer;
+                    font-size: 0.75rem;
+                    transition: all 0.2s ease;
+                `;
+                copyBtn.addEventListener('mouseenter', () => {
+                    copyBtn.style.background = 'var(--primary-dark)';
+                });
+                copyBtn.addEventListener('mouseleave', () => {
+                    copyBtn.style.background = 'var(--primary)';
+                });
+                
+                // Position relative for parent
+                box.style.position = 'relative';
+                box.appendChild(copyBtn);
+                
+                copyBtn.addEventListener('click', () => {
+                    const text = box.innerText.replace('Copy', '').replace('Copied!', '');
+                    navigator.clipboard.writeText(text.trim()).then(() => {
+                        const originalHTML = copyBtn.innerHTML;
+                        copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                        copyBtn.style.background = '#2ecc71';
+                        setTimeout(() => {
+                            copyBtn.innerHTML = originalHTML;
+                            copyBtn.style.background = 'var(--primary)';
+                        }, 1500);
+                    });
+                });
+            });
+            
+            // Image zoom functionality
+            const images = document.querySelectorAll('.image-container img');
+            images.forEach(img => {
+                img.addEventListener('click', function() {
+                    const overlay = document.createElement('div');
+                    overlay.style.cssText = `
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0, 0, 0, 0.9);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 2000;
+                        cursor: zoom-out;
+                    `;
+                    
+                    const zoomedImg = document.createElement('img');
+                    zoomedImg.src = this.src;
+                    zoomedImg.style.cssText = `
+                        max-width: 90%;
+                        max-height: 90%;
+                        object-fit: contain;
+                        border-radius: 6px;
+                        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+                    `;
+                    
+                    overlay.appendChild(zoomedImg);
+                    document.body.appendChild(overlay);
+                    
+                    overlay.addEventListener('click', function() {
+                        document.body.removeChild(overlay);
+                    });
+                    
+                    // Close on ESC key
+                    document.addEventListener('keydown', function closeOnEsc(e) {
+                        if (e.key === 'Escape') {
+                            document.body.removeChild(overlay);
+                            document.removeEventListener('keydown', closeOnEsc);
+                        }
+                    });
+                });
+            });
+        });
+
+        // MathJax Configuration
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                tags: 'ams'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    
+    <!-- MathJax CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</body>
+</html>

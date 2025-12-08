@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Preliminary Exploration of MuP: Cross-Model Scaling Laws for Hyperparameters | Scientific Spaces</title>
+    <meta name="description" content="An in-depth analysis of Maximal Update Parametrization (MuP) for zero-shot hyperparameter transfer across model scales, covering initialization strategies and learning rate scaling laws for SGD, Adam, and Muon optimizers.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a6bca;
+            --primary-dark: #1357a8;
+            --primary-light: #e8f1fc;
+            --secondary: #2c3e50;
+            --accent: #3498db;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f5f7fa;
+            --gray-200: #e4e7eb;
+            --gray-300: #cbd2d9;
+            --gray-600: #7b8794;
+            --gray-700: #52606d;
+            --gray-900: #323f4b;
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 6px 24px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: #f0f5fc;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.5rem 1.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -8%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+        }
+
+        .meta-item i {
+            font-size: 0.85rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Translation Notice */
+        .translation-notice {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1.2rem;
+            margin: 0;
+        }
+
+        .translation-notice-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .translation-text h3 {
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .translation-text p {
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        .translator-badge {
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(26, 107, 202, 0.2);
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+        }
+
+        @media (max-width: 850px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            padding-left: 1rem;
+        }
+
+        .toc {
+            position: sticky;
+            top: 1rem;
+        }
+
+        .toc-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .toc-header i {
+            font-size: 0.9rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.4rem;
+            position: relative;
+        }
+
+        .toc-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            transition: var(--transition);
+            border-left: 2px solid transparent;
+            padding-left: 8px;
+        }
+
+        .toc-link:hover {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            transform: translateX(2px);
+        }
+
+        .toc-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .toc-number {
+            font-weight: 500;
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            min-width: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-right: 1.2rem;
+            padding-left: 0;
+        }
+
+        @media (max-width: 850px) {
+            .sidebar {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 0 1rem;
+            }
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 1.5rem 0 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: relative;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 35px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        h2 a {
+            color: var(--accent);
+            font-size: 0.7rem;
+            margin-left: 6px;
+            text-decoration: none;
+        }
+
+        h2 a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            color: var(--gray-900);
+            line-height: 1.65;
+        }
+
+        /* Equation Styling */
+        .equation-container {
+            margin: 0.8rem 0;
+        }
+
+        .equation {
+            background: var(--primary-light);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1rem;
+            border-radius: 0 5px 5px 0;
+            font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', serif;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .equation-number {
+            color: var(--primary);
+            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin-right: 6px;
+            display: inline-block;
+            min-width: 18px;
+        }
+
+        .equation-ref {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            border-bottom: 1px dotted var(--primary);
+        }
+
+        .equation-ref:hover {
+            text-decoration: none;
+            border-bottom: 1px solid var(--primary);
+        }
+
+        /* Code Block Styling */
+        .code-container {
+            margin: 1rem 0;
+            background: #2d2d2d;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .code-header {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 0.6rem 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .code-content {
+            padding: 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #f8f8f2;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+        }
+
+        /* Reference Box */
+        .reference-box {
+            background: linear-gradient(to right, #f8fafc, var(--primary-light));
+            border: 1px solid var(--gray-200);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .reference-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .reference-header i {
+            font-size: 0.9rem;
+        }
+
+        .reference-list {
+            list-style: none;
+        }
+
+        .reference-item {
+            padding: 0.3rem 0 0.3rem 0.8rem;
+            position: relative;
+            margin-bottom: 0.4rem;
+            color: var(--gray-700);
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .reference-item::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 0.65rem;
+        }
+
+        /* Citation Section */
+        .citation-section {
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .citation-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .citation-box {
+            background: var(--white);
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid var(--gray-300);
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-top: 0.6rem;
+            overflow-x: auto;
+            color: var(--gray-900);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--secondary);
+            color: white;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .translation-credit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 6px 16px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(26, 107, 202, 0.2);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            margin-top: 0.6rem;
+        }
+
+        /* Utility Classes */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-light), #e8f2ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .math {
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.1s ease;
+            z-index: 1000;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 1rem 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 0.6rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem 0;
+            }
+            
+            .main-content {
+                padding-right: 0.8rem;
+            }
+            
+            .sidebar {
+                padding-left: 0.8rem;
+            }
+            
+            .meta-info {
+                gap: 0.6rem;
+            }
+            
+            .meta-item {
+                font-size: 0.75rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .translation-notice-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .translator-badge {
+                align-self: flex-start;
+            }
+        }
+
+        /* Links styling */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Optimize long formula display */
+        .equation {
+            word-break: break-word;
+        }
+        
+        /* Optimize list display */
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.3rem;
+            line-height: 1.5;
+        }
+        
+        /* Optimize math formula spacing */
+        .MathJax_Display {
+            margin: 0.6em 0 !important;
+        }
+        
+        /* Image container styling */
+        .pic-container {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+        
+        .pic-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .typecho-caption {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        
+        /* Definition Box */
+        .definition-box {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 3px solid #4caf50;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .definition-header {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Note Box */
+        .note-box {
+            background: linear-gradient(to right, #fff8e1, #fff3cd);
+            border-left: 3px solid #ffc107;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .note-header {
+            color: #856404;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Analysis Box */
+        .analysis-box {
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+            border-left: 3px solid #1976d2;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .analysis-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Result Box */
+        .result-box {
+            background: linear-gradient(to right, #f3e5f5, #f8f4ff);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .result-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Quote styling */
+        blockquote {
+            background: linear-gradient(to right, var(--gray-100), var(--primary-light));
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+        }
+
+        blockquote p {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Special quote styling */
+        blockquote.cite {
+            background: linear-gradient(to right, #e8f1fc, #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+        }
+
+        blockquote.cite div {
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 0.3rem;
+        }
+
+        /* Summary Table Styling */
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.85rem;
+            box-shadow: var(--shadow-md);
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .summary-table th {
+            background: var(--primary);
+            color: white;
+            padding: 0.8rem;
+            text-align: center;
+            font-weight: 600;
+            border: 1px solid var(--primary-dark);
+        }
+
+        .summary-table td {
+            padding: 0.8rem;
+            border: 1px solid var(--gray-300);
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .summary-table tr:nth-child(even) {
+            background: var(--gray-100);
+        }
+
+        .summary-table .section-header {
+            background: var(--primary-dark);
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Underline styling */
+        u {
+            text-decoration: none;
+            border-bottom: 1px dotted var(--primary);
+        }
+
+        /* Model Architecture Styling */
+        .model-architecture {
+            background: linear-gradient(to right, #fce4ec, #f8bbd9);
+            border-left: 3px solid #e91e63;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .model-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Mathematical Notation Box */
+        .notation-box {
+            background: linear-gradient(to right, #fff3e0, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.85rem;
+        }
+
+        .notation-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Key Insight Box */
+        .insight-box {
+            background: linear-gradient(to right, #f1f8e9, #e8f5e9);
+            border-left: 3px solid #8bc34a;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .insight-header {
+            color: #689f38;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Equation reference styling */
+        .eq-ref {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .eq-ref:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>A Preliminary Exploration of MuP: Cross-Model Scaling Laws for Hyperparameters</h1>
+                <div class="subtitle">An in-depth analysis of Maximal Update Parametrization (MuP) for zero-shot hyperparameter transfer across model scales, covering initialization strategies and learning rate scaling laws</div>
+                
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>Su Jianlin</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-eye"></i>
+                        <span>Scientific Spaces</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <div class="tag">MuP</div>
+                        <div class="tag">Scaling Laws</div>
+                        <div class="tag">Optimization</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Translation Notice -->
+        <div class="translation-notice">
+            <div class="translation-notice-content">
+                <div class="translation-text">
+                    <h3><i class="fas fa-language"></i> Academic Translation</h3>
+                    <p>This is an academic English translation maintaining technical accuracy while adapting to English academic conventions.</p>
+                </div>
+                <div class="translator-badge">
+                    <i class="fas fa-user-graduate"></i>
+                    Translated by Juanxi Tian (ScalingOpt Team)
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Sidebar Table of Contents -->
+            <aside class="sidebar">
+                <nav class="toc">
+                    <div class="toc-header">
+                        <i class="fas fa-list"></i>
+                        Contents
+                    </div>
+                    <ul class="toc-list">
+                        <li class="toc-item">
+                            <a href="#method-overview" class="toc-link">
+                                <span class="toc-number">1</span>
+                                <span>Method Overview</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#forward-propagation" class="toc-link">
+                                <span class="toc-number">2</span>
+                                <span>Forward Propagation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#backward-propagation" class="toc-link">
+                                <span class="toc-number">3</span>
+                                <span>Backward Propagation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#loss-increment" class="toc-link">
+                                <span class="toc-number">4</span>
+                                <span>Loss Increment</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#model-assumption" class="toc-link">
+                                <span class="toc-number">5</span>
+                                <span>Model Assumption</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#assembly" class="toc-link">
+                                <span class="toc-number">6</span>
+                                <span>Assembly</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#feature-variation" class="toc-link">
+                                <span class="toc-number">7</span>
+                                <span>Feature Variation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#adam-version" class="toc-link">
+                                <span class="toc-number">8</span>
+                                <span>Adam Version</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#muon-version" class="toc-link">
+                                <span class="toc-number">9</span>
+                                <span>Muon Version</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#conclusion-summary" class="toc-link">
+                                <span class="toc-number">10</span>
+                                <span>Conclusion Summary</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#article-summary" class="toc-link">
+                                <span class="toc-number">11</span>
+                                <span>Article Summary</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Article Content -->
+            <main class="main-content">
+                <p>It is well known that the cost of fully training a large Language Model (LLM) is expensive, which precludes the possibility of repeatedly testing hyperparameters directly on large LLMs. A natural idea is to carefully search for hyperparameters on smaller models with the same architecture, then directly transfer the optimal combination to larger models. Although this idea is straightforward, implementing it is non-trivial. It requires understanding the scaling laws between common hyperparameters and model scale, and MuP is one practical implementation of this idea.</p>
+                
+                <p>MuP, sometimes written as $\mu P$, stands for Maximal Update Parametrization, originating from the paper <a href="https://papers.cool/arxiv/2203.03466" target="_blank">"Tensor Programs V: Tuning Large Neural Networks via Zero-Shot Hyperparameter Transfer"</a>. With the proliferation of LLM training, it has gradually become one of the de facto standards in scientific model training.</p>
+                
+                <h2 id="method-overview">Method Overview<a href="#method-overview">#</a></h2>
+                
+                <div class="definition-box">
+                    <div class="definition-header">
+                        <i class="fas fa-info-circle"></i>
+                        Core Concepts of MuP
+                    </div>
+                    <p><strong>MuP</strong> (Maximal Update Parametrization) investigates the <strong>transfer laws</strong> of <strong>hyperparameters</strong> across <strong>model scales</strong>. The key insight is that optimal hyperparameter combinations found on small models can be directly transferred to larger models with proper scaling.</p>
+                </div>
+                
+                <p>Before delving into the topic, I must first comment that the original MuP paper is written in an extremely obscure manner, with conclusions expressed insufficiently clearly, unnecessarily increasing the difficulty of comprehension. Therefore, I will attempt to reproduce MuP's conclusions in what I consider a concise manner.</p>
+                
+                <p>First, the conclusion: MuP primarily investigates the transfer laws of hyperparameters across model scales. There are several key terms here:</p>
+                
+                <blockquote>
+                    <p>1. <strong>Hyperparameters</strong>: Currently mainly refers to <strong>learning rate</strong>;</p>
+                    <p>2. <strong>Model scale</strong>: Currently mainly refers to model <strong>width</strong>;</p>
+                    <p>3. The core here is <strong>"transfer"</strong>.</p>
+                </blockquote>
+                
+                <div class="note-box">
+                    <div class="note-header">
+                        <i class="fas fa-exclamation-circle"></i>
+                        Important Distinction
+                    </div>
+                    <p>Please note that MuP does not study what the optimal hyperparameters are, only how optimal hyperparameters <u>change with model scale</u>. Therefore, we need to search for the optimal hyperparameter combination on some small model, then transfer it to larger models. This is the use case and method of MuP.</p>
+                </div>
+                
+                <p>The principle behind deriving MuP is to ensure that the model's <u>forward propagation, backward propagation, loss increment, and feature changes</u> do not significantly vary with model scale:</p>
+                
+                <blockquote>
+                    <p>1. The specific approach analyzes the order of magnitude of initialization, then assumes conclusions can represent subsequent optimization patterns;</p>
+                    <p>2. Essentially, it assumes that with proper initialization, subsequent optimization will automatically follow the correct trajectory (a good start is half the battle?);</p>
+                    <p>3. One can also justify this assumption with stories about the <strong>Law of Large Numbers</strong> or <strong>Central Limit Theorem</strong>, but personally I don't find this necessary.</p>
+                </blockquote>
+                
+                <h2 id="forward-propagation">Forward Propagation<a href="#forward-propagation">#</a></h2>
+                
+                <p>We begin with forward propagation because it is relatively simple and well-established. First, consider the linear layer $\boldsymbol{Y}=\boldsymbol{X}\boldsymbol{W}$, where $\boldsymbol{X}\in\mathbb{R}^{b\times d_{in}},\boldsymbol{W}\in\mathbb{R}^{d_{in}\times d_{out}}$. We use RMS (Root Mean Square) as a measure of matrix scale, for example:</p>
+                
+                <div class="equation-container" id="eq-rms">
+                    <div class="equation">
+                        <span class="equation-number">(1)</span>
+                        \[
+                        \text{RMS}(\boldsymbol{W}) = \sqrt{\frac{1}{d_{in} d_{out}}\sum_{i=1}^{d_{in}} \sum_{j=1}^{d_{out}} W_{i,j}^2}
+                        \]
+                    </div>
+                </div>
+                
+                <p>We know that to make the RMS of $\boldsymbol{X}$ approximately equal to the RMS of $\boldsymbol{Y}$ during initialization (referred to as "<strong>stability</strong>"), $\boldsymbol{W}$ should use:</p>
+                
+                <blockquote class="cite">
+                    <div><strong>LeCun Initialization</strong>: Random initialization with "mean 0, variance $1/d_{in}$".</div>
+                </blockquote>
+                
+                <p>This is already one of the fundamental conclusions in deep learning, so I won't expand on the derivation. Readers unfamiliar with this can refer to previous blog posts such as <a href="/archives/7180" target="_blank">"Geometric Perspective on Model Parameter Initialization Strategies"</a> and <a href="/archives/8620" target="_blank">"On Transformer Initialization, Parameterization, and Normalization"</a>.</p>
+                
+                <p>Next, consider the nonlinear layer $\boldsymbol{Y}=\phi(\boldsymbol{X}\boldsymbol{W})$, where $\phi$ is an element-wise activation function. If we still want to maintain approximate equality between the RMS of $\boldsymbol{X}$ and the RMS of $\boldsymbol{Y}$, the result differs slightly. For example, with $\text{relu}$ activation we obtain:</p>
+                
+                <blockquote class="cite">
+                    <div><strong>Kaiming Initialization</strong>: Random initialization with "mean 0, variance $2/d_{in}$".</div>
+                </blockquote>
+                
+                <p>It's easy to see that <strong>Kaiming Initialization</strong> differs from <strong>LeCun Initialization</strong> only by a constant factor 2 (independent of model scale). One can prove similar results for other activation functions. So we can conclude:</p>
+                
+                <blockquote class="cite">
+                    <div><strong>fan_in initialization</strong>: To ensure forward propagation stability, one should use random initialization with "mean 0, variance <u>proportional to</u> $1/d_{in}$".</div>
+                </blockquote>
+                
+                <p>This conclusion can also be understood as "the effect of activation functions is independent of model scale." So if we only want to analyze the effect of model scale, we can ignore the presence of (element-wise) activation functions and directly obtain the scaling law $\propto 1/d_{in}$ from LeCun initialization.</p>
+                
+                <h2 id="backward-propagation">Backward Propagation<a href="#backward-propagation">#</a></h2>
+                
+                <p>Now let's continue analyzing backward propagation (gradients). Note that here we assume variables and their gradients have the same shape. We can compute:</p>
+                
+                <div class="equation-container" id="eq-gradients">
+                    <div class="equation">
+                        <span class="equation-number">(2)</span>
+                        \[
+                        \begin{aligned}
+                        \frac{\partial\mathcal{L}}{\partial \boldsymbol{W}} &= \boldsymbol{X}^{\top}\left(\frac{\partial\mathcal{L}}{\partial \boldsymbol{Y}}\otimes \phi'(\boldsymbol{X}\boldsymbol{W})\right) \\[5pt]
+                        \frac{\partial\mathcal{L}}{\partial \boldsymbol{X}} &= \left(\frac{\partial\mathcal{L}}{\partial \boldsymbol{Y}}\otimes \phi'(\boldsymbol{X}\boldsymbol{W})\right)\boldsymbol{W}^{\top}
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>The first formula is the gradient of parameters within the current layer, the second is the gradient propagated forward from this layer, $\otimes$ denotes the Hadamard product, and $\phi'$ is the derivative of $\phi$.</p>
+                
+                <div class="insight-box">
+                    <div class="insight-header">
+                        <i class="fas fa-lightbulb"></i>
+                        Key Observation
+                    </div>
+                    <p>Note a fact: For commonly used activation functions, their derivatives can be bounded by a (scale-independent) constant. So at least in terms of order of magnitude, we can write:</p>
+                </div>
+                
+                <div class="equation-container" id="eq-grad-approximations">
+                    <div class="equation">
+                        <span class="equation-number">(3)</span>
+                        \[
+                        \begin{aligned}
+                        \frac{\partial\mathcal{L}}{\partial \boldsymbol{W}} &= \boldsymbol{X}^{\top}\left(\frac{\partial\mathcal{L}}{\partial \boldsymbol{Y}}\otimes \phi'(\boldsymbol{X}\boldsymbol{W})\right) \sim \boldsymbol{X}^{\top}\frac{\partial\mathcal{L}}{\partial \boldsymbol{Y}} \\[5pt]
+                        \frac{\partial\mathcal{L}}{\partial \boldsymbol{X}} &= \left(\frac{\partial\mathcal{L}}{\partial \boldsymbol{Y}}\otimes \phi'(\boldsymbol{X}\boldsymbol{W})\right)\boldsymbol{W}^{\top}\sim \frac{\partial\mathcal{L}}{\partial \boldsymbol{Y}}\boldsymbol{W}^{\top}
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Let's look at the second formula first. Compared with $\boldsymbol{Y}=\boldsymbol{X}\boldsymbol{W}$, the matrix multiplied on the right becomes $\boldsymbol{W}^{\top}$. Then according to the previous section's conclusion, to maintain RMS stability in backward propagation, $\boldsymbol{W}$'s initialization should be:</p>
+                
+                <blockquote class="cite">
+                    <div><strong>fan_out initialization</strong>: Random initialization with "mean 0, variance $1/d_{out}$".</div>
+                </blockquote>
+                
+                <p>When $d_{in}\neq d_{out}$, the requirements for forward propagation and backward propagation conflict. Someone proposed a compromise strategy:</p>
+                
+                <blockquote class="cite">
+                    <div><strong>Xavier initialization</strong>: Random initialization with "mean 0, variance $2/(d_{in} + d_{out})$".</div>
+                </blockquote>
+                
+                <p>This is also called "<strong>fan_avg initialization</strong>" because it simply algebraically averages $d_{in}$ and $d_{out}$. Other averaging methods can also be considered, refer to <a href="/archives/8725" target="_blank">"Thoughts on Dimension Averaging Strategies for Non-Square Matrices in Initialization Methods"</a>. Xavier initialization appears to balance both forward and backward propagation, but one could also say it doesn't fully satisfy either. A better approach is to design models such that most parameters are square matrices, as discussed later with the model family <a href="#eq-model" class="eq-ref">equation (6)</a>.</p>
+                
+                <h2 id="loss-increment">Loss Increment<a href="#loss-increment">#</a></h2>
+                
+                <p>With the groundwork of forward and backward propagation, we can attempt to analyze the increment of the loss function. Consider the change in loss when $\boldsymbol{W}\to \boldsymbol{W} + \Delta\boldsymbol{W}$:</p>
+                
+                <div class="equation-container" id="eq-loss-delta">
+                    <div class="equation">
+                        <span class="equation-number">(4)</span>
+                        \[
+                        \Delta \mathcal{L} = \mathcal{L}(\boldsymbol{W} + \Delta\boldsymbol{W}) - \mathcal{L}(\boldsymbol{W})\approx \left\langle\frac{\partial\mathcal{L}}{\partial \boldsymbol{W}}, \Delta\boldsymbol{W}\right\rangle_F
+                        \]
+                    </div>
+                </div>
+                
+                <p>Here $\langle\cdot,\cdot\rangle_F$ is the Frobenius inner product, i.e., flattening matrices into vectors then computing vector inner product. Consider gradient descent $\Delta\boldsymbol{W} = -\eta \frac{\partial\mathcal{L}}{\partial \boldsymbol{W}}$, where $\eta$ is naturally the learning rate. Combining with equation <a href="#eq-grad-approximations" class="eq-ref">(3)</a>, we have:</p>
+                
+                <div class="equation-container" id="eq-loss-gradient">
+                    <div class="equation">
+                        <span class="equation-number">(5)</span>
+                        \[
+                        \Delta \mathcal{L}\approx -\eta\left\Vert\frac{\partial\mathcal{L}}{\partial \boldsymbol{W}}\right\Vert_F^2\sim -\eta \left\Vert\boldsymbol{X}^{\top}\frac{\partial\mathcal{L}}{\partial \boldsymbol{Y}}\right\Vert_F^2
+                        \]
+                    </div>
+                </div>
+                
+                <div class="analysis-box">
+                    <div class="analysis-header">
+                        <i class="fas fa-chart-line"></i>
+                        Why Same Learning Rate Cannot Be Used Across Scales
+                    </div>
+                    <p>This formula already tells us why the same learning rate $\eta$ cannot be used across model scales:</p>
+                    <ol>
+                        <li>$\boldsymbol{X}^{\top}\frac{\partial\mathcal{L}}{\partial \boldsymbol{Y}}$ is a $d_{in}\times d_{out}$ matrix;</li>
+                        <li>$\left\Vert\boldsymbol{X}^{\top}\frac{\partial\mathcal{L}}{\partial \boldsymbol{Y}}\right\Vert_F^2$ is the sum of squares of $d_{in}\times d_{out}$ numbers;</li>
+                        <li>$\boldsymbol{X}^{\top}\frac{\partial\mathcal{L}}{\partial \boldsymbol{Y}}$ is exactly the product of forward and backward propagation;</li>
+                        <li>If both forward and backward propagation are stable, then each element of $\boldsymbol{X}^{\top}\frac{\partial\mathcal{L}}{\partial \boldsymbol{Y}}$ is $\mathcal{\Theta}(1)$ ($\mathcal{\Theta}$ is "<a href="https://en.wikipedia.org/wiki/Big_O_notation#Family_of_Bachmann%E2%80%93Landau_notations" target="_blank">Big Theta Notation</a>");</li>
+                        <li>Therefore $\left\Vert\boldsymbol{X}^{\top}\frac{\partial\mathcal{L}}{\partial \boldsymbol{Y}}\right\Vert_F^2$ is $\mathcal{\Theta}(d_{in} d_{out})$.</li>
+                    </ol>
+                </div>
+                
+                <p>Point 4 may need additional commentary. $\boldsymbol{X}^{\top}$ is a $d_{in}\times b$ matrix, $\frac{\partial\mathcal{L}}{\partial \boldsymbol{Y}}$ is a $b\times d_{out}$ matrix, their multiplication yields $d_{in} d_{out}$ inner products of $b$-dimensional vector pairs. The inner product sums $b$ terms, and the loss $\mathcal{L}$ typically averages over samples (i.e., includes division by $b$). So if $\boldsymbol{X}^{\top}$ and $\frac{\partial\mathcal{L}}{\partial \boldsymbol{Y}}$ are both scale-independent, their product is essentially also scale-independent [i.e., RMS is $\mathcal{\Theta}(1)$].</p>
+                
+                <p>The final conclusion shows that if we directly use a small model's learning rate for a large model, then for sufficiently large models, each step's loss increment will <u><strong>explode</strong></u> as parameter scale (i.e., $d_{in} d_{out}$) increases. This means we cannot replicate the small model's convergence process, and may even fail to converge due to steps that are too large.</p>
+                
+                <p>At this point, one might think of scaling $\eta\propto 1/(d_{in} d_{out})$ to adjust $\Delta\mathcal{L}$. This idea actually aligns with MuP's approach. However, in practical scenarios, due to the incompatibility between forward and backward propagation mentioned earlier, point 4 "if both forward and backward propagation are stable, then each element of $\boldsymbol{X}^{\top}\frac{\partial\mathcal{L}}{\partial \boldsymbol{Y}}$ is $\mathcal{\Theta}(1)$" cannot always hold. So the actual situation is more complex.</p>
+                
+                <h2 id="model-assumption">Model Assumption<a href="#model-assumption">#</a></h2>
+                
+                <div class="model-architecture">
+                    <div class="model-header">
+                        <i class="fas fa-project-diagram"></i>
+                        Standard Model Architecture for MuP Analysis
+                    </div>
+                    <p>Now let's consider a scenario closer to practice. Our task is to train a model $\mathbb{R}^{d_{in}}\mapsto \mathbb{R}^{d_{out}}$, where $d_{in},d_{out}$ are determined by data and cannot be changed. As mentioned at the beginning, MuP aims to study how hyperparameters scale with model scale, so all fixed quantities are essentially constants or $\mathcal{\Theta}(1)$. For example, initialization variance $1/d_{in}$ is equivalent to saying initialization variance is $\mathcal{\Theta}(1)$.</p>
+                </div>
+                
+                <p>We can change the model's architecture, parameter count, etc., but MuP mainly considers width scaling laws. So let's define the model architecture. The primary model family considered is:</p>
+                
+                <div class="equation-container" id="eq-model">
+                    <div class="equation">
+                        <span class="equation-number">(6)</span>
+                        \[
+                        \begin{gathered}
+                        \boldsymbol{Y}_{in} = \boldsymbol{X} \boldsymbol{W}_{in} \\[5pt]
+                        \boldsymbol{Y}_{out} = \text{NN}(\boldsymbol{Y}_{in},\boldsymbol{\Omega}) \\[5pt]
+                        \boldsymbol{Z} = \boldsymbol{Y}_{out} \boldsymbol{W}_{out}
+                        \end{gathered}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Where:</p>
+                
+                <blockquote>
+                    <p>1. $\boldsymbol{X}\in\mathbb{R}^{b\times d_{in}}$ (including batch size);</p>
+                    <p>2. $\boldsymbol{W}_{in} \in \mathbb{R}^{d_{in}\times d}, \boldsymbol{W}_{out} \in \mathbb{R}^{d\times d_{out}}$;</p>
+                    <p>3. $\text{NN}$ is any neural network $\mathbb{R}^d\mapsto \mathbb{R}^d$;</p>
+                    <p>4. Here $d$ is what we commonly call hidden size;</p>
+                    <p>5. We can arbitrarily increase $d$ to enhance model parameter count and capacity;</p>
+                    <p>6. MuP wants to study how hyperparameters change with $d$.</p>
+                </blockquote>
+                
+                <p>More specifically, here we consider $\text{NN}$ as a $K$-layer MLP:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(7)</span>
+                        \[
+                        \begin{aligned}
+                        \boldsymbol{Y}_0 &= Y_{in} \\[5pt]
+                        \boldsymbol{Y}_{k+1} &= \phi(\boldsymbol{Y}_k \boldsymbol{W}_{k+1}) \\[5pt]
+                        \boldsymbol{Y}_{out} &= \boldsymbol{Y}_K
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Here $\boldsymbol{\Omega}=\{\boldsymbol{W}_1,\boldsymbol{W}_2,\cdots,\boldsymbol{W}_K\}$, $\boldsymbol{W}_k\in\mathbb{R}^{d\times d}$, i.e., all are $d\times d$ <strong>square matrices</strong>, all using <strong>fan_in initialization</strong> (equivalently, also <strong>fan_out initialization</strong>).</p>
+                
+                <div class="note-box">
+                    <div class="note-header">
+                        <i class="fas fa-sticky-note"></i>
+                        Design Rationale
+                    </div>
+                    <p>All parameter matrices being $d\times d$ square matrices here is purely for simplifying analysis, not a mandatory requirement. The real purpose is to assume that parameters in $\text{NN}$ have <u>no scale-independent shapes</u>, e.g., shapes like $d\times 64$ are not allowed because $64$ is a constant, but shapes like $d\times 4d$ are allowed because regardless of fan_in, fan_out, or fan_avg initialization, variance is proportional to $1/d$.</p>
+                </div>
+                
+                <h2 id="assembly">Assembly<a href="#assembly">#</a></h2>
+                
+                <p>With a concrete model established, we can now assemble all previous conclusions. Parameters to update are divided into three parts: $\boldsymbol{W}_{in},\boldsymbol{\Omega},\boldsymbol{W}_{out}$. Compute gradients separately:</p>
+                
+                <div class="equation-container" id="eq-assembled-gradients">
+                    <div class="equation">
+                        <span class="equation-number">(8)</span>
+                        \[
+                        \begin{aligned}
+                        \frac{\partial\mathcal{L}}{\partial \boldsymbol{W}_{out}} &= \boldsymbol{Y}_{out}^{\top}\frac{\partial\mathcal{L}}{\partial \boldsymbol{Z}} \\[6pt]
+                        \frac{\partial\mathcal{L}}{\partial \boldsymbol{W}_k} &= \frac{\partial \boldsymbol{Y}_{out}}{\partial \boldsymbol{W}_k} \cdot\frac{\partial\mathcal{L}}{\partial \boldsymbol{Y}_{out}} = \frac{\partial \boldsymbol{Y}_{out}}{\partial \boldsymbol{W}_k} \cdot\left(\frac{\partial\mathcal{L}}{\partial \boldsymbol{Z}}\boldsymbol{W}_{out}^{\top}\right) \\[6pt]
+                        \frac{\partial\mathcal{L}}{\partial \boldsymbol{W}_{in}} &= \boldsymbol{X}^{\top} \frac{\partial\mathcal{L}}{\partial \boldsymbol{Y}_{in}} = \boldsymbol{X}^{\top} \left(\frac{\partial\boldsymbol{Y}_{out}}{\partial \boldsymbol{Y}_{in}}\cdot\frac{\partial\mathcal{L}}{\partial \boldsymbol{Y}_{out}}\right) = \boldsymbol{X}^{\top} \left(\frac{\partial\boldsymbol{Y}_{out}}{\partial \boldsymbol{Y}_{in}}\cdot\left(\frac{\partial\mathcal{L}}{\partial \boldsymbol{Z}}\boldsymbol{W}_{out}^{\top}\right)\right)
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <div class="notation-box">
+                    <div class="notation-header">
+                        <i class="fas fa-calculator"></i>
+                        Notation Clarification
+                    </div>
+                    <p>The $\cdot$ operation needs slight explanation: $\boldsymbol{Y}_{in},\boldsymbol{Y}_{out}$ are both matrices, so $\frac{\partial\boldsymbol{Y}_{out}}{\partial \boldsymbol{Y}_{in}}$ is in principle a fourth-order tensor. The chain rule $\frac{\partial\boldsymbol{Y}_{out}}{\partial \boldsymbol{Y}_{in}}\cdot\frac{\partial\mathcal{L}}{\partial \boldsymbol{Y}_{out}}$ is actually multiplication of higher-order tensors, but we won't expand on that here. We simply use $\cdot$ as a placeholder; readers only need to know it's a generalization of matrix multiplication.</p>
+                </div>
+                
+                <p>Now observe patterns:</p>
+                
+                <blockquote>
+                    <p>1. All three expressions contain $\frac{\partial\mathcal{L}}{\partial \boldsymbol{Z}}$;</p>
+                    <p>2. The latter two contain $\boldsymbol{W}_{out}^{\top}$;</p>
+                    <p>3. $\boldsymbol{W}_k$ are all square matrices, $\frac{\partial\boldsymbol{Y}_{out}}{\partial \boldsymbol{Y}_{in}}$ and $\frac{\partial \boldsymbol{Y}_{out}}{\partial \boldsymbol{W}_k}$ are both stable [RMS is $\mathcal{\Theta}(1)$];</p>
+                    <p>4. If $\boldsymbol{W}_{in}$ also uses fan_in initialization, then $\boldsymbol{Y}_{out}$ is also stable;</p>
+                    <p>5. For $\frac{\partial\mathcal{L}}{\partial \boldsymbol{Z}}\boldsymbol{W}_{out}^{\top}$ to be stable, initialization variance should be $1/d_{out}$, but $d_{out}$ is scale-independent, essentially a constant.</p>
+                </blockquote>
+                
+                <p>Thus:</p>
+                
+                <blockquote>
+                    <p>1. $\frac{\partial\mathcal{L}}{\partial \boldsymbol{W}_{out}}$'s RMS is $\mathcal{\Theta}(1)$, $\left\Vert\frac{\partial\mathcal{L}}{\partial \boldsymbol{W}_{out}}\right\Vert_F^2$ is the sum of squares of $d\times d_{out}$ numbers, so its magnitude is $\mathcal{\Theta}(d\times d_{out})$. Remember $d_{out}$ is constant, so actually $\mathcal{\Theta}(d)$. Therefore, to obtain $\mathcal{\Theta}(1)$ $\Delta\mathcal{L}$, its learning rate must satisfy $\eta_{out}\propto 1/d$;</p>
+                    <p>2. $\left\Vert\frac{\partial\mathcal{L}}{\partial \boldsymbol{W}_k}\right\Vert_F^2$ sums $d^2$ numbers. $\frac{\partial \boldsymbol{Y}_{out}}{\partial \boldsymbol{W}_k}$ and $\frac{\partial\mathcal{L}}{\partial \boldsymbol{Z}}$'s RMS are both $\mathcal{\Theta}(1)$. If we directly set $\boldsymbol{W}_{out}$'s initialization variance as $\propto 1/d^2$, then $\frac{\partial\mathcal{L}}{\partial \boldsymbol{W}_k}$'s RMS is $\mathcal{\Theta}(1/d)$, and after squaring and summing, it becomes exactly $\mathcal{\Theta}(1)$. Therefore, learning rate doesn't need to change;</p>
+                    <p>3. Then $\frac{\partial\mathcal{L}}{\partial \boldsymbol{W}_{in}}$'s RMS is also $\mathcal{\Theta}(1/d)$, but $\left\Vert\frac{\partial\mathcal{L}}{\partial \boldsymbol{W}_{in}}\right\Vert_F^2$ only sums $d_{in}\times d$ squared numbers, so the result is $\mathcal{\Theta}(1/d)$. To obtain $\mathcal{\Theta}(1)$ $\Delta\mathcal{L}$, the learning rate actually needs to be amplified by $d$ to counteract this effect, i.e., $\eta_{in}\propto d$.</p>
+                </blockquote>
+                
+                <h2 id="feature-variation">Feature Variation<a href="#feature-variation">#</a></h2>
+                
+                <p>The above results are correct, but careful thought reveals an issue in the derivation: points 2 and 3 above are based on the setting "we directly set $\boldsymbol{W}_{out}$'s initialization variance as $\propto 1/d^2$", which currently lacks direct justification. Without further explanation, the derivation remains incomplete.</p>
+                
+                <p>Indeed, considering only the requirement $\Delta \mathcal{L}=\mathcal{\Theta}(1)$, other choices cannot be excluded. For example, if $\boldsymbol{W}_{out}$'s initialization variance is set as $\propto 1/d$, then $\frac{\partial\mathcal{L}}{\partial \boldsymbol{W}_k}$'s RMS is $\mathcal{\Theta}(1/\sqrt{d})$, after squaring and summing becomes $\mathcal{\Theta}(d)$. Then as long as learning rate $\eta\propto 1/d$, $\Delta \mathcal{L}=\mathcal{\Theta}(1)$ can also be achieved. Therefore, to explain the necessity of "$\boldsymbol{W}_{out}$'s initialization variance set as $\propto 1/d^2$", new conditions need to be introduced.</p>
+                
+                <div class="result-box">
+                    <div class="result-header">
+                        <i class="fas fa-search"></i>
+                        Refining the Analysis with Feature Variation
+                    </div>
+                    <p>The loss function $\mathcal{L}$ is a macroscopic indicator of the model, or an external metric. Looking only at its changes is insufficient to explain all results, so we need to examine the model's internal details. Specifically, we hope that the variation of each layer's output (often called features, sometimes activations) also has scale invariance.</p>
+                </div>
+                
+                <p>For example, for linear layer $\boldsymbol{Y}_k = \boldsymbol{Y}_{k-1} \boldsymbol{W}_k$, parameter change $\boldsymbol{W}_k\to \boldsymbol{W}_k + \Delta \boldsymbol{W}_k$ causes output change:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(9)</span>
+                        \[
+                        \Delta\boldsymbol{Y}_k = \boldsymbol{Y}_{k-1} (\boldsymbol{W}_k + \Delta \boldsymbol{W}_k) - \boldsymbol{Y}_{k-1} \boldsymbol{W}_k = \boldsymbol{Y}_{k-1} \Delta\boldsymbol{W}_k
+                        \]
+                    </div>
+                </div>
+                
+                <p>Note $\boldsymbol{Y}_{k-1}\in\mathbb{R}^{b\times d},\Delta\boldsymbol{W}_k\in\mathbb{R}^{d\times d}$, so $\boldsymbol{Y}_{k-1} \Delta\boldsymbol{W}_k$ is the inner product of $b\times d$ pairs of $d$-dimensional vectors. Note here $\Delta\boldsymbol{W}_k$ is a carefully designed update; it's unlikely to be independent of $\boldsymbol{Y}_{k-1}$ as in initialization. So "inner product of $d$-dimensional vector pairs" is more likely $\mathcal{\Theta}(d)$ ($d$-dimensional inner product sums $d$ terms). Therefore, if $\Delta\boldsymbol{Y}_{k-1}$'s RMS is $\mathcal{\Theta}(1)$, then $\Delta\boldsymbol{Y}_k$'s RMS would be $\mathcal{\Theta}(d\times \text{RMS}(\Delta \boldsymbol{W}_k))$.</p>
+                
+                <p>Thus, to make $\Delta\boldsymbol{Y}_k$'s RMS $\mathcal{\Theta}(1)$, we obtain an additional requirement for $\Delta \boldsymbol{W}_k$:</p>
+                
+                <div class="equation-container" id="eq-dw-rms">
+                    <div class="equation">
+                        <span class="equation-number">(10)</span>
+                        \[
+                        \text{RMS}(\Delta \boldsymbol{W}_k) = \mathcal{\Theta}(1 / d)
+                        \]
+                    </div>
+                </div>
+                
+                <p>Combining $\Delta \boldsymbol{W}_k = -\eta\frac{\partial\mathcal{L}}{\partial \boldsymbol{W}_k}$ and $\Delta\mathcal{L}=\mathcal{\Theta}(1)$, we can obtain the result "$\boldsymbol{W}_{out}$'s initialization variance set as $\propto 1/d^2$".</p>
+                
+                <div class="note-box">
+                    <div class="note-header">
+                        <i class="fas fa-user-check"></i>
+                        Acknowledgment
+                    </div>
+                    <p>(Note: This section relies on insights from <a href="/archives/10770/comment-page-1#comment-27212" target="_blank">@Chenyu Zheng</a>, many thanks!)</p>
+                </div>
+                
+                <h2 id="adam-version">Adam Version<a href="#adam-version">#</a></h2>
+                
+                <p>The above is MuP for SGD. For Adam, we typically use SignSGD approximation for order-of-magnitude analysis:</p>
+                
+                <blockquote>
+                    <p>1. $\Delta \boldsymbol{W} = -\eta \mathop{\text{sign}}\left(\frac{\partial\mathcal{L}}{\partial \boldsymbol{W}}\right)$;</p>
+                    <p>2. $\Delta \mathcal{L} \approx -\eta \left|\frac{\partial\mathcal{L}}{\partial \boldsymbol{W}}\right|_1$;</p>
+                    <p>3. Here $|\cdot|_1$ means taking absolute value of each element then summing.</p>
+                </blockquote>
+                
+                <div class="reference-box">
+                    <div class="reference-header">
+                        <i class="fas fa-book"></i>
+                        Related Resources
+                    </div>
+                    <ul class="reference-list">
+                        <li class="reference-item">About the SignSGD approximation itself, readers can refer to <a href="/archives/10542" target="_blank">"How Should Learning Rate Scale with Batch Size?"</a></li>
+                        <li class="reference-item"><a href="/archives/10563" target="_blank">"How Does Adam's epsilon Affect Learning Rate Scaling Laws?"</a></li>
+                        <li class="reference-item">In summary, SignSGD is a commonly used approximation when analyzing scaling laws related to Adam.</li>
+                    </ul>
+                </div>
+                
+                <p>Now we can mimic the SGD process for analysis:</p>
+                
+                <blockquote>
+                    <p>1. $\frac{\partial\mathcal{L}}{\partial \boldsymbol{W}_{out}}$'s RMS is $\mathcal{\Theta}(1)$, $\left|\frac{\partial\mathcal{L}}{\partial \boldsymbol{W}_{out}}\right|_1$ sums $d\times d_{out}$ numbers, magnitude is $\mathcal{\Theta}(d\times d_{out}) = \mathcal{\Theta}(d)$, so its learning rate must satisfy $\eta_{out}\propto 1/d$ to counteract scale effects;</p>
+                    <p>2. $\left|\frac{\partial\mathcal{L}}{\partial \boldsymbol{W}_k}\right|_1$ sums $d^2$ numbers. $\frac{\partial \boldsymbol{Y}_{out}}{\partial \boldsymbol{W}_k}$ and $\frac{\partial\mathcal{L}}{\partial \boldsymbol{Z}}$'s RMS are both $\mathcal{\Theta}(1)$. If we set $\boldsymbol{W}_{out}$'s initial variance as $\propto 1/d^2$, then $\frac{\partial\mathcal{L}}{\partial \boldsymbol{W}_k}$'s RMS is $\mathcal{\Theta}(1/d)$, summing $d^2$ numbers gives $\mathcal{\Theta}(d)$, so learning rate should change as $\eta_k\propto 1/d$ to counteract scale effects;</p>
+                    <p>3. Then $\frac{\partial\mathcal{L}}{\partial \boldsymbol{W}_{in}}$'s RMS is also $\mathcal{\Theta}(1/d)$, but $\left|\frac{\partial\mathcal{L}}{\partial \boldsymbol{W}_{in}}\right|_1$ only sums $d_{in}\times d$ numbers, so it's already $\mathcal{\Theta}(1)$. Thus learning rate doesn't need to change with scale.</p>
+                </blockquote>
+                
+                <p>(Note: Readers can verify that equation <a href="#eq-dw-rms" class="eq-ref">(10)</a> is satisfied.)</p>
+                
+                <h2 id="muon-version">Muon Version<a href="#muon-version">#</a></h2>
+                
+                <p>Naturally, Muon analysis follows. For Muon itself, we have already provided detailed introductions in <a href="/archives/10592" target="_blank">"Appreciating Muon Optimizer: The Essential Leap from Vectors to Matrices"</a> and <a href="/archives/10739" target="_blank">"Muon Sequel: Why Did We Choose to Try Muon?"</a>, not repeated here. Similar to Adam using SignSGD, we use MSignSGD to approximate Muon:</p>
+                
+                <blockquote>
+                    <p>1. $\Delta \boldsymbol{W} = -\eta \mathop{\text{msign}}\left(\frac{\partial\mathcal{L}}{\partial \boldsymbol{W}}\right)$;</p>
+                    <p>2. $\Delta \mathcal{L} \approx -\eta \left\Vert\frac{\partial\mathcal{L}}{\partial \boldsymbol{W}}\right\Vert_*$ (proof see <a href="/archives/10592" target="_blank">"Appreciating Muon Optimizer: The Essential Leap from Vectors to Matrices"</a>);</p>
+                    <p>3. Here $\Vert\cdot\Vert_*$ refers to the <a href="https://en.wikipedia.org/wiki/Nuclear_norm" target="_blank">Nuclear norm</a>, which is the <u>sum of all singular values</u> of a matrix;</p>
+                    <p>4. Nuclear norm is not easy to compute, but $F$ norm is easier; it equals the <u>square root of the sum of squared singular values</u>;</p>
+                    <p>5. We use $F$ norm as an approximation for Nuclear norm, thus $\Delta \mathcal{L} \approx -\eta \left\Vert\frac{\partial\mathcal{L}}{\partial \boldsymbol{W}}\right\Vert_*\approx -\eta \left\Vert\frac{\partial\mathcal{L}}{\partial \boldsymbol{W}}\right\Vert_F$;</p>
+                    <p>6. $F$ norm also equals the <u>square root of the sum of squared elements</u>.</p>
+                </blockquote>
+                
+                <p>Now we can begin the analysis:</p>
+                
+                <blockquote>
+                    <p>1. $\frac{\partial\mathcal{L}}{\partial \boldsymbol{W}_{out}}$'s RMS is $\mathcal{\Theta}(1)$, so $\left\Vert\frac{\partial\mathcal{L}}{\partial \boldsymbol{W}_{out}}\right\Vert_*$ magnitude is $\mathcal{\Theta}(\sqrt{d\times d_{out}}) = \mathcal{\Theta}(\sqrt{d})$. To eliminate scale effects, its learning rate must satisfy $\eta_{out}\propto 1/\sqrt{d}$;</p>
+                    <p>2. $\left\Vert\frac{\partial\mathcal{L}}{\partial \boldsymbol{W}_k}\right\Vert_F$ is the square root of the sum of squares of $d^2$ numbers. $\frac{\partial \boldsymbol{Y}_{out}}{\partial \boldsymbol{W}_k}$ and $\frac{\partial\mathcal{L}}{\partial \boldsymbol{Z}}$'s RMS are both $\mathcal{\Theta}(1)$. If we set $\boldsymbol{W}_{out}$'s initial variance as $\propto 1/d^2$, then $\frac{\partial\mathcal{L}}{\partial \boldsymbol{W}_k}$'s RMS is $\mathcal{\Theta}(1/d)$. After squaring and taking square root, the result is $\mathcal{\Theta}(1)$. So learning rate doesn't change;</p>
+                    <p>3. Then $\frac{\partial\mathcal{L}}{\partial \boldsymbol{W}_{in}}$'s RMS is also $\mathcal{\Theta}(1/d)$, but $\left\Vert\frac{\partial\mathcal{L}}{\partial \boldsymbol{W}_{in}}\right\Vert_F$ is the square root of the sum of squares of $d_{in}\times d$ numbers, so it's $\mathcal{\Theta}(1/\sqrt{d})$. The learning rate actually needs to be amplified by $\sqrt{d}$ to counteract this effect, i.e., $\eta_{in}\propto \sqrt{d}$.</p>
+                </blockquote>
+                
+                <div class="note-box">
+                    <div class="note-header">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Implementation Note
+                    </div>
+                    <p>(Note: Here Muon's conclusion is correct, but it doesn't satisfy condition <a href="#eq-dw-rms" class="eq-ref">(10)</a>, because equation <a href="#eq-dw-rms" class="eq-ref">(10)</a> in detail also depends on an assumption that updates are element-wise, which Muon doesn't satisfy. So it's actually unusable. Here we didn't carefully expand related discussion but directly adopted the conclusion "$\boldsymbol{W}_{out}$'s initialization variance set as $\propto 1/d^2$", avoiding equation <a href="#eq-dw-rms" class="eq-ref">(10)</a>.)</p>
+                </div>
+                
+                <h2 id="conclusion-summary">Conclusion Summary<a href="#conclusion-summary">#</a></h2>
+                
+                <p>Summarizing the above conclusions:</p>
+                
+                <table class="summary-table">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">Optimizer</th>
+                            <th colspan="2">$\boldsymbol{W}_{in}$</th>
+                            <th colspan="2">$\boldsymbol{W}_k$</th>
+                            <th colspan="2">$\boldsymbol{W}_{out}$</th>
+                        </tr>
+                        <tr>
+                            <th>Variance</th>
+                            <th>Learning Rate</th>
+                            <th>Variance</th>
+                            <th>Learning Rate</th>
+                            <th>Variance</th>
+                            <th>Learning Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>SGD</strong></td>
+                            <td>$1/d_{in}$</td>
+                            <td>$d$</td>
+                            <td>$1 / d$</td>
+                            <td>$1$</td>
+                            <td>$1/d^2$</td>
+                            <td>$1 / d$</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Adam</strong></td>
+                            <td>$1/d_{in}$</td>
+                            <td>$1$</td>
+                            <td>$1 / d$</td>
+                            <td>$1 / d$</td>
+                            <td>$1/d^2$</td>
+                            <td>$1 / d$</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Muon</strong></td>
+                            <td>$1/d_{in}$</td>
+                            <td>$\sqrt{d}$</td>
+                            <td>$1 / d$</td>
+                            <td>$1$</td>
+                            <td>$1/d^2$</td>
+                            <td>$1 / \sqrt{d}$</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <p>Here $\boldsymbol{W}_k$ refers to all parameters except $\boldsymbol{W}_{in},\boldsymbol{W}_{out}$. It must be emphasized that these relationships are "proportional to" not "equal to". In practice, adjustments can be made based on specific needs. For example, when we actually use Muon, $\boldsymbol{W}_{in}$ and $\boldsymbol{W}_{out}$ optimization typically doesn't use Muon but Adam. This leads to two changes:</p>
+                
+                <blockquote>
+                    <p>1. $\eta_{out}\propto 1/d$;</p>
+                    <p>2. $\eta_{in}$ unchanged.</p>
+                </blockquote>
+                
+                <p>If combined with Adjust LR proposed in our paper <a href="https://papers.cool/arxiv/2502.16982" target="_blank">"Muon is Scalable for LLM Training"</a>, then learning rate should be multiplied by $\sqrt{\max(n, m)}$, where $n\times m$ is the parameter matrix shape. We have already assumed parameters in $\text{NN}$ part always scale proportionally, so $\sqrt{\max(n, m)}\propto \sqrt{d}$. Therefore, to counteract the scale effect brought by Adjust LR, we need:</p>
+                
+                <blockquote>
+                    <p>3. $\eta_k\propto 1/\sqrt{d}$ .</p>
+                </blockquote>
+                
+                <h2 id="article-summary">Article Summary<a href="#article-summary">#</a></h2>
+                
+                <div class="highlight-box">
+                    <p>This article introduces MuP (Maximal Update Parametrization) in as clear and concise a manner as possible. This work aims to study the transfer laws of hyperparameters across model scales. Based on MuP, we can carefully search for hyperparameters (mainly learning rate and initialization here) on small models at relatively low cost, then transfer them to large models, reducing the cost of large model experimentation.</p>
+                </div>
+                
+                <p>Objectively speaking, this introduction and analysis are still preliminary. For example, we didn't consider bias terms, didn't evaluate the generality of conclusions beyond MLP architectures, and didn't carefully consider the roles of Normalization and residuals. Not considering bias terms is purely laziness, left as an exercise for readers. As for MuP under different architectures, analysis is generally complicated. But due to neural network similarity, conclusions are roughly the same; we can use them without proof. Personally, I think the more critical improvements involve the effects of Normalization and residuals, especially Normalization, which enables stable forward propagation without relying on special initialization, providing greater freedom and possibilities.</p>
+                
+                <p>Of course, these are left for subsequent analysis.</p>
+
+                <div class="citation-section">
+                    <div class="citation-header">
+                        <i class="fas fa-quote-right"></i>
+                        Citation Information
+                    </div>
+                    <p><strong>Original Article:</strong> Su Jianlin. A Preliminary Exploration of MuP: Cross-Model Scaling Laws for Hyperparameters. <em>Scientific Spaces</em>.</p>
+                    
+                    <p><strong>How to cite this translation:</strong></p>
+                    <div class="citation-box">
+                        Su, J. A Preliminary Exploration of MuP: Cross-Model Scaling Laws for Hyperparameters [Translated by Juanxi Tian]. 
+                        <em>Scientific Spaces</em>.
+                    </div>
+                    <p style="margin-top: 0.8rem;"><strong>BibTeX:</strong></p>
+                    <div class="citation-box">
+                        @article{su2025mup_preliminary,
+                            title   = {A Preliminary Exploration of MuP: Cross-Model Scaling Laws for Hyperparameters},
+                            author  = {Su, Jianlin},
+                            journal = {Scientific Spaces},
+                            year    = {2025},
+                            url     = {https://kexue.fm/archives/10563},
+                            note    = {Translated by Juanxi Tian (ScalingOpt Team)}
+                          }
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="translation-credit">
+                <i class="fas fa-user-graduate"></i>
+                Academic Translation by Juanxi Tian (ScalingOpt Team)
+            </div>
+            <div class="copyright">
+                © 2009-2025 Scientific Spaces. All rights reserved.<br>
+                Original content licensed under Creative Commons BY-NC-ND 2.5 China
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript for Interactive Features -->
+    <script>
+        // Scroll Progress Bar
+        window.addEventListener('scroll', function() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            scrollProgress.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Table of Contents Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            const sections = document.querySelectorAll('h2[id]');
+            
+            // Set active section based on scroll position
+            function setActiveSection() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 50)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', setActiveSection);
+            setActiveSection(); // Initial call
+            
+            // Smooth scroll for TOC links
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 50,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // Smooth scroll for equation references
+            const eqRefs = document.querySelectorAll('.eq-ref');
+            eqRefs.forEach(ref => {
+                ref.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 100,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+
+        // MathJax Configuration
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                tags: 'ams'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    
+    <!-- MathJax CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</body>
+</html>

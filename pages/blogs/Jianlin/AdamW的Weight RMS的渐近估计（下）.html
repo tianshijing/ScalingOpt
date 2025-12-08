@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asymptotic Estimation of Weight RMS in AdamW (Part 2) | Scientific Spaces</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a6bca;
+            --primary-dark: #1357a8;
+            --primary-light: #e8f1fc;
+            --secondary: #2c3e50;
+            --accent: #3498db;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f5f7fa;
+            --gray-200: #e4e7eb;
+            --gray-300: #cbd2d9;
+            --gray-600: #7b8794;
+            --gray-700: #52606d;
+            --gray-900: #323f4b;
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 6px 24px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: #f0f5fc;
+            min-height: 100vh;
+            padding: 10px; /* 减少外边距 */
+        }
+
+        .container {
+            max-width: 1000px; /* 增加容器宽度 */
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        /* Header Styles - 更紧凑 */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.5rem 1.8rem; /* 减少内边距 */
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -8%;
+            width: 200px; /* 减小尺寸 */
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 1.8rem; /* 稍微减小标题 */
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+        }
+
+        .meta-item i {
+            font-size: 0.85rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Translation Notice - 更紧凑 */
+        .translation-notice {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1.2rem;
+            margin: 0;
+        }
+
+        .translation-notice-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .translation-text h3 {
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .translation-text p {
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        .translator-badge {
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(26, 107, 202, 0.2);
+        }
+
+        /* Content Layout - 优化布局 */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 160px 1fr; /* 减小侧边栏宽度 */
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+        }
+
+        @media (max-width: 850px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* Sidebar - 更紧凑 */
+        .sidebar {
+            padding-left: 1rem;
+        }
+
+        .toc {
+            position: sticky;
+            top: 1rem;
+        }
+
+        .toc-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .toc-header i {
+            font-size: 0.9rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.4rem;
+            position: relative;
+        }
+
+        .toc-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            transition: var(--transition);
+            border-left: 2px solid transparent;
+            padding-left: 8px;
+        }
+
+        .toc-link:hover {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            transform: translateX(2px);
+        }
+
+        .toc-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .toc-number {
+            font-weight: 500;
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            min-width: 16px;
+        }
+
+        /* Main Content - 增加可用空间 */
+        .main-content {
+            padding-right: 1.2rem;
+            padding-left: 0;
+        }
+
+        @media (max-width: 850px) {
+            .sidebar {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 0 1rem;
+            }
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 1.5rem 0 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: relative;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 35px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        h2 a {
+            color: var(--accent);
+            font-size: 0.7rem;
+            margin-left: 6px;
+            text-decoration: none;
+        }
+
+        h2 a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            color: var(--gray-900);
+            line-height: 1.65;
+        }
+
+        /* Equation Styling - 更紧凑 */
+        .equation-container {
+            margin: 0.8rem 0;
+        }
+
+        .equation {
+            background: var(--primary-light);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1rem;
+            border-radius: 0 5px 5px 0;
+            font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', serif;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .equation-number {
+            color: var(--primary);
+            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin-right: 6px;
+            display: inline-block;
+            min-width: 18px;
+        }
+
+        /* Code Block Styling - 更紧凑 */
+        .code-container {
+            margin: 1rem 0;
+            background: #2d2d2d;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .code-header {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 0.6rem 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .code-content {
+            padding: 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #f8f8f2;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+        }
+
+        /* Reference Box - 更紧凑 */
+        .reference-box {
+            background: linear-gradient(to right, #f8fafc, var(--primary-light));
+            border: 1px solid var(--gray-200);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .reference-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .reference-header i {
+            font-size: 0.9rem;
+        }
+
+        .reference-list {
+            list-style: none;
+        }
+
+        .reference-item {
+            padding: 0.3rem 0 0.3rem 0.8rem;
+            position: relative;
+            margin-bottom: 0.4rem;
+            color: var(--gray-700);
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .reference-item::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 0.65rem;
+        }
+
+        /* Citation Section - 更紧凑 */
+        .citation-section {
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .citation-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .citation-box {
+            background: var(--white);
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid var(--gray-300);
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-top: 0.6rem;
+            overflow-x: auto;
+            color: var(--gray-900);
+        }
+
+        /* Footer - 更紧凑 */
+        .footer {
+            background: var(--secondary);
+            color: white;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .translation-credit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 6px 16px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(26, 107, 202, 0.2);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            margin-top: 0.6rem;
+        }
+
+        /* Utility Classes */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-light), #e8f2ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .math {
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+        }
+
+        /* Scroll Progress Bar - 更细 */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.1s ease;
+            z-index: 1000;
+        }
+
+        /* Mobile Responsive - 优化移动端 */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 1rem 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 0.6rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem 0;
+            }
+            
+            .main-content {
+                padding-right: 0.8rem;
+            }
+            
+            .sidebar {
+                padding-left: 0.8rem;
+            }
+            
+            .meta-info {
+                gap: 0.6rem;
+            }
+            
+            .meta-item {
+                font-size: 0.75rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .translation-notice-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .translator-badge {
+                align-self: flex-start;
+            }
+        }
+
+        /* Links styling */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* 优化长公式显示 */
+        .equation {
+            word-break: break-word;
+        }
+        
+        /* 优化列表显示 */
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.3rem;
+            line-height: 1.5;
+        }
+        
+        /* 优化数学公式间距 */
+        .MathJax_Display {
+            margin: 0.6em 0 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>Asymptotic Estimation of Weight RMS in AdamW (Part 2)</h1>
+                <div class="subtitle">Extension to Dynamic Weight Decay and Learning Rate Schedules</div>
+                
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>Su Jianlin</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-eye"></i>
+                        <span>Scientific Spaces</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <div class="tag">Mathematical Research</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Translation Notice -->
+        <div class="translation-notice">
+            <div class="translation-notice-content">
+                <div class="translation-text">
+                    <h3><i class="fas fa-language"></i> Academic Translation</h3>
+                    <p>This is an academic English translation maintaining technical accuracy while adapting to English academic conventions.</p>
+                </div>
+                <div class="translator-badge">
+                    <i class="fas fa-user-graduate"></i>
+                    Translated by Juanxi Tian (ScalingOpt Team)
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Sidebar Table of Contents -->
+            <aside class="sidebar">
+                <nav class="toc">
+                    <div class="toc-header">
+                        <i class="fas fa-list"></i>
+                        Contents
+                    </div>
+                    <ul class="toc-list">
+                        <li class="toc-item">
+                            <a href="#step-one" class="toc-link">
+                                <span class="toc-number">1</span>
+                                <span>Step One</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#step-two" class="toc-link">
+                                <span class="toc-number">2</span>
+                                <span>Step Two</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#step-three" class="toc-link">
+                                <span class="toc-number">3</span>
+                                <span>Step Three</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#example-one" class="toc-link">
+                                <span class="toc-number">4</span>
+                                <span>Example One</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#example-two" class="toc-link">
+                                <span class="toc-number">5</span>
+                                <span>Example Two</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#differential-equation" class="toc-link">
+                                <span class="toc-number">6</span>
+                                <span>Differential Eqn</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#mean-field" class="toc-link">
+                                <span class="toc-number">7</span>
+                                <span>Mean Field</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#example-three" class="toc-link">
+                                <span class="toc-number">8</span>
+                                <span>Example Three</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#simulation" class="toc-link">
+                                <span class="toc-number">9</span>
+                                <span>Simulation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#summary" class="toc-link">
+                                <span class="toc-number">10</span>
+                                <span>Summary</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Article Content - 增加可用宽度 -->
+            <main class="main-content">
+                <p>In the blog post <a href="/archives/11307" target="_blank">"Asymptotic Estimation of Weight RMS in AdamW (Part 1)"</a>, we derived the asymptotic expression for the RMS of model weights trained with AdamW. However, we assumed fixed Weight Decay and learning rate throughout training, which does not fully align with practical training. Therefore, in this article, we extend the previous conclusions to a dynamic version.</p>
+                
+                <p>The dynamic version allows both Weight Decay and learning rate to vary with increasing training steps, such as classic Cosine Decay, WSD (Warmup Stable Decay), etc., making the conclusions more general.</p>
+
+                <h2 id="step-one">Step One<a href="#step-one">#</a></h2>
+                
+                <p>Our starting point remains the definition of AdamW:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(1)</span>
+                        \[
+                        \text{Adam}\color{skyblue}{\text{W}}:=\left\{\begin{aligned}
+                        &\boldsymbol{m}_t = \beta_1 \boldsymbol{m}_{t-1} + \left(1 - \beta_1\right) \boldsymbol{g}_t\\
+                        &\boldsymbol{v}_t = \beta_2 \boldsymbol{v}_{t-1} + \left(1 - \beta_2\right) \boldsymbol{g}_t^2\\
+                        &\hat{\boldsymbol{m}}_t = \boldsymbol{m}_t\left/\left(1 - \beta_1^t\right)\right.\\
+                        &\hat{\boldsymbol{v}}_t = \boldsymbol{v}_t\left/\left(1 - \beta_2^t\right)\right.\\
+                        &\boldsymbol{u}_t =\hat{\boldsymbol{m}}_t\left/\left(\sqrt{\hat{\boldsymbol{v}}_t} + \epsilon\right)\right.\\
+                        &\boldsymbol{\theta}_t = \boldsymbol{\theta}_{t-1} - \eta_t (\boldsymbol{u}_t \color{skyblue}{ + \lambda_t \boldsymbol{\theta}_{t-1}})
+                        \end{aligned}\right.
+                        \]
+                    </div>
+                </div>
+                
+                <p>Since \(\eta_t\lambda_t\ll 1\), we can write:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(2)</span>
+                        \(\boldsymbol{\theta}_t = (1 - \eta_t\lambda_t)\boldsymbol{\theta}_{t-1} -\eta_t\boldsymbol{u}_t \approx e^{- \eta_t\lambda_t}\boldsymbol{\theta}_{t-1} -\eta_t\boldsymbol{u}_t\)
+                    </div>
+                </div>
+                
+                <p>Let \(\kappa_t = \sum_{i=1}^t \eta_i\lambda_i\), then direct expansion gives:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(3)</span>
+                        \(\boldsymbol{\theta}_t \approx e^{-\kappa_t}\boldsymbol{\theta}_0 - \sum_{i=1}^t e^{-(\kappa_t - \kappa_i)}\eta_i\boldsymbol{u}_i  = e^{-\kappa_t}\left(\boldsymbol{\theta}_0 - \sum_{i=1}^t e^{\kappa_i}\eta_i\boldsymbol{u}_i\right)\)
+                    </div>
+                </div>
+                
+                <p>Then set \(z_t = \sum_{i=1}^t e^{\kappa_i}\eta_i\), and by mean-field approximation:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(4)</span>
+                        \[
+                        \bar{\boldsymbol{u}}_t\triangleq\frac{1}{z_t}\sum_{i=1}^t e^{\kappa_i}\eta_i \boldsymbol{u}_i = \frac{1}{z_t}\sum_{i=1}^t e^{\kappa_i}\eta_i \frac{\boldsymbol{m}_i}{\sqrt{\boldsymbol{v}_i}}\approx \frac{\bar{\boldsymbol{m}}_t \triangleq \frac{1}{z_t}\sum_{i=1}^t e^{\kappa_i}\eta_i\boldsymbol{m}_i}{\sqrt{\bar{\boldsymbol{v}}_t \triangleq \frac{1}{z_t}\sum_{i=1}^t e^{\kappa_i}\eta_i\boldsymbol{v}_i}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Thus:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(5)</span>
+                        \(\Vert\boldsymbol{\theta}_t\Vert_{RMS}^2 \approx e^{-2\kappa_t}\Vert\boldsymbol{\theta}_0 - z_t \bar{\boldsymbol{u}}_t\Vert_{RMS}^2 \approx e^{-2\kappa_t}\Vert\boldsymbol{\theta}_0\Vert_{RMS}^2 + e^{-2\kappa_t}z_t^2\Vert\bar{\boldsymbol{u}}_t\Vert_{RMS}^2\)
+                    </div>
+                </div>
+
+                <h2 id="step-two">Step Two<a href="#step-two">#</a></h2>
+                
+                <p>Following the previous approach, to estimate \(\Vert \bar{\boldsymbol{u}}_t\Vert_{RMS}^2\), we need to assume \(\boldsymbol{g}_j\) are i.i.d. from \(\mathcal{N}(\boldsymbol{\mu},\boldsymbol{\sigma}^2)\), then compute:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(6)</span>
+                        \(\mathbb{E}[\bar{\boldsymbol{u}}_t^2] \approx \mathbb{E}\left[\frac{\bar{\boldsymbol{m}}_t^2}{\bar{\boldsymbol{v}}_t}\right] \approx \frac{\mathbb{E}[\bar{\boldsymbol{m}}_t^2]}{\mathbb{E}[\bar{\boldsymbol{v}}_t]}\)
+                    </div>
+                </div>
+                
+                <p>Finally, averaging over components of \(\mathbb{E}[\bar{\boldsymbol{u}}_t^2]\) yields an approximation for \(\Vert\bar{\boldsymbol{u}}_t\Vert_{RMS}^2\).</p>
+                
+                <p>Expanding \(\boldsymbol{m}_t,\boldsymbol{v}_t\) gives:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(7)</span>
+                        \(\boldsymbol{m}_t = (1 - \beta_1)\sum_{i=1}^t \beta_1^{t-i}\boldsymbol{g}_i,\qquad \boldsymbol{v}_t = (1 - \beta_2)\sum_{i=1}^t \beta_2^{t-i}\boldsymbol{g}_i^2\)
+                    </div>
+                </div>
+                
+                <p>We also have the identity:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(8)</span>
+                        \(\sum_{i=1}^t \sum_{j=1}^i a_i b_j = \sum_{j=1}^t \sum_{i=j}^t a_i b_j\)
+                    </div>
+                </div>
+                
+                <p>Using these results, we can write:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(9)</span>
+                        \[
+                        \begin{aligned}
+                        \bar{\boldsymbol{m}}_t &= \frac{1}{z_t}\sum_{i=1}^t e^{\kappa_i}\eta_i\boldsymbol{m}_i = \frac{1 - \beta_1}{z_t}\sum_{i=1}^t e^{\kappa_i}\eta_i\sum_{j=1}^i \beta_1^{i-j}\boldsymbol{g}_j = \sum_{j=1}^t\boldsymbol{g}_j\underbrace{\frac{1 - \beta_1}{z_t}\sum_{i=j}^t e^{\kappa_i}\beta_1^{i-j}\eta_i}_{\text{denoted as }\bar{\beta}_1(j,t)} \\
+                        \bar{\boldsymbol{v}}_t &= \frac{1}{z_t}\sum_{i=1}^t e^{\kappa_i}\eta_i\boldsymbol{v}_i = \frac{1 - \beta_2}{z_t}\sum_{i=1}^t e^{\kappa_i}\eta_i\sum_{j=1}^i \beta_2^{i-j}\boldsymbol{g}_j^2 = \sum_{j=1}^t\boldsymbol{g}_j^2\underbrace{\frac{1 - \beta_2}{z_t}\sum_{i=j}^t e^{\kappa_i}\beta_2^{i-j}\eta_i}_{\text{denoted as }\bar{\beta}_2(j,t)}
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+
+                <h2 id="step-three">Step Three<a href="#step-three">#</a></h2>
+                
+                <p>First compute the denominator. When \(t\) is sufficiently large (\(\beta_1^t, \beta_2^t\) sufficiently small), \(\sum_{j=1}^t \bar{\beta}_1(j,t)\) and \(\sum_{j=1}^t \bar{\beta}_2(j,t)\) are sufficiently close to 1, so:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(10)</span>
+                        \(\mathbb{E}[\bar{\boldsymbol{v}}_t] = \sum_{j=1}^t\bar{\beta}_2(j,t) \mathbb{E}[\boldsymbol{g}_j^2] = \sum_{j=1}^t\bar{\beta}_2(j,t) (\boldsymbol{\mu}^2 + \boldsymbol{\sigma}^2) \approx \boldsymbol{\mu}^2 + \boldsymbol{\sigma}^2\)
+                    </div>
+                </div>
+                
+                <p>Similarly, \(\mathbb{E}[\bar{\boldsymbol{m}}_t] = \boldsymbol{\mu}\), and \(\mathbb{E}[\bar{\boldsymbol{m}}_t^2] = \mathbb{E}[\bar{\boldsymbol{m}}_t]^2 + \mathbb{V}ar[\bar{\boldsymbol{m}}_t]\). Using additivity of variance:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(11)</span>
+                        \(\mathbb{V}ar[\bar{\boldsymbol{m}}_t] = \sum_{j=1}^t\bar{\beta}_1(j,t)^2 \mathbb{V}ar[\boldsymbol{g}_j] = \sum_{j=1}^t\bar{\beta}_1(j,t)^2 \boldsymbol{\sigma}^2\)
+                    </div>
+                </div>
+                
+                <p>Thus:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(12)</span>
+                        \(\mathbb{E}[\bar{\boldsymbol{u}}_t^2] \approx \frac{\boldsymbol{\mu}^2 + \boldsymbol{\sigma}^2\sum_{j=1}^t\bar{\beta}_1(j,t)^2}{\boldsymbol{\mu}^2 + \boldsymbol{\sigma}^2}\)
+                    </div>
+                </div>
+                
+                <p>And:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(13)</span>
+                        \(\Vert\bar{\boldsymbol{u}}_t\Vert_{RMS}^2 \approx \frac{\Vert\boldsymbol{\mu}\Vert^2/\Vert\boldsymbol{\sigma}\Vert^2 + \sum_{j=1}^t\bar{\beta}_1(j,t)^2}{\Vert\boldsymbol{\mu}\Vert^2/\Vert\boldsymbol{\sigma}\Vert^2 + 1}\)
+                    </div>
+                </div>
+                
+                <p>Finally:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(14)</span>
+                        \(\Vert\boldsymbol{\theta}_t\Vert_{RMS}^2 \approx e^{-2\kappa_t}\Vert\boldsymbol{\theta}_0\Vert_{RMS}^2 + e^{-2\kappa_t}z_t^2\frac{\Vert\boldsymbol{\mu}\Vert^2/\Vert\boldsymbol{\sigma}\Vert^2 + \sum_{j=1}^t\bar{\beta}_1(j,t)^2}{\Vert\boldsymbol{\mu}\Vert^2/\Vert\boldsymbol{\sigma}\Vert^2 + 1}\)
+                    </div>
+                </div>
+                
+                <p>If readers are viewing this article directly, some steps may appear to jump; in such cases, it is advisable to revisit <a href="/archives/11307" target="_blank">"Asymptotic Estimation of Weight RMS in AdamW (Part 1)"</a> to familiarize with the reasoning behind each approximation.</p>
+
+                <h2 id="example-one">Example One<a href="#example-one">#</a></h2>
+                
+                <p>First consider \(\boldsymbol{\mu}=\boldsymbol{0}\), substituting the expression for \(\bar{\beta}_1(j,t)\) into the above equation yields:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(15)</span>
+                        \(\Vert\boldsymbol{\theta}_t\Vert_{RMS}^2 \approx e^{-2\kappa_t}\Vert\boldsymbol{\theta}_0\Vert_{RMS}^2 + e^{-2\kappa_t}(1-\beta_1)^2\sum_{j=1}^t\left(\sum_{i=j}^t e^{\kappa_i}\beta_1^{i-j}\eta_i\right)^2\)
+                    </div>
+                </div>
+                
+                <p>Now consider the simple case \(\lambda_t=0\), i.e., no Weight Decay, then:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(16)</span>
+                        \(\Vert\boldsymbol{\theta}_t\Vert_{RMS}^2 \approx \Vert\boldsymbol{\theta}_0\Vert_{RMS}^2 + (1-\beta_1)^2\sum_{j=1}^t\left(\sum_{i=j}^t \beta_1^{i-j}\eta_i\right)^2\)
+                    </div>
+                </div>
+                
+                <p>If \(\beta_1\to 0\), we immediately get \(\Vert\boldsymbol{\theta}_t\Vert_{RMS}^2 \approx \Vert\boldsymbol{\theta}_0\Vert_{RMS}^2 + \sum_{j=1}^t\eta_j^2\). This indicates that without Weight Decay and as training steps \(t\to\infty\), to prevent Weight RMS from exploding, the sum of squares of the learning rate sequence must converge.</p>
+                
+                <p>In fact, even for \(0 < \beta_1 < 1\), this condition remains necessary and sufficient:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(17)</span>
+                        \(\sum_{j=1}^{\infty}\left(\sum_{i=j}^{\infty} \beta_1^{i-j}\eta_i\right)^2 < \infty \qquad\Leftrightarrow\qquad \sum_{j=1}^{\infty}\eta_j^2 < \infty\)
+                    </div>
+                </div>
+                
+                <p>The proof is not difficult. Transform the left side:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(18)</span>
+                        \[
+                        \begin{aligned}
+                        \sum_{j=1}^{\infty}\left(\sum_{i=j}^{\infty} \beta_1^{i-j}\eta_i\right)^2 = \sum_{j=1}^{\infty}\left(\sum_{i=0}^{\infty} \beta_1^i\eta_{i+j}\right)^2 =&\, \sum_{j=1}^{\infty}\left(\sum_{i_1=0}^{\infty} \beta_1^{i_1}\eta_{i_1+j}\right)\left(\sum_{i_2=0}^{\infty} \beta_1^{i_2}\eta_{i_2+j}\right) \\
+                        =&\, \sum_{i_1=0}^{\infty}\sum_{i_2=0}^{\infty} \beta_1^{i_1 + i_2}\sum_{j=1}^{\infty}\eta_{i_1+j}\eta_{i_2+j}
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>This shows that if the left side converges, then for all \(i_1, i_2\), the sum \(\sum_{j=1}^{\infty}\eta_{i_1+j}\eta_{i_2+j}\) converges, which naturally implies \(\sum_{j=1}^{\infty}\eta_j^2\) converges, proving necessity. For sufficiency, starting from the above and using Cauchy-Schwarz inequality:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(19)</span>
+                        \[
+                        \begin{aligned}
+                        \sum_{i_1=0}^{\infty}\sum_{i_2=0}^{\infty} \beta_1^{i_1 + i_2}\sum_{j=1}^{\infty}\eta_{i_1+j}\eta_{i_2+j} \leq&\, \sum_{i_1=0}^{\infty}\sum_{i_2=0}^{\infty} \beta_1^{i_1 + i_2}\sqrt{\left(\sum_{j=1}^{\infty}\eta_{i_1+j}^2\right)\left(\sum_{j=1}^{\infty}\eta_{i_2+j}^2\right)} \\
+                        \leq&\, \sum_{i_1=0}^{\infty}\sum_{i_2=0}^{\infty} \beta_1^{i_1 + i_2}\sqrt{\left(\sum_{j=1}^{\infty}\eta_j^2\right)\left(\sum_{j=1}^{\infty}\eta_j^2\right)} \\
+                        =&\, \frac{1}{(1-\beta_1)^2} \sum_{j=1}^{\infty}\eta_j^2
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Thus convergence of \(\sum_{j=1}^{\infty}\eta_j^2\) implies convergence of the left side, proving sufficiency.</p>
+
+                <h2 id="example-two">Example Two<a href="#example-two">#</a></h2>
+                
+                <p>Next, we consider the case where Weight Decay is constant but learning rate varies, i.e., \(\kappa_t = \lambda\sum_{i=1}^t \eta_i\). If we want infinite training to obtain a solution as close as possible to theoretical optimum, the learning rate should satisfy \(\sum_{i=1}^{\infty} \eta_i \to \infty\).</p>
+                
+                <p>For the general case, computing Equation (15) is challenging, but we can consider further approximations based on practical scenarios. In actual training, typically \(\lambda_t \eta_t \ll 1\), so \(e^{\kappa_i}\) grows much slower than \(\beta_1^i\) decays. Thus, we can approximate:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(20)</span>
+                        \(\sum_{i=j}^t e^{\kappa_i}\beta_1^{i-j}\eta_i \approx \sum_{i=j}^t e^{\kappa_j}\beta_1^{i-j}\eta_j = e^{\kappa_j}\eta_j\sum_{i=j}^t\beta_1^{i-j}\approx e^{\kappa_j}\eta_j\sum_{i=j}^{\infty}\beta_1^{i-j} = \frac{e^{\kappa_j}\eta_j}{1-\beta_1}\)
+                    </div>
+                </div>
+                
+                <p>Substituting this approximation back into Equation (15):</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(21)</span>
+                        \(\Vert\boldsymbol{\theta}_t\Vert_{RMS}^2 \approx e^{-2\kappa_t}\Vert\boldsymbol{\theta}_0\Vert_{RMS}^2 + e^{- 2\kappa_t}\sum_{j=1}^t e^{2\kappa_j}\eta_j^2\)
+                    </div>
+                </div>
+                
+                <p>Now we can only compute specifically for given \(\eta_j\). For example, when \(\lambda_j,\eta_j\) are constants, we have \(\kappa_t = \lambda\eta t\), and:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(22)</span>
+                        \[
+                        \begin{aligned}
+                        \Vert\boldsymbol{\theta}_t\Vert_{RMS}^2 \approx&\, e^{-2\kappa_t}\Vert\boldsymbol{\theta}_0\Vert_{RMS}^2 + e^{- 2\kappa_t}\sum_{j=1}^t e^{2\kappa_j}\eta_j^2 \\
+                        =&\, e^{-2\lambda\eta t}\Vert\boldsymbol{\theta}_0\Vert_{RMS}^2 + e^{-2\lambda\eta t}\sum_{j=1}^t e^{2\lambda\eta j}\eta^2 \\
+                        =&\, e^{-2\lambda\eta t}\Vert\boldsymbol{\theta}_0\Vert_{RMS}^2 + \frac{e^{2\lambda\eta}(1 - e^{-2\lambda\eta t})}{e^{2\lambda\eta} - 1}\eta^2 \\
+                        \approx&\, e^{-2\lambda\eta t}\Vert\boldsymbol{\theta}_0\Vert_{RMS}^2 + (1 - e^{-2\lambda\eta t} )\frac{\eta}{2\lambda}
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>This matches the result from the previous article.</p>
+
+                <h2 id="differential-equation">Differential Equation<a href="#differential-equation">#</a></h2>
+                
+                <p>Considering integrals are usually easier to compute than summations, we can approximate sums with integrals:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(23)</span>
+                        \(\Vert\boldsymbol{\theta}_t\Vert_{RMS}^2 \approx e^{-2\kappa_t}\Vert\boldsymbol{\theta}_0\Vert_{RMS}^2 + e^{- 2\kappa_t}\sum_{j=1}^t e^{2\kappa_j}\eta_j^2\approx e^{-2\kappa_t}\Vert\boldsymbol{\theta}_0\Vert_{RMS}^2 + e^{- 2\kappa_t}\int_0^t e^{2\kappa_s}\eta_s^2 ds\)
+                    </div>
+                </div>
+                
+                <p>where \(\kappa_t = \int_0^t \lambda_s\eta_s ds\). Let \(\rho_t = \Vert\boldsymbol{\theta}_t\Vert_{RMS}^2\), multiply both sides by \(e^{2\kappa_t}\) and differentiate:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(24)</span>
+                        \(\frac{d}{dt}\rho_t \approx -2\lambda_t\eta_t\rho_t + \eta_t^2\)
+                    </div>
+                </div>
+                
+                <p>This is the differential equation governing the RMS squared. If \(\rho_t\) converges to a constant as \(t\to\infty\), the left side equals 0, giving:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(25)</span>
+                        \(\lim_{t\to\infty} \rho_t \approx \lim_{t\to\infty} \frac{\eta_t}{2\lambda_t}\)
+                    </div>
+                </div>
+                
+                <p>This tells us that for decay-type learning rate schedules, the final learning rate should not be set to 0; otherwise, prolonged training risks model weight collapse.</p>
+
+                <h2 id="mean-field">Mean Field<a href="#mean-field">#</a></h2>
+                
+                <p>The scenario where \(t\to\infty\) typically applies to multi-epoch supervised training. In pre-training scenarios, training is usually single-epoch, and \(\kappa_t\) is often \(\mathcal{\Theta}(1)\).</p>
+                
+                <p>Under the assumption \(\kappa_t=\mathcal{\Theta}(1)\), we can consider mean-field approximation. Starting from the integral form (23), by definition, \(\kappa_s\) is a monotonically increasing function from 0 to \(\kappa_t\) over \([0,t]\). Thus:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(26)</span>
+                        \[
+                        e^{- 2\kappa_t}\int_0^t \eta_s^2 ds \leq e^{- 2\kappa_t}\int_0^t e^{2\kappa_s}\eta_s^2 ds = \int_0^t e^{2\kappa_s- 2\kappa_t}\eta_s^2 ds \leq \int_0^t \eta_s^2 ds
+                        \]
+                    </div>
+                </div>
+                
+                <p>That is, the target integral itself is bounded between \(e^{- 2\kappa_t} \nu_t\) and \(\nu_t\), where \(\nu_t = \int_0^t \eta_s^2 ds\). When \(\kappa_t=\mathcal{\Theta}(1)\), \(e^{-2\kappa_t}\) is not much smaller than 1, meaning \(\nu_t\) itself may be a good approximation.</p>
+                
+                <p>We can be more precise by estimating a reasonable multiplier:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(27)</span>
+                        \[
+                        e^{- 2\kappa_t}\int_0^t e^{2\kappa_s}\eta_s^2 ds \approx \frac{\nu_t e^{- 2\kappa_t}}{t}\int_0^t e^{2\kappa_s} ds \approx \frac{\nu_t e^{- 2\kappa_t}}{t}\int_0^t e^{2(\kappa_t/t)s} ds = \frac{\nu_t}{2\kappa_t}(1 - e^{- 2\kappa_t})
+                        \]
+                    </div>
+                </div>
+                
+                <p>Substituting into Equation (23):</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(28)</span>
+                        \(\Vert\boldsymbol{\theta}_t\Vert_{RMS}^2 \approx e^{-2\kappa_t}\Vert\boldsymbol{\theta}_0\Vert_{RMS}^2 + (1 - e^{- 2\kappa_t})\frac{\nu_t}{2\kappa_t}\)
+                    </div>
+                </div>
+
+                <h2 id="example-three">Example Three<a href="#example-three">#</a></h2>
+                
+                <p>Returning to our main concern—the common setting of "fixed Weight Decay, variable learning rate"—we compute \(\kappa_t,\nu_t\) for several specific examples.</p>
+                
+                <p>First, linear learning rate:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(29)</span>
+                        \(\eta_s = \eta_a + (\eta_b - \eta_a) s / t\)
+                    </div>
+                </div>
+                
+                <p>Integrating:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(30)</span>
+                        \[
+                        \begin{aligned}
+                        \kappa_t &= \int_0^t \lambda\eta_s ds= \lambda (\eta_a + \eta_b) t / 2  \\
+                        \nu_t &= \int_0^t \eta_s^2 ds = (\eta_a^2 + \eta_a \eta_b + \eta_b^2) t / 3
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Next, Cosine Decay:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(31)</span>
+                        \(\eta_s = \eta_{\min} + (\eta_{\max} - \eta_{\min})\left(\frac{1}{2} + \frac{1}{2}\cos \frac{s\pi}{t}\right)\)
+                    </div>
+                </div>
+                
+                <p>Integrating:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(32)</span>
+                        \[
+                        \begin{aligned}
+                        \kappa_t &= \int_0^t \lambda\eta_s ds= \lambda (\eta_{\min} + \eta_{\max}) t / 2  \\
+                        \nu_t &= \int_0^t \eta_s^2 ds = (3\eta_{\min}^2 + 2\eta_{\min} \eta_{\max} + 3\eta_{\max}^2 ) t / 8
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Finally, WSD (Warmup Stable Decay):</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(33)</span>
+                        \[
+                        \eta_s = \left\{\begin{aligned} \frac{s}{t_1}\eta_{\max}, \quad s \in [0, t_1] \\
+                        \eta_{\max} , \quad s \in [t_1, t_2] \\
+                        \frac{t-s}{t-t_2}\eta_{\max}, \quad j \in [t_2, t]
+                        \end{aligned}\right.
+                        \]
+                    </div>
+                </div>
+                
+                <p>We have:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(34)</span>
+                        \[
+                        \begin{aligned}
+                        \kappa_t &= \int_0^t \lambda\eta_s ds= \lambda \eta_{\max} (t + t_2 - t_1) / 2  \\
+                        \nu_t &= \int_0^t \eta_s^2 ds = \eta_{\max}^2 (t + 2t_2 - 2t_1) / 3
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+
+                <h2 id="simulation">Simulation<a href="#simulation">#</a></h2>
+                
+                <p>We can also validate the above approximations through numerical simulation:</p>
+                
+                <div class="code-container">
+                    <div class="code-header">
+                        <i class="fas fa-code"></i> Python Simulation Code
+                    </div>
+                    <div class="code-content">
+<pre><code>import numpy as np
+
+N, T = 10000, 10000
+beta1, beta2 = 0.9, 0.95
+m, v = 0, 0
+w = np.random.randn(N) * (init_std := 0.1)
+lr_max, lr_min, wd = 0.001, 0.0001, 0.1
+lr = lr_min + (lr_max - lr_min) * (1 + np.cos(np.arange(T) / T * np.pi)) / 2
+for i in range(T):
+    g = np.random.randn(N)
+    m = beta1 * m + (1 - beta1) * g
+    v = beta2 * v + (1 - beta2) * g**2
+    w = w - lr[i] * (m / v**0.5 + wd * w)
+
+# Direct computation ≈ 0.0744
+weight_rms = (w**2).mean()**0.5
+
+# Series approximation ≈ 0.0742
+kappa = wd * lr.cumsum()
+approx1 = ((np.exp(kappa * 2) * lr**2).sum() + init_std**2)**0.5 * np.exp(-kappa[-1])
+
+# Mean-field approximation ≈ 0.0760
+kappa = wd * (lr_max + lr_min) / 2 * T
+nu = (3 * lr_max**2 + 2 * lr_max * lr_min + 3 * lr_min**2) / 8 * T
+approx2 = ((np.exp(kappa * 2) - 1) * nu / kappa / 2 + init_std**2)**0.5 * np.exp(-kappa)
+
+print(weight_rms)
+print(approx1)
+print(approx2)</code></pre>
+                    </div>
+                </div>
+
+                <h2 id="summary">Summary<a href="#summary">#</a></h2>
+                
+                <p>This article extends the results from Part 1 to a dynamic version, allowing us to estimate Weight RMS for AdamW with time-varying learning rates and Weight Decay.</p>
+
+                <div class="citation-section">
+                    <div class="citation-header">
+                        <i class="fas fa-quote-right"></i>
+                        Citation Information
+                    </div>
+                    <p><strong>Original Article:</strong> Su Jianlin. Asymptotic Estimation of Weight RMS in AdamW (Part 2). <em>Scientific Spaces</em>.</p>
+                    
+                    <p><strong>How to cite this translation:</strong></p>
+                    <div class="citation-box">
+                        Su, J. Asymptotic Estimation of Weight RMS in AdamW (Part 2) [Translated by Juanxi Tian]. 
+                        <em>Scientific Spaces</em>.
+                    </div>
+                    
+                    <p style="margin-top: 0.8rem;"><strong>BibTeX:</strong></p>
+                    <div class="citation-box">
+                        @article{su2025adamw_weight_rms_2,
+                            title   = {Asymptotic Estimation of Weight RMS in AdamW (Part 2)},
+                            author  = {Su, Jianlin},
+                            journal = {Scientific Spaces},
+                            year    = {2025},
+                            url     = {https://kexue.fm/archives/11404},
+                            note    = {Translated by Juanxi Tian (ScalingOpt Team)}
+                          }
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="translation-credit">
+                <i class="fas fa-user-graduate"></i>
+                Academic Translation by Juanxi Tian (ScalingOpt Team)
+            </div>
+            <div class="copyright">
+                © 2009-2025 Scientific Spaces. All rights reserved.<br>
+                Original content licensed under Creative Commons BY-NC-ND 2.5 China
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript for Interactive Features -->
+    <script>
+        // Scroll Progress Bar
+        window.addEventListener('scroll', function() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            scrollProgress.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Table of Contents Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            const sections = document.querySelectorAll('h2[id]');
+            
+            // Set active section based on scroll position
+            function setActiveSection() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 50)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', setActiveSection);
+            setActiveSection(); // Initial call
+            
+            // Smooth scroll for TOC links
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 50,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+
+        // MathJax Configuration
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                tags: 'ams'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    
+    <!-- MathJax CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</body>
+</html>

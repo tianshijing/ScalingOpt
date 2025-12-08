@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rethinking Learning Rate and Batch Size (Part 2): Mean Field Theory | Scientific Spaces</title>
+    <meta name="description" content="Applying mean field theory to simplify the analysis of learning rate scaling laws for non-linear optimizers like SignSGD and SoftSignSGD, with insights into Surge phenomena and general asymptotic patterns.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a6bca;
+            --primary-dark: #1357a8;
+            --primary-light: #e8f1fc;
+            --secondary: #2c3e50;
+            --accent: #3498db;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f5f7fa;
+            --gray-200: #e4e7eb;
+            --gray-300: #cbd2d9;
+            --gray-600: #7b8794;
+            --gray-700: #52606d;
+            --gray-900: #323f4b;
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 6px 24px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: #f0f5fc;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.5rem 1.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -8%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+        }
+
+        .meta-item i {
+            font-size: 0.85rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Translation Notice */
+        .translation-notice {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1.2rem;
+            margin: 0;
+        }
+
+        .translation-notice-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .translation-text h3 {
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .translation-text p {
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        .translator-badge {
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(26, 107, 202, 0.2);
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+        }
+
+        @media (max-width: 850px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            padding-left: 1rem;
+        }
+
+        .toc {
+            position: sticky;
+            top: 1rem;
+        }
+
+        .toc-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .toc-header i {
+            font-size: 0.9rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.4rem;
+            position: relative;
+        }
+
+        .toc-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            transition: var(--transition);
+            border-left: 2px solid transparent;
+            padding-left: 8px;
+        }
+
+        .toc-link:hover {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            transform: translateX(2px);
+        }
+
+        .toc-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .toc-number {
+            font-weight: 500;
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            min-width: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-right: 1.2rem;
+            padding-left: 0;
+        }
+
+        @media (max-width: 850px) {
+            .sidebar {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 0 1rem;
+            }
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 1.5rem 0 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: relative;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 35px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        h2 a {
+            color: var(--accent);
+            font-size: 0.7rem;
+            margin-left: 6px;
+            text-decoration: none;
+        }
+
+        h2 a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            color: var(--gray-900);
+            line-height: 1.65;
+        }
+
+        /* Equation Styling */
+        .equation-container {
+            margin: 0.8rem 0;
+        }
+
+        .equation {
+            background: var(--primary-light);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1rem;
+            border-radius: 0 5px 5px 0;
+            font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', serif;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .equation-number {
+            color: var(--primary);
+            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin-right: 6px;
+            display: inline-block;
+            min-width: 18px;
+        }
+
+        /* Code Block Styling */
+        .code-container {
+            margin: 1rem 0;
+            background: #2d2d2d;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .code-header {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 0.6rem 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .code-content {
+            padding: 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #f8f8f2;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+        }
+
+        /* Reference Box */
+        .reference-box {
+            background: linear-gradient(to right, #f8fafc, var(--primary-light));
+            border: 1px solid var(--gray-200);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .reference-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .reference-header i {
+            font-size: 0.9rem;
+        }
+
+        .reference-list {
+            list-style: none;
+        }
+
+        .reference-item {
+            padding: 0.3rem 0 0.3rem 0.8rem;
+            position: relative;
+            margin-bottom: 0.4rem;
+            color: var(--gray-700);
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .reference-item::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 0.65rem;
+        }
+
+        /* Citation Section */
+        .citation-section {
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .citation-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .citation-box {
+            background: var(--white);
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid var(--gray-300);
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-top: 0.6rem;
+            overflow-x: auto;
+            color: var(--gray-900);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--secondary);
+            color: white;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .translation-credit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 6px 16px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(26, 107, 202, 0.2);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            margin-top: 0.6rem;
+        }
+
+        /* Utility Classes */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-light), #e8f2ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .math {
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.1s ease;
+            z-index: 1000;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 1rem 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 0.6rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem 0;
+            }
+            
+            .main-content {
+                padding-right: 0.8rem;
+            }
+            
+            .sidebar {
+                padding-left: 0.8rem;
+            }
+            
+            .meta-info {
+                gap: 0.6rem;
+            }
+            
+            .meta-item {
+                font-size: 0.75rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .translation-notice-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .translator-badge {
+                align-self: flex-start;
+            }
+        }
+
+        /* Links styling */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Optimize long formula display */
+        .equation {
+            word-break: break-word;
+        }
+        
+        /* Optimize list display */
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.3rem;
+            line-height: 1.5;
+        }
+        
+        /* Optimize math formula spacing */
+        .MathJax_Display {
+            margin: 0.6em 0 !important;
+        }
+        
+        /* Image container styling */
+        .pic-container {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+        
+        .pic-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .typecho-caption {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        
+        /* Quote block styling */
+        blockquote.cite {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+        }
+        
+        blockquote.cite div {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        blockquote.cite a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        /* Blockquote styling */
+        blockquote {
+            background: linear-gradient(to right, var(--gray-100), var(--primary-light));
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+            position: relative;
+        }
+
+        blockquote p {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+
+        blockquote p:before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Underline styling */
+        u {
+            text-decoration: none;
+            border-bottom: 1px dotted var(--primary);
+        }
+
+        /* List styling inside main content */
+        .main-content ol, .main-content ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .main-content li {
+            margin-bottom: 0.4rem;
+            line-height: 1.6;
+        }
+
+        /* Highlight box for important notes */
+        .note-box {
+            background: linear-gradient(to right, #fff8e1, #fff3cd);
+            border-left: 3px solid #ffc107;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .note-box strong {
+            color: #856404;
+        }
+
+        /* Definition list styling */
+        .definition {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 3px solid #4caf50;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .definition-header {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Mathematical proof styling */
+        .proof {
+            background: linear-gradient(to right, #f3e5f5, #f8f4ff);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .proof-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>Rethinking Learning Rate and Batch Size (Part 2): Mean Field Theory</h1>
+                <div class="subtitle">Applying mean field approximations to simplify the analysis of learning rate scaling laws for non-linear optimizers like SignSGD and SoftSignSGD</div>
+                
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>Su Jianlin</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-eye"></i>
+                        <span>Scientific Spaces</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <div class="tag">Mean Field Theory</div>
+                        <div class="tag">SignSGD Analysis</div>
+                        <div class="tag">Surge Phenomenon</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Translation Notice -->
+        <div class="translation-notice">
+            <div class="translation-notice-content">
+                <div class="translation-text">
+                    <h3><i class="fas fa-language"></i> Academic Translation</h3>
+                    <p>This is an academic English translation maintaining technical accuracy while adapting to English academic conventions.</p>
+                </div>
+                <div class="translator-badge">
+                    <i class="fas fa-user-graduate"></i>
+                    Translated by Juanxi Tian (ScalingOpt Team)
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Sidebar Table of Contents -->
+            <aside class="sidebar">
+                <nav class="toc">
+                    <div class="toc-header">
+                        <i class="fas fa-list"></i>
+                        Contents
+                    </div>
+                    <ul class="toc-list">
+                        <li class="toc-item">
+                            <a href="#method-overview" class="toc-link">
+                                <span class="toc-number">1</span>
+                                <span>Method Overview</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#computation-process" class="toc-link">
+                                <span class="toc-number">2</span>
+                                <span>Computation Process</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#anomalous-phenomenon" class="toc-link">
+                                <span class="toc-number">3</span>
+                                <span>Anomalous Phenomenon</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#causal-reflection" class="toc-link">
+                                <span class="toc-number">4</span>
+                                <span>Causal Reflection</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#loss-variation" class="toc-link">
+                                <span class="toc-number">5</span>
+                                <span>Loss Variation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#general-patterns" class="toc-link">
+                                <span class="toc-number">6</span>
+                                <span>General Patterns</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#validity-analysis" class="toc-link">
+                                <span class="toc-number">7</span>
+                                <span>Validity Analysis</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#generalized-approximation" class="toc-link">
+                                <span class="toc-number">8</span>
+                                <span>Generalized Approximation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#summary" class="toc-link">
+                                <span class="toc-number">9</span>
+                                <span>Summary</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Article Content -->
+            <main class="main-content">
+                <p>At the end of the previous article <a href="/archives/11260" target="_blank">"Rethinking Learning Rate and Batch Size (Part 1): Current Landscape"</a>, we mentioned that for cases where $\tilde{\boldsymbol{\varphi}}_B$ nonlinearly depends on $\tilde{\boldsymbol{g}}_B$, such as SignSGD and SoftSignSGD, the computational process is mentally burdensome and faces difficulties in generalization. To address this, I invested some effort in attempting to simplify the derivations, and fortunately made some progress. The key idea is the theme of this article—mean field theory.</p>
+                
+                <p>Mean field theory is a common approximation method in physics that has no fixed form, but the general idea is to move the averaging operation inside the function. In fact, we have already glimpsed the charm of mean field theory in <a href="/archives/11267" target="_blank">"Why is Adam's Update RMS 0.2?"</a>. In this article, we will once again witness its remarkable effectiveness in computing the learning rate scaling laws for SignSGD/SoftSignSGD.</p>
+                
+                <h2 id="method-overview">Method Overview<a href="#method-overview">#</a></h2>
+                
+                <p>Following the notation from the previous article, for SignSGD we have $\newcommand{sign}{\mathop{\text{sign}}}\tilde{\boldsymbol{\varphi}}_B=\sign(\tilde{\boldsymbol{g}}_B)$. We first need to compute $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]$ and $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]$, then we can calculate:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(1)</span>
+                        \[
+                        \newcommand{tr}{\mathop{\text{tr}}}\eta^* \approx \frac{\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]^{\top}\boldsymbol{g}}{\tr(\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]\boldsymbol{H})}
+                        \]
+                    </div>
+                </div>
+                
+                <p>where $\boldsymbol{g}$ is the gradient and $\boldsymbol{H}$ is the Hessian matrix. According to our assumptions, the random variable $\tilde{\boldsymbol{g}}_B$ has mean $\boldsymbol{g}$ and covariance matrix $\boldsymbol{\Sigma}/B$. We are primarily concerned with the relationship between $\eta^*$ and batch size $B$. Since $\sign$ is an element-wise operation, we can attempt the analysis starting from a single scalar. The mean field method originated from my sudden discovery one day of a potentially valid approximation:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(2)</span>
+                        \[
+                        \mathbb{E}[\sign(\tilde{g}_B)] = \mathbb{E}\bigg[\frac{\tilde{g}_B}{\sqrt{\tilde{g}_B^2}}\bigg]\approx \frac{\mathbb{E}[\tilde{g}_B]}{\sqrt{\mathbb{E}[\tilde{g}_B^2}]} = \frac{g}{\sqrt{g^2 + \sigma^2/B}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Readers who have read <a href="/archives/10542" target="_blank">"How Should Learning Rate Scale with Batch Size?"</a> should be surprised to discover that this result, which can be derived in just one line, differs from the result obtained through numerous assumptions and approximations in the original article only by an insignificant constant $\pi/2$! This fact made me realize that the mean field approximation might be completely sufficient for analyzing the relationship between learning rate and batch size.</p>
+                
+                <div class="definition">
+                    <div class="definition-header">
+                        <i class="fas fa-lightbulb"></i>
+                        Advantages of Mean Field Derivation
+                    </div>
+                    <p><strong>Fewer Assumptions:</strong> The original derivation contained at least three assumptions: component independence, normal distribution, and approximating $\text{erf}(x)$ with $x/\sqrt{x^2+c}$. However, the mean field approximation can eliminate the distributional form assumption, requiring only the assumption that the approximation itself is valid.</p>
+                    <p><strong>Simpler Computation:</strong> We completed the calculation in just one line above, whereas the original derivation was much more complex even under numerous assumptions.</p>
+                </div>
+                
+                <h2 id="computation-process">Computation Process<a href="#computation-process">#</a></h2>
+                
+                <p>In this section, we will use the mean field approximation to provide the complete computation process for SignSGD. First, for the mean $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]$, the calculation from the previous section is almost complete—we just need to add a few details. Using component notation:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(3)</span>
+                        \[
+                        \mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]_i = \mathbb{E}[\sign((\tilde{g}_B)_i)] = \mathbb{E}\bigg[\frac{(\tilde{g}_B)_i}{\sqrt{(\tilde{g}_B)_i^2}}\bigg]\approx \frac{\mathbb{E}[(\tilde{g}_B)_i]}{\sqrt{\mathbb{E}[(\tilde{g}_B)_i^2]}} = \frac{g_i}{\sqrt{g_i^2 + \sigma_i^2/B}} = \frac{\sign(g_i)}{\sqrt{1 + (\sigma_i^2/g_i^2)/B}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>where $\sigma_i^2 = \boldsymbol{\Sigma}_{i,i}$. Since we are ultimately mainly concerned with the relationship between $\eta^*$ and $B$, both of which are scalars, we apply the mean field approximation once more here to separate the denominator part related to $B$ in scalar form:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(4)</span>
+                        \[
+                        \mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]_i \approx \frac{\sign(g_i)}{\sqrt{1 + (\sigma_i^2/g_i^2)/B}} \approx \frac{\sign(g_i)}{\sqrt{1 + \mathcal{B}_{\text{simple}}/B}} \triangleq \mu_i
+                        \]
+                    </div>
+                </div>
+                
+                <p>Here, $\mathcal{B}_{\text{simple}}$ is the same as in the previous article: $\mathcal{B}_{\text{simple}} = \tr(\boldsymbol{\Sigma})/\boldsymbol{g}^{\top}\boldsymbol{g}$, which is also equal to $\mathbb{E}[\sigma_i^2]/\mathbb{E}[g_i^2]$ (where $\mathbb{E}$ denotes averaging over index $i$). That is, it replaces the originally index-dependent $\sigma_i^2/g_i^2$ with an index-independent average $\mathbb{E}[\sigma_i^2]/\mathbb{E}[g_i^2]$. After this approximation, the result is simplified while still preserving the functional form with respect to $B$.</p>
+                
+                <p>Next, for the second moment $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]$, we reintroduce the component independence assumption to simplify the result. It is possible to compute without this assumption, but the result would be more complex and would require other assumptions to simplify the computation, so it's better to directly introduce the independence assumption. Under the independence assumption, $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]_{i,j}$ is computed in two parts: $i\neq j$ and $i=j$. When $i\neq j$,</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(5)</span>
+                        \[
+                        \mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]_{i,j} = \mathbb{E}[(\tilde{\varphi}_B)_i(\tilde{\varphi}_B)_j] = \mathbb{E}[(\tilde{\varphi}_B)_i]\mathbb{E}[(\tilde{\varphi}_B)_j] \approx \mu_i \mu_j
+                        \]
+                    </div>
+                </div>
+                
+                <p>When $i=j$, it's even simpler because the square of $\sign$ is necessarily 1, so its expectation is naturally 1. Therefore, the overall result can be concisely written as $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]_{i,j}\approx \mu_i\mu_j + \delta_{i,j}(1 - \mu_i\mu_j)$.</p>
+                
+                <h2 id="anomalous-phenomenon">Anomalous Phenomenon<a href="#anomalous-phenomenon">#</a></h2>
+                
+                <p>Substituting the above calculation results into equation (1), we obtain:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(6)</span>
+                        \[
+                        \eta^* \approx \frac{\sum_i |g_i|}{\frac{1}{\beta}\sum_i H_{i,i} + \beta\sum_{i\neq j} H_{i,j}\sign(g_i g_j)}
+                        \]
+                    </div>
+                </div>
+                
+                <p>where $\beta = (1 + \mathcal{B}_{\text{simple}}/B)^{-1/2}$. Note that $\beta$ is monotonically increasing with respect to $B$, and $\beta\in(0,1)$, so $\beta$ can be viewed as a normalized batch size. However, $\eta^*$ is not always monotonic with respect to $\beta$, which could lead to the anomalous behavior where "increasing batch size should actually decrease the learning rate"—termed the "Surge phenomenon" in the <a href="https://papers.cool/arxiv/2405.14578" target="_blank">original paper</a>.</p>
+                
+                <p>Let's understand this step by step. When $B\ll \mathcal{B}_{\text{simple}}$, we have $\beta\approx \sqrt{B/\mathcal{B}_{\text{simple}}}$, and thus $\beta \ll 1$. In this case, the $1/\beta$ term in the denominator of equation (6) dominates, giving:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(7)</span>
+                        \[
+                        \eta^* \approx \frac{\sum_i |g_i|}{\sum_i H_{i,i}}\beta \approx \frac{\sum_i |g_i|}{\sum_i H_{i,i}}\sqrt{B/\mathcal{B}_{\text{simple}}}\propto \sqrt{B}
+                        \]
+                    </div>
+                </div>
+                
+                <p>This indicates that SignSGD's learning rate follows square root scaling for small batch sizes. Since we assume positive definiteness of the Hessian matrix during analysis, we necessarily have $\sum_i H_{i,i} > 0$. Then when $\sum_{i\neq j} H_{i,j}\sign(g_i g_j) \leq 0$, equation (6) is always monotonically increasing with respect to $\beta$, so $\eta^*$ is also monotonically increasing with respect to $B$, showing no anomalous behavior.</p>
+                
+                <p>When $\sum_{i\neq j} H_{i,j}\sign(g_i g_j) > 0$, using basic inequalities we can find that the denominator of equation (6) has a minimum point at:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(8)</span>
+                        \[
+                        \beta^* = \sqrt{\frac{\sum_i H_{i,i}}{\sum_{i\neq j} H_{i,j}\sign(g_i g_j)}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Note that $\beta\in(0, 1)$, so there is an additional condition $\beta^*\in(0, 1)$. In this case, $\eta^*$ is no longer monotonically increasing with respect to $B$, but rather increases first and then decreases. There exists a critical batch size beyond which the learning rate should actually decrease—this is the "Surge phenomenon".</p>
+                
+                <h2 id="causal-reflection">Causal Reflection<a href="#causal-reflection">#</a></h2>
+                
+                <p>Why does this anomalous Surge phenomenon occur? In fact, it reflects an incompatibility between the optimizer's underlying assumptions and our analytical method. Specifically, to estimate the optimal learning rate, we expanded the loss increment to second-order approximation and assumed positive definiteness of the Hessian matrix. Under these settings, the optimal update should be Newton's method: $\boldsymbol{H}^{-1}\boldsymbol{g}$.</p>
+                
+                <p>From the perspective of Newton's method, different optimizers essentially correspond to different assumptions about the Hessian matrix. For example, SGD corresponds to assuming $\boldsymbol{H}=\eta_{\max}^{-1} \boldsymbol{I}$, while SignSGD corresponds to assuming $\newcommand{diag}{\mathop{\text{diag}}}\boldsymbol{H}=\eta_{\max}^{-1} \diag(|\boldsymbol{g}|)$, though in practice we can only replace $\boldsymbol{g}$ with $\tilde{\boldsymbol{g}}_B$. The Surge phenomenon actually reflects that as $B\to\infty$, the deviation between SignSGD's assumed Hessian matrix and the actual Hessian matrix increases.</p>
+                
+                <p>We know that today's LLM models have parameters numbering in the billions. Computing either the full Hessian matrix or the covariance matrix is nearly impossible, which is one reason why we introduce the independence assumption when computing the second moment $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]$—only then does the covariance matrix become diagonal, making estimation feasible. The Hessian matrix is similar; we can often only compute it for specific structures.</p>
+                
+                <p>For example, substituting $\boldsymbol{H}=\eta_{\max}^{-1} \diag(|\boldsymbol{g}|)$ into equation (6) yields $\eta^*\approx \eta_{\max} \beta = \eta_{\max} / \sqrt{1 + \mathcal{B}_{\text{simple}}/B}$. This form is very concise and shows no anomalous behavior. Does this mean the Surge phenomenon won't occur? Not exactly. The Surge phenomenon objectively exists; the point here is more that: when we observe the Surge phenomenon in experiments, perhaps the first thing to consider is not correcting the variation pattern of $\eta^*$, but rather changing the optimizer.</p>
+                
+                <h2 id="loss-variation">Loss Variation<a href="#loss-variation">#</a></h2>
+                
+                <p>With $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]$ and $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]$, we can also compute $\overline{\Delta\mathcal{L}}$ as in the previous article. Interestingly, it has the same format as the SGD result:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(9)</span>
+                        \[
+                        \overline{\Delta\mathcal{L}} = \mathcal{L}(\boldsymbol{w}) - \mathbb{E}[\mathcal{L}(\boldsymbol{w} - \eta^*\tilde{\boldsymbol{g}}_B)] \approx \frac{(\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]^{\top}\boldsymbol{g})^2}{2\tr(\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]\boldsymbol{H})}\approx \frac{\Delta\mathcal{L}_{\max}}{1 + \mathcal{B}_{\text{noise}}/B}
+                        \]
+                    </div>
+                </div>
+                
+                <p>where:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(10)</span>
+                        \[
+                        \Delta\mathcal{L}_{\max} = \frac{\frac{1}{2}(\sum_i |g_i|)^2}{\sum_i H_{i,i} + \sum_{i\neq j} H_{i,j}\sign(g_i g_j)},\quad \mathcal{B}_{\text{noise}} = \frac{\mathcal{B}_{\text{simple}}\sum_i H_{i,i}}{\sum_i H_{i,i} + \sum_{i\neq j} H_{i,j}\sign(g_i g_j)}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Note that this retains the full Hessian matrix, so the result is actually quite interesting—although the learning rate $\eta^*$ may exhibit the Surge phenomenon, the average loss increment does not show this phenomenon. It is always monotonically increasing with respect to $B$ and maintains the same form as SGD, meaning we can derive the same "training data volume–training steps" relationship:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(11)</span>
+                        \[
+                        \left(\frac{S}{S_{\min}} - 1\right)\left(\frac{E}{E_{\min}} - 1\right) = 1
+                        \]
+                    </div>
+                </div>
+                
+                <p>A more thought-provoking question is: why do SGD and SignSGD have completely different update magnitudes, including明显 different behaviors in learning rate $\eta^*$, yet $\overline{\Delta\mathcal{L}}$ has the same form with respect to $B$? Is this merely a coincidence, or is there a deeper principle underlying it?</p>
+                
+                <h2 id="general-patterns">General Patterns<a href="#general-patterns">#</a></h2>
+                
+                <p>Starting again from the mean field approximation, I obtained an answer leaning toward the latter. Whether for $\eta^*$ or $\overline{\Delta\mathcal{L}}$, the core difficulty lies in computing $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]$ and $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]$, so our goal is to explore unified computational patterns for both.</p>
+                
+                <p>We generally set $\tilde{\boldsymbol{\varphi}}_B=\tilde{\boldsymbol{H}}{}_B^{-1}\tilde{\boldsymbol{g}}_B$, where $\tilde{\boldsymbol{H}}_B$ is some positive semidefinite matrix. Then we can write:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(12)</span>
+                        \[
+                        \mathbb{E}[\tilde{\boldsymbol{\varphi}}_B] = \mathbb{E}[\tilde{\boldsymbol{H}}{}_B^{-1}\tilde{\boldsymbol{g}}_B]\approx \underbrace{\mathbb{E}[\tilde{\boldsymbol{H}}_B]^{-1}}_{\text{denoted }\hat{\boldsymbol{H}}{}^{-1}}\mathbb{E}[\tilde{\boldsymbol{g}}_B] = \hat{\boldsymbol{H}}{}^{-1}\boldsymbol{g}
+                        \]
+                    </div>
+                </div>
+                
+                <p>and:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(13)</span>
+                        \[
+                        \mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}] = \mathbb{E}[\tilde{\boldsymbol{H}}{}_B^{-1}\tilde{\boldsymbol{g}}_B\tilde{\boldsymbol{g}}_B^{\top}\tilde{\boldsymbol{H}}{}_B^{-1}]\approx \mathbb{E}[\tilde{\boldsymbol{H}}_B]^{-1}\mathbb{E}[\tilde{\boldsymbol{g}}_B\tilde{\boldsymbol{g}}_B^{\top}]\mathbb{E}[\tilde{\boldsymbol{H}}_B]^{-1} = \hat{\boldsymbol{H}}{}^{-1}(\boldsymbol{g}\boldsymbol{g}^{\top} + \boldsymbol{\Sigma}/B)\hat{\boldsymbol{H}}{}^{-1}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Substituting into the expression for $\overline{\Delta\mathcal{L}}$, we obtain:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(14)</span>
+                        \[
+                        \overline{\Delta\mathcal{L}} \approx \frac{1}{2}\frac{(\boldsymbol{g}^{\top}\hat{\boldsymbol{H}}{}^{-1}\boldsymbol{g})^2}{\boldsymbol{g}^{\top}\hat{\boldsymbol{H}}{}^{-1}\boldsymbol{H}\hat{\boldsymbol{H}}{}^{-1}\boldsymbol{g} + \tr(\boldsymbol{\Sigma}\hat{\boldsymbol{H}}{}^{-1}\boldsymbol{H}\hat{\boldsymbol{H}}{}^{-1})/B}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Note that the above expression is homogeneous with respect to $\hat{\boldsymbol{H}}$. If we assume that the relationship between $\hat{\boldsymbol{H}}$ and $B$ can be separated into a scalar form such as $\hat{\boldsymbol{H}}\approx f(B) \boldsymbol{G}$, where $f(B)$ is a scalar function of $B$ and $\boldsymbol{G}$ is not明显 related to $B$, then $f(B)$ can be canceled out in both numerator and denominator. Ultimately, the relationship with $B$ can be organized into the following form:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(15)</span>
+                        \[
+                        \overline{\Delta\mathcal{L}} \approx \frac{\Delta\mathcal{L}_{\max}}{1 + \mathcal{B}_{\text{noise}}/B}
+                        \]
+                    </div>
+                </div>
+                
+                <p>This proves that $\overline{\Delta\mathcal{L}}$ has the same asymptotic pattern with respect to $B$, with the core being the homogeneity with respect to $\hat{\boldsymbol{H}}$. In contrast, $\eta^*$ does not have such a unified result because it is not homogeneous with respect to $\hat{\boldsymbol{H}}$.</p>
+                
+                <h2 id="validity-analysis">Validity Analysis<a href="#validity-analysis">#</a></h2>
+                
+                <p>By this point, I believe everyone has some understanding of the mean field method. Its main characteristic is computational simplicity, or more fundamentally, mean field theory chooses the simple, computable direction for computation, which gives it great flexibility. Flexibility is often also a drawback, meaning it's difficult to grasp the patterns for the next step.</p>
+                
+                <p>As for explaining why this approach is valid, that's even harder—it can only be analyzed case by case, and sometimes even case-by-case analysis is difficult. My feeling is that the mean field method is <strong>three parts computation</strong>, <strong>three parts luck</strong>, <strong>three parts intuition</strong>, plus <strong>one part metaphysics</strong>. Of course, trying it out is fine. Let's take the previous SignSGD computation as an example and attempt some analysis.</p>
+                
+                <div class="proof">
+                    <div class="proof-header">
+                        <i class="fas fa-calculator"></i>
+                        Validity Analysis of Mean Field Approximation
+                    </div>
+                    <p>Clearly, the core computation for SignSGD is $\mathbb{E}[\sign(x)]$. We denote $\mathbb{E}[x]=\mu,\mathbb{E}[x^2]=\mu^2 + \sigma^2$, and then write:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            \[
+                            \sign(x) = \frac{x}{\sqrt{x^2}} = \frac{x}{\sqrt{\mu^2 + \sigma^2 + (x^2 - \mu^2 - \sigma^2)}}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Assuming $x^2 - \mu^2 - \sigma^2$ is small, we perform a Taylor expansion:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            \[
+                            \sign(x) = \frac{x}{\sqrt{\mu^2 + \sigma^2}} - \frac{1}{2}\frac{x(x^2 - \mu^2 - \sigma^2)}{(\mu^2 + \sigma^2)^{3/2}} + \frac{3}{8}\frac{x(x^2 - \mu^2 - \sigma^2)^2}{(\mu^2 + \sigma^2)^{5/2}}-\cdots
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Now the denominators are independent of $x$, and the numerators are polynomials in $x$, so taking expectations on both sides, the first term is the mean field approximation result $\mu/\sqrt{\mu^2 + \sigma^2}$. To examine the reasonableness of the mean field approximation, we compute the second term:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            \[
+                            \frac{1}{2}\frac{\mathbb{E}[x(x^2 - \mu^2 - \sigma^2)]}{(\mu^2 + \sigma^2)^{3/2}} = \frac{1}{2}\frac{\mathbb{E}[x^3] - (\mu^3 + \mu\sigma^2)}{(\mu^2 + \sigma^2)^{3/2}}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>This involves $\mathbb{E}[x^3]$, a new statistical quantity that is the key factor in the mean field error. We can use the normal distribution $\mathcal{N}(x;\mu,\sigma^2)$ to get a sense of this: here $\mathbb{E}[x^3]=\mu^3 + 3\mu\sigma^2$. Substituting into the above gives:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            \[
+                            \frac{\mu\sigma^2}{(\mu^2 + \sigma^2)^{3/2}} = \frac{\sigma^2/\mu^2}{(1 + \sigma^2/\mu^2)^{3/2}}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>The right side is a bounded expression, with the maximum at $\sigma^2/\mu^2=2$, giving $2/3^{3/2}=0.3849\cdots$. This indicates that the error of the mean field approximation is likely finite, and the error term tends to 0 as both $\sigma\to 0$ and $\sigma\to\infty$, which to some extent demonstrates the usability of the mean field approximation.</p>
+                </div>
+                
+                <h2 id="generalized-approximation">Generalized Approximation<a href="#generalized-approximation">#</a></h2>
+                
+                <p>One reason for choosing to analyze SignSGD is that we typically use it as a theoretical approximation for Adam. In <a href="/archives/10563" target="_blank">"How Does Adam's Epsilon Affect Learning Rate Scaling Laws?"</a>, we computed a theoretically better approximation: SoftSignSGD, which considers the effect of $\epsilon$.</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(16)</span>
+                        \[
+                        \sign(x)=\frac{x}{\sqrt{x^2}}\quad\to\quad\newcommand{softsign}{\mathop{\text{softsign}}}\softsign(x)=\frac{x}{\sqrt{x^2+\epsilon^2}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>In this case, $\tilde{\boldsymbol{\varphi}}_B = \softsign(\tilde{\boldsymbol{g}}_B)$. Let's proceed directly to the main topic:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(17)</span>
+                        \[
+                        \begin{aligned}
+                        &\,\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]_i = \mathbb{E}[\softsign((\tilde{g}_B)_i)] = \mathbb{E}\bigg[\frac{(\tilde{g}_B)_i}{\sqrt{(\tilde{g}_B)_i^2 + \epsilon^2}}\bigg]\approx \frac{\mathbb{E}[(\tilde{g}_B)_i]}{\sqrt{\mathbb{E}[(\tilde{g}_B)_i^2]+ \epsilon^2}} \\[8pt]
+                        =&\, \frac{g_i}{\sqrt{g_i^2 + \sigma_i^2/B + \epsilon^2}} = \frac{\softsign(g_i)}{\sqrt{1 + \sigma_i^2/(g_i^2 + \epsilon^2)/B}}\approx \frac{\softsign(g_i)}{\sqrt{1 + \mathcal{B}_{\text{simple}}/B}}\triangleq \nu_i\beta
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Here, $\mathcal{B}_{\text{simple}}$ is slightly different: it is $\tr(\boldsymbol{\Sigma})/(\boldsymbol{g}^{\top}\boldsymbol{g} + N\epsilon^2)$, where $N$ is the total number of model parameters, i.e., $\boldsymbol{g}\in\mathbb{R}^N$. As for the final terms: $\nu_i=\softsign(g_i)$ and $\beta = (1 + \mathcal{B}_{\text{simple}}/B)^{-1/2}$. Next, compute $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]$. Under the independence assumption, when $i\neq j$ we can still compute the means separately, so $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]_{i,j}=\nu_i \nu_j \beta^2$. Thus we only need to compute the case $i=j$:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(18)</span>
+                        \[
+                        \begin{aligned}
+                        &\,\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]_{i,i} = \mathbb{E}[\softsign((\tilde{g}_B)_i)^2] = \mathbb{E}\bigg[\frac{(\tilde{g}_B)_i^2}{(\tilde{g}_B)_i^2 + \epsilon^2}\bigg]\approx \frac{\mathbb{E}[(\tilde{g}_B)_i^2]}{\mathbb{E}[(\tilde{g}_B)_i^2]+ \epsilon^2} \\[8pt]
+                        =&\, \frac{g_i^2 + \sigma_i^2/B}{g_i^2 + \sigma_i^2/B + \epsilon^2} = 1 - \frac{1 - \softsign(g)^2}{1 + \sigma_i^2/(g_i^2 + \epsilon^2)/B}\approx 1 - \frac{1 - \softsign(g)^2}{1 + \mathcal{B}_{\text{simple}}/B}
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>This can be uniformly written as $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]_{i,j}\approx \nu_i \nu_j\beta^2 + \delta_{i,j}(1-\beta^2)$. Therefore:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(19)</span>
+                        \[
+                        \eta^* \approx \frac{\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]^{\top}\boldsymbol{g}}{\text{Tr}(\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]\boldsymbol{H})} \approx \frac{\beta\sum_i \nu_i g_i}{\sum_i H_{i,i} + \beta^2(\sum_{i,j} \nu_i \nu_j H_{i,j} - \sum_i H_{i,i})}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Except for $\beta$, all other parts of the above expression are independent of $B$, so we have already obtained the explicit relationship between $\eta^*$ and $B$, with a form大同小异 to that of SignSGD. The remaining analysis can refer to <a href="/archives/10563" target="_blank">"How Does Adam's Epsilon Affect Learning Rate Scaling Laws?"</a> or follow the previous content.</p>
+                
+                <h2 id="summary">Summary<a href="#summary">#</a></h2>
+                
+                <p>In this article, we used mean field approximation to recompute the conclusions for SignSGD and SoftSignSGD, greatly simplifying the related computational processes, and preliminarily considered the general patterns of these computations.</p>
+
+                <div class="citation-section">
+                    <div class="citation-header">
+                        <i class="fas fa-quote-right"></i>
+                        Citation Information
+                    </div>
+                    <p><strong>Original Article:</strong> Su Jianlin. Rethinking Learning Rate and Batch Size (Part 2): Mean Field Theory. <em>Scientific Spaces</em>.</p>
+                    
+                    <p><strong>How to cite this translation:</strong></p>
+                    <div class="citation-box">
+                        Su, J. Rethinking Learning Rate and Batch Size (Part 2): Mean Field Theory [Translated by Juanxi Tian]. 
+                        <em>Scientific Spaces</em>.
+                    </div>
+                    <p style="margin-top: 0.8rem;"><strong>BibTeX:</strong></p>
+                    <div class="citation-box">
+                        @article{su2025rethinking_lr_bs_part2,
+                            title   = {Rethinking Learning Rate and Batch Size (Part 2): Mean Field Theory},
+                            author  = {Su, Jianlin},
+                            journal = {Scientific Spaces},
+                            year    = {2025},
+                            url     = {https://kexue.fm/archives/11280},
+                            note    = {Translated by Juanxi Tian (ScalingOpt Team)}
+                          }
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="translation-credit">
+                <i class="fas fa-user-graduate"></i>
+                Academic Translation by Juanxi Tian (ScalingOpt Team)
+            </div>
+            <div class="copyright">
+                © 2009-2025 Scientific Spaces. All rights reserved.<br>
+                Original content licensed under Creative Commons BY-NC-ND 2.5 China
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript for Interactive Features -->
+    <script>
+        // Scroll Progress Bar
+        window.addEventListener('scroll', function() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            scrollProgress.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Table of Contents Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            const sections = document.querySelectorAll('h2[id]');
+            
+            // Set active section based on scroll position
+            function setActiveSection() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 50)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', setActiveSection);
+            setActiveSection(); // Initial call
+            
+            // Smooth scroll for TOC links
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 50,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+
+        // MathJax Configuration
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                tags: 'ams'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    
+    <!-- MathJax CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</body>
+</html>

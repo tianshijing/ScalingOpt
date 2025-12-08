@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Does Adam's Epsilon Affect Learning Rate Scaling Laws? | Scientific Spaces</title>
+    <meta name="description" content="Analyzing the impact of Adam's epsilon parameter on learning rate scaling laws with batch size, exploring the transition between SignSGD and SGD behaviors through SoftSignSGD approximations.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a6bca;
+            --primary-dark: #1357a8;
+            --primary-light: #e8f1fc;
+            --secondary: #2c3e50;
+            --accent: #3498db;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f5f7fa;
+            --gray-200: #e4e7eb;
+            --gray-300: #cbd2d9;
+            --gray-600: #7b8794;
+            --gray-700: #52606d;
+            --gray-900: #323f4b;
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 6px 24px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: #f0f5fc;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.5rem 1.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -8%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+        }
+
+        .meta-item i {
+            font-size: 0.85rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Translation Notice */
+        .translation-notice {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1.2rem;
+            margin: 0;
+        }
+
+        .translation-notice-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .translation-text h3 {
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .translation-text p {
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        .translator-badge {
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(26, 107, 202, 0.2);
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+        }
+
+        @media (max-width: 850px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            padding-left: 1rem;
+        }
+
+        .toc {
+            position: sticky;
+            top: 1rem;
+        }
+
+        .toc-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .toc-header i {
+            font-size: 0.9rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.4rem;
+            position: relative;
+        }
+
+        .toc-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            transition: var(--transition);
+            border-left: 2px solid transparent;
+            padding-left: 8px;
+        }
+
+        .toc-link:hover {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            transform: translateX(2px);
+        }
+
+        .toc-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .toc-number {
+            font-weight: 500;
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            min-width: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-right: 1.2rem;
+            padding-left: 0;
+        }
+
+        @media (max-width: 850px) {
+            .sidebar {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 0 1rem;
+            }
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 1.5rem 0 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: relative;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 35px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        h2 a {
+            color: var(--accent);
+            font-size: 0.7rem;
+            margin-left: 6px;
+            text-decoration: none;
+        }
+
+        h2 a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            color: var(--gray-900);
+            line-height: 1.65;
+        }
+
+        /* Equation Styling */
+        .equation-container {
+            margin: 0.8rem 0;
+        }
+
+        .equation {
+            background: var(--primary-light);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1rem;
+            border-radius: 0 5px 5px 0;
+            font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', serif;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .equation-number {
+            color: var(--primary);
+            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin-right: 6px;
+            display: inline-block;
+            min-width: 18px;
+        }
+
+        /* Code Block Styling */
+        .code-container {
+            margin: 1rem 0;
+            background: #2d2d2d;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .code-header {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 0.6rem 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .code-content {
+            padding: 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #f8f8f2;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+        }
+
+        /* Reference Box */
+        .reference-box {
+            background: linear-gradient(to right, #f8fafc, var(--primary-light));
+            border: 1px solid var(--gray-200);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .reference-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .reference-header i {
+            font-size: 0.9rem;
+        }
+
+        .reference-list {
+            list-style: none;
+        }
+
+        .reference-item {
+            padding: 0.3rem 0 0.3rem 0.8rem;
+            position: relative;
+            margin-bottom: 0.4rem;
+            color: var(--gray-700);
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .reference-item::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 0.65rem;
+        }
+
+        /* Citation Section */
+        .citation-section {
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .citation-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .citation-box {
+            background: var(--white);
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid var(--gray-300);
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-top: 0.6rem;
+            overflow-x: auto;
+            color: var(--gray-900);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--secondary);
+            color: white;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .translation-credit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 6px 16px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(26, 107, 202, 0.2);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            margin-top: 0.6rem;
+        }
+
+        /* Utility Classes */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-light), #e8f2ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .math {
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.1s ease;
+            z-index: 1000;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 1rem 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 0.6rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem 0;
+            }
+            
+            .main-content {
+                padding-right: 0.8rem;
+            }
+            
+            .sidebar {
+                padding-left: 0.8rem;
+            }
+            
+            .meta-info {
+                gap: 0.6rem;
+            }
+            
+            .meta-item {
+                font-size: 0.75rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .translation-notice-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .translator-badge {
+                align-self: flex-start;
+            }
+        }
+
+        /* Links styling */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Optimize long formula display */
+        .equation {
+            word-break: break-word;
+        }
+        
+        /* Optimize list display */
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.3rem;
+            line-height: 1.5;
+        }
+        
+        /* Optimize math formula spacing */
+        .MathJax_Display {
+            margin: 0.6em 0 !important;
+        }
+        
+        /* Image container styling */
+        .pic-container {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+        
+        .pic-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .typecho-caption {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        
+        /* Quote block styling */
+        blockquote.cite {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+        }
+        
+        blockquote.cite div {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        blockquote.cite a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        /* Blockquote styling */
+        blockquote {
+            background: linear-gradient(to right, var(--gray-100), var(--primary-light));
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+            position: relative;
+        }
+
+        blockquote p {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+
+        blockquote p:before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Underline styling */
+        u {
+            text-decoration: none;
+            border-bottom: 1px dotted var(--primary);
+        }
+
+        /* List styling inside main content */
+        .main-content ol, .main-content ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .main-content li {
+            margin-bottom: 0.4rem;
+            line-height: 1.6;
+        }
+
+        /* Highlight box for important notes */
+        .note-box {
+            background: linear-gradient(to right, #fff8e1, #fff3cd);
+            border-left: 3px solid #ffc107;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .note-box strong {
+            color: #856404;
+        }
+
+        /* Definition list styling */
+        .definition {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 3px solid #4caf50;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .definition-header {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Mathematical proof styling */
+        .proof {
+            background: linear-gradient(to right, #f3e5f5, #f8f4ff);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .proof-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Insight box styling */
+        .insight-box {
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+            border-left: 3px solid #1976d2;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .insight-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Analysis box styling */
+        .analysis-box {
+            background: linear-gradient(to right, #fff3e0, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .analysis-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Technical box styling */
+        .technical-box {
+            background: linear-gradient(to right, #fce4ec, #f8bbd9);
+            border-left: 3px solid #e91e63;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .technical-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Epsilon context box */
+        .epsilon-box {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 3px solid #4caf50;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .epsilon-header {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>How Does Adam's Epsilon Affect Learning Rate Scaling Laws?</h1>
+                <div class="subtitle">Analyzing the impact of Adam's epsilon parameter on learning rate scaling laws with batch size, exploring the transition between SignSGD and SGD behaviors</div>
+                
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>Su Jianlin</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-eye"></i>
+                        <span>Scientific Spaces</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <div class="tag">Adam Optimization</div>
+                        <div class="tag">Epsilon Analysis</div>
+                        <div class="tag">Scaling Laws</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Translation Notice -->
+        <div class="translation-notice">
+            <div class="translation-notice-content">
+                <div class="translation-text">
+                    <h3><i class="fas fa-language"></i> Academic Translation</h3>
+                    <p>This is an academic English translation maintaining technical accuracy while adapting to English academic conventions.</p>
+                </div>
+                <div class="translator-badge">
+                    <i class="fas fa-user-graduate"></i>
+                    Translated by Juanxi Tian (ScalingOpt Team)
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Sidebar Table of Contents -->
+            <aside class="sidebar">
+                <nav class="toc">
+                    <div class="toc-header">
+                        <i class="fas fa-list"></i>
+                        Contents
+                    </div>
+                    <ul class="toc-list">
+                        <li class="toc-item">
+                            <a href="#softsign" class="toc-link">
+                                <span class="toc-number">1</span>
+                                <span>SoftSign</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#sigmoid-approximations" class="toc-link">
+                                <span class="toc-number">2</span>
+                                <span>Sigmoid Approximations</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#mean-estimation" class="toc-link">
+                                <span class="toc-number">3</span>
+                                <span>Mean Estimation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#variance-estimation" class="toc-link">
+                                <span class="toc-number">4</span>
+                                <span>Variance Estimation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#preliminary-results" class="toc-link">
+                                <span class="toc-number">5</span>
+                                <span>Preliminary Results</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#summary" class="toc-link">
+                                <span class="toc-number">6</span>
+                                <span>Summary</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Article Content -->
+            <main class="main-content">
+                <p>In the previous article <a href="/archives/10542" target="_blank">"How Should Learning Rate Scale with Batch Size?"</a>, we discussed the scaling laws between learning rate and batch size from multiple perspectives. For the Adam optimizer, we employed the SignSGD approximation—a common technique for analyzing Adam. A natural question then arises: how scientific is it to approximate Adam using SignSGD?</p>
+                
+                <p>We know that Adam's update denominator includes an $\epsilon$, originally intended to prevent division by zero, so its value is typically very close to zero, and we often choose to ignore it during theoretical analysis. However, in current LLM training, especially in low-precision training, we tend to choose relatively large $\epsilon$ values. This results in $\epsilon$ often exceeding the magnitude of gradient squares during the middle and later stages of training, making the presence of $\epsilon$ practically non-negligible.</p>
+                
+                <p>Therefore, in this article, we attempt to explore how $\epsilon$ affects Adam's learning rate and batch size scaling laws, providing a reference computational scheme for related issues.</p>
+                
+                <h2 id="softsign">SoftSign<a href="#softsign">#</a></h2>
+                
+                <p>Since this article follows the previous one, we won't repeat the background. To investigate the role of $\epsilon$, we switch from SignSGD to SoftSignSGD, i.e., from $\newcommand{sign}{\mathop{\text{sign}}}\tilde{\boldsymbol{\varphi}}_B = \sign(\tilde{\boldsymbol{g}}_B)$ to $\tilde{\boldsymbol{\varphi}}_B = \text{softsign}(\tilde{\boldsymbol{g}}_B)$, where:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(1)</span>
+                        \[
+                        \sign(x)=\frac{x}{\sqrt{x^2}}\quad\to\quad\text{softsign}(x, \epsilon)=\frac{x}{\sqrt{x^2+\epsilon^2}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>This form undoubtedly aligns more closely with Adam. But before proceeding, we need to confirm whether $\epsilon$ is truly non-negligible to determine if further research is warranted.</p>
+                
+                <div class="epsilon-box">
+                    <div class="epsilon-header">
+                        <i class="fas fa-exclamation-circle"></i>
+                        The Significance of Epsilon in Modern LLM Training
+                    </div>
+                    <p><strong>Default Values:</strong> In Keras's Adam implementation, the default $\epsilon$ is $10^{-7}$, while in Torch it is $10^{-8}$. At these values, the probability of gradient absolute values being less than $\epsilon$ is not particularly high.</p>
+                    <p><strong>LLM Practice:</strong> However, in LLMs, $\epsilon$ commonly takes values like $10^{-5}$ (e.g., in <a href="https://papers.cool/arxiv/2307.09288" target="_blank">LLAMA2</a>). When training enters a "steady state," components with gradient absolute values less than $\epsilon$ become very common, making $\epsilon$'s influence significant.</p>
+                    <p><strong>Parameter Count Effect:</strong> This is also related to the parameter count of LLMs. For a stably trainable model, regardless of its parameter count, its gradient <u>magnitude</u> remains roughly within the same order of magnitude, determined by the stability of backpropagation (refer to <a href="/archives/8978" target="_blank">"What Are the Challenges in Training 1000-Layer Transformers?"</a>). Therefore, for models with larger parameter counts, the average gradient absolute value per parameter becomes relatively smaller, making $\epsilon$'s role more prominent.</p>
+                </div>
+                
+                <p>It's worth noting that introducing $\epsilon$ actually provides an interpolation between Adam and SGD, because when $x\neq 0$:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(2)</span>
+                        \[
+                        \lim_{\epsilon\to \infty}\epsilon\,\text{softsign}(x, \epsilon)=\lim_{\epsilon\to \infty}\frac{x \epsilon}{\sqrt{x^2+\epsilon^2}} = x
+                        \]
+                    </div>
+                </div>
+                
+                <p>Thus, the larger $\epsilon$ is, the more Adam's behavior approaches SGD.</p>
+                
+                <h2 id="sigmoid-approximations">Sigmoid Approximations<a href="#sigmoid-approximations">#</a></h2>
+                
+                <p>Having confirmed the necessity of introducing $\epsilon$, we proceed with the analysis. During the analysis, we will repeatedly encounter sigmoid functions, so another preparatory step is to explore simple approximations for sigmoid functions.</p>
+                
+                <p>Sigmoid functions are already familiar to most; the $\text{softsign}$ function introduced in the previous section is itself one example, the $\text{erf}$ function appearing in the previous article's analysis is another, along with $\tanh$, $\text{sigmoid}$, etc. Next, we handle sigmoid functions $S(x)$ satisfying the following characteristics:</p>
+                
+                <blockquote>
+                    <p>1. Globally smooth and monotonically increasing;</p>
+                    <p>2. Odd function, with range $[-1,1]$;</p>
+                    <p>3. Slope at the origin is $k > 0$.</p>
+                </blockquote>
+                
+                <p>For such functions, we consider two approximations. The first is similar to $\text{softsign}$:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(3)</span>
+                        \[
+                        S(x)\approx \frac{x}{\sqrt{x^2 + 1/k^2}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>This is probably the simplest function preserving the three properties above for $S(x)$. The second approximation is based on the $\text{clip}$ function:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(4)</span>
+                        \[
+                        S(x)\approx \text{clip}(kx, -1, 1) \triangleq \left\{\begin{aligned}&1, &kx\geq 1 \\[2pt]
+                        &kx, &-1 < kx < 1\\[2pt]
+                        &-1, &kx \leq -1\end{aligned}\right.
+                        \]
+                    </div>
+                </div>
+                
+                <p>This is essentially a piecewise linear function, sacrificing global smoothness, but piecewise linearity makes integration easier, as we will see shortly.</p>
+                
+                <div class="pic-container">
+                    <div class="typecho-caption" style="max-width: 480px; margin: 0 auto">
+                        <div style="margin: 5px">
+                            <img src="https://kexue.fm/usr/uploads/2024/11/103719578.png" style="max-width: 100%" alt="Erf Function and Its Two Approximations" />
+                        </div>
+                        <p class="typecho-caption-text">Erf Function and Its Two Approximations</p>
+                    </div>
+                </div>
+                
+                <h2 id="mean-estimation">Mean Estimation<a href="#mean-estimation">#</a></h2>
+                
+                <p>Without delay, following the method from the previous article, the starting point remains:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(5)</span>
+                        \[
+                        \mathbb{E}[\mathcal{L}(\boldsymbol{w} - \eta\tilde{\boldsymbol{\varphi}}_B)] \approx \mathcal{L}(\boldsymbol{w}) - \eta\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]^{\top}\boldsymbol{g} + \frac{1}{2}\eta^2 \text{Tr}(\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]\boldsymbol{H})
+                        \]
+                    </div>
+                </div>
+                
+                <p>Our task is to estimate $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]$ and $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]$.</p>
+                
+                <p>In this section, we compute $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]$. For this, we need to approximate the $\text{softsign}$ function using the $\text{clip}$ function:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(6)</span>
+                        \[
+                        \text{softsign}(x, \epsilon)\approx \text{clip}(x/\epsilon, -1, 1) = \left\{\begin{aligned}&1, & x/\epsilon \geq 1 \\[2pt]
+                        & x / \epsilon, & -1 < x/\epsilon < 1 \\[2pt]
+                        &-1, & x/\epsilon \leq -1 \\[2pt]
+                        \end{aligned}\right.
+                        \]
+                    </div>
+                </div>
+                
+                <p>Then we have:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(7)</span>
+                        \[
+                        \begin{aligned}
+                        \mathbb{E}[\tilde{\varphi}_B] =&\, \mathbb{E}[\text{softsign}(g + \sigma z/\sqrt{B}, \epsilon)] \approx \mathbb{E}[\text{clip}(g/\epsilon + \sigma z/\epsilon\sqrt{B},-1, 1)] \\[5pt]
+                        =&\,\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty} \text{clip}(g/\epsilon + \sigma z/\epsilon\sqrt{B},-1, 1) e^{-z^2/2}dz \\[5pt]
+                        =&\,\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{-(g+\epsilon)\sqrt{B}/\sigma} (-1)\times e^{-z^2/2}dz + \frac{1}{\sqrt{2\pi}}\int_{-(g-\epsilon)\sqrt{B}/\sigma}^{\infty}  1\times e^{-z^2/2}dz \\[5pt]
+                        &\,\qquad\qquad + \frac{1}{\sqrt{2\pi}}\int_{-(g+\epsilon)\sqrt{B}/\sigma}^{-(g-\epsilon)\sqrt{B}/\sigma} (g/\epsilon + \sigma z/\epsilon\sqrt{B})\times e^{-z^2/2}dz
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>The integral form is complex, but it's not difficult to compute with Mathematica. The result can be expressed using the $\text{erf}$ function:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(8)</span>
+                        \[
+                        \frac{1}{2}\left[\text{erf}\left(\frac{a+b}{\sqrt{2}}\right)+\text{erf}\left(\frac{a-b}{\sqrt{2}}\right)\right]+\frac{a}{2b}\left[\text{erf}\left(\frac{a+b}{\sqrt{2}}\right)-\text{erf}\left(\frac{a-b}{\sqrt{2}}\right)\right]+\frac{e^{-(a+b)^2/2} - e^{-(a-b)^2/2}}{b\sqrt{2\pi}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>where $a = g\sqrt{B}/\sigma, b=\epsilon \sqrt{B}/\sigma$. This function appears rather complicated, but it happens to be an S-shaped function of $a$, with range $(-1,1)$ and slope at $a=0$ equal to $\text{erf}(b/\sqrt{2})/b$. Therefore, using the first approximation form:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(9)</span>
+                        \[
+                        \mathbb{E}[\tilde{\varphi}_B]\approx\frac{a}{\sqrt{a^2 + b^2 / \text{erf}(b/\sqrt{2})^2}}\approx \frac{a}{\sqrt{a^2 + b^2 + \pi / 2}}=\frac{g/\sigma}{\sqrt{(g^2+\epsilon^2)/\sigma^2 + \pi / 2B}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>The second approximation uses $\text{erf}(x)\approx x / \sqrt{x^2 + \pi / 4}$ to handle $\text{erf}(b/\sqrt{2})$ in the denominator. We can consider ourselves quite fortunate, as the final form is not overly complicated. Then we have:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(10)</span>
+                        \[
+                        \mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]_i \approx \frac{g_i/\sigma_i}{\sqrt{(g_i^2+\epsilon^2)/\sigma_i^2 + \pi / 2B}} = \frac{\text{softsign}(g_i, \epsilon)}{\sqrt{1 + \pi \sigma_i^2 /(g_i^2+\epsilon^2)/2B}}\approx \frac{\text{softsign}(g_i, \epsilon)}{\sqrt{1 + \pi \kappa^2/2B}} = \nu_i \beta
+                        \]
+                    </div>
+                </div>
+                
+                <p>Similar to the previous article, the last approximation employs a mean field approximation, where $\kappa^2$ is some average of all $\sigma_i^2 /(g_i^2+\epsilon^2)$, and $\nu_i = \text{softsign}(g_i, \epsilon)$ and $\beta = (1 + \pi\kappa^2 / 2B)^{-1/2}$.</p>
+                
+                <h2 id="variance-estimation">Variance Estimation<a href="#variance-estimation">#</a></h2>
+                
+                <p>Having addressed the mean (first moment), we now turn to the second moment:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(11)</span>
+                        \[
+                        \begin{aligned}
+                        \mathbb{E}[\tilde{\varphi}_B^2] =&\, \mathbb{E}[\text{softsign}(g + \sigma z/\sqrt{B}, \epsilon)^2] \approx \mathbb{E}[\text{clip}(g/\epsilon + \sigma z/\epsilon\sqrt{B},-1, 1)^2] \\[5pt]
+                        =&\,\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty} \text{clip}(g/\epsilon + \sigma z/\epsilon\sqrt{B},-1, 1)^2 e^{-z^2/2}dz \\[5pt]
+                        =&\,\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{-(g+\epsilon)\sqrt{B}/\sigma} (-1)^2\times e^{-z^2/2}dz + \frac{1}{\sqrt{2\pi}}\int_{-(g-\epsilon)\sqrt{B}/\sigma}^{\infty}  1^2\times e^{-z^2/2}dz \\[5pt]
+                        &\,\qquad\qquad + \frac{1}{\sqrt{2\pi}}\int_{-(g+\epsilon)\sqrt{B}/\sigma}^{-(g-\epsilon)\sqrt{B}/\sigma} (g/\epsilon + \sigma z/\epsilon\sqrt{B})^2\times e^{-z^2/2}dz
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>The result can also be expressed using $\text{erf}$ functions, but it is even more verbose, so we won't write it out here. As before, for Mathematica, this is no issue. When viewed as a function of $a$, the result is an inverted bell-shaped curve symmetric about the y-axis, with an upper bound of 1 and a minimum within $(0,1)$. Referring to the approximation (9) for $\mathbb{E}[\tilde{\varphi}_B]$, we choose the following approximation:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(12)</span>
+                        \[
+                        \mathbb{E}[\tilde{\varphi}_B^2] \approx 1 - \frac{b^2}{a^2 + b^2 + \pi / 2} = 1 - \frac{\epsilon^2/(g^2+\epsilon^2)}{1 + \pi\sigma^2/(g^2+\epsilon^2) / 2B}
+                        \]
+                    </div>
+                </div>
+                
+                <p>To be honest, this approximation is not highly accurate, primarily for computational convenience. However, it retains key characteristics: inverted bell shape, y-axis symmetry, upper bound of 1, result of 1 when $b=0$, and result approaching 0 as $b\to\infty$. Next, we continue applying the mean field approximation:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(13)</span>
+                        \[
+                        \mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]_{i,i} \approx  1 - \frac{\epsilon^2/(g_i^2+\epsilon^2)}{1 + \pi\sigma_i^2/(g_i^2+\epsilon^2) / 2B}\approx 1 - \frac{\epsilon^2/(g_i^2+\epsilon^2)}{1 + \pi\kappa^2 / 2B} = \nu_i^2 \beta^2 + (1 - \beta^2)
+                        \]
+                    </div>
+                </div>
+                
+                <p>Thus, $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]_{i,j}\approx \nu_i \nu_j \beta^2 + \delta_{i,j}(1-\beta^2)$. The term $\delta_{i,j}(1-\beta^2)$ represents the covariance matrix $(1-\beta^2)\boldsymbol{I}$ of $\tilde{\boldsymbol{\varphi}}$, which is diagonal—this is expected because one of our assumptions is independence between components of $\tilde{\boldsymbol{\varphi}}$, so the covariance matrix must be diagonal.</p>
+                
+                <h2 id="preliminary-results">Preliminary Results<a href="#preliminary-results">#</a></h2>
+                
+                <p>From this, we obtain:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(14)</span>
+                        \[
+                        \eta^* \approx \frac{\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]^{\top}\boldsymbol{g}}{\text{Tr}(\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]\boldsymbol{H})} \approx \frac{\beta\sum_i \nu_i g_i}{\beta^2\sum_{i,j} \nu_i \nu_j H_{i,j} + (1-\beta^2)\sum_i H_{i,i} }
+                        \]
+                    </div>
+                </div>
+                
+                <div class="analysis-box">
+                    <div class="analysis-header">
+                        <i class="fas fa-chart-line"></i>
+                        Key Functional Dependence
+                    </div>
+                    <p>Note that apart from $\beta$, all other symbols are independent of $B$, so the above equation already gives the dependence of $\eta^*$ on $B$. To ensure the existence of a minimum, we always assume positive definiteness of the $\boldsymbol{H}$ matrix. Under this assumption, we necessarily have $\sum_{i,j} \nu_i \nu_j H_{i,j} > 0$ and $\sum_i H_{i,i} > 0$.</p>
+                </div>
+                
+                <p>In the previous article, we mentioned that one of Adam's most important characteristics is the possible occurrence of the "Surge phenomenon," where $\eta^*$ is no longer globally monotonically increasing with respect to $B$. Next, we will prove that introducing $\epsilon > 0$ reduces the likelihood of the Surge phenomenon occurring, and it completely disappears as $\epsilon \to \infty$. This proof is not difficult; clearly, a necessary condition for the Surge phenomenon to occur is:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(15)</span>
+                        \[
+                        \sum_{i,j} \nu_i \nu_j H_{i,j} - \sum_i H_{i,i} > 0
+                        \]
+                    </div>
+                </div>
+                
+                <p>If not, the entire $\eta^*$ is monotonically increasing with respect to $\beta$, and since $\beta$ is monotonically increasing with respect to $B$, $\eta^*$ is monotonically increasing with respect to $B$, and no Surge phenomenon exists. Recall that $\nu_i = \text{softsign}(g_i, \epsilon)$ is a monotonically decreasing function of $\epsilon$, so as $\epsilon$ increases, $\sum_{i,j} \nu_i \nu_j H_{i,j}$ becomes smaller, making the above inequality less likely to hold. As $\epsilon\to \infty$, $\nu_i$ approaches zero, and the inequality can no longer hold, so the Surge phenomenon disappears.</p>
+                
+                <p>Furthermore, we can prove that as $\epsilon\to\infty$, the result becomes consistent with SGD. This only requires noticing:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(16)</span>
+                        \[
+                        \frac{\eta^*}{\epsilon} \approx \frac{\beta\sum_i (\epsilon \nu_i) g_i}{\beta^2\sum_{i,j} (\epsilon \nu_i)(\epsilon \nu_j) H_{i,j} + \epsilon^2(1-\beta^2)\sum_i H_{i,i} }
+                        \]
+                    </div>
+                </div>
+                
+                <p>We have the limits:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(17)</span>
+                        \[
+                        \lim_{\epsilon\to\infty} \beta = 1,\quad\lim_{\epsilon\to\infty} \epsilon \nu_i = g_i, \quad \lim_{\epsilon\to\infty} \epsilon^2(1-\beta^2) = \pi \sigma^2 / 2B
+                        \]
+                    </div>
+                </div>
+                
+                <p>Here, $\sigma^2$ is some average of all $\sigma_i^2$. Thus, we obtain the approximation for sufficiently large $\epsilon$:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(18)</span>
+                        \[
+                        \frac{\eta^*}{\epsilon} \approx \frac{\sum_i g_i^2}{\sum_{i,j} g_i g_j H_{i,j} + \left(\pi \sigma^2\sum_i H_{i,i}\right)/2B }
+                        \]
+                    </div>
+                </div>
+                
+                <div class="insight-box">
+                    <div class="insight-header">
+                        <i class="fas fa-arrows-alt-h"></i>
+                        Interpolation Between SignSGD and SGD
+                    </div>
+                    <p>The right-hand side is precisely the SGD result under the assumption that the gradient covariance matrix is $(\pi\sigma^2/2B)\boldsymbol{I}$. This demonstrates that Adam with large $\epsilon$ behaves similarly to SGD, while with small $\epsilon$, it approaches SignSGD behavior, with $\epsilon$ serving as an interpolation parameter between these two regimes.</p>
+                </div>
+                
+                <h2 id="summary">Summary<a href="#summary">#</a></h2>
+                
+                <p>This article continues the methodology of the previous article, attempting to analyze the impact of Adam's $\epsilon$ on the scaling laws between learning rate and batch size. The result is a form intermediate between SGD and SignSGD: the larger $\epsilon$ is, the closer the result is to SGD, and the lower the probability of the "Surge phenomenon" occurring. Overall, the computational results contain no particularly surprising elements, but they can serve as a reference process for analyzing the role of $\epsilon$.</p>
+
+                <div class="citation-section">
+                    <div class="citation-header">
+                        <i class="fas fa-quote-right"></i>
+                        Citation Information
+                    </div>
+                    <p><strong>Original Article:</strong> Su Jianlin. How Does Adam's Epsilon Affect Learning Rate Scaling Laws?. <em>Scientific Spaces</em>.</p>
+                    
+                    <p><strong>How to cite this translation:</strong></p>
+                    <div class="citation-box">
+                        Su, J. How Does Adam's Epsilon Affect Learning Rate Scaling Laws? [Translated by Juanxi Tian]. 
+                        <em>Scientific Spaces</em>.
+                    </div>
+                    <p style="margin-top: 0.8rem;"><strong>BibTeX:</strong></p>
+                    <div class="citation-box">
+                        @article{su2025adam_epsilon_scaling,
+                            title   = {How Does Adam's Epsilon Affect Learning Rate Scaling Laws?},
+                            author  = {Su, Jianlin},
+                            journal = {Scientific Spaces},
+                            year    = {2025},
+                            url     = {https://kexue.fm/archives/10563},
+                            note    = {Translated by Juanxi Tian (ScalingOpt Team)}
+                          }
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="translation-credit">
+                <i class="fas fa-user-graduate"></i>
+                Academic Translation by Juanxi Tian (ScalingOpt Team)
+            </div>
+            <div class="copyright">
+                © 2009-2025 Scientific Spaces. All rights reserved.<br>
+                Original content licensed under Creative Commons BY-NC-ND 2.5 China
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript for Interactive Features -->
+    <script>
+        // Scroll Progress Bar
+        window.addEventListener('scroll', function() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            scrollProgress.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Table of Contents Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            const sections = document.querySelectorAll('h2[id]');
+            
+            // Set active section based on scroll position
+            function setActiveSection() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 50)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', setActiveSection);
+            setActiveSection(); // Initial call
+            
+            // Smooth scroll for TOC links
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 50,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+
+        // MathJax Configuration
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                tags: 'ams'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    
+    <!-- MathJax CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</body>
+</html>

@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rethinking Learning Rate and Batch Size (Part 4): EMA Effects | Scientific Spaces</title>
+    <meta name="description" content="Analyzing how Exponential Moving Averages (EMA) in optimizers affect learning rate scaling laws, with focus on momentum mechanisms and their implications for Adam, SGDM, and SignSGDM.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a6bca;
+            --primary-dark: #1357a8;
+            --primary-light: #e8f1fc;
+            --secondary: #2c3e50;
+            --accent: #3498db;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f5f7fa;
+            --gray-200: #e4e7eb;
+            --gray-300: #cbd2d9;
+            --gray-600: #7b8794;
+            --gray-700: #52606d;
+            --gray-900: #323f4b;
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 6px 24px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: #f0f5fc;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.5rem 1.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -8%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+        }
+
+        .meta-item i {
+            font-size: 0.85rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Translation Notice */
+        .translation-notice {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1.2rem;
+            margin: 0;
+        }
+
+        .translation-notice-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .translation-text h3 {
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .translation-text p {
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        .translator-badge {
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(26, 107, 202, 0.2);
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+        }
+
+        @media (max-width: 850px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            padding-left: 1rem;
+        }
+
+        .toc {
+            position: sticky;
+            top: 1rem;
+        }
+
+        .toc-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .toc-header i {
+            font-size: 0.9rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.4rem;
+            position: relative;
+        }
+
+        .toc-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            transition: var(--transition);
+            border-left: 2px solid transparent;
+            padding-left: 8px;
+        }
+
+        .toc-link:hover {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            transform: translateX(2px);
+        }
+
+        .toc-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .toc-number {
+            font-weight: 500;
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            min-width: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-right: 1.2rem;
+            padding-left: 0;
+        }
+
+        @media (max-width: 850px) {
+            .sidebar {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 0 1rem;
+            }
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 1.5rem 0 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: relative;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 35px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        h2 a {
+            color: var(--accent);
+            font-size: 0.7rem;
+            margin-left: 6px;
+            text-decoration: none;
+        }
+
+        h2 a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            color: var(--gray-900);
+            line-height: 1.65;
+        }
+
+        /* Equation Styling */
+        .equation-container {
+            margin: 0.8rem 0;
+        }
+
+        .equation {
+            background: var(--primary-light);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1rem;
+            border-radius: 0 5px 5px 0;
+            font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', serif;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .equation-number {
+            color: var(--primary);
+            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin-right: 6px;
+            display: inline-block;
+            min-width: 18px;
+        }
+
+        /* Code Block Styling */
+        .code-container {
+            margin: 1rem 0;
+            background: #2d2d2d;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .code-header {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 0.6rem 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .code-content {
+            padding: 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #f8f8f2;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+        }
+
+        /* Reference Box */
+        .reference-box {
+            background: linear-gradient(to right, #f8fafc, var(--primary-light));
+            border: 1px solid var(--gray-200);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .reference-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .reference-header i {
+            font-size: 0.9rem;
+        }
+
+        .reference-list {
+            list-style: none;
+        }
+
+        .reference-item {
+            padding: 0.3rem 0 0.3rem 0.8rem;
+            position: relative;
+            margin-bottom: 0.4rem;
+            color: var(--gray-700);
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .reference-item::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 0.65rem;
+        }
+
+        /* Citation Section */
+        .citation-section {
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .citation-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .citation-box {
+            background: var(--white);
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid var(--gray-300);
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-top: 0.6rem;
+            overflow-x: auto;
+            color: var(--gray-900);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--secondary);
+            color: white;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .translation-credit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 6px 16px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(26, 107, 202, 0.2);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            margin-top: 0.6rem;
+        }
+
+        /* Utility Classes */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-light), #e8f2ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .math {
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.1s ease;
+            z-index: 1000;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 1rem 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 0.6rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem 0;
+            }
+            
+            .main-content {
+                padding-right: 0.8rem;
+            }
+            
+            .sidebar {
+                padding-left: 0.8rem;
+            }
+            
+            .meta-info {
+                gap: 0.6rem;
+            }
+            
+            .meta-item {
+                font-size: 0.75rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .translation-notice-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .translator-badge {
+                align-self: flex-start;
+            }
+        }
+
+        /* Links styling */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Optimize long formula display */
+        .equation {
+            word-break: break-word;
+        }
+        
+        /* Optimize list display */
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.3rem;
+            line-height: 1.5;
+        }
+        
+        /* Optimize math formula spacing */
+        .MathJax_Display {
+            margin: 0.6em 0 !important;
+        }
+        
+        /* Image container styling */
+        .pic-container {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+        
+        .pic-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .typecho-caption {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        
+        /* Quote block styling */
+        blockquote.cite {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+        }
+        
+        blockquote.cite div {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        blockquote.cite a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        /* Blockquote styling */
+        blockquote {
+            background: linear-gradient(to right, var(--gray-100), var(--primary-light));
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+            position: relative;
+        }
+
+        blockquote p {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+
+        blockquote p:before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Underline styling */
+        u {
+            text-decoration: none;
+            border-bottom: 1px dotted var(--primary);
+        }
+
+        /* List styling inside main content */
+        .main-content ol, .main-content ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .main-content li {
+            margin-bottom: 0.4rem;
+            line-height: 1.6;
+        }
+
+        /* Highlight box for important notes */
+        .note-box {
+            background: linear-gradient(to right, #fff8e1, #fff3cd);
+            border-left: 3px solid #ffc107;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .note-box strong {
+            color: #856404;
+        }
+
+        /* Definition list styling */
+        .definition {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 3px solid #4caf50;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .definition-header {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Mathematical proof styling */
+        .proof {
+            background: linear-gradient(to right, #f3e5f5, #f8f4ff);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .proof-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Insight box styling */
+        .insight-box {
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+            border-left: 3px solid #1976d2;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .insight-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Analysis box styling */
+        .analysis-box {
+            background: linear-gradient(to right, #fff3e0, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .analysis-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Technical box styling */
+        .technical-box {
+            background: linear-gradient(to right, #fce4ec, #f8bbd9);
+            border-left: 3px solid #e91e63;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .technical-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>Rethinking Learning Rate and Batch Size (Part 4): EMA Effects</h1>
+                <div class="subtitle">Analyzing how Exponential Moving Averages in optimizers affect learning rate scaling laws, with implications for Adam, SGDM, and the Surge phenomenon</div>
+                
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>Su Jianlin</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-eye"></i>
+                        <span>Scientific Spaces</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <div class="tag">EMA Analysis</div>
+                        <div class="tag">Momentum Effects</div>
+                        <div class="tag">Adam Optimization</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Translation Notice -->
+        <div class="translation-notice">
+            <div class="translation-notice-content">
+                <div class="translation-text">
+                    <h3><i class="fas fa-language"></i> Academic Translation</h3>
+                    <p>This is an academic English translation maintaining technical accuracy while adapting to English academic conventions.</p>
+                </div>
+                <div class="translator-badge">
+                    <i class="fas fa-user-graduate"></i>
+                    Translated by Juanxi Tian (ScalingOpt Team)
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Sidebar Table of Contents -->
+            <aside class="sidebar">
+                <nav class="toc">
+                    <div class="toc-header">
+                        <i class="fas fa-list"></i>
+                        Contents
+                    </div>
+                    <ul class="toc-list">
+                        <li class="toc-item">
+                            <a href="#problem-analysis" class="toc-link">
+                                <span class="toc-number">1</span>
+                                <span>Problem Analysis</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#gradient-descent" class="toc-link">
+                                <span class="toc-number">2</span>
+                                <span>Gradient Descent</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#batch-size-amplification" class="toc-link">
+                                <span class="toc-number">3</span>
+                                <span>Batch Size Amplification</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#signed-momentum" class="toc-link">
+                                <span class="toc-number">4</span>
+                                <span>Signed Momentum</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#double-smoothing" class="toc-link">
+                                <span class="toc-number">5</span>
+                                <span>Double Smoothing</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#two-special-cases" class="toc-link">
+                                <span class="toc-number">6</span>
+                                <span>Two Special Cases</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#general-analysis" class="toc-link">
+                                <span class="toc-number">7</span>
+                                <span>General Analysis</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#summary" class="toc-link">
+                                <span class="toc-number">8</span>
+                                <span>Summary</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Article Content -->
+            <main class="main-content">
+                <p>In <a href="/archives/11280" target="_blank">"Rethinking Learning Rate and Batch Size (Part 2): Mean Field Theory"</a>, we mentioned that one reason for focusing on SignSGD is that we typically use it as a theoretical approximation for Adam—a common simplification strategy when analyzing Adam theoretically. Beyond learning rate analysis, we have also employed this simplification in contexts such as <a href="/archives/10001" target="_blank">"Configuring Different Learning Rates: Can LoRA Improve Further?"</a> and <a href="/archives/10770" target="_blank">"Exploring MuP: Cross-Model Scale Transfer of Hyperparameters"</a>.</p>
+                
+                <p>However, is SignSGD truly a good approximation for Adam? An obvious discrepancy is that SignSGD's Update RMS is always 1, whereas Adam's is not. I discovered that the core reason for this difference is momentum, which is ubiquitous in optimizers like Adam, Lion, and Muon. Therefore, in this article, we examine the effects of momentum—more broadly, Exponential Moving Averages (EMA).</p>
+                
+                <h2 id="problem-analysis">Problem Analysis<a href="#problem-analysis">#</a></h2>
+                
+                <p>From the perspective of Adam, SignSGD corresponds to the special case where $\beta_1=\beta_2=0$, or corresponds to Adam's first update step (regardless of $\beta_1,\beta_2$). Therefore, we believe it must share some commonalities with Adam and can capture some general patterns.</p>
+                
+                <div class="analysis-box">
+                    <div class="analysis-header">
+                        <i class="fas fa-balance-scale"></i>
+                        Key Differences Between SignSGD and Adam
+                    </div>
+                    <p><strong>Update RMS Discrepancy:</strong> SignSGD always has an Update RMS of 1, while Adam's is typically significantly less than 1.</p>
+                    <p><strong>Behavioral Similarity:</strong> Adam appears closer to SGD—it seems like an intermediate version between SignSGD and SGD.</p>
+                    <p><strong>Initial Hypothesis:</strong> Initially, I thought this difference was caused by $\epsilon$ in Adam's denominator, so I specifically calculated SoftSignSGD with $\epsilon$ in <a href="/archives/10563" target="_blank">"How Does Adam's Epsilon Affect Learning Rate Scaling Laws?"</a>.</p>
+                    <p><strong>Later Realization:</strong> In <a href="/archives/11267" target="_blank">"Why is Adam's Update RMS 0.2?"</a>, we estimated Adam's Update RMS through both simulation and theory. The mean field approximation estimate was $\sqrt{\frac{1-\beta_1}{1+\beta_1}}$, which was verified to align well with both simulation results and actual experiments. This result explicitly depends on $\beta_1$, clearly directing our thinking toward momentum.</p>
+                </div>
+                
+                <p>This leads to the following analytical process. In summary, we can confirm that the role of $\epsilon$ is indeed secondary; the true protagonist is actually momentum—which is essentially a "moving average" of gradients—and this is precisely the main focus of this article: "EMA (Exponential Moving Average)".</p>
+                
+                <h2 id="gradient-descent">Gradient Descent<a href="#gradient-descent">#</a></h2>
+                
+                <p>To analyze the variations introduced by EMA, we start with SGDM (SGD with momentum). In practice, when using SGD, it is rare not to include momentum:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(1)</span>
+                        \[
+                        \begin{aligned}
+                        &\boldsymbol{m}_t = \beta_1 \boldsymbol{m}_{t-1} + \left(1 - \beta_1\right) \boldsymbol{g}_t \\[4pt]
+                        &\boldsymbol{w}_t = \boldsymbol{w}_{t-1} - \eta_t \boldsymbol{m}_t
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>In practical use, $\boldsymbol{g}_t$ is replaced by $\tilde{\boldsymbol{g}}_{B,t}$, a random variable with mean $\boldsymbol{g}_t$ and covariance matrix $\boldsymbol{\Sigma}_t/B$. These basic settings are the same as in <a href="/archives/11260" target="_blank">"Rethinking Learning Rate and Batch Size (Part 1): Current Landscape"</a>. The noise here arises from randomly sampling different batches, so we can reasonably assume that $\tilde{\boldsymbol{g}}_{B,t}$ across different $t$ are mutually independent.</p>
+                
+                <p>Our task is to compute:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(2)</span>
+                        \[
+                        \newcommand{tr}{\mathop{\text{tr}}}\eta^* \approx \frac{\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]^{\top}\boldsymbol{g}}{\tr(\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]\boldsymbol{H})}
+                        \]
+                    </div>
+                </div>
+                
+                <p>The related derivations have been provided in previous articles and won't be repeated here. For SGDM, $\tilde{\boldsymbol{\varphi}}_B = \boldsymbol{m}_t$, which can be expanded as:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(3)</span>
+                        \[
+                        \boldsymbol{m}_t = (1 - \beta_1)\sum\limits_{s=1}^t \beta_1^{t-s}\tilde{\boldsymbol{g}}_{B,s}
+                        \]
+                    </div>
+                </div>
+                
+                <h2 id="batch-size-amplification">Batch Size Amplification<a href="#batch-size-amplification">#</a></h2>
+                
+                <p>Now we can compute:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(4)</span>
+                        \[
+                        \mathbb{E}[\boldsymbol{m}_t] = (1 - \beta_1)\sum_{s=1}^t \beta_1^{t-s}\mathbb{E}[\tilde{\boldsymbol{g}}_{B,s}] = (1 - \beta_1)\sum_{s=1}^t \beta_1^{t-s}\boldsymbol{g}_s
+                        \]
+                    </div>
+                </div>
+                
+                <p>We further assume that when model training enters a "steady state," the gradient changes slowly. Thus, we can approximate $\boldsymbol{g}_s$ with the current gradient $\boldsymbol{g}_t$, yielding:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(5)</span>
+                        \[
+                        \mathbb{E}[\boldsymbol{m}_t] = (1 - \beta_1)\sum_{s=1}^t \beta_1^{t-s}\boldsymbol{g}_t = (1 - \beta_1^t) \boldsymbol{g}_t \approx \boldsymbol{g}_t \qquad (t\to\infty)
+                        \]
+                    </div>
+                </div>
+                
+                <p>As for $\mathbb{E}[\boldsymbol{m}_t \boldsymbol{m}_t^{\top}]$, we use the identity $\mathbb{E}[\boldsymbol{m}_t \boldsymbol{m}_t^{\top}] = \mathbb{E}[\boldsymbol{m}_t] \mathbb{E}[\boldsymbol{m}_t]^{\top} + \mathbb{C}\text{ov}[\boldsymbol{m}_t,\boldsymbol{m}_t]$, then utilize the additivity of variance:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(6)</span>
+                        \[
+                        \mathbb{C}\text{ov}[\boldsymbol{m}_t,\boldsymbol{m}_t] = (1 - \beta_1)^2\sum_{s=1}^t \beta_1^{2(t-s)}\boldsymbol{\Sigma}_s/B
+                        \]
+                    </div>
+                </div>
+                
+                <p>Similarly, assuming slow variation of the covariance matrix, we have:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(7)</span>
+                        \[
+                        \mathbb{C}\text{ov}[\boldsymbol{m}_t] \approx (1 - \beta_1)^2\sum_{s=1}^t \beta_1^{2(t-s)}\boldsymbol{\Sigma}_t/B = (1 - \beta_1)^2\frac{1-\beta_1^{2t}}{1-\beta_1^2}\boldsymbol{\Sigma}_t/B = \frac{1 - \beta_1}{1 + \beta_1}\boldsymbol{\Sigma}_t/B \qquad (t\to\infty)
+                        \]
+                    </div>
+                </div>
+                
+                <p>Substituting into equation (2) yields:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(8)</span>
+                        \[
+                        \eta^* \approx \frac{\eta_{\max}}{1 + \frac{1 - \beta_1}{1 + \beta_1}\mathcal{B}_{\text{noise}}/B},\qquad \eta_{\max} = \frac{\boldsymbol{g}^{\top}\boldsymbol{g}}{\boldsymbol{g}^{\top}\boldsymbol{H}\boldsymbol{g}},\quad\mathcal{B}_{\text{noise}} = \frac{\tr(\boldsymbol{\Sigma}\boldsymbol{H})}{\boldsymbol{g}^{\top}\boldsymbol{H}\boldsymbol{g}}
+                        \]
+                    </div>
+                </div>
+                
+                <div class="insight-box">
+                    <div class="insight-header">
+                        <i class="fas fa-search-plus"></i>
+                        Key Insight: Momentum as Batch Size Amplification
+                    </div>
+                    <p>From this result, we can see that introducing the momentum mechanism effectively amplifies SGD's batch size by a factor of $\frac{1 + \beta_1}{1 - \beta_1}$. According to my understanding, momentum reduces gradient noise by applying EMA to gradients along the optimization trajectory at low cost, so this result aligns with my interpretation of momentum's purpose.</p>
+                </div>
+                
+                <h2 id="signed-momentum">Signed Momentum<a href="#signed-momentum">#</a></h2>
+                
+                <p>Further, we consider SignSGDM, which can be viewed as a special case of <a href="/archives/9473" target="_blank">Lion</a>—essentially SGDM with an added $\newcommand{sign}{\mathop{\text{sign}}}\sign$:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(9)</span>
+                        \[
+                        \begin{aligned}
+                        &\boldsymbol{m}_t = \beta_1 \boldsymbol{m}_{t-1} + \left(1 - \beta_1\right) \boldsymbol{g}_t \\[4pt]
+                        &\boldsymbol{w}_t = \boldsymbol{w}_{t-1} - \eta_t \sign(\boldsymbol{m}_t)
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>In actual training, $\boldsymbol{g}_t$ is similarly replaced by $\tilde{\boldsymbol{g}}_{B,t}$. For SignSGDM, $\tilde{\boldsymbol{\varphi}}_B = \sign(\boldsymbol{m}_t)$. Using the mean field approximation:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(10)</span>
+                        \[
+                        \mathbb{E}[\tilde{\boldsymbol{\varphi}}_B] = \mathbb{E}\bigg[\frac{\boldsymbol{m}_t}{\sqrt{\boldsymbol{m}_t^2}}\bigg]\approx \frac{\mathbb{E}[\boldsymbol{m}_t]}{\sqrt{\mathbb{E}[\boldsymbol{m}_t^2]}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Here, vector multiplication defaults to the Hadamard product. The numerator $\mathbb{E}[\boldsymbol{m}_t]$ was computed in the previous section. The denominator $\mathbb{E}[\boldsymbol{m}_t^2]$ actually equals $\newcommand{diag}{\mathop{\text{diag}}}\diag(\mathbb{E}[\boldsymbol{m}_t \boldsymbol{m}_t^{\top}])$, so we can substitute the results from the previous section to obtain:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(11)</span>
+                        \[
+                        \mathbb{E}[\tilde{\boldsymbol{\varphi}}_B] \approx \frac{\boldsymbol{g}_t}{\sqrt{\boldsymbol{g}_t^2 + \frac{1 - \beta_1}{1 + \beta_1}\boldsymbol{\sigma}_t^2/B}} = \frac{\sign(\boldsymbol{g}_t)}{\sqrt{1 + \frac{1 - \beta_1}{1 + \beta_1}(\boldsymbol{\sigma}_t^2/\boldsymbol{g}_t^2)/B}} \approx \frac{\sign(\boldsymbol{g}_t)}{\sqrt{1 + \frac{1 - \beta_1}{1 + \beta_1} \mathcal{B}_{\text{simple}}/B}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>where $\boldsymbol{\sigma}_t^2 = \diag(\boldsymbol{\Sigma}_t)$, and $\mathcal{B}_{\text{simple}} = \tr(\boldsymbol{\Sigma}_t)/\boldsymbol{g}_t^{\top}\boldsymbol{g}_t$. The above equation is equivalent to SignSGD with $B$ replaced by $\frac{1 + \beta_1}{1 - \beta_1}B$. If we further compute $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]$, we would find the same conclusion. Thus, similar to SGDM, momentum effectively amplifies SignSGD's batch size by a factor of $\frac{1 + \beta_1}{1 - \beta_1}$.</p>
+                
+                <p>In <a href="/archives/11285" target="_blank">"Rethinking Learning Rate and Batch Size (Part 3): Muon"</a>, we calculated Muon's learning rate scaling pattern and found it to be consistent with SignSGD. Therefore, we can assert that the role of momentum in Muon is similar to that in SignSGDM—both approximately amplify the batch size by a factor of $\frac{1 + \beta_1}{1 - \beta_1}$.</p>
+                
+                <h2 id="double-smoothing">Double Smoothing<a href="#double-smoothing">#</a></h2>
+                
+                <p>Finally, we examine Adam:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(12)</span>
+                        \[
+                        \begin{aligned}
+                        &\boldsymbol{m}_t = \beta_1 \boldsymbol{m}_{t-1} + \left(1 - \beta_1\right) \boldsymbol{g}_t\\
+                        &\boldsymbol{v}_t = \beta_2 \boldsymbol{v}_{t-1} + \left(1 - \beta_2\right) \boldsymbol{g}_t^2\\
+                        &\hat{\boldsymbol{m}}_t = \boldsymbol{m}_t\left/\left(1 - \beta_1^t\right)\right.\\
+                        &\hat{\boldsymbol{v}}_t = \boldsymbol{v}_t\left/\left(1 - \beta_2^t\right)\right.\\
+                        &\boldsymbol{\theta}_t = \boldsymbol{\theta}_{t-1} - \eta_t \hat{\boldsymbol{m}}_t\left/\left(\sqrt{\hat{\boldsymbol{v}}_t} + \epsilon\right)\right.
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>In actual training, $\boldsymbol{g}_t$ is replaced by $\tilde{\boldsymbol{g}}_{B,t}$. We consider the state where training has already entered a "steady state," i.e., $t\to\infty$, so we do not distinguish between $\boldsymbol{m}_t$ and $\hat{\boldsymbol{m}}_t$, or between $\boldsymbol{v}_t$ and $\hat{\boldsymbol{v}}_t$. Additionally, to focus on the effect of EMA, we set $\epsilon = 0$. Then for Adam, $\tilde{\boldsymbol{\varphi}}_B=\boldsymbol{m}_t/\sqrt{\boldsymbol{v}_t}$. The difference from SignSGDM is that the denominator $\boldsymbol{m}_t^2$ is replaced by another EMA statistic $\boldsymbol{v}_t$.</p>
+                
+                <p>Using the mean field approximation:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(13)</span>
+                        \[
+                        \mathbb{E}[\tilde{\boldsymbol{\varphi}}_B] = \mathbb{E}\bigg[\frac{\boldsymbol{m}_t}{\sqrt{\boldsymbol{v}_t}}\bigg]\approx \frac{\mathbb{E}[\boldsymbol{m}_t]}{\sqrt{\mathbb{E}[\boldsymbol{v}_t]}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>We have already computed $\mathbb{E}[\boldsymbol{m}_t]$, so we only need to compute $\mathbb{E}[\boldsymbol{v}_t]$:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(14)</span>
+                        \[
+                        \mathbb{E}[\boldsymbol{v}_t] = (1 - \beta_2)\sum_{s=1}^t \beta_2^{t-s}\mathbb{E}[\tilde{\boldsymbol{g}}_{B,s}^2] = (1 - \beta_2)\sum_{s=1}^t \beta_2^{t-s}(\boldsymbol{g}_s^2 + \boldsymbol{\sigma}_s^2/B)\approx \boldsymbol{g}_t^2 + \boldsymbol{\sigma}_t^2/B
+                        \]
+                    </div>
+                </div>
+                
+                <p>As before, the last approximation assumes slow variation of gradients and variances, and $t\to\infty$. Thus, we have:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(15)</span>
+                        \[
+                        \mathbb{E}[\tilde{\boldsymbol{\varphi}}_B] \approx \frac{\boldsymbol{g}_t}{\sqrt{\boldsymbol{g}_t^2 + \boldsymbol{\sigma}_t^2/B}} \approx \frac{\sign(\boldsymbol{g}_t)}{\sqrt{1 + \mathcal{B}_{\text{simple}}/B}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>This result is indeed identical to SignSGD, so from the perspective of the first moment, SignSGD as an approximation for Adam is reasonable. However, we also have the second moment $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B \tilde{\boldsymbol{\varphi}}_B^{\top}]$. Under the assumption of component independence, we only need to compute $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B^2]$:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(16)</span>
+                        \[
+                        \mathbb{E}[\tilde{\boldsymbol{\varphi}}_B^2] = \mathbb{E}\bigg[\frac{\boldsymbol{m}_t^2}{\boldsymbol{v}_t}\bigg]\approx \frac{\mathbb{E}[\boldsymbol{m}_t^2]}{\mathbb{E}[\boldsymbol{v}_t]} \approx \frac{\boldsymbol{g}_t^2 + \frac{1 - \beta_1}{1 + \beta_1}\boldsymbol{\sigma}_t^2/B}{\boldsymbol{g}_t^2 + \boldsymbol{\sigma}_t^2/B}
+                        \]
+                    </div>
+                </div>
+                
+                <h2 id="two-special-cases">Two Special Cases<a href="#two-special-cases">#</a></h2>
+                
+                <p>We examine two special cases. First, when $\beta_1=0$, the numerator and denominator are identical, making $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B^2]$ a vector of all ones—consistent with SignSGD. Therefore, SignSGD is a good approximation for Adam with $\beta_1=0$—which is <a href="https://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf" target="_blank">RMSProp</a>. As $\beta_1$ increases, the approximation quality begins to degrade.</p>
+                
+                <p>When $\beta_1=1$, we have:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(17)</span>
+                        \[
+                        \mathbb{E}[\tilde{\boldsymbol{\varphi}}_B^2] \approx \frac{\boldsymbol{g}_t^2}{\boldsymbol{g}_t^2 + \boldsymbol{\sigma}_t^2/B}\approx \mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]^2
+                        \]
+                    </div>
+                </div>
+                
+                <p>This yields $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B \tilde{\boldsymbol{\varphi}}_B^{\top}] \approx \mathbb{E}[\tilde{\boldsymbol{\varphi}}_B] \mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]^{\top}$. Substituting into equation (2):</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(18)</span>
+                        \[
+                        \eta^* \approx \frac{\Vert \boldsymbol{g}\Vert_1 \sqrt{1 + \mathcal{B}_{\text{simple}}/B}}{\sign(\boldsymbol{g})^{\top} \boldsymbol{H} \sign(\boldsymbol{g})}
+                        \]
+                    </div>
+                </div>
+                
+                <div class="technical-box">
+                    <div class="technical-header">
+                        <i class="fas fa-chart-line"></i>
+                        Critical Implication: Surge Phenomenon Acceleration
+                    </div>
+                    <p>Note that this is a monotonically decreasing function with respect to $B$, meaning that when batch size increases, the learning rate should decrease. From this, we can infer that increasing $\beta_1$ in Adam will accelerate the emergence of the "<a href="/archives/11280#anomalous-phenomenon" target="_blank">Surge phenomenon</a>."</p>
+                    
+                    <p>This conclusion might seem somewhat puzzling at first, but it becomes understandable from another perspective. The "Surge phenomenon" refers to the situation where, after batch size exceeds a certain threshold, the optimal learning rate decreases as batch size increases. The previous results for SGDM and SignSGDM indicate that introducing momentum effectively amplifies batch size by a factor of $\frac{1 + \beta_1}{1 - \beta_1} > 1$, which naturally increases the likelihood of exceeding the threshold.</p>
+                    
+                    <p>In other words, the conclusion that "as $\beta_1$ increases, the 'Surge phenomenon' becomes more likely to occur" holds even for SignSGDM. While Adam has some new characteristics compared to SignSGDM, the fundamental point that "the momentum mechanism effectively amplifies batch size" remains valid, making the same conclusion understandable.</p>
+                </div>
+                
+                <h2 id="general-analysis">General Analysis<a href="#general-analysis">#</a></h2>
+                
+                <p>Let's rewrite equation (16):</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(19)</span>
+                        \[
+                        \mathbb{E}[\tilde{\boldsymbol{\varphi}}_B^2] \approx \frac{\boldsymbol{g}_t^2 + \frac{1 - \beta_1}{1 + \beta_1}\boldsymbol{\sigma}_t^2/B}{\boldsymbol{g}_t^2 + \boldsymbol{\sigma}_t^2/B} = \frac{2\beta_1}{1+\beta_1}\frac{\boldsymbol{g}_t^2}{\boldsymbol{g}_t^2 + \boldsymbol{\sigma}_t^2/B} + \frac{1 - \beta_1}{1 + \beta_1} \approx \frac{2\beta_1}{1+\beta_1}\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]^2 + \frac{1 - \beta_1}{1 + \beta_1}
+                        \]
+                    </div>
+                </div>
+                
+                <p>From this, we can write:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(20)</span>
+                        \[
+                        \mathbb{E}[\tilde{\boldsymbol{\varphi}}_B \tilde{\boldsymbol{\varphi}}_B^{\top}] \approx \mathbb{E}[\tilde{\boldsymbol{\varphi}}_B] \mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]^{\top} + \frac{1 - \beta_1}{1 + \beta_1}\diag\left(1 - \mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]^2\right)
+                        \]
+                    </div>
+                </div>
+                
+                <p>Then:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(21)</span>
+                        \[
+                        \eta^* \approx \frac{\sum_i |g_i|}{\frac{1}{\beta}\frac{1 - \beta_1}{1 + \beta_1}\sum_i H_{i,i} + \beta\left(\sum_{i,j} H_{i,j}\sign(g_i g_j) - \frac{1 - \beta_1}{1 + \beta_1}\sum_i H_{i,i}\right)}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Here, the subscriptless $\beta$ equals $(1 + \mathcal{B}_{\text{simple}}/B)^{-1/2}$. Without careful reading, this might be confused with $\beta_1,\beta_2$—I apologize, as this is notation from the previous two articles and we continue using it here. Unlike SignSGD, where assuming a diagonal Hessian matrix eliminates the Surge phenomenon, the above expression still exhibits the Surge phenomenon even under a diagonal Hessian assumption. In that case:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(22)</span>
+                        \[
+                        \eta^* \approx \frac{\sum_i |g_i|}{\left(\frac{1}{\beta}\frac{1 - \beta_1}{1 + \beta_1} + \beta\frac{2\beta_1}{1 + \beta_1}\right)\sum_i H_{i,i}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>By the inequality of arithmetic and geometric means, the above expression reaches its maximum at $\beta^*=\sqrt{\frac{1-\beta_1}{2\beta_1}}$. However, note that by definition $\beta\in(0,1)$, so we must also check whether $\beta^*\in(0,1)$, i.e., $\beta_1 > 1/3$. If this condition is not satisfied, the maximum still occurs at $\beta=1$, and there is no Surge phenomenon. Conversely, when $\beta_1 > 1/3$ and $\beta > \beta^*$ (i.e., $B > \frac{1-\beta_1}{3\beta_1-1}\mathcal{B}_{\text{simple}}$), the learning rate should decrease as batch size increases.</p>
+                
+                <div class="insight-box">
+                    <div class="insight-header">
+                        <i class="fas fa-lightbulb"></i>
+                        Explaining Muon's Superior Batch Size Performance
+                    </div>
+                    <p>This conclusion can preliminarily explain why Muon supports larger batch sizes. As shown in <a href="/archives/11285" target="_blank">"Rethinking Learning Rate and Batch Size (Part 3): Muon"</a>, Muon's behavior is similar to SignSGDM. Under specific Hessian structure assumptions, it does not exhibit the Surge phenomenon, meaning that increasing batch size can always improve learning efficiency, although the relative gains diminish.</p>
+                    
+                    <p>In contrast, Adam under common settings (e.g., $\beta_1=0.9$), even assuming a diagonal Hessian, exhibits the Surge phenomenon. This means that once batch size exceeds a certain value, learning efficiency declines.</p>
+                </div>
+                
+                <h2 id="summary">Summary<a href="#summary">#</a></h2>
+                
+                <p>This article provides a preliminary analysis of how the EMA mechanism in optimizers affects learning rate and batch size scaling laws. It confirms that EMA, particularly the momentum mechanism, subtly alters scaling laws. Optimizers like Adam, which involve dual EMA operations, exhibit some new characteristics distinct from SignSGD.</p>
+
+                <div class="citation-section">
+                    <div class="citation-header">
+                        <i class="fas fa-quote-right"></i>
+                        Citation Information
+                    </div>
+                    <p><strong>Original Article:</strong> Su Jianlin. Rethinking Learning Rate and Batch Size (Part 4): EMA Effects. <em>Scientific Spaces</em>.</p>
+                    
+                    <p><strong>How to cite this translation:</strong></p>
+                    <div class="citation-box">
+                        Su, J. Rethinking Learning Rate and Batch Size (Part 4): EMA Effects [Translated by Juanxi Tian]. 
+                        <em>Scientific Spaces</em>.
+                    </div>
+                    <p style="margin-top: 0.8rem;"><strong>BibTeX:</strong></p>
+                    <div class="citation-box">
+                        @article{su2025rethinking_lr_bs_part4,
+                            title   = {Rethinking Learning Rate and Batch Size (Part 4): EMA Effects},
+                            author  = {Su, Jianlin},
+                            journal = {Scientific Spaces},
+                            year    = {2025},
+                            url     = {https://kexue.fm/archives/11301},
+                            note    = {Translated by Juanxi Tian (ScalingOpt Team)}
+                          }
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="translation-credit">
+                <i class="fas fa-user-graduate"></i>
+                Academic Translation by Juanxi Tian (ScalingOpt Team)
+            </div>
+            <div class="copyright">
+                © 2009-2025 Scientific Spaces. All rights reserved.<br>
+                Original content licensed under Creative Commons BY-NC-ND 2.5 China
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript for Interactive Features -->
+    <script>
+        // Scroll Progress Bar
+        window.addEventListener('scroll', function() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            scrollProgress.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Table of Contents Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            const sections = document.querySelectorAll('h2[id]');
+            
+            // Set active section based on scroll position
+            function setActiveSection() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 50)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', setActiveSection);
+            setActiveSection(); // Initial call
+            
+            // Smooth scroll for TOC links
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 50,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+
+        // MathJax Configuration
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                tags: 'ams'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    
+    <!-- MathJax CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</body>
+</html>

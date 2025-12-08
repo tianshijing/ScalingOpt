@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Higher-Order MuP: A More Concise Yet Profound Spectral Condition Scaling | Scientific Spaces</title>
+    <meta name="description" content="An in-depth analysis of the Spectral Condition approach for cross-model hyperparameter transfer, providing a more intuitive and concise framework than standard MuP while yielding richer theoretical insights into initialization and learning rate scaling laws.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a6bca;
+            --primary-dark: #1357a8;
+            --primary-light: #e8f1fc;
+            --secondary: #2c3e50;
+            --accent: #3498db;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f5f7fa;
+            --gray-200: #e4e7eb;
+            --gray-300: #cbd2d9;
+            --gray-600: #7b8794;
+            --gray-700: #52606d;
+            --gray-900: #323f4b;
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 6px 24px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: #f0f5fc;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.5rem 1.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -8%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+        }
+
+        .meta-item i {
+            font-size: 0.85rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Translation Notice */
+        .translation-notice {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1.2rem;
+            margin: 0;
+        }
+
+        .translation-notice-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .translation-text h3 {
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .translation-text p {
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        .translator-badge {
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(26, 107, 202, 0.2);
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+        }
+
+        @media (max-width: 850px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            padding-left: 1rem;
+        }
+
+        .toc {
+            position: sticky;
+            top: 1rem;
+        }
+
+        .toc-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .toc-header i {
+            font-size: 0.9rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.4rem;
+            position: relative;
+        }
+
+        .toc-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            transition: var(--transition);
+            border-left: 2px solid transparent;
+            padding-left: 8px;
+        }
+
+        .toc-link:hover {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            transform: translateX(2px);
+        }
+
+        .toc-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .toc-number {
+            font-weight: 500;
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            min-width: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-right: 1.2rem;
+            padding-left: 0;
+        }
+
+        @media (max-width: 850px) {
+            .sidebar {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 0 1rem;
+            }
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 1.5rem 0 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: relative;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 35px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        h2 a {
+            color: var(--accent);
+            font-size: 0.7rem;
+            margin-left: 6px;
+            text-decoration: none;
+        }
+
+        h2 a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            color: var(--gray-900);
+            line-height: 1.65;
+        }
+
+        /* Equation Styling */
+        .equation-container {
+            margin: 0.8rem 0;
+        }
+
+        .equation {
+            background: var(--primary-light);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1rem;
+            border-radius: 0 5px 5px 0;
+            font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', serif;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .equation-number {
+            color: var(--primary);
+            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin-right: 6px;
+            display: inline-block;
+            min-width: 18px;
+        }
+
+        .equation-ref {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            border-bottom: 1px dotted var(--primary);
+        }
+
+        .equation-ref:hover {
+            text-decoration: none;
+            border-bottom: 1px solid var(--primary);
+        }
+
+        /* Code Block Styling */
+        .code-container {
+            margin: 1rem 0;
+            background: #2d2d2d;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .code-header {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 0.6rem 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .code-content {
+            padding: 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #f8f8f2;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+        }
+
+        /* Reference Box */
+        .reference-box {
+            background: linear-gradient(to right, #f8fafc, var(--primary-light));
+            border: 1px solid var(--gray-200);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .reference-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .reference-header i {
+            font-size: 0.9rem;
+        }
+
+        .reference-list {
+            list-style: none;
+        }
+
+        .reference-item {
+            padding: 0.3rem 0 0.3rem 0.8rem;
+            position: relative;
+            margin-bottom: 0.4rem;
+            color: var(--gray-700);
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .reference-item::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 0.65rem;
+        }
+
+        /* Citation Section */
+        .citation-section {
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .citation-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .citation-box {
+            background: var(--white);
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid var(--gray-300);
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-top: 0.6rem;
+            overflow-x: auto;
+            color: var(--gray-900);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--secondary);
+            color: white;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .translation-credit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 6px 16px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(26, 107, 202, 0.2);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            margin-top: 0.6rem;
+        }
+
+        /* Utility Classes */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-light), #e8f2ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .math {
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.1s ease;
+            z-index: 1000;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 1rem 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 0.6rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem 0;
+            }
+            
+            .main-content {
+                padding-right: 0.8rem;
+            }
+            
+            .sidebar {
+                padding-left: 0.8rem;
+            }
+            
+            .meta-info {
+                gap: 0.6rem;
+            }
+            
+            .meta-item {
+                font-size: 0.75rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .translation-notice-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .translator-badge {
+                align-self: flex-start;
+            }
+        }
+
+        /* Links styling */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Optimize long formula display */
+        .equation {
+            word-break: break-word;
+        }
+        
+        /* Optimize list display */
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.3rem;
+            line-height: 1.5;
+        }
+        
+        /* Optimize math formula spacing */
+        .MathJax_Display {
+            margin: 0.6em 0 !important;
+        }
+        
+        /* Image container styling */
+        .pic-container {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+        
+        .pic-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .typecho-caption {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        
+        /* Definition Box */
+        .definition-box {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 3px solid #4caf50;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .definition-header {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Note Box */
+        .note-box {
+            background: linear-gradient(to right, #fff8e1, #fff3cd);
+            border-left: 3px solid #ffc107;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .note-header {
+            color: #856404;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Analysis Box */
+        .analysis-box {
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+            border-left: 3px solid #1976d2;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .analysis-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Result Box */
+        .result-box {
+            background: linear-gradient(to right, #f3e5f5, #f8f4ff);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .result-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Quote styling */
+        blockquote {
+            background: linear-gradient(to right, var(--gray-100), var(--primary-light));
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+        }
+
+        blockquote p {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Special quote styling */
+        blockquote.cite {
+            background: linear-gradient(to right, #e8f1fc, #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+        }
+
+        blockquote.cite div {
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 0.3rem;
+        }
+
+        /* Summary Table Styling */
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.85rem;
+            box-shadow: var(--shadow-md);
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .summary-table th {
+            background: var(--primary);
+            color: white;
+            padding: 0.8rem;
+            text-align: center;
+            font-weight: 600;
+            border: 1px solid var(--primary-dark);
+        }
+
+        .summary-table td {
+            padding: 0.8rem;
+            border: 1px solid var(--gray-300);
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .summary-table tr:nth-child(even) {
+            background: var(--gray-100);
+        }
+
+        .summary-table .section-header {
+            background: var(--primary-dark);
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Underline styling */
+        u {
+            text-decoration: none;
+            border-bottom: 1px dotted var(--primary);
+        }
+
+        /* Model Architecture Styling */
+        .model-architecture {
+            background: linear-gradient(to right, #fce4ec, #f8bbd9);
+            border-left: 3px solid #e91e63;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .model-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Mathematical Notation Box */
+        .notation-box {
+            background: linear-gradient(to right, #fff3e0, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.85rem;
+        }
+
+        .notation-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Key Insight Box */
+        .insight-box {
+            background: linear-gradient(to right, #f1f8e9, #e8f5e9);
+            border-left: 3px solid #8bc34a;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .insight-header {
+            color: #689f38;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Equation reference styling */
+        .eq-ref {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .eq-ref:hover {
+            text-decoration: underline;
+        }
+        
+        /* Large Summary Equation */
+        .large-summary-equation {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 1px solid var(--gray-300);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            overflow-x: auto;
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>Higher-Order MuP: A More Concise Yet Profound Spectral Condition Scaling</h1>
+                <div class="subtitle">A sophisticated spectral condition approach for cross-model hyperparameter transfer, providing intuitive algebraic insights into initialization and learning rate scaling laws</div>
+                
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>Su Jianlin</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-eye"></i>
+                        <span>Scientific Spaces</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <div class="tag">MuP</div>
+                        <div class="tag">Spectral Condition</div>
+                        <div class="tag">Scaling Laws</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Translation Notice -->
+        <div class="translation-notice">
+            <div class="translation-notice-content">
+                <div class="translation-text">
+                    <h3><i class="fas fa-language"></i> Academic Translation</h3>
+                    <p>This is an academic English translation maintaining technical accuracy while adapting to English academic conventions.</p>
+                </div>
+                <div class="translator-badge">
+                    <i class="fas fa-user-graduate"></i>
+                    Translated by Juanxi Tian (ScalingOpt Team)
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Sidebar Table of Contents -->
+            <aside class="sidebar">
+                <nav class="toc">
+                    <div class="toc-header">
+                        <i class="fas fa-list"></i>
+                        Contents
+                    </div>
+                    <ul class="toc-list">
+                        <li class="toc-item">
+                            <a href="#preparatory-work" class="toc-link">
+                                <span class="toc-number">1</span>
+                                <span>Preparatory Work</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#desired-properties" class="toc-link">
+                                <span class="toc-number">2</span>
+                                <span>Desired Properties</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#spectral-condition" class="toc-link">
+                                <span class="toc-number">3</span>
+                                <span>Spectral Condition</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#spectral-normalization" class="toc-link">
+                                <span class="toc-number">4</span>
+                                <span>Spectral Normalization</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#singular-value-clipping" class="toc-link">
+                                <span class="toc-number">5</span>
+                                <span>Singular Value Clipping</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#approximation-estimation" class="toc-link">
+                                <span class="toc-number">6</span>
+                                <span>Approximation Estimation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#learning-rate-strategy" class="toc-link">
+                                <span class="toc-number">7</span>
+                                <span>Learning Rate Strategy</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#article-summary" class="toc-link">
+                                <span class="toc-number">8</span>
+                                <span>Article Summary</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Article Content -->
+            <main class="main-content">
+                <p>In the article <a href="/archives/10770" target="_blank">"A Preliminary Exploration of MuP: Cross-Model Scaling Laws for Hyperparameters"</a>, we derived MuP (Maximal Update Parametrization) based on scale invariance in forward propagation, backward propagation, loss increment, and feature variation. For some readers, this process might still seem somewhat cumbersome, although it is significantly simplified compared to the original paper. It's worth noting that we introduced MuP relatively comprehensively within a single article, while the MuP paper is actually the fifth in the author's Tensor Programs series!</p>
+                
+                <div class="insight-box">
+                    <div class="insight-header">
+                        <i class="fas fa-lightbulb"></i>
+                        Key Advancement
+                    </div>
+                    <p>The good news is that in subsequent research <a href="https://papers.cool/arxiv/2310.17813" target="_blank">"A Spectral Condition for Feature Learning"</a>, the authors discovered a new approach (referred to as the "spectral condition") that is more intuitive and concise than both the original MuP derivation and our derivation, yet yields richer results than MuP. This can be considered a higher-order version of MuP—a representative work that is both concise and profound.</p>
+                </div>
+                
+                <h2 id="preparatory-work">Preparatory Work<a href="#preparatory-work">#</a></h2>
+                
+                <p>As the name suggests, the spectral condition is related to the spectral norm. Its starting point is a fundamental inequality of the spectral norm:</p>
+                
+                <div class="equation-container" id="eq-spec-ineq">
+                    <div class="equation">
+                        <span class="equation-number">(1)</span>
+                        \[
+                        \Vert\boldsymbol{x}\boldsymbol{W}\Vert_2\leq \Vert\boldsymbol{x}\Vert_2 \Vert\boldsymbol{W}\Vert_2
+                        \]
+                    </div>
+                </div>
+                
+                <p>where $\boldsymbol{x}\in\mathbb{R}^{d_{in}}, \boldsymbol{W}\in\mathbb{R}^{d_{in}\times d_{out}}$, and as for $\Vert\cdot\Vert_2$, we can call it the "$2$-norm". For $\boldsymbol{x},\boldsymbol{x}\boldsymbol{W}$, they are both vectors, so the $2$-norm is the vector length; while $\boldsymbol{W}$ is a matrix, and its $2$-norm is also called the spectral norm, which equals the smallest constant $C$ such that $\Vert\boldsymbol{x}\boldsymbol{W}\Vert_2\leq C\Vert\boldsymbol{x}\Vert_2$ holds for all $\boldsymbol{x}$. In other words, the above inequality is a direct consequence of the definition of spectral norm and requires no additional proof.</p>
+                
+                <p>Regarding spectral norm, readers can also refer to blog posts such as <a href="/archives/6051" target="_blank">"Lipschitz Constraints in Deep Learning: Generalization and Generative Models"</a>, <a href="/archives/10407#%E7%9F%A9%E9%98%B5%E8%8C%83%E6%95%B0" target="_blank">"The Path of Low-Rank Approximation (II): SVD"</a>, etc. We won't expand on it here. A matrix also has a simpler $F$-norm, which is a straightforward extension of vector length:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(2)</span>
+                        \[
+                        \Vert \boldsymbol{W}\Vert_F = \sqrt{\sum_{i=1}^{d_{in}}\sum_{j=1}^{d_{out}}W_{i,j}^2}
+                        \]
+                    </div>
+                </div>
+                
+                <p>From the perspective of singular values, the spectral norm equals the largest singular value of the matrix, while the $F$-norm equals the square root of the sum of squares of all singular values. Similarly, we can also define the "Nuclear Norm", which equals the sum of all singular values:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(3)</span>
+                        \[
+                        \Vert \boldsymbol{W}\Vert_* = \sum_{i=1}^{\min(d_{in}, d_{out})} \sigma_i
+                        \]
+                    </div>
+                </div>
+                
+                <p>Matrix norms such as spectral norm, $F$-norm, and nuclear norm that can be expressed through singular values all belong to one type of <a href="https://en.wikipedia.org/wiki/Schatten_norm" target="_blank">Schatten-p norms</a>. Finally, let's define RMS (Root Mean Square), which is a variant of vector length:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(4)</span>
+                        \[
+                        \Vert\boldsymbol{x}\Vert_{RMS} = \sqrt{\frac{1}{d_{in}}\sum_{i=1}^{d_{in}} x_i^2} = \frac{1}{\sqrt{d_{in}}}\Vert \boldsymbol{x}\Vert_2
+                        \]
+                    </div>
+                </div>
+                
+                <p>If we extend this to matrices, then $\Vert\boldsymbol{W}\Vert_{RMS} = \Vert \boldsymbol{W}\Vert_F/\sqrt{d_{in} d_{out}}$. Actually, it's easy to understand from the name: vector length or matrix $F$-norm can be called "Root Sum Square", while RMS replaces Sum with Mean, mainly serving as an average scale indicator for vector or matrix elements. Now substituting RMS into inequality <a href="#eq-spec-ineq" class="eq-ref">(1)</a>, we obtain:</p>
+                
+                <div class="equation-container" id="eq-spec-rms">
+                    <div class="equation">
+                        <span class="equation-number">(5)</span>
+                        \[
+                        \Vert\boldsymbol{x}\boldsymbol{W}\Vert_{RMS}\leq \sqrt{\frac{d_{in}}{d_{out}}}\Vert\boldsymbol{x}\Vert_{RMS} \Vert\boldsymbol{W}\Vert_2
+                        \]
+                    </div>
+                </div>
+                
+                <h2 id="desired-properties">Desired Properties<a href="#desired-properties">#</a></h2>
+                
+                <p>Our previous approach to deriving MuP involved carefully analyzing the forms of <strong>forward propagation</strong>, <strong>backward propagation</strong>, <strong>loss increment</strong>, and <strong>feature variation</strong>, and adjusting initialization and learning rates to achieve their scale invariance. The spectral condition "refines and simplifies" this by finding that focusing only on <strong>forward propagation</strong> and <strong>feature variation</strong> is sufficient.</p>
+                
+                <div class="definition-box">
+                    <div class="definition-header">
+                        <i class="fas fa-bullseye"></i>
+                        Core Requirement of Spectral Condition
+                    </div>
+                    <p>Simply put, the spectral condition expects that <u><strong>the output and increment of each layer exhibit scale invariance</strong></u>. How to understand this statement? Taking each layer as $\boldsymbol{x}_k= f(\boldsymbol{x}_{k-1}; \boldsymbol{W}_k)$ as an example, this statement can be translated as "expecting each $\Vert\boldsymbol{x}_k\Vert_{RMS}$ and $\Vert\Delta\boldsymbol{x}_k\Vert_{RMS}$ to be $\mathcal{\Theta}(1)$" (where $\mathcal{\Theta}$ denotes "<a href="https://en.wikipedia.org/wiki/Big_O_notation#Family_of_Bachmann%E2%80%93Landau_notations" target="_blank">Big Theta Notation</a>"):</p>
+                </div>
+                
+                <blockquote>
+                    <p>1. $\Vert\boldsymbol{x}_k\Vert_{RMS}=\mathcal{\Theta}(1)$ is easy to understand—it represents the stability of forward propagation, which was also included in the derivation in the previous article.</p>
+                    <p>2. $\Delta\boldsymbol{x}_k$ represents the change in $\boldsymbol{x}_k$ caused by parameter changes, so $\Vert\Delta\boldsymbol{x}_k\Vert_{RMS}=\mathcal{\Theta}(1)$ combines the requirements of backward propagation and feature variation.</p>
+                </blockquote>
+                
+                <div class="analysis-box">
+                    <div class="analysis-header">
+                        <i class="fas fa-question-circle"></i>
+                        Why Loss Increment is Not Needed
+                    </div>
+                    <p>Some readers might question: Shouldn't there at least be a "loss increment" requirement? Actually not needed. In fact, we can prove that if $\Vert\boldsymbol{x}_k\Vert_{RMS}$ and $\Vert\Delta\boldsymbol{x}_k\Vert_{RMS}$ are both $\mathcal{\Theta}(1)$ for each layer, then $\Delta\mathcal{L}$ automatically becomes $\mathcal{\Theta}(1)$. This is precisely the first beauty of the spectral condition approach—it reduces the four conditions originally needed for MuP derivation to two, simplifying the analysis.</p>
+                </div>
+                
+                <p>The proof is not difficult. The key here is that we assume $\Vert\boldsymbol{x}_k\Vert_{RMS}=\mathcal{\Theta}(1)$ and $\Vert\Delta\boldsymbol{x}_k\Vert_{RMS}=\mathcal{\Theta}(1)$ hold for <u>each layer</u>, so the last layer naturally satisfies this as well. Assume the model has $K$ layers in total, with the single-sample loss function as $\ell$, which is a function of $\boldsymbol{x}_K$ i.e., $\ell(\boldsymbol{x}_K)$. For simplicity, we omit label inputs here since they are not variables for the following analysis.</p>
+                
+                <p>Based on the assumption, $\Vert\boldsymbol{x}_K\Vert_{RMS}$ is $\mathcal{\Theta}(1)$, so naturally $\ell(\boldsymbol{x}_K)$ is $\mathcal{\Theta}(1)$; also since $\Vert\Delta\boldsymbol{x}_K\Vert_{RMS}$ is $\mathcal{\Theta}(1)$, we have $\Vert\boldsymbol{x}_K + \Delta\boldsymbol{x}_K\Vert_{RMS}\leq \Vert\boldsymbol{x}_K\Vert_{RMS} + \Vert\Delta\boldsymbol{x}_K\Vert_{RMS}$ which is also $\mathcal{\Theta}(1)$, thus $\ell(\boldsymbol{x}_K + \Delta\boldsymbol{x}_K)$ is $\mathcal{\Theta}(1)$, and therefore:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(6)</span>
+                        \[
+                        \Delta \ell = \ell(\boldsymbol{x}_K + \Delta\boldsymbol{x}_K) - \ell(\boldsymbol{x}_K) = \mathcal{\Theta}(1)
+                        \]
+                    </div>
+                </div>
+                
+                <p>Thus, the single-sample loss increment $\Delta \ell$ is $\mathcal{\Theta}(1)$, and $\Delta\mathcal{L}$ is the average of all $\Delta \ell$, so it is also $\mathcal{\Theta}(1)$. This proves that $\Vert\boldsymbol{x}_k\Vert_{RMS}=\mathcal{\Theta}(1)$ and $\Vert\Delta\boldsymbol{x}_k\Vert_{RMS}=\mathcal{\Theta}(1)$ automatically include $\Delta\mathcal{L}=\mathcal{\Theta}(1)$. The principle is simply that $\Delta\mathcal{L}$ is a function of the last layer's output and its increment—once they are stable, $\Delta\mathcal{L}$ naturally becomes stable.</p>
+                
+                <h2 id="spectral-condition">Spectral Condition<a href="#spectral-condition">#</a></h2>
+                
+                <p>Next, let's examine how to achieve the two desired properties. Since neural networks primarily consist of matrix multiplications, we first consider the simplest linear layer $\boldsymbol{x}_k = \boldsymbol{x}_{k-1} \boldsymbol{W}_k$, where $\boldsymbol{W}_k\in\mathbb{R}^{d_{k-1}\times d_k}$. To satisfy the condition $\Vert\boldsymbol{x}_k\Vert_{RMS}=\mathcal{\Theta}(1)$, the spectral condition does not assume independent identically distributed variables and calculate expectations and variances as in traditional initialization analysis, but directly applies inequality <a href="#eq-spec-rms" class="eq-ref">(5)</a>:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(7)</span>
+                        \[
+                        \Vert\boldsymbol{x}_k\Vert_{RMS}\leq \sqrt{\frac{d_{k-1}}{d_k}}\Vert\boldsymbol{x}_{k-1}\Vert_{RMS}\, \Vert\boldsymbol{W}_k\Vert_2
+                        \]
+                    </div>
+                </div>
+                
+                <p>Note that this inequality can achieve equality, and in some sense is the most precise. So if the input $\Vert\boldsymbol{x}_{k-1}\Vert_{RMS}$ is already $\mathcal{\Theta}(1)$, then to make the output $\Vert\boldsymbol{x}_k\Vert_{RMS}=\mathcal{\Theta}(1)$, we need:</p>
+                
+                <div class="equation-container" id="eq-spec-c1">
+                    <div class="equation">
+                        <span class="equation-number">(8)</span>
+                        \[
+                        \sqrt{\frac{d_{k-1}}{d_k}}\Vert\boldsymbol{W}_k\Vert_2 = \mathcal{\Theta}(1)\quad\Rightarrow\quad \Vert\boldsymbol{W}_k\Vert_2 = \mathcal{\Theta}\left(\sqrt{\frac{d_k}{d_{k-1}}}\right)
+                        \]
+                    </div>
+                </div>
+                
+                <div class="insight-box">
+                    <div class="insight-header">
+                        <i class="fas fa-star"></i>
+                        Algebraic Elegance
+                    </div>
+                    <p>This presents the first <strong>spectral condition</strong>—the requirement on the spectral norm of $\boldsymbol{W}_k$. It is independent of initialization and distribution assumptions, being purely a result of analysis and algebra. This is what the author considers the second beauty of the spectral condition—simplifying the analysis process. Of course, this omits the foundational content of spectral norms, but adding it might not make the entire exposition shorter than analysis under distribution assumptions. However, distribution assumptions ultimately appear more limiting and less flexible than this algebraic framework.</p>
+                </div>
+                
+                <p>After analyzing $\Vert\boldsymbol{x}_k\Vert_{RMS}$, we come to $\Vert\Delta\boldsymbol{x}_k\Vert_{RMS}$. The source of increment $\Delta\boldsymbol{x}_k$ has two parts: first, parameters change from $\boldsymbol{W}_k$ to $\boldsymbol{W}_k+\Delta \boldsymbol{W}_k$; second, input $\boldsymbol{x}_{k-1}$ changes due to parameter variations from $\boldsymbol{x}_{k-1}$ to $\boldsymbol{x}_{k-1} + \Delta\boldsymbol{x}_{k-1}$, so:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(9)</span>
+                        \[
+                        \begin{aligned}
+                        \Delta\boldsymbol{x}_k =&\, (\boldsymbol{x}_{k-1} + \Delta\boldsymbol{x}_{k-1})(\boldsymbol{W}_k+\Delta \boldsymbol{W}_k) - \boldsymbol{x}_{k-1}\boldsymbol{W}_k \\[5pt]
+                        =&\, \boldsymbol{x}_{k-1} (\Delta \boldsymbol{W}_k)  + (\Delta\boldsymbol{x}_{k-1})\boldsymbol{W}_k + (\Delta\boldsymbol{x}_{k-1})(\Delta \boldsymbol{W}_k)
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Therefore:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(10)</span>
+                        \[
+                        \begin{aligned}
+                        \Vert\Delta\boldsymbol{x}_k\Vert_{RMS} =&\, \Vert\boldsymbol{x}_{k-1} (\Delta \boldsymbol{W}_k)  + (\Delta\boldsymbol{x}_{k-1})\boldsymbol{W}_k + (\Delta\boldsymbol{x}_{k-1})(\Delta \boldsymbol{W}_k)\Vert_{RMS} \\[5pt]
+                        \leq&\, \Vert\boldsymbol{x}_{k-1} (\Delta \boldsymbol{W}_k)\Vert_{RMS}  + \Vert(\Delta\boldsymbol{x}_{k-1})\boldsymbol{W}_k\Vert_{RMS} + \Vert(\Delta\boldsymbol{x}_{k-1})(\Delta \boldsymbol{W}_k)\Vert_{RMS} \\[5pt]
+                        \leq&\, \sqrt{\frac{d_{k-1}}{d_k}}\left({\begin{gathered}\Vert\boldsymbol{x}_{k-1}\Vert_{RMS}\,\Vert\Delta \boldsymbol{W}_k\Vert_2 + \Vert\Delta\boldsymbol{x}_{k-1}\Vert_{RMS}\,\Vert \boldsymbol{W}_k\Vert_2 \\[5pt]
+                        + \Vert\Delta\boldsymbol{x}_{k-1}\Vert_{RMS}\,\Vert\Delta \boldsymbol{W}_k\Vert_2\end{gathered}} \right)
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Analyzing term by term:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(11)</span>
+                        \[
+                        \underbrace{\Vert\boldsymbol{x}_{k-1}\Vert_{RMS}}_{\mathcal{\Theta}(1)}\,\Vert\Delta \boldsymbol{W}_k\Vert_2 + \underbrace{\Vert\Delta\boldsymbol{x}_{k-1}\Vert_{RMS}}_{\mathcal{\Theta}(1)}\,\underbrace{\Vert \boldsymbol{W}_k\Vert_2}_{\mathcal{\Theta}\left(\sqrt{\frac{d_k}{d_{k-1}}}\right)} + \underbrace{\Vert\Delta\boldsymbol{x}_{k-1}\Vert_{RMS}}_{\mathcal{\Theta}(1)}\,\Vert\Delta \boldsymbol{W}_k\Vert_2
+                        \]
+                    </div>
+                </div>
+                
+                <p>From this, we can see that to achieve $\Vert\Delta\boldsymbol{x}_k\Vert_{RMS}=\mathcal{\Theta}(1)$, we need:</p>
+                
+                <div class="equation-container" id="eq-spec-c2">
+                    <div class="equation">
+                        <span class="equation-number">(12)</span>
+                        \[
+                        \Vert\Delta\boldsymbol{W}_k\Vert_2 = \mathcal{\Theta}\left(\sqrt{\frac{d_k}{d_{k-1}}}\right)
+                        \]
+                    </div>
+                </div>
+                
+                <p>This is the second <strong>spectral condition</strong>—the requirement on the spectral norm of $\Delta\boldsymbol{W}_k$.</p>
+                
+                <div class="note-box">
+                    <div class="note-header">
+                        <i class="fas fa-check-circle"></i>
+                        Note on Nonlinear Activations
+                    </div>
+                    <p>The above analysis does not consider nonlinearities. In fact, as long as the activation function is element-wise and its derivative can be bounded by some constant (commonly used activation functions like ReLU, Sigmoid, Tanh all satisfy this), the result remains consistent even when considering nonlinear activation functions. This is what was stated in the previous article's analysis: "the effect of activation functions is scale-independent." Readers who remain skeptical can derive this themselves.</p>
+                </div>
+                
+                <h2 id="spectral-normalization">Spectral Normalization<a href="#spectral-normalization">#</a></h2>
+                
+                <p>Now we have two spectral conditions <a href="#eq-spec-c1" class="eq-ref">(8)</a> and <a href="#eq-spec-c2" class="eq-ref">(12)</a>. Next, we need to consider how to design the model and its optimization to satisfy these two conditions.</p>
+                
+                <p>Note that both $\boldsymbol{W}_k$ and $\Delta \boldsymbol{W}_k$ are matrices. The standard method to make a matrix satisfy spectral norm conditions is usually spectral normalization (SN), and this case is no exception. First, we want the initialized $\boldsymbol{W}_k$ to satisfy $\Vert\boldsymbol{W}_k\Vert_2=\mathcal{\Theta}\left(\sqrt{\frac{d_k}{d_{k-1}}}\right)$. This can be achieved by selecting an arbitrary initialization matrix $\boldsymbol{W}_k'$ and then applying spectral normalization:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(13)</span>
+                        \[
+                        \boldsymbol{W}_k = \sigma\sqrt{\frac{d_k}{d_{k-1}}}\frac{\boldsymbol{W}_k'}{\Vert\boldsymbol{W}_k'\Vert_2}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Here $\sigma > 0$ is a scale-independent constant. Similarly, for the update $\boldsymbol{\Phi}_k$ provided by any optimizer, we can reconstruct $\Delta \boldsymbol{W}_k$ through spectral normalization:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(14)</span>
+                        \[
+                        \Delta \boldsymbol{W}_k = \eta\sqrt{\frac{d_k}{d_{k-1}}}\frac{\boldsymbol{\Phi}_k}{\Vert\boldsymbol{\Phi}_k\Vert_2}
+                        \]
+                    </div>
+                </div>
+                
+                <p>where $\eta > 0$ is also a scale-independent constant (learning rate), ensuring that each step satisfies $\Vert\Delta\boldsymbol{W}_k\Vert_2=\mathcal{\Theta}\left(\sqrt{\frac{d_k}{d_{k-1}}}\right)$. Since both initialization and each step update have spectral norms satisfying $\mathcal{\Theta}\left(\sqrt{\frac{d_k}{d_{k-1}}}\right)$, $\Vert\boldsymbol{W}_k\Vert_2$ also satisfies $\mathcal{\Theta}\left(\sqrt{\frac{d_k}{d_{k-1}}}\right)$ throughout, thus meeting both spectral conditions.</p>
+                
+                <div class="analysis-box">
+                    <div class="analysis-header">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Stability Considerations
+                    </div>
+                    <p>At this point, some readers might question: Considering only the stability of initialization and increments, can it truly guarantee the stability of $\boldsymbol{W}_k$? Could it be possible for $\Vert\boldsymbol{W}_k\Vert_{RMS}\to\infty$? The answer is yes, it's possible. The $\mathcal{\Theta}\left(\sqrt{\frac{d_k}{d_{k-1}}}\right)$ here emphasizes the relationship with model scale (currently mainly width). It does not exclude the possibility of training collapse due to improper settings of other hyperparameters; it aims to express that after such settings, even if collapse occurs, the cause is unrelated to scale changes.</p>
+                </div>
+                
+                <h2 id="singular-value-clipping">Singular Value Clipping<a href="#singular-value-clipping">#</a></h2>
+                
+                <p>To achieve the spectral norm condition, besides spectral normalization as a standard method, we can also consider singular value clipping (SVC). This section is supplemented by the author and does not appear in the original paper, but it can explain some interesting results.</p>
+                
+                <p>From the perspective of singular values, spectral normalization scales the largest singular value to 1 and proportionally scales the remaining singular values. Singular value clipping is somewhat more lenient—it only sets singular values greater than 1 to 1, without altering those already less than or equal to 1:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(15)</span>
+                        \[
+                        \mathop{\text{SVC}}(\boldsymbol{W}) = \boldsymbol{U}\min(\boldsymbol{\Lambda},1)\boldsymbol{V}^{\top},\qquad \boldsymbol{U},\boldsymbol{\Lambda},\boldsymbol{V}^{\top} = \mathop{\text{SVD}}(\boldsymbol{W})
+                        \]
+                    </div>
+                </div>
+                
+                <p>In contrast, spectral normalization is $\mathop{\text{SN}}(\boldsymbol{W})=\boldsymbol{U}(\boldsymbol{\Lambda}/\max(\boldsymbol{\Lambda}))\boldsymbol{V}^{\top}$. Replacing spectral normalization with singular value clipping, we obtain:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(16)</span>
+                        \[
+                        \boldsymbol{W}_k = \sigma\sqrt{\frac{d_k}{d_{k-1}}}\mathop{\text{SVC}}(\boldsymbol{W}_k'), \qquad \Delta \boldsymbol{W}_k = \eta\sqrt{\frac{d_k}{d_{k-1}}}\mathop{\text{SVC}}(\boldsymbol{\Phi}_k)
+                        \]
+                    </div>
+                </div>
+                
+                <p>The drawback of singular value clipping is that it only guarantees the clipped spectral norm equals 1 when at least one singular value is greater than or equal to 1. If not satisfied, we can consider multiplying by $\lambda > 0$ and then clipping, i.e., changing to $\mathop{\text{SVC}}(\lambda\boldsymbol{W})$. However, different scaling factors yield different results, yet it's not easy to determine a suitable scaling factor. Nevertheless, we can consider a limiting version:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(17)</span>
+                        \[
+                        \lim_{\lambda\to\infty} \mathop{\text{SVC}}(\lambda\boldsymbol{W}) = \mathop{\text{msign}}(\boldsymbol{W})
+                        \]
+                    </div>
+                </div>
+                
+                <p>Here $\mathop{\text{msign}}$ is the matrix sign function $\mathop{\text{msign}}$ used in Muon (refer to <a href="/archives/10592" target="_blank">"Appreciating Muon Optimizer: The Essential Leap from Vectors to Matrices"</a>). Replacing spectral normalization or singular value clipping with $\mathop{\text{msign}}$, we obtain:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(18)</span>
+                        \[
+                        \Delta \boldsymbol{W}_k = \eta\sqrt{\frac{d_k}{d_{k-1}}}\mathop{\text{msign}}(\boldsymbol{\Phi}_k)
+                        \]
+                    </div>
+                </div>
+                
+                <p>This actually gives us a generalized Muon optimizer. Standard Muon applies $\mathop{\text{msign}}$ to momentum, while this allows us to apply $\mathop{\text{msign}}$ to updates from any existing optimizer. Coincidentally, someone on Twitter recently experimented with applying $\mathop{\text{msign}}$ to Adam updates (they called it "Mudamw", <a href="https://x.com/kyleliang5/status/1896385441571742103" target="_blank">link</a>), finding it performed slightly better than Muon, as shown below:</p>
+                
+                <div class="pic-container">
+                    <div class="typecho-caption aligncenter" style="max-width: 520px">
+                        <div style="margin: 5px">
+                            <a href="https://kexue.fm/usr/uploads/2025/03/585996134.jpeg" title="Click to view original image" target="_blank">
+                                <img src="https://kexue.fm/usr/uploads/2025/03/585996134.jpeg" style="max-width: 100%" alt="Adam+msign appears to outperform Muon (from Twitter @KyleLiang5)" />
+                            </a>
+                        </div>
+                        <p class="typecho-caption-text">Adam+msign appears to outperform Muon (from Twitter @KyleLiang5)</p>
+                    </div>
+                </div>
+                
+                <p>Upon seeing this, we also tried it on small models and found we could reproduce similar conclusions! So perhaps applying $\mathop{\text{msign}}$ to existing optimizers might yield better results. The feasibility of this operation is difficult to explain within the original Muon framework, but here we interpret it as applying singular value clipping (or its limiting version) to updates, naturally leading to this result.</p>
+                
+                <h2 id="approximation-estimation">Approximation Estimation<a href="#approximation-estimation">#</a></h2>
+                
+                <p>It's generally believed that operations related to SVD (Singular Value Decomposition), such as spectral normalization, singular value clipping, or $\mathop{\text{msign}}$, are relatively expensive. Therefore, we still hope to find simpler forms. Since our goal is only to find scaling laws between model scales, further simplification is indeed possible.</p>
+                
+                <div class="note-box">
+                    <div class="note-header">
+                        <i class="fas fa-clock"></i>
+                        Computational Note
+                    </div>
+                    <p>(Note: In fact, our <a href="https://papers.cool/arxiv/2502.16982" target="_blank">Moonlight</a> work shows that if implemented well, even performing $\mathop{\text{msign}}$ at each update step adds very limited cost. Therefore, the content of this section currently seems more for exploring explicit scaling laws rather than saving computational cost.)</p>
+                </div>
+                
+                <p>First, initialization. Initialization is a one-time operation, so even if computational cost is somewhat higher, it's not a big problem. Thus, the previous scheme of random initialization followed by spectral normalization/singular value clipping/$\mathop{\text{msign}}$ can still be retained. If we still want to refine further, we can utilize a statistical result: for a $d_{k-1}\times d_k$ matrix sampled independently from a standard normal distribution, its largest singular value is approximately $\sqrt{d_{k-1}} + \sqrt{d_k}$. This essentially means that as long as the sampling standard deviation is changed to:</p>
+                
+                <div class="equation-container" id="eq-spec-std">
+                    <div class="equation">
+                        <span class="equation-number">(19)</span>
+                        \[
+                        \sigma_k = \mathcal{\Theta}\left(\sqrt{\frac{d_k}{d_{k-1}}}(\sqrt{d_{k-1}} + \sqrt{d_k})^{-1}\right) = \mathcal{\Theta}\left(\sqrt{\frac{1}{d_{k-1}}\min\left(1, \frac{d_k}{d_{k-1}}\right)}\right)
+                        \]
+                    </div>
+                </div>
+                
+                <p>it can meet the requirement $\Vert\boldsymbol{W}_k\Vert_2=\mathcal{\Theta}\left(\sqrt{\frac{d_k}{d_{k-1}}}\right)$ during initialization. As for the proof of this statistical result, readers can refer to materials such as <a href="https://www.math.uci.edu/~rvershyn/papers/HDP-book/HDP-book.html" target="_blank">"High-Dimensional Probability"</a>, <a href="https://en.wikipedia.org/wiki/Marchenko%E2%80%93Pastur_distribution" target="_blank">"Marchenko-Pastur law"</a>, etc., which won't be expanded here.</p>
+                
+                <p>Next, let's examine the update, which is relatively more troublesome because the spectral norm of an arbitrary update $\boldsymbol{\Phi}_k$ is not so easy to estimate. Here we need to utilize an empirical conclusion: gradient matrices of parameters are typically low-rank. This low-rank nature is not necessarily mathematically strict low-rank, but rather that the largest few (number independent of model scale) singular values significantly exceed the remaining singular values, making low-rank approximation feasible—this is also the theoretical foundation for various <a href="/tag/lora/" target="_blank">LoRA</a> optimizations.</p>
+                
+                <p>A direct corollary of this empirical assumption is the approximate equivalence between spectral norm and nuclear norm. Since spectral norm is the largest singular value and nuclear norm is the sum of all singular values, under the above assumption, the nuclear norm approximately equals the sum of the largest several singular values. Thus, the two are at least consistent in scale, i.e., $\mathcal{\Theta}(\Vert\nabla_{\boldsymbol{W}_k}\mathcal{L}\Vert_2)=\mathcal{\Theta}(\Vert\nabla_{\boldsymbol{W}_k}\mathcal{L}\Vert_*)$. Next, we utilize the relationship between $\Delta\mathcal{L}$ and $\Delta\boldsymbol{W}_k$:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(20)</span>
+                        \[
+                        \Delta\mathcal{L} \approx \sum_k \langle \Delta\boldsymbol{W}_k, \nabla_{\boldsymbol{W}_k}\mathcal{L}\rangle_F \leq \sum_k \Vert\Delta\boldsymbol{W}_k\Vert_2\,  \Vert\nabla_{\boldsymbol{W}_k}\mathcal{L}\Vert_*
+                        \]
+                    </div>
+                </div>
+                
+                <p>Here $\langle\cdot,\cdot\rangle_F$ is the Frobenius inner product, i.e., flattening matrices into vectors and computing inner products. As for the inequality, it's due to a classical matrix inequality $\langle\boldsymbol{A},\boldsymbol{B}\rangle_F \leq \Vert\boldsymbol{A}\Vert_2\,  \Vert\boldsymbol{B}\Vert_*$, similar to <a href="https://en.wikipedia.org/wiki/H%C3%B6lder%27s_inequality" target="_blank">Holder's inequality</a>. In fact, we proved precisely this when deriving Muon in <a href="/archives/10592#%E7%9F%A9%E9%98%B5%E8%8C%83%E6%95%B0" target="_blank">"Appreciating Muon Optimizer: The Essential Leap from Vectors to Matrices"</a>. Based on the above and combined with the low-rank assumption of gradients, we have:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(21)</span>
+                        \[
+                        \Delta\mathcal{L} \sim \sum_k \mathcal{\Theta}(\Vert\Delta\boldsymbol{W}_k\Vert_2\,  \Vert\nabla_{\boldsymbol{W}_k}\mathcal{L}\Vert_*) \sim \sum_k \mathcal{\Theta}(\Vert\Delta\boldsymbol{W}_k\Vert_2\,  \Vert\nabla_{\boldsymbol{W}_k}\mathcal{L}\Vert_2)
+                        \]
+                    </div>
+                </div>
+                
+                <p>Don't forget that we have already proven earlier that satisfying the two spectral conditions necessarily implies $\Delta\mathcal{L}=\mathcal{\Theta}(1)$. Now combining with the above equation, we obtain that when $\Vert\Delta\boldsymbol{W}_k\Vert_2=\mathcal{\Theta}\left(\sqrt{\frac{d_k}{d_{k-1}}}\right)$, we have:</p>
+                
+                <div class="equation-container" id="eq-grad-norm">
+                    <div class="equation">
+                        <span class="equation-number">(22)</span>
+                        \[
+                        \mathcal{\Theta}(\Vert\nabla_{\boldsymbol{W}_k}\mathcal{L}\Vert_2) = \mathcal{\Theta}\left(\sqrt{\frac{d_{k-1}}{d_k}}\right)
+                        \]
+                    </div>
+                </div>
+                
+                <div class="result-box">
+                    <div class="result-header">
+                        <i class="fas fa-calculator"></i>
+                        Key Theoretical Insight
+                    </div>
+                    <p>This is an important estimation result about gradient magnitude, derived directly from the two spectral conditions, avoiding explicit gradient computation. This is the third beauty of the spectral condition—it allows us to obtain relevant estimates without computing gradient expressions through chain rules.</p>
+                </div>
+                
+                <h2 id="learning-rate-strategy">Learning Rate Strategy<a href="#learning-rate-strategy">#</a></h2>
+                
+                <p>Applying estimate <a href="#eq-grad-norm" class="eq-ref">(22)</a> to SGD, i.e., $\Delta \boldsymbol{W}_k = -\eta_k \nabla_{\boldsymbol{W}_k}\mathcal{L}$, according to equation <a href="#eq-grad-norm" class="eq-ref">(22)</a> we have $\Vert\nabla_{\boldsymbol{W}_k}\mathcal{L}\Vert_2=\mathcal{\Theta}\left(\sqrt{\frac{d_{k-1}}{d_k}}\right)$. To achieve the goal $\Vert\Delta\boldsymbol{W}_k\Vert_2=\mathcal{\Theta}\left(\sqrt{\frac{d_k}{d_{k-1}}}\right)$, we need:</p>
+                
+                <div class="equation-container" id="eq-sgd-eta">
+                    <div class="equation">
+                        <span class="equation-number">(23)</span>
+                        \[
+                        \eta_k = \mathcal{\Theta}\left(\frac{d_k}{d_{k-1}}\right)
+                        \]
+                    </div>
+                </div>
+                
+                <p>As for Adam, we still approximate with SignSGD $\Delta \boldsymbol{W}_k = -\eta_k \mathop{\text{sign}}(\nabla_{\boldsymbol{W}_k}\mathcal{L})$. Since $\mathop{\text{sign}}$ generally yields $\pm 1$, we have $\Vert\mathop{\text{sign}}(\nabla_{\boldsymbol{W}_k}\mathcal{L})\Vert_F = \mathcal{\Theta}(\sqrt{d_{k-1} d_k})$. Element-wise operations like $\mathop{\text{sign}}$ typically don't have special rank-increasing effects, so we believe $\mathop{\text{sign}}(\nabla_{\boldsymbol{W}_k}\mathcal{L})$ and $\nabla_{\boldsymbol{W}_k}\mathcal{L}$ are both low-rank. Thus, similar to nuclear norm, the $F$-norm and spectral norm will be of the same order, i.e., $\Vert\mathop{\text{sign}}(\nabla_{\boldsymbol{W}_k}\mathcal{L})\Vert_2 = \mathcal{\Theta}(\sqrt{d_{k-1} d_k})$.</p>
+                
+                <p>Therefore, to achieve the goal $\Vert\Delta\boldsymbol{W}_k\Vert_2=\mathcal{\Theta}\left(\sqrt{\frac{d_k}{d_{k-1}}}\right)$, we need:</p>
+                
+                <div class="equation-container" id="eq-adam-eta">
+                    <div class="equation">
+                        <span class="equation-number">(24)</span>
+                        \[
+                        \eta_k = \mathcal{\Theta}\left(\frac{1}{d_{k-1}}\right)
+                        \]
+                    </div>
+                </div>
+                
+                <div class="analysis-box">
+                    <div class="analysis-header">
+                        <i class="fas fa-balance-scale"></i>
+                        Comparing Spectral Condition with MuP
+                    </div>
+                    <p>Now we can compare the results of the spectral condition with MuP. MuP assumes we want to build a model $\mathbb{R}^{d_{in}}\mapsto\mathbb{R}^{d_{out}}$. It divides the model into three parts: first, project the input to $d$ dimensions using a $d_{in}\times d$ matrix; then model within the $d$-dimensional space, where parameters are all $d\times d$ square matrices; finally, obtain $d_{out}$-dimensional output using a $d\times d_{out}$ matrix. Correspondingly, MuP's conclusions are also divided into input, intermediate, and output parts.</p>
+                </div>
+                
+                <p>Regarding initialization, MuP has input variance $1/d_{in}$, output variance $1/d^2$, and remaining parameter variance $1/d$, while the spectral condition result has only one equation <a href="#eq-spec-std" class="eq-ref">(19)</a>. But if we examine carefully, equation <a href="#eq-spec-std" class="eq-ref">(19)</a> already encompasses MuP's three cases: setting input, intermediate, and output matrix sizes as $d_{in}\times d,d\times d,d\times d_{out}$ respectively, substituting into equation <a href="#eq-spec-std" class="eq-ref">(19)</a> yields:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(25)</span>
+                        \[
+                        \begin{aligned}
+                        \sigma_{in}^2 =&\, \mathcal{\Theta}\left(\frac{1}{d_{in}}\min\left(1, \frac{d}{d_{in}}\right)\right) = \mathcal{\Theta}\left(\frac{1}{d_{in}}\right) \\
+                        \sigma_k^2 =&\, \mathcal{\Theta}\left(\frac{1}{d}\min\left(1, \frac{d}{d}\right)\right) = \mathcal{\Theta}\left(\frac{1}{d}\right) \\
+                        \sigma_{out}^2 =&\, \mathcal{\Theta}\left(\frac{1}{d}\min\left(1, \frac{d_{out}}{d}\right)\right) = \mathcal{\Theta}\left(\frac{1}{d^2}\right)
+                        \end{aligned}
+                        \qquad(d\to\infty)
+                        \]
+                    </div>
+                </div>
+                
+                <p>Some readers might wonder why we only consider $d\to\infty$. This is because $d_{in},d_{out}$ are task-related numbers, essentially constants. The variable model scale is only $d$, and MuP studies the asymptotic laws of hyperparameters with model scale, so it refers to the simplified laws when $d$ is sufficiently large.</p>
+                
+                <p>Regarding learning rates, for SGD, MuP has input learning rate $d$, output learning rate $1/d$, and remaining parameter learning rate $1$. Note these relationships are proportional, not equal. The spectral condition result <a href="#eq-sgd-eta" class="eq-ref">(23)</a> similarly encompasses these three cases. Similarly, for Adam, MuP has input learning rate $1$, output learning rate $1/d$, and remaining parameter learning rate $1/d$. The spectral condition still describes these three cases with a single equation <a href="#eq-adam-eta" class="eq-ref">(24)</a>.</p>
+                
+                <div class="highlight-box">
+                    <p>Thus, the spectral condition obtains more concise results in what the author considers a simpler way, and the practical meaning of these more concise results is richer than MuP because its results don't impose strong assumptions on model architecture or parameter shapes. Therefore, the author considers the spectral condition a higher-order version of MuP.</p>
+                </div>
+                
+                <h2 id="article-summary">Article Summary<a href="#article-summary">#</a></h2>
+                
+                <p>This article introduces the upgraded version of MuP—the spectral condition. It starts from inequalities related to spectral norms to analyze conditions for stable model training, obtaining richer results than MuP in a more convenient way.</p>
+                
+                <div class="large-summary-equation">
+                    \[
+                    \left\{\begin{aligned}
+                    &\,\text{Desired Properties:}\left\{\begin{aligned}
+                    &\,\Vert\boldsymbol{x}_k\Vert_{RMS}=\mathcal{\Theta}(1) \\[5pt] &\,\Vert\Delta\boldsymbol{x}_k\Vert_{RMS}=\mathcal{\Theta}(1)
+                    \end{aligned}\right. \\[10pt]
+                    &\,\text{Spectral Conditions:}\left\{\begin{aligned}
+                    &\,\Vert\boldsymbol{W}_k\Vert_2 = \mathcal{\Theta}\left(\sqrt{\frac{d_k}{d_{k-1}}}\right) \\[5pt]
+                    &\,\Vert\Delta\boldsymbol{W}_k\Vert_2 = \mathcal{\Theta}\left(\sqrt{\frac{d_k}{d_{k-1}}}\right)
+                    \end{aligned}\right. \\[10pt]
+                    &\,\text{Implementation Methods:}\left\{\begin{aligned}
+                    &\,\text{Spectral Normalization:}\left\{\begin{aligned}
+                    &\,\boldsymbol{W}_k = \sigma\sqrt{\frac{d_k}{d_{k-1}}}\frac{\boldsymbol{W}_k'}{\Vert\boldsymbol{W}_k'\Vert_2} \\[5pt]
+                    &\,\Delta \boldsymbol{W}_k = \eta\sqrt{\frac{d_k}{d_{k-1}}}\frac{\boldsymbol{\Phi}_k}{\Vert\boldsymbol{\Phi}_k\Vert_2}
+                    \end{aligned}\right. \\[10pt]
+                    &\,\text{Singular Value Clipping:}\left\{\begin{aligned}
+                    &\,\boldsymbol{W}_k = \sigma\sqrt{\frac{d_k}{d_{k-1}}}\mathop{\text{SVC}}(\boldsymbol{W}_k')\xrightarrow{\text{limit}} \sigma\sqrt{\frac{d_k}{d_{k-1}}}\mathop{\text{msign}}(\boldsymbol{W}_k')\\[5pt]
+                    &\,\Delta \boldsymbol{W}_k = \eta\sqrt{\frac{d_k}{d_{k-1}}}\mathop{\text{SVC}}(\boldsymbol{\Phi}_k)\xrightarrow{\text{limit}} \eta\sqrt{\frac{d_k}{d_{k-1}}}\mathop{\text{msign}}(\boldsymbol{\Phi}_k)
+                    \end{aligned}\right. \\[10pt]
+                    &\,\text{Approximation Estimation:}\left\{\begin{aligned}
+                    &\,\sigma_k = \mathcal{\Theta}\left(\sqrt{\frac{1}{d_{k-1}}\min\left(1, \frac{d_k}{d_{k-1}}\right)}\right) \\[5pt]
+                    &\,\eta_k = \left\{\begin{aligned}
+                    &\,\text{SGD: }\mathcal{\Theta}\left(\frac{d_k}{d_{k-1}}\right) \\[5pt]
+                    &\,\text{Adam: }\mathcal{\Theta}\left(\frac{1}{d_{k-1}}\right)
+                    \end{aligned}\right.
+                    \end{aligned}\right. \\[10pt]
+                    \end{aligned}\right.
+                    \end{aligned}\right.
+                    \]
+                </div>
+
+                <div class="citation-section">
+                    <div class="citation-header">
+                        <i class="fas fa-quote-right"></i>
+                        Citation Information
+                    </div>
+                    <p><strong>Original Article:</strong> Su Jianlin. Higher-Order MuP: A More Concise Yet Profound Spectral Condition Scaling. <em>Scientific Spaces</em>.</p>
+                    
+                    <p><strong>How to cite this translation:</strong></p>
+                    <div class="citation-box">
+                        Su, J. Higher-Order MuP: A More Concise Yet Profound Spectral Condition Scaling [Translated by Juanxi Tian]. 
+                        <em>Scientific Spaces</em>.
+                    </div>
+                    <p style="margin-top: 0.8rem;"><strong>BibTeX:</strong></p>
+                    <div class="citation-box">
+                        @article{su2025higher_order_mup,
+                            title   = {Higher-Order MuP: A More Concise Yet Profound Spectral Condition Scaling},
+                            author  = {Su, Jianlin},
+                            journal = {Scientific Spaces},
+                            year    = {2025},
+                            url     = {https://kexue.fm/archives/10770},
+                            note    = {Translated by Juanxi Tian (ScalingOpt Team)}
+                          }
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="translation-credit">
+                <i class="fas fa-user-graduate"></i>
+                Academic Translation by Juanxi Tian (ScalingOpt Team)
+            </div>
+            <div class="copyright">
+                © 2009-2025 Scientific Spaces. All rights reserved.<br>
+                Original content licensed under Creative Commons BY-NC-ND 2.5 China
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript for Interactive Features -->
+    <script>
+        // Scroll Progress Bar
+        window.addEventListener('scroll', function() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            scrollProgress.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Table of Contents Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            const sections = document.querySelectorAll('h2[id]');
+            
+            // Set active section based on scroll position
+            function setActiveSection() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 50)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', setActiveSection);
+            setActiveSection(); // Initial call
+            
+            // Smooth scroll for TOC links
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 50,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // Smooth scroll for equation references
+            const eqRefs = document.querySelectorAll('.eq-ref');
+            eqRefs.forEach(ref => {
+                ref.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 100,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+
+        // MathJax Configuration
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                tags: 'ams'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    
+    <!-- MathJax CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</body>
+</html>

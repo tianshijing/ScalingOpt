@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muon Optimizer Appreciation: The Essential Leap from Vectors to Matrices | Scientific Spaces</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a6bca;
+            --primary-dark: #1357a8;
+            --primary-light: #e8f1fc;
+            --secondary: #2c3e50;
+            --accent: #3498db;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f5f7fa;
+            --gray-200: #e4e7eb;
+            --gray-300: #cbd2d9;
+            --gray-600: #7b8794;
+            --gray-700: #52606d;
+            --gray-900: #323f4b;
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 6px 24px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: #f0f5fc;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.5rem 1.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -8%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+        }
+
+        .meta-item i {
+            font-size: 0.85rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Translation Notice */
+        .translation-notice {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1.2rem;
+            margin: 0;
+        }
+
+        .translation-notice-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .translation-text h3 {
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .translation-text p {
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        .translator-badge {
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(26, 107, 202, 0.2);
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+        }
+
+        @media (max-width: 850px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            padding-left: 1rem;
+        }
+
+        .toc {
+            position: sticky;
+            top: 1rem;
+        }
+
+        .toc-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .toc-header i {
+            font-size: 0.9rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.4rem;
+            position: relative;
+        }
+
+        .toc-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            transition: var(--transition);
+            border-left: 2px solid transparent;
+            padding-left: 8px;
+        }
+
+        .toc-link:hover {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            transform: translateX(2px);
+        }
+
+        .toc-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .toc-number {
+            font-weight: 500;
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            min-width: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-right: 1.2rem;
+            padding-left: 0;
+        }
+
+        @media (max-width: 850px) {
+            .sidebar {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 0 1rem;
+            }
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 1.5rem 0 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: relative;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 35px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        h2 a {
+            color: var(--accent);
+            font-size: 0.7rem;
+            margin-left: 6px;
+            text-decoration: none;
+        }
+
+        h2 a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            color: var(--gray-900);
+            line-height: 1.65;
+        }
+
+        /* Equation Styling */
+        .equation-container {
+            margin: 0.8rem 0;
+        }
+
+        .equation {
+            background: var(--primary-light);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1rem;
+            border-radius: 0 5px 5px 0;
+            font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', serif;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .equation-number {
+            color: var(--primary);
+            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin-right: 6px;
+            display: inline-block;
+            min-width: 18px;
+        }
+
+        /* Code Block Styling */
+        .code-container {
+            margin: 1rem 0;
+            background: #2d2d2d;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .code-header {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 0.6rem 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .code-content {
+            padding: 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #f8f8f2;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+        }
+
+        /* Reference Box */
+        .reference-box {
+            background: linear-gradient(to right, #f8fafc, var(--primary-light));
+            border: 1px solid var(--gray-200);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .reference-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .reference-header i {
+            font-size: 0.9rem;
+        }
+
+        .reference-list {
+            list-style: none;
+        }
+
+        .reference-item {
+            padding: 0.3rem 0 0.3rem 0.8rem;
+            position: relative;
+            margin-bottom: 0.4rem;
+            color: var(--gray-700);
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .reference-item::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 0.65rem;
+        }
+
+        /* Citation Section */
+        .citation-section {
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .citation-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .citation-box {
+            background: var(--white);
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid var(--gray-300);
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-top: 0.6rem;
+            overflow-x: auto;
+            color: var(--gray-900);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--secondary);
+            color: white;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .translation-credit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 6px 16px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(26, 107, 202, 0.2);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            margin-top: 0.6rem;
+        }
+
+        /* Utility Classes */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-light), #e8f2ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .math {
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.1s ease;
+            z-index: 1000;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 1rem 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 0.6rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem 0;
+            }
+            
+            .main-content {
+                padding-right: 0.8rem;
+            }
+            
+            .sidebar {
+                padding-left: 0.8rem;
+            }
+            
+            .meta-info {
+                gap: 0.6rem;
+            }
+            
+            .meta-item {
+                font-size: 0.75rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .translation-notice-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .translator-badge {
+                align-self: flex-start;
+            }
+        }
+
+        /* Links styling */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* 优化长公式显示 */
+        .equation {
+            word-break: break-word;
+        }
+        
+        /* 优化列表显示 */
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.3rem;
+            line-height: 1.5;
+        }
+        
+        /* 优化数学公式间距 */
+        .MathJax_Display {
+            margin: 0.6em 0 !important;
+        }
+        
+        /* Image container styling */
+        .pic-container {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+        
+        .pic-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .typecho-caption {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        
+        /* Quote block styling */
+        blockquote.cite {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+        }
+        
+        blockquote.cite div {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        blockquote.cite a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>Muon Optimizer Appreciation: The Essential Leap from Vectors to Matrices</h1>
+                <div class="subtitle">An In-Depth Analysis of the Matrix-Centric Muon Optimizer</div>
+                
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>Su Jianlin</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-eye"></i>
+                        <span>Scientific Spaces</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <div class="tag">Optimizer Research</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Translation Notice -->
+        <div class="translation-notice">
+            <div class="translation-notice-content">
+                <div class="translation-text">
+                    <h3><i class="fas fa-language"></i> Academic Translation</h3>
+                    <p>This is an academic English translation maintaining technical accuracy while adapting to English academic conventions.</p>
+                </div>
+                <div class="translator-badge">
+                    <i class="fas fa-user-graduate"></i>
+                    Translated by Juanxi Tian (ScalingOpt Team)
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Sidebar Table of Contents -->
+            <aside class="sidebar">
+                <nav class="toc">
+                    <div class="toc-header">
+                        <i class="fas fa-list"></i>
+                        Contents
+                    </div>
+                    <ul class="toc-list">
+                        <li class="toc-item">
+                            <a href="#algorithm-overview" class="toc-link">
+                                <span class="toc-number">1</span>
+                                <span>Algorithm Overview</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#sign-function" class="toc-link">
+                                <span class="toc-number">2</span>
+                                <span>Sign Function</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#iterative-solution" class="toc-link">
+                                <span class="toc-number">3</span>
+                                <span>Iterative Solution</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#convergence-acceleration" class="toc-link">
+                                <span class="toc-number">4</span>
+                                <span>Convergence Acceleration</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#deeper-thoughts" class="toc-link">
+                                <span class="toc-number">5</span>
+                                <span>Deeper Thoughts</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#norm-perspective" class="toc-link">
+                                <span class="toc-number">6</span>
+                                <span>Norm Perspective</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#matrix-norms" class="toc-link">
+                                <span class="toc-number">7</span>
+                                <span>Matrix Norms</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#historical-context" class="toc-link">
+                                <span class="toc-number">8</span>
+                                <span>Historical Context</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#summary" class="toc-link">
+                                <span class="toc-number">9</span>
+                                <span>Summary</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Article Content -->
+            <main class="main-content">
+                <p>With the advent of the LLM era, academic enthusiasm for optimizer research appears to have waned. This is primarily because the currently mainstream AdamW already meets most requirements, and significantly modifying optimizers incurs substantial validation costs. Therefore, most current optimizer variations are merely minor patches that industry applies to AdamW based on their training experience.</p>
+                
+                <p>However, an optimizer named "<a href="https://github.com/KellerJordan/Muon" target="_blank">Muon</a>" recently gained significant attention on Twitter. It claims to be more efficient than AdamW and not merely a minor tweak based on Adam but rather embodies some thought-provoking principles about the differences between vectors and matrices. Let's explore it together in this article.</p>
+                
+                <div class="pic-container">
+                    <div class="typecho-caption" style="max-width: 480px; margin: 0 auto">
+                        <div style="margin: 5px">
+                            <img src="https://kexue.fm/usr/uploads/2024/12/125501438.jpeg" style="max-width: 100%" alt="Muon vs AdamW Performance Comparison (Source: Twitter @Yuchenj_UW)" />
+                        </div>
+                        <p class="typecho-caption-text">Muon vs AdamW Performance Comparison (Source: Twitter @Yuchenj_UW)</p>
+                    </div>
+                </div>
+
+                <h2 id="algorithm-overview">Algorithm Overview<a href="#algorithm-overview">#</a></h2>
+                
+                <p>Muon, short for "<font color=red>M</font>oment<font color=red>U</font>m <font color=red>O</font>rthogonalized by <font color=red>N</font>ewton-schulz", is designed for matrix parameters $\boldsymbol{W}\in\mathbb{R}^{n\times m}$. Its update rule is:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(1)</span>
+                        \[
+                        \begin{aligned}
+                        \boldsymbol{M}_t =&\, \beta\boldsymbol{M}_{t-1} + \boldsymbol{G}_t \\[5pt]
+                        \boldsymbol{W}_t =&\, \boldsymbol{W}_{t-1} - \eta_t [\text{msign}(\boldsymbol{M}_t) + \lambda \boldsymbol{W}_{t-1}] \\
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Here $\text{msign}$ is the <a href="https://en.wikipedia.org/wiki/Matrix_sign_function" target="_blank">matrix sign function</a>, which is not simply applying $\text{sign}$ element-wise to the matrix but rather a matrix generalization of the $\text{sign}$ function. Its relationship with <a href="/archives/10407" target="_blank">SVD</a> is:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(2)</span>
+                        \(\boldsymbol{U},\boldsymbol{\Sigma},\boldsymbol{V}^{\top} = \text{SVD}(\boldsymbol{M}) \quad\Rightarrow\quad \text{msign}(\boldsymbol{M}) = \boldsymbol{U}_{[:,:r]}\boldsymbol{V}_{[:,:r]}^{\top}\)
+                    </div>
+                </div>
+                
+                <p>where $\boldsymbol{U}\in\mathbb{R}^{n\times n},\boldsymbol{\Sigma}\in\mathbb{R}^{n\times m},\boldsymbol{V}\in\mathbb{R}^{m\times m}$, and $r$ is the rank of $\boldsymbol{M}$. We'll elaborate on more theoretical details later, but first, let's intuitively understand the following fact:</p>
+                
+                <blockquote class="cite">
+                    <div>Muon is an adaptive learning rate optimizer similar to Adam.</div>
+                </blockquote>
+                
+                <p>Adaptive learning rate optimizers like Adagrad, RMSprop, and Adam adjust each parameter's update by dividing by <u>the square root of the moving average of gradient squares</u>, achieving two effects: 1. Constant scaling of the loss function doesn't affect the optimization trajectory; 2. Each parameter component's update magnitude is made as consistent as possible. Muon precisely satisfies these two properties:</p>
+                
+                <blockquote>
+                    <p>1. When the loss function is multiplied by $\lambda$, $\boldsymbol{M}$ is also multiplied by $\lambda$, resulting in $\boldsymbol{\Sigma}$ being multiplied by $\lambda$. However, Muon's final update transforms $\boldsymbol{\Sigma}$ into an identity matrix, so it doesn't affect optimization results;</p>
+                    <p>2. When $\boldsymbol{M}$ is decomposed via SVD as $\boldsymbol{U}\boldsymbol{\Sigma}\boldsymbol{V}^{\top}$, different singular values in $\boldsymbol{\Sigma}$ reflect the "anisotropy" of $\boldsymbol{M}$. Setting them all to <u>one</u> makes them more isotropic, also serving to synchronize update magnitudes.</p>
+                </blockquote>
+                
+                <p>Regarding point 2, did any readers recall <a href="/archives/8069" target="_blank">BERT-whitening</a>? Additionally, it should be noted that Muon also has a Nesterov version, which simply replaces $\text{msign}(\boldsymbol{M}_t)$ with $\text{msign}(\beta\boldsymbol{M}_t + \boldsymbol{G}_t)$ in the update rule, with all other parts remaining identical. For simplicity, we won't elaborate further.</p>
+                
+                <p>(Historical note: It was later discovered that the 2015 paper <a href="https://proceedings.mlr.press/v38/carlson15.html" target="_blank">"Stochastic Spectral Descent for Restricted Boltzmann Machines"</a> already proposed an optimization algorithm roughly identical to Muon, then called "Stochastic Spectral Descent.")</p>
+
+                <h2 id="sign-function">Sign Function<a href="#sign-function">#</a></h2>
+                
+                <p>Using SVD, we can also prove the identity:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(3)</span>
+                        \(\text{msign}(\boldsymbol{M}) = (\boldsymbol{M}\boldsymbol{M}^{\top})^{-1/2}\boldsymbol{M}= \boldsymbol{M}(\boldsymbol{M}^{\top}\boldsymbol{M})^{-1/2}\)
+                    </div>
+                </div>
+                
+                <p>where ${}^{-1/2}$ is the inverse of the $1/2$ power of the matrix (or the pseudoinverse if not invertible). This identity helps us better understand why $\text{msign}$ is the matrix generalization of $\text{sign}$: for scalar $x$ we have $\text{sign}(x)=x(x^2)^{-1/2}$, which is exactly a special case of the above equation (when $\boldsymbol{M}$ is a $1\times 1$ matrix). This special case can be extended to diagonal matrices $\boldsymbol{M}=\text{diag}(\boldsymbol{m})$:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(4)</span>
+                        \(\text{msign}(\boldsymbol{M}) = \text{diag}(\boldsymbol{m})[\text{diag}(\boldsymbol{m})^2]^{-1/2} = \text{diag}(\text{sign}(\boldsymbol{m}))=\text{sign}(\boldsymbol{M})\)
+                    </div>
+                </div>
+                
+                <p>where $\text{sign}(\boldsymbol{m})$, $\text{sign}(\boldsymbol{M})$ means applying $\text{sign}$ element-wise to the vector/matrix. The above equation implies that when $\boldsymbol{M}$ is diagonal, Muon degenerates to momentum-based <a href="/archives/10542#%E8%87%AA%E9%80%82%E5%BA%94%E7%89%88" target="_blank">SignSGD</a> (Signum) or <a href="/archives/9512" target="_blank">Tiger</a> proposed by the author, both classical approximations of Adam. Conversely, the difference between Muon and Signum/Tiger is replacing the element-wise $\text{sign}(\boldsymbol{M})$ with the matrix version $\text{msign}(\boldsymbol{M})$.</p>
+                
+                <p>For an $n$-dimensional vector, we can view it as an $n\times 1$ matrix, where $\text{msign}(\boldsymbol{m}) = \boldsymbol{m}/\Vert\boldsymbol{m}\Vert_2$ is exactly $l_2$ normalization. Therefore, under the Muon framework, we have two perspectives for vectors: first as diagonal matrices (like LayerNorm's gamma parameters), resulting in applying $\text{sign}$ to momentum; second as $n\times 1$ matrices, resulting in $l_2$ normalization of momentum. Additionally, although input and output embeddings are also matrices, they are used sparsely, so a more reasonable approach is to treat them as multiple independent vectors.</p>
+                
+                <p>When $m=n=r$, $\text{msign}(\boldsymbol{M})$ has another meaning as the "optimal orthogonal approximation":</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(5)</span>
+                        \(\text{msign}(\boldsymbol{M}) = \mathop{\text{argmin}}_{\boldsymbol{O}^{\top}\boldsymbol{O} = \boldsymbol{I}}\Vert \boldsymbol{M} - \boldsymbol{O}\Vert_F^2\)
+                    </div>
+                </div>
+                
+                <p>Similarly, for $\text{sign}(\boldsymbol{M})$ we can write (assuming $\boldsymbol{M}$ has no zero elements):</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(6)</span>
+                        \(\text{sign}(\boldsymbol{M}) = \mathop{\text{argmin}}_{\boldsymbol{O}\in\{-1,1\}^{n\times m}}\Vert \boldsymbol{M} - \boldsymbol{O}\Vert_F^2\)
+                    </div>
+                </div>
+                
+                <p>Whether $\boldsymbol{O}^{\top}\boldsymbol{O} = \boldsymbol{I}$ or $\boldsymbol{O}\in\{-1,1\}^{n\times m}$, we can regard them as regularization constraints on updates. Thus Muon and Signum/Tiger can be viewed as optimizers under the same conceptual framework—they all start from momentum $\boldsymbol{M}$ to construct updates but choose different regularization methods.</p>
+                
+                <blockquote>
+                    <p><strong>Proof of Equation (5)</strong>: For orthogonal matrix $\boldsymbol{O}$, we have:<br />
+                    \begin{equation}\begin{aligned}
+                    \Vert \boldsymbol{M} - \boldsymbol{O}\Vert_F^2 =&\,  \Vert \boldsymbol{M}\Vert_F^2 + \Vert \boldsymbol{O}\Vert_F^2 - 2\langle\boldsymbol{M},\boldsymbol{O}\rangle_F \\[5pt]
+                    =&\,  \Vert \boldsymbol{M}\Vert_F^2 + n - 2\text{Tr}(\boldsymbol{M}\boldsymbol{O}^{\top})\\[5pt]
+                    =&\,  \Vert \boldsymbol{M}\Vert_F^2 + n - 2\text{Tr}(\boldsymbol{U}\boldsymbol{\Sigma}\boldsymbol{V}^{\top}\boldsymbol{O}^{\top})\\[5pt]
+                    =&\,  \Vert \boldsymbol{M}\Vert_F^2 + n - 2\text{Tr}(\boldsymbol{\Sigma}\boldsymbol{V}^{\top}\boldsymbol{O}^{\top}\boldsymbol{U})\\
+                    =&\,  \Vert \boldsymbol{M}\Vert_F^2 + n - 2\sum_{i=1}^n \boldsymbol{\Sigma}_{i,i}(\boldsymbol{V}^{\top}\boldsymbol{O}^{\top}\boldsymbol{U})_{i,i}
+                    \end{aligned}\end{equation}<br />
+                    The involved operational rules have been introduced in <a href="/archives/10366" target="_blank">pseudoinverse</a>. Since $\boldsymbol{U},\boldsymbol{V},\boldsymbol{O}$ are orthogonal matrices, $\boldsymbol{V}^{\top}\boldsymbol{O}^{\top}\boldsymbol{U}$ is also orthogonal. Orthogonal matrix elements cannot exceed 1, and since $\boldsymbol{\Sigma}_{i,i} > 0$, minimizing the above expression corresponds to maximizing each $(\boldsymbol{V}^{\top}\boldsymbol{O}^{\top}\boldsymbol{U})_{i,i}$, i.e., $(\boldsymbol{V}^{\top}\boldsymbol{O}^{\top}\boldsymbol{U})_{i,i}=1$, which means $\boldsymbol{V}^{\top}\boldsymbol{O}^{\top}\boldsymbol{U}=\boldsymbol{I}$, i.e., $\boldsymbol{O}=\boldsymbol{U}\boldsymbol{V}^{\top}$.</p>
+                    <p>This conclusion can be carefully extended to cases where $m,n,r$ are unequal but won't be further expanded here.</p>
+                </blockquote>
+
+                <h2 id="iterative-solution">Iterative Solution<a href="#iterative-solution">#</a></h2>
+                
+                <p>In practice, if we perform SVD on $\boldsymbol{M}$ at each step to compute $\text{msign}(\boldsymbol{M})$, the computational cost would be substantial. Therefore, the author proposes using Newton-Schulz iteration to approximate $\text{msign}(\boldsymbol{M})$.</p>
+                
+                <p>The iteration starts from identity (3). Without loss of generality, assume $n\geq m$, then consider Taylor expanding $(\boldsymbol{M}^{\top}\boldsymbol{M})^{-1/2}$ around $\boldsymbol{M}^{\top}\boldsymbol{M}=\boldsymbol{I}$. The expansion method is directly applying the scalar function $t^{-1/2}$ result to the matrix:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(7)</span>
+                        \(t^{-1/2} = 1 - \frac{1}{2}(t-1) + \frac{3}{8}(t-1)^2 - \frac{5}{16}(t-1)^3 + \cdots\)
+                    </div>
+                </div>
+                
+                <p>Keeping up to second order gives $(15 - 10t + 3t^2)/8$, so we have:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(8)</span>
+                        \(\text{msign}(\boldsymbol{M}) = \boldsymbol{M}(\boldsymbol{M}^{\top}\boldsymbol{M})^{-1/2}\approx \frac{15}{8}\boldsymbol{M} - \frac{5}{4}\boldsymbol{M}(\boldsymbol{M}^{\top}\boldsymbol{M}) + \frac{3}{8}\boldsymbol{M}(\boldsymbol{M}^{\top}\boldsymbol{M})^2\)
+                    </div>
+                </div>
+                
+                <p>If $\boldsymbol{X}_t$ is some approximation of $\text{msign}(\boldsymbol{M})$, substituting it into the above should yield a better approximation of $\text{msign}(\boldsymbol{M})$, giving us a usable iterative scheme:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(9)</span>
+                        \(\boldsymbol{X}_{t+1} = \frac{15}{8}\boldsymbol{X}_t - \frac{5}{4}\boldsymbol{X}_t(\boldsymbol{X}_t^{\top}\boldsymbol{X}_t) + \frac{3}{8}\boldsymbol{X}_t(\boldsymbol{X}_t^{\top}\boldsymbol{X}_t)^2\)
+                    </div>
+                </div>
+                
+                <p>However, examining Muon's official code reveals that its Newton-Schulz iteration indeed has this form, but the three coefficients are $(3.4445, -4.7750, 2.0315)$, with no mathematical derivation provided by the author, only cryptic comments:</p>
+                
+                <div class="pic-container">
+                    <div class="typecho-caption" style="max-width: 500px; margin: 0 auto">
+                        <div style="margin: 5px">
+                            <img src="https://kexue.fm/usr/uploads/2024/12/39782973.png" style="max-width: 100%" alt="Muon Optimizer's Newton-Schulz Iteration" />
+                        </div>
+                        <p class="typecho-caption-text">Muon Optimizer's Newton-Schulz Iteration</p>
+                    </div>
+                </div>
+
+                <h2 id="convergence-acceleration">Convergence Acceleration<a href="#convergence-acceleration">#</a></h2>
+                
+                <p>To guess the origin of the official iterative algorithm, consider a general iteration process:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(10)</span>
+                        \(\boldsymbol{X}_{t+1} = a\boldsymbol{X}_t + b\boldsymbol{X}_t(\boldsymbol{X}_t^{\top}\boldsymbol{X}_t) + c\boldsymbol{X}_t(\boldsymbol{X}_t^{\top}\boldsymbol{X}_t)^2\)
+                    </div>
+                </div>
+                
+                <p>where $a,b,c$ are three coefficients to be determined. For higher-order iterative algorithms, we can sequentially add terms like $\boldsymbol{X}_t(\boldsymbol{X}_t^{\top}\boldsymbol{X}_t)^3$, $\boldsymbol{X}_t(\boldsymbol{X}_t^{\top}\boldsymbol{X}_t)^4$, etc. The following analysis process is general.</p>
+                
+                <p>We choose initial value $\boldsymbol{X}_0=\boldsymbol{M}/\Vert\boldsymbol{M}\Vert_F$, where $\Vert\cdot\Vert_F$ is the matrix $F$-norm. The rationale is dividing by $\Vert\boldsymbol{M}\Vert_F$ doesn't change SVD's $\boldsymbol{U},\boldsymbol{V}$ but ensures all singular values of $\boldsymbol{X}_0$ are in $[0,1]$, making initial singular values more standardized. Assuming $\boldsymbol{X}_t$ can be SVD decomposed as $\boldsymbol{U}\boldsymbol{\Sigma}_t\boldsymbol{V}^{\top}$, substituting into the above gives:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(11)</span>
+                        \(\boldsymbol{X}_{t+1} = \boldsymbol{U}_{[:,:r]}(a \boldsymbol{\Sigma}_{t,[:r,:r]} + b \boldsymbol{\Sigma}_{t,[:r,:r]}^3 + c \boldsymbol{\Sigma}_{t,[:r,:r]}^5)\boldsymbol{V}_{[:,:r]}^{\top}\)
+                    </div>
+                </div>
+                
+                <p>Thus, Equation (10) actually iterates the diagonal matrix $\boldsymbol{\Sigma}_{[:r,:r]}$ composed of singular values. If we denote $\boldsymbol{X}_t=\boldsymbol{U}_{[:,:r]}\boldsymbol{\Sigma}_{t,[:r,:r]}\boldsymbol{V}_{[:,:r]}^{\top}$, then $\boldsymbol{\Sigma}_{t+1,[:r,:r]} = g(\boldsymbol{\Sigma}_{t,[:r,:r]})$, where $g(x) = ax + bx^3 + cx^5$. Since powers of diagonal matrices equal element-wise powers, the problem simplifies to iterating individual singular values $\sigma$. Our goal is to compute $\boldsymbol{U}_{[:,:r]}\boldsymbol{V}_{[:,:r]}^{\top}$, i.e., to transform $\boldsymbol{\Sigma}_{[:r,:r]}$ into an identity matrix via iteration, which simplifies to iterating $\sigma_{t+1} = g(\sigma_t)$ to transform a single singular value to 1.</p>
+                
+                <p>Inspired by <a href="https://x.com/leloykun/status/1846165001746501899" target="_blank">@leloykun</a>, we treat selecting $a,b,c$ as an optimization problem aiming for the fastest possible convergence for arbitrary initial singular values. First, reparameterize $g(x)$ as:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(12)</span>
+                        \(g(x) = x + \kappa x(x^2 - x_1^2)(x^2 - x_2^2)\)
+                    </div>
+                </div>
+                
+                <p>where $x_1 \leq x_2$. This parameterization intuitively shows the iteration's five fixed points $0,\pm x_1,\pm x_2$. Since our goal is convergence to 1, we choose initialization with $x_1 < 1, x_2 > 1$, hoping iteration moves toward $x_1$ or $x_2$, both near 1.</p>
+                
+                <p>Next, determine iteration steps $T$, making the iteration process a deterministic function. Then fix matrix shape ($n,m$) and sample a batch of matrices, compute singular values via SVD. Finally, treat these singular values as input, target output as 1, loss function as squared error. The entire model is fully differentiable and solvable via gradient descent (<a href="https://x.com/leloykun/status/1846165001746501899" target="_blank">@leloykun</a> assumed $x_1 + x_2 = 2$ and used grid search).</p>
+                
+                <p>Some calculation results:</p>
+                
+                <div class="code-container">
+                    <div class="code-header">Numerical Results Table</div>
+                    <div class="code-content">
+<pre>n    m    T    κ      x₁    x₂    a      b       c      mse    mseₒ
+1024 1024 3    7.020  0.830 0.830 4.328  -9.666  7.020  0.10257 0.18278
+1024 1024 5    1.724  0.935 1.235 3.297  -4.136  1.724  0.02733 0.04431
+2048 1024 3    7.028  0.815 0.815 4.095  -9.327  7.028  0.01628 0.06171
+2048 1024 5    1.476  0.983 1.074 2.644  -3.128  1.476  0.00038 0.02954
+4096 1024 3    6.948  0.802 0.804 3.886  -8.956  6.948  0.00371 0.02574
+4096 1024 5    1.214  1.047 1.048 2.461  -2.663  1.214  0.00008 0.02563
+2048 2048 3    11.130 0.767 0.767 4.857  -13.103 11.130 0.10739 0.24410
+2048 2048 5    1.779  0.921 1.243 3.333  -4.259  1.779  0.03516 0.04991
+4096 4096 3    18.017 0.705 0.705 5.460  -17.929 18.017 0.11303 0.33404
+4096 4096 5    2.057  0.894 1.201 3.373  -4.613  2.057  0.04700 0.06372
+8192 8192 3    30.147 0.643 0.643 6.139  -24.893 30.147 0.11944 0.44843
+8192 8192 5    2.310  0.871 1.168 3.389  -4.902  2.310  0.05869 0.07606</pre>
+                    </div>
+                </div>
+                
+                <p>Here $\text{mse}_{\text{o}}$ is the result calculated using Muon author's $a,b,c$. The table shows results clearly depend on matrix size and iteration steps; from loss perspective, non-square matrices converge more easily than square ones; Muon author's $a,b,c$ roughly correspond to square matrices' optimal solution for $T=5$. Given iteration steps, results depend on matrix size, essentially depending on singular value distribution. A noteworthy result about this distribution is the <a href="https://en.wikipedia.org/wiki/Marchenko%E2%80%93Pastur_distribution" target="_blank">Marchenko–Pastur distribution</a> when $n,m\to\infty$.</p>
+                
+                <p>Reference code:</p>
+                
+                <div class="code-container">
+                    <div class="code-header">Python Code</div>
+                    <div class="code-content">
+<pre class="language-python">import jax
+import jax.numpy as jnp
+from tqdm import tqdm
+
+n, m, T = 1024, 1024, 5
+key, data = jax.random.key(42), jnp.array([])
+for _ in tqdm(range(1000), ncols=0, desc='SVD'):
+    key, subkey = jax.random.split(key)
+    M = jax.random.normal(subkey, shape=(n, m))
+    S = jnp.linalg.svd(M, full_matrices=False)[1]
+    data = jnp.concatenate([data, S / (S**2).sum()**0.5])
+
+@jax.jit
+def f(w, x):
+    k, x1, x2 = w
+    for _ in range(T):
+        x = x + k * x * (x**2 - x1**2) * (x**2 - x2**2)
+    return ((x - 1)**2).mean()
+
+f_grad = jax.grad(f)
+w, u = jnp.array([1, 0.9, 1.1]), jnp.zeros(3)
+for _ in tqdm(range(100000), ncols=0, desc='SGD'):
+    u = 0.9 * u + f_grad(w, data)  # momentum acceleration
+    w = w - 0.01 * u
+
+k, x1, x2 = w
+a, b, c = 1 + k * x1**2 * x2**2, -k * (x1**2 + x2**2), k
+print(f'{n} & {m} & {T} & {k:.3f} & {x1:.3f} & {x2:.3f} & {a:.3f} & {b:.3f} & {c:.3f} & {f(w, data):.5f}')</pre>
+                    </div>
+                </div>
+
+                <h2 id="deeper-thoughts">Deeper Thoughts<a href="#deeper-thoughts">#</a></h2>
+                
+                <p>With default $T=5$, for an $n\times n$ matrix parameter, each Muon update requires at least 15 multiplications of $n\times n$ with $n\times n$ matrices. This computational load is undoubtedly significantly larger than Adam, raising concerns about Muon's practical feasibility.</p>
+                
+                <p>In fact, this concern is unwarranted. Although Muon's computation is more complex than Adam, the time increase per step is minimal—the author's conclusion is within 5%, while Muon's author claims 2%. This is because Muon's matrix multiplications occur after current gradient computation and before next gradient computation, when almost all computing power is idle. These matrix multiplications have static sizes and can be parallelized, so they don't significantly increase time costs. Instead, Muon has one less cached variable than Adam, resulting in lower memory costs.</p>
+                
+                <p>The most thought-provoking aspect of Muon is the intrinsic difference between vectors and matrices and its impact on optimization. Common optimizers like SGD, Adam, and Tiger have element-wise update rules, treating all parameters (vectors or matrices) as one large vector with components updated independently according to identical rules. Optimizers with this characteristic tend to simplify theoretical analysis and facilitate tensor parallelism, as splitting a large matrix into smaller independent matrices doesn't change optimization trajectories.</p>
+                
+                <p>But Muon is different—it treats matrices as fundamental units, considering unique matrix characteristics. Some readers might wonder: aren't matrices and vectors just arrangements of numbers? What's the difference? For example, matrices have the concept of "trace"—the sum of diagonal elements. This isn't arbitrarily defined; it has an important property of being invariant under similarity transformations and equals the sum of all matrix eigenvalues. This example shows diagonal and off-diagonal elements don't have completely equal status. Muon's superior performance stems precisely from considering this inequality.</p>
+                
+                <p>Of course, this also introduces negative consequences. If a matrix is partitioned across different devices, Muon requires gathering their gradients to compute updates rather than each device updating independently, increasing communication costs. Even without considering parallelism, this issue exists. For example, Multi-Head Attention typically projects through a single large matrix to $Q$ (similarly for $K,V$), then uses reshape to obtain multiple heads. Thus, model parameters contain only a single matrix, but it essentially comprises multiple small matrices, so theoretically we should split the large matrix into multiple small matrices for independent updates.</p>
+                
+                <p>In summary, Muon's non-element-wise update rules capture essential differences between vectors and matrices while introducing minor issues that might dissatisfy some readers aesthetically.</p>
+                
+                <p>(Addition: Almost simultaneously with this blog post's publication, Muon author Keller Jordan published his own blog <a href="https://kellerjordan.github.io/posts/muon/" target="_blank">"Muon: An optimizer for hidden layers in neural networks"</a>.)</p>
+
+                <h2 id="norm-perspective">Norm Perspective<a href="#norm-perspective">#</a></h2>
+                
+                <p>Theoretically, what key matrix characteristics does Muon capture? Perhaps the following norm perspective can answer our question.</p>
+                
+                <p>This section's discussion mainly references papers <a href="https://ieeexplore.ieee.org/abstract/document/7347351" target="_blank">"Stochastic Spectral Descent for Discrete Graphical Models"</a> and <a href="https://papers.cool/arxiv/2409.20325" target="_blank">"Old Optimizer, New Norm: An Anthology"</a>, particularly the latter. However, the starting point isn't new; we briefly touched on it in <a href="/archives/9660" target="_blank">"Gradient Flow: Exploring Paths to Minima"</a>: For vector parameters $\boldsymbol{w}\in\mathbb{R}^n$, define next-step update rule as:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(13)</span>
+                        \(\boldsymbol{w}_{t+1} = \mathop{\text{argmin}}_{\boldsymbol{w}} \frac{\Vert\boldsymbol{w} - \boldsymbol{w}_t\Vert^2}{2\eta_t} + \mathcal{L}(\boldsymbol{w})\)
+                    </div>
+                </div>
+                
+                <p>where $\Vert\Vert$ is some vector norm. This is called "steepest gradient descent" under some norm constraint. Assuming $\eta_t$ is sufficiently small, the first term dominates, meaning $\boldsymbol{w}_{t+1}$ is close to $\boldsymbol{w}_t$, so we assume $\mathcal{L}(\boldsymbol{w})$'s first-order approximation suffices, simplifying the problem to:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(14)</span>
+                        \(\boldsymbol{w}_{t+1} = \mathop{\text{argmin}}_{\boldsymbol{w}} \frac{\Vert\boldsymbol{w} - \boldsymbol{w}_t\Vert^2}{2\eta_t} + \mathcal{L}(\boldsymbol{w}_t) + \nabla_{\boldsymbol{w}_t}\mathcal{L}(\boldsymbol{w}_t)^{\top}(\boldsymbol{w}-\boldsymbol{w}_t)\)
+                    </div>
+                </div>
+                
+                <p>Let $\Delta\boldsymbol{w}_{t+1} = \boldsymbol{w}_{t+1}-\boldsymbol{w}_t, \boldsymbol{g}_t = \nabla_{\boldsymbol{w}_t}\mathcal{L}(\boldsymbol{w}_t)$, then simplified as:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(15)</span>
+                        \(\Delta\boldsymbol{w}_{t+1} = \mathop{\text{argmin}}_{\Delta\boldsymbol{w}} \frac{\Vert\Delta\boldsymbol{w}\Vert^2}{2\eta_t} + \boldsymbol{g}_t^{\top}\Delta\boldsymbol{w}\)
+                    </div>
+                </div>
+                
+                <p>The general approach for computing $\Delta\boldsymbol{w}_{t+1}$ is differentiation, but <a href="https://papers.cool/arxiv/2409.20325" target="_blank">"Old Optimizer, New Norm: An Anthology"</a> provides a unified scheme without differentiation: Decompose $\Delta\boldsymbol{w}$ into norm $\gamma = \Vert\Delta\boldsymbol{w}\Vert$ and direction vector $\boldsymbol{\varphi} = -\Delta\boldsymbol{w}/\Vert\Delta\boldsymbol{w}\Vert$, then:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(16)</span>
+                        \[
+                        \begin{aligned}
+                        \min_{\Delta\boldsymbol{w}} & \frac{\Vert\Delta\boldsymbol{w}\Vert^2}{2\eta_t} + \boldsymbol{g}_t^{\top}\Delta\boldsymbol{w} \\
+                        =& \min_{\gamma\geq 0, \Vert\boldsymbol{\varphi}\Vert=1} \frac{\gamma^2}{2\eta_t} - \gamma\boldsymbol{g}_t^{\top}\boldsymbol{\varphi} \\
+                        =& \min_{\gamma\geq 0} \frac{\gamma^2}{2\eta_t} - \gamma\bigg(\underbrace{\max_{\Vert\boldsymbol{\varphi}\Vert=1}\boldsymbol{g}_t^{\top}\boldsymbol{\varphi}}_{\text{denoted }\Vert \boldsymbol{g}_t\Vert^{\dagger}}\bigg)
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>$\gamma$ is just a scalar, similar to learning rate, easily found optimal as $\eta_t\Vert \boldsymbol{g}_t\Vert^{\dagger}$, while update direction is $\boldsymbol{\varphi}^*$ maximizing $\boldsymbol{g}_t^{\top}\boldsymbol{\varphi}$ ($\Vert\boldsymbol{\varphi}\Vert=1$). Substituting Euclidean norm $\Vert\boldsymbol{\varphi}\Vert_2 = \sqrt{\boldsymbol{\varphi}^{\top}\boldsymbol{\varphi}}$ gives $\Vert \boldsymbol{g}_t\Vert^{\dagger}=\Vert \boldsymbol{g}_t\Vert_2$ and $\boldsymbol{\varphi}^* = \boldsymbol{g}_t/\Vert\boldsymbol{g}_t\Vert_2$, yielding $\Delta\boldsymbol{w}_{t+1}=-\eta_t \boldsymbol{g}_t$, i.e., gradient descent (SGD). Generally, for $p$-norm:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(17)</span>
+                        \(\Vert\boldsymbol{\varphi}\Vert_p = \sqrt[\uproot{10}p]{\sum_{i=1}^n |\varphi_i|^p}\)
+                    </div>
+                </div>
+                
+                <p><a href="https://en.wikipedia.org/wiki/H%C3%B6lder%27s_inequality" target="_blank">Hölder's inequality</a> gives $\boldsymbol{g}^{\top}\boldsymbol{\varphi} \leq \Vert \boldsymbol{g}\Vert_q \Vert \boldsymbol{\varphi}\Vert_p$, where $1/p + 1/q = 1$, giving us:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(18)</span>
+                        \(\max_{\Vert\boldsymbol{\varphi}\Vert_p=1}\boldsymbol{g}^{\top}\boldsymbol{\varphi} = \Vert \boldsymbol{g}\Vert_q\)
+                    </div>
+                </div>
+                
+                <p>Equality holds when:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(19)</span>
+                        \(\boldsymbol{\varphi}^* = \frac{1}{\Vert\boldsymbol{g}\Vert_q^{q/p}}\Big[\text{sign}(g_1) |g_1|^{q/p},\text{sign}(g_2) |g_2|^{q/p},\cdots,\text{sign}(g_n) |g_n|^{q/p}\Big]\)
+                    </div>
+                </div>
+                
+                <p>Optimizers using this direction vector are called pbSGD, refer to <a href="https://www.ijcai.org/proceedings/2020/451" target="_blank">"pbSGD: Powered Stochastic Gradient Descent Methods for Accelerated Non-Convex Optimization"</a>. Particularly, when $p\to\infty$, $q\to 1$ and $|g_i|^{q/p}\to 1$, degenerating to SignSGD, i.e., SignSGD is actually steepest gradient descent under $\Vert\Vert_{\infty}$ norm.</p>
+
+                <h2 id="matrix-norms">Matrix Norms<a href="#matrix-norms">#</a></h2>
+                
+                <p>Now shift focus to matrix parameters $\boldsymbol{W}\in\mathbb{R}^{n\times m}$. Similarly, define its update rule as:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(20)</span>
+                        \(\boldsymbol{W}_{t+1} = \mathop{\text{argmin}}_{\boldsymbol{W}} \frac{\Vert\boldsymbol{W} - \boldsymbol{W}_t\Vert^2}{2\eta_t} + \mathcal{L}(\boldsymbol{W})\)
+                    </div>
+                </div>
+                
+                <p>Here $\Vert\Vert$ is some matrix norm. Using first-order approximation gives:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(21)</span>
+                        \(\Delta\boldsymbol{W}_{t+1} = \mathop{\text{argmin}}_{\Delta\boldsymbol{W}} \frac{\Vert\Delta\boldsymbol{W}\Vert^2}{2\eta_t} + \text{Tr}(\boldsymbol{G}_t^{\top}\Delta\boldsymbol{W})\)
+                    </div>
+                </div>
+                
+                <p>where $\Delta\boldsymbol{W}_{t+1} = \boldsymbol{W}_{t+1}-\boldsymbol{W}_t, \boldsymbol{G}_t = \nabla_{\boldsymbol{W}_t}\mathcal{L}(\boldsymbol{W}_t)$. Still using "norm-direction" decoupling, i.e., set $\gamma = \Vert\Delta\boldsymbol{w}\Vert$ and $\boldsymbol{\Phi} = -\Delta\boldsymbol{W}/\Vert\Delta\boldsymbol{W}\Vert$, we get:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(22)</span>
+                        \[
+                        \begin{aligned}
+                        \min_{\Delta\boldsymbol{W}} & \frac{\Vert\Delta\boldsymbol{W}\Vert^2}{2\eta_t} + \text{Tr}(\boldsymbol{G}_t^{\top}\Delta\boldsymbol{W}) \\
+                        =& \min_{\gamma\geq 0} \frac{\gamma^2}{2\eta_t} - \gamma\bigg(\underbrace{\max_{\Vert\boldsymbol{\Phi}\Vert=1}\text{Tr}(\boldsymbol{G}_t^{\top}\boldsymbol{\Phi})}_{\text{denoted }\Vert \boldsymbol{G}_t\Vert^{\dagger}}\bigg)
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Then analyze specific norms. Two common matrix norms: one is the <a href="/archives/10366#%E8%8C%83%E6%95%B0%E7%9B%B8%E5%85%B3" target="_blank">F-norm</a>, which essentially computes Euclidean norm after flattening matrix to vector—conclusions match vectors, answer is SGD, not elaborated here; the other is the $2$-norm induced from vector norms, also called spectral norm:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(23)</span>
+                        \(\Vert \boldsymbol{\Phi}\Vert_2 = \max_{\Vert \boldsymbol{x}\Vert_2 = 1} \Vert \boldsymbol{\Phi}\boldsymbol{x}\Vert_2\)
+                    </div>
+                </div>
+                
+                <p>Note $\Vert\Vert_2$ in the right side applies to vectors, so definition is clear. More discussion about $2$-norm can be found in <a href="/archives/6051" target="_blank">"Lipschitz Constraints in Deep Learning: Generalization and Generative Models"</a> and <a href="/archives/10407#%E7%9F%A9%E9%98%B5%E8%8C%83%E6%95%B0" target="_blank">"The Path to Low-Rank Approximation (II): SVD"</a>. Since $2$-norm is induced by "matrix-vector" multiplication, it better aligns with matrix multiplication, and always satisfies $\Vert\boldsymbol{\Phi}\Vert_2\leq \Vert\boldsymbol{\Phi}\Vert_F$, i.e., $2$-norm is more compact than F-norm.</p>
+                
+                <p>So, next compute for $2$-norm specifically. Let $\boldsymbol{G}$'s SVD be $\boldsymbol{U}\boldsymbol{\Sigma}\boldsymbol{V}^{\top} = \sum\limits_{i=1}^r \sigma_i \boldsymbol{u}_i \boldsymbol{v}_i^{\top}$, we have:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(24)</span>
+                        \(\text{Tr}(\boldsymbol{G}^{\top}\boldsymbol{\Phi})=\text{Tr}\Big(\sum_{i=1}^r \sigma_i \boldsymbol{v}_i \boldsymbol{u}_i^{\top}\boldsymbol{\Phi}\Big) = \sum_{i=1}^r \sigma_i \boldsymbol{u}_i^{\top}\boldsymbol{\Phi}\boldsymbol{v}_i\)
+                    </div>
+                </div>
+                
+                <p>By definition, when $\Vert\boldsymbol{\Phi}\Vert_2=1$, $\Vert\boldsymbol{\Phi}\boldsymbol{v}_i\Vert_2\leq \Vert\boldsymbol{v}_i\Vert_2=1$, so $\boldsymbol{u}_i^{\top}\boldsymbol{\Phi}\boldsymbol{v}_i\leq 1$, therefore:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(25)</span>
+                        \(\text{Tr}(\boldsymbol{G}^{\top}\boldsymbol{\Phi})\leq \sum_{i=1}^r \sigma_i\)
+                    </div>
+                </div>
+                
+                <p>Equality holds when all $\boldsymbol{u}_i^{\top}\boldsymbol{\Phi}\boldsymbol{v}_i$ equal 1, then:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(26)</span>
+                        \(\boldsymbol{\Phi} = \sum_{i=1}^r \boldsymbol{u}_i \boldsymbol{v}_i^{\top} = \boldsymbol{U}_{[:,:r]}\boldsymbol{V}_{[:,:r]}^{\top} = \text{msign}(\boldsymbol{G})\)
+                    </div>
+                </div>
+                
+                <p>Thus we've proven gradient descent under $2$-norm penalty is exactly the Muon optimizer with $\beta=0$! When $\beta > 0$, moving average takes effect, which can be viewed as a more accurate gradient estimate, so changed to applying $\text{msign}$ to momentum. Overall, Muon corresponds to gradient descent under $2$-norm constraint, where $2$-norm better measures essential differences between matrices, making each step more precise and fundamental.</p>
+
+                <h2 id="historical-context">Historical Context<a href="#historical-context">#</a></h2>
+                
+                <p>Muon has an older related work <a href="https://papers.cool/arxiv/1802.09568" target="_blank">"Shampoo: Preconditioned Stochastic Tensor Optimization"</a>, a 2018 paper proposing the Shampoo optimizer, sharing similarities with Muon.</p>
+                
+                <p>Adam's strategy of adapting learning rates via moving averages of gradient squares originated from Adagrad's paper <a href="https://jmlr.org/papers/v12/duchi11a.html" target="_blank">"Adaptive Subgradient Methods for Online Learning and Stochastic Optimization"</a>, which proposed directly accumulating gradient squares—equivalent to global equal-weight averaging. Later RMSProp and Adam, inspired by momentum design, changed to moving averages, performing better in practice.</p>
+                
+                <p>Moreover, Adagrad originally proposed accumulating outer products $\boldsymbol{g}\boldsymbol{g}^{\top}$, but caching outer products was too costly in space, so practice switched to Hadamard products $\boldsymbol{g}\odot\boldsymbol{g}$. What's the theoretical basis for accumulating outer products? As derived in <a href="/archives/10588" target="_blank">"Viewing Adaptive Learning Rate Optimizers from Hessian Approximation"</a>, the answer is "long-term average of gradient outer products $\mathbb{E}[\boldsymbol{g}\boldsymbol{g}^{\top}]$ approximates Hessian matrix square $\sigma^2\boldsymbol{\mathcal{H}}_{\boldsymbol{\theta}^*}^2$", so this actually approximates second-order Newton's method.</p>
+                
+                <p>Shampoo inherits Adagrad's idea of caching outer products but compromises considering cost. Like Muon, it optimizes matrices (and higher-order tensors), strategy being caching gradient matrix products $\boldsymbol{G}\boldsymbol{G}^{\top}$ and $\boldsymbol{G}^{\top}\boldsymbol{G}$, not outer products, with space cost $\mathcal{O}(n^2 + m^2)$ instead of $\mathcal{O}(n^2 m^2)$:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(27)</span>
+                        \[
+                        \begin{aligned}
+                        \boldsymbol{L}_t =&\, \beta\boldsymbol{L}_{t-1} + \boldsymbol{G}_t\boldsymbol{G}_t^{\top} \\[5pt]
+                        \boldsymbol{R}_t =&\, \beta\boldsymbol{R}_{t-1} + \boldsymbol{G}_t^{\top}\boldsymbol{G}_t \\[5pt]
+                        \boldsymbol{W}_t =&\, \boldsymbol{W}_{t-1} - \eta_t \boldsymbol{L}_t^{-1/4}\boldsymbol{G}_t\boldsymbol{R}_t^{-1/4} \\
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Here $\beta$ is added by the author; Shampoo defaults $\beta=1$. ${}^{-1/4}$ is again matrix power operations, computable via SVD. Since Shampoo didn't propose approximate schemes like Newton-Schulz iteration but directly uses SVD, to save computation costs, it doesn't compute $\boldsymbol{L}_t^{-1/4}$ and $\boldsymbol{R}_t^{-1/4}$ every step but updates them periodically.</p>
+                
+                <p>Particularly, when $\beta=0$, Shampoo's update vector is $(\boldsymbol{G}\boldsymbol{G}^{\top})^{-1/4}\boldsymbol{G}(\boldsymbol{G}^{\top}\boldsymbol{G})^{-1/4}$. Through SVD of $\boldsymbol{G}$ we can prove:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(28)</span>
+                        \((\boldsymbol{G}\boldsymbol{G}^{\top})^{-1/4}\boldsymbol{G}(\boldsymbol{G}^{\top}\boldsymbol{G})^{-1/4} = (\boldsymbol{G}\boldsymbol{G}^{\top})^{-1/2}\boldsymbol{G}= \boldsymbol{G}(\boldsymbol{G}^{\top}\boldsymbol{G})^{-1/2}=\text{msign}(\boldsymbol{G})\)
+                    </div>
+                </div>
+                
+                <p>This shows Shampoo and Muon are theoretically equivalent when $\beta=0$! Therefore, Shampoo and Muon share common ground in update design.</p>
+
+                <h2 id="summary">Summary<a href="#summary">#</a></h2>
+                
+                <p>This article introduces the recently popular Muon optimizer on Twitter. It's specifically designed for matrix parameters, currently appears more efficient than AdamW, and seems to embody some essential differences between vectorization and matrixization, worthy of study and reflection.</p>
+
+                <div class="citation-section">
+                    <div class="citation-header">
+                        <i class="fas fa-quote-right"></i>
+                        Citation Information
+                    </div>
+                    <p><strong>Original Article:</strong> Su Jianlin. Muon Optimizer Appreciation: The Essential Leap from Vectors to Matrices. <em>Scientific Spaces</em>.</p>
+                    
+                    <p><strong>How to cite this translation:</strong></p>
+                    <div class="citation-box">
+                        Su, J. Muon Optimizer Appreciation: The Essential Leap from Vectors to Matrices [Translated by Juanxi Tian]. 
+                        <em>Scientific Spaces</em>.
+                    </div>
+                    <p style="margin-top: 0.8rem;"><strong>BibTeX:</strong></p>
+                    <div class="citation-box">
+                        @article{su2025muon_appreciation,
+                            title   = {Muon Optimizer Appreciation: The Essential Leap from Vectors to Matrices},
+                            author  = {Su, Jianlin},
+                            journal = {Scientific Spaces},
+                            year    = {2025},
+                            url     = {https://kexue.fm/archives/10592},
+                            note    = {Translated by Juanxi Tian (ScalingOpt Team)}
+                          }
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="translation-credit">
+                <i class="fas fa-user-graduate"></i>
+                Academic Translation by Juanxi Tian (ScalingOpt Team)
+            </div>
+            <div class="copyright">
+                © 2009-2025 Scientific Spaces. All rights reserved.<br>
+                Original content licensed under Creative Commons BY-NC-ND 2.5 China
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript for Interactive Features -->
+    <script>
+        // Scroll Progress Bar
+        window.addEventListener('scroll', function() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            scrollProgress.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Table of Contents Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            const sections = document.querySelectorAll('h2[id]');
+            
+            // Set active section based on scroll position
+            function setActiveSection() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 50)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', setActiveSection);
+            setActiveSection(); // Initial call
+            
+            // Smooth scroll for TOC links
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 50,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+
+        // MathJax Configuration
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                tags: 'ams'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    
+    <!-- MathJax CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</body>
+</html>

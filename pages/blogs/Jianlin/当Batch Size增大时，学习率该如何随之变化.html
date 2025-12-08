@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Should Learning Rate Scale with Batch Size? | Scientific Spaces</title>
+    <meta name="description" content="A comprehensive analysis of scaling laws between learning rate and batch size from multiple perspectives, covering SGD, Adam, and their variants in modern deep learning.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a6bca;
+            --primary-dark: #1357a8;
+            --primary-light: #e8f1fc;
+            --secondary: #2c3e50;
+            --accent: #3498db;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f5f7fa;
+            --gray-200: #e4e7eb;
+            --gray-300: #cbd2d9;
+            --gray-600: #7b8794;
+            --gray-700: #52606d;
+            --gray-900: #323f4b;
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 6px 24px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: #f0f5fc;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.5rem 1.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -8%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+        }
+
+        .meta-item i {
+            font-size: 0.85rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Translation Notice */
+        .translation-notice {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1.2rem;
+            margin: 0;
+        }
+
+        .translation-notice-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .translation-text h3 {
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .translation-text p {
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        .translator-badge {
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(26, 107, 202, 0.2);
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+        }
+
+        @media (max-width: 850px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            padding-left: 1rem;
+        }
+
+        .toc {
+            position: sticky;
+            top: 1rem;
+        }
+
+        .toc-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .toc-header i {
+            font-size: 0.9rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.4rem;
+            position: relative;
+        }
+
+        .toc-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            transition: var(--transition);
+            border-left: 2px solid transparent;
+            padding-left: 8px;
+        }
+
+        .toc-link:hover {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            transform: translateX(2px);
+        }
+
+        .toc-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .toc-number {
+            font-weight: 500;
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            min-width: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-right: 1.2rem;
+            padding-left: 0;
+        }
+
+        @media (max-width: 850px) {
+            .sidebar {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 0 1rem;
+            }
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 1.5rem 0 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: relative;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 35px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        h2 a {
+            color: var(--accent);
+            font-size: 0.7rem;
+            margin-left: 6px;
+            text-decoration: none;
+        }
+
+        h2 a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            color: var(--gray-900);
+            line-height: 1.65;
+        }
+
+        /* Equation Styling */
+        .equation-container {
+            margin: 0.8rem 0;
+        }
+
+        .equation {
+            background: var(--primary-light);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1rem;
+            border-radius: 0 5px 5px 0;
+            font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', serif;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .equation-number {
+            color: var(--primary);
+            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin-right: 6px;
+            display: inline-block;
+            min-width: 18px;
+        }
+
+        /* Code Block Styling */
+        .code-container {
+            margin: 1rem 0;
+            background: #2d2d2d;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .code-header {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 0.6rem 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .code-content {
+            padding: 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #f8f8f2;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+        }
+
+        /* Reference Box */
+        .reference-box {
+            background: linear-gradient(to right, #f8fafc, var(--primary-light));
+            border: 1px solid var(--gray-200);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .reference-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .reference-header i {
+            font-size: 0.9rem;
+        }
+
+        .reference-list {
+            list-style: none;
+        }
+
+        .reference-item {
+            padding: 0.3rem 0 0.3rem 0.8rem;
+            position: relative;
+            margin-bottom: 0.4rem;
+            color: var(--gray-700);
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .reference-item::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 0.65rem;
+        }
+
+        /* Citation Section */
+        .citation-section {
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .citation-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .citation-box {
+            background: var(--white);
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid var(--gray-300);
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-top: 0.6rem;
+            overflow-x: auto;
+            color: var(--gray-900);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--secondary);
+            color: white;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .translation-credit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 6px 16px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(26, 107, 202, 0.2);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            margin-top: 0.6rem;
+        }
+
+        /* Utility Classes */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-light), #e8f2ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .math {
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.1s ease;
+            z-index: 1000;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 1rem 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 0.6rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem 0;
+            }
+            
+            .main-content {
+                padding-right: 0.8rem;
+            }
+            
+            .sidebar {
+                padding-left: 0.8rem;
+            }
+            
+            .meta-info {
+                gap: 0.6rem;
+            }
+            
+            .meta-item {
+                font-size: 0.75rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .translation-notice-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .translator-badge {
+                align-self: flex-start;
+            }
+        }
+
+        /* Links styling */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Optimize long formula display */
+        .equation {
+            word-break: break-word;
+        }
+        
+        /* Optimize list display */
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.3rem;
+            line-height: 1.5;
+        }
+        
+        /* Optimize math formula spacing */
+        .MathJax_Display {
+            margin: 0.6em 0 !important;
+        }
+        
+        /* Image container styling */
+        .pic-container {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+        
+        .pic-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .typecho-caption {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        
+        /* Quote block styling */
+        blockquote.cite {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+        }
+        
+        blockquote.cite div {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        blockquote.cite a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        /* Blockquote styling */
+        blockquote {
+            background: linear-gradient(to right, var(--gray-100), var(--primary-light));
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+            position: relative;
+        }
+
+        blockquote p {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+
+        blockquote p:before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Underline styling */
+        u {
+            text-decoration: none;
+            border-bottom: 1px dotted var(--primary);
+        }
+
+        /* List styling inside main content */
+        .main-content ol, .main-content ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .main-content li {
+            margin-bottom: 0.4rem;
+            line-height: 1.6;
+        }
+
+        /* Highlight box for important notes */
+        .note-box {
+            background: linear-gradient(to right, #fff8e1, #fff3cd);
+            border-left: 3px solid #ffc107;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .note-box strong {
+            color: #856404;
+        }
+
+        /* Definition list styling */
+        .definition {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 3px solid #4caf50;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .definition-header {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Mathematical proof styling */
+        .proof {
+            background: linear-gradient(to right, #f3e5f5, #f8f4ff);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .proof-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Insight box styling */
+        .insight-box {
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+            border-left: 3px solid #1976d2;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .insight-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Analysis box styling */
+        .analysis-box {
+            background: linear-gradient(to right, #fff3e0, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .analysis-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Technical box styling */
+        .technical-box {
+            background: linear-gradient(to right, #fce4ec, #f8bbd9);
+            border-left: 3px solid #e91e63;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .technical-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Epsilon context box */
+        .epsilon-box {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 3px solid #4caf50;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .epsilon-header {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Practical guidance box */
+        .practical-box {
+            background: linear-gradient(to right, #e8f4fd, #d4e9fa);
+            border-left: 3px solid #2196f3;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .practical-header {
+            color: #1976d2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Historical context box */
+        .historical-box {
+            background: linear-gradient(to right, #f3e5f5, #e8daef);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .historical-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Scaling law comparison */
+        .scaling-box {
+            background: linear-gradient(to right, #e0f2f1, #b2dfdb);
+            border-left: 3px solid #009688;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .scaling-header {
+            color: #00796b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Equation reference styling */
+        .equation-ref {
+            color: var(--primary);
+            font-weight: 600;
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>How Should Learning Rate Scale with Batch Size?</h1>
+                <div class="subtitle">A comprehensive analysis of scaling laws between learning rate and batch size from multiple perspectives, covering SGD, Adam, and their variants in modern deep learning.</div>
+                
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>Su Jianlin</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-eye"></i>
+                        <span>Scientific Spaces</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <div class="tag">Optimization</div>
+                        <div class="tag">Scaling Laws</div>
+                        <div class="tag">Deep Learning</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Translation Notice -->
+        <div class="translation-notice">
+            <div class="translation-notice-content">
+                <div class="translation-text">
+                    <h3><i class="fas fa-language"></i> Academic Translation</h3>
+                    <p>This is an academic English translation maintaining technical accuracy while adapting to English academic conventions.</p>
+                </div>
+                <div class="translator-badge">
+                    <i class="fas fa-user-graduate"></i>
+                    Translated by Juanxi Tian (ScalingOpt Team)
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Sidebar Table of Contents -->
+            <aside class="sidebar">
+                <nav class="toc">
+                    <div class="toc-header">
+                        <i class="fas fa-list"></i>
+                        Contents
+                    </div>
+                    <ul class="toc-list">
+                        <li class="toc-item">
+                            <a href="#variance-perspective" class="toc-link">
+                                <span class="toc-number">1</span>
+                                <span>Variance Perspective</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#square-root-scaling" class="toc-link">
+                                <span class="toc-number">1.1</span>
+                                <span>Square Root Scaling</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#linear-scaling" class="toc-link">
+                                <span class="toc-number">1.2</span>
+                                <span>Linear Scaling</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#loss-function-perspective" class="toc-link">
+                                <span class="toc-number">2</span>
+                                <span>Loss Function Perspective</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#monotonic-with-bound" class="toc-link">
+                                <span class="toc-number">2.1</span>
+                                <span>Monotonic with Bound</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#practical-analysis" class="toc-link">
+                                <span class="toc-number">2.2</span>
+                                <span>Practical Analysis</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#data-efficiency" class="toc-link">
+                                <span class="toc-number">2.3</span>
+                                <span>Data Efficiency</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#adaptive-optimizers" class="toc-link">
+                                <span class="toc-number">3</span>
+                                <span>Adaptive Optimizers</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#sign-approximation" class="toc-link">
+                                <span class="toc-number">3.1</span>
+                                <span>Sign Approximation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#two-special-cases" class="toc-link">
+                                <span class="toc-number">3.2</span>
+                                <span>Two Special Cases</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#emergent-behavior" class="toc-link">
+                                <span class="toc-number">3.3</span>
+                                <span>Emergent Behavior</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#efficiency-relationship" class="toc-link">
+                                <span class="toc-number">3.4</span>
+                                <span>Efficiency Relationship</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#article-summary" class="toc-link">
+                                <span class="toc-number">4</span>
+                                <span>Article Summary</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Article Content -->
+            <main class="main-content">
+                <p>With the rapid advancement of computing power, there are increasingly many scenarios that hope to achieve "computing power for time," i.e., to shorten model training time by stacking computing resources. Ideally, we hope that by investing $n$ times the computing power, the time to achieve the same effect is reduced to $1/n$, at which point the total computing cost remains consistent. This "hope" seems reasonable and natural, but in fact it is not trivial. Even if we disregard bottlenecks like communication, when computing power exceeds a certain scale or the model is smaller than a certain size, increasing computing power often only increases Batch Size. However, does increasing Batch Size necessarily shorten training time while maintaining the same effect?</p>
+                
+                <p>This is precisely the topic we will discuss next: when Batch Size increases, how should various hyperparameters, especially the learning rate, be adjusted to maintain the original training effect while maximizing training efficiency? We can also refer to this as the Scaling Law between Batch Size and learning rate.</p>
+                
+                <h2 id="variance-perspective">Variance Perspective<a href="#variance-perspective">#</a></h2>
+                
+                <p>Intuitively, when Batch Size increases, the gradient of each batch becomes more accurate, so we can take larger steps, i.e., increase the learning rate, to reach the endpoint faster, thereby shortening training time. This is generally understood. The question is: how much increase is most appropriate?</p>
+                
+                <div class="historical-box">
+                    <div class="historical-header">
+                        <i class="fas fa-history"></i>
+                        Historical Context
+                    </div>
+                    <p>The relationship between batch size and learning rate has been a fundamental question in deep learning optimization since the early days of large-scale training. The debate between square root scaling and linear scaling reflects different theoretical assumptions about gradient noise and optimization dynamics.</p>
+                </div>
+                
+                <h3 id="square-root-scaling">Square Root Scaling<a href="#square-root-scaling">#</a></h3>
+                
+                <p>The earliest answer to this question may be square root scaling, i.e., when Batch Size expands by a factor of $n$, the learning rate expands by $\sqrt{n}$, from the 2014 paper <a href="https://papers.cool/arxiv/1404.5997" target="_blank">"One weird trick for parallelizing convolutional neural networks"</a>. The derivation principle is to keep the variance of SGD increments constant. Specifically, we denote the gradient of randomly sampling one sample as $\tilde{\boldsymbol{g}}$, with mean and covariance denoted as $\boldsymbol{g}$ and $\boldsymbol{\Sigma}$ respectively, where $\boldsymbol{g}$ is the gradient of the entire dataset. When we increase the number of samples to $B$, we have:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(1)</span>
+                        \[
+                        \tilde{\boldsymbol{g}}_B \triangleq \frac{1}{B}\sum_{i=1}^B \tilde{\boldsymbol{g}}^{(i)},\quad \mathbb{E}[\tilde{\boldsymbol{g}}_B] = \boldsymbol{g},\quad \mathbb{E}[(\tilde{\boldsymbol{g}}_B-\boldsymbol{g})(\tilde{\boldsymbol{g}}_B-\boldsymbol{g})^{\top}]=\frac{\boldsymbol{\Sigma}}{B}
+                        \]
+                    </div>
+                </div>
+                
+                <p>That is, increasing the number of samples does not change the mean, but reduces the covariance to $1/B$. For the SGD optimizer, the increment is $-\eta \tilde{\boldsymbol{g}}_B$, and its covariance is proportional to $\eta^2/B$. We believe that an appropriate amount of (neither too much nor too little) noise is necessary during optimization. Therefore, when Batch Size $B$ changes, we adjust the learning rate $\eta$ to keep the noise intensity of the increment, i.e., the covariance matrix, constant, leading to:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(2)</span>
+                        \[
+                        \frac{\eta^2}{B} = \text{constant}\quad\Rightarrow\quad \eta\propto \sqrt{B}
+                        \]
+                    </div>
+                </div>
+                
+                <p>This yields the square root scaling law between learning rate and Batch Size. The later paper <a href="https://papers.cool/arxiv/1705.08741" target="_blank">"Train longer, generalize better: closing the generalization gap in large batch training of neural networks"</a> also endorsed this choice.</p>
+                
+                <h3 id="linear-scaling">Linear Scaling<a href="#linear-scaling">#</a></h3>
+                
+                <p>Interestingly, linear scaling, i.e., $\eta\propto B$, often performs better in practice. Even the author of the aforementioned paper that first proposed square root scaling, <a href="https://papers.cool/arxiv/1404.5997" target="_blank">"One weird trick for parallelizing convolutional neural networks"</a>, pointed this out in the paper and stated that he could not provide a reasonable explanation.</p>
+                
+                <p>To some extent, linear scaling aligns more with our intuitive understanding, especially as in <a href="https://papers.cool/arxiv/1706.02677" target="_blank">"Accurate, Large Minibatch SGD: Training ImageNet in 1 Hour"</a>, which assumes that the gradient directions of consecutive $n$ batches do not change much, making linear scaling almost obviously valid. However, this assumption is clearly too strong. Relaxing this assumption requires connecting SGD with SDEs (Stochastic Differential Equations), which was accomplished by <a href="https://papers.cool/arxiv/1811.01558" target="_blank">"Stochastic Modified Equations and Dynamics of Stochastic Gradient Algorithms I: Mathematical Foundations"</a>, but the first paper to point out the scaling relationship between learning rate and Batch Size was likely <a href="https://papers.cool/arxiv/2006.15081" target="_blank">"On the Generalization Benefit of Noise in Stochastic Gradient Descent"</a>.</p>
+                
+                <p>In retrospect, establishing this connection is not difficult to understand. Let the model parameters be $\boldsymbol{w}$, then the SGD update rule can be rewritten as:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(3)</span>
+                        \[
+                        \boldsymbol{w}_{t+1} =\boldsymbol{w}_t - \eta \tilde{\boldsymbol{g}}_{B,t} =\boldsymbol{w}_t - \eta \boldsymbol{g}_t - \eta (\tilde{\boldsymbol{g}}_{B,t} - \boldsymbol{g}_t)
+                        \]
+                    </div>
+                </div>
+                
+                <p>where $\tilde{\boldsymbol{g}}_{B,t} - \boldsymbol{g}_t$ is the gradient noise. So far, we have not made any assumptions about the distribution of this noise, only knowing that its mean is $\boldsymbol{0}$ and its covariance is $\boldsymbol{\Sigma}_t/B$. Next, we assume that this noise follows a normal distribution $\mathcal{N}(\boldsymbol{0},\boldsymbol{\Sigma}_t/B)$, then the iteration can be further rewritten as:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(4)</span>
+                        \[
+                        \begin{aligned}
+                        \boldsymbol{w}_{t+1} =&\, \boldsymbol{w}_t - \eta \boldsymbol{g}_t - \eta (\tilde{\boldsymbol{g}}_{B,t} - \boldsymbol{g}_t) \\[5pt]
+                        =&\, \boldsymbol{w}_t - \eta \boldsymbol{g}_t - \eta \sqrt{\frac{\boldsymbol{\Sigma}_t}{B}}\boldsymbol{z},\quad \boldsymbol{z}\sim \mathcal{N}(\boldsymbol{0},\boldsymbol{I}) \\[5pt]
+                        =&\, \boldsymbol{w}_t - \eta \boldsymbol{g}_t - \sqrt{\eta} \sqrt{\frac{\eta\boldsymbol{\Sigma}_t}{B}}\boldsymbol{z},\quad \boldsymbol{z}\sim \mathcal{N}(\boldsymbol{0},\boldsymbol{I})
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <div class="insight-box">
+                    <div class="insight-header">
+                        <i class="fas fa-lightbulb"></i>
+                        Key Insight
+                    </div>
+                    <p>The critical step here is that <u>the step size of the noise term in the SDE is the square root of the non-noise term</u>, thus separating out a $\sqrt{\eta}$ term. We have also analyzed this in <a href="/archives/9209" target="_blank">"Generative Diffusion Model Discussion (5): General Framework of SDEs"</a>. Simply put, zero-mean Gaussian noise tends to cancel out over the long term, so the step size must be increased to manifest the noise effect.</p>
+                </div>
+                
+                <p>This means that the SGD iteration format $\boldsymbol{w}_{t+1} =\boldsymbol{w}_t - \eta \tilde{\boldsymbol{g}}_{B,t}$ is actually approximately solving the SDE:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(5)</span>
+                        \[
+                        d\boldsymbol{w} = - \boldsymbol{g}_t dt - \sqrt{\frac{\eta\boldsymbol{\Sigma}_t}{B}}d\boldsymbol{z},\quad d\boldsymbol{z}\sim \mathcal{N}(\boldsymbol{0},dt\boldsymbol{I})
+                        \]
+                    </div>
+                </div>
+                
+                <p>Therefore, to ensure that the running results do not change significantly when $B$ changes, the form of the above SDE should remain unchanged, leading to linear scaling $\eta\propto B$.</p>
+                
+                <p>The above conclusions are all based on the SGD optimizer. The paper <a href="https://papers.cool/arxiv/2205.10287" target="_blank">"On the SDEs and Scaling Rules for Adaptive Gradient Algorithms"</a> extended this to RMSProp, Adam, and other optimizers, resulting in <u>square root scaling</u>. Coincidentally, the slightly earlier <a href="https://papers.cool/arxiv/1904.00962" target="_blank">"Large Batch Optimization for Deep Learning: Training BERT in 76 minutes"</a> also applied square root scaling when testing Adam and its variant LAMB. More content can also be found in the blog <a href="https://www.cs.princeton.edu/~smalladi/blog/2024/01/22/SDEs-ScalingRules/" target="_blank">"How to Scale Hyperparameters as Batch Size Increases"</a>.</p>
+                
+                <div class="scaling-box">
+                    <div class="scaling-header">
+                        <i class="fas fa-balance-scale"></i>
+                        Scaling Law Comparison
+                    </div>
+                    <p><strong>Square Root Scaling ($\eta \propto \sqrt{B}$):</strong> Based on keeping gradient variance constant. Works well for adaptive optimizers like Adam, RMSProp.</p>
+                    <p><strong>Linear Scaling ($\eta \propto B$):</strong> Based on SDE analysis. Works well for SGD, especially when consecutive batches have correlated gradients.</p>
+                    <p><strong>Bounded Monotonic:</strong> Based on loss function analysis. Learning rate increases with batch size but saturates at a maximum value.</p>
+                </div>
+                
+                <h2 id="loss-function-perspective">Loss Function Perspective<a href="#loss-function-perspective">#</a></h2>
+                
+                <p>It is certain that both square root scaling and linear scaling can only be approximately valid within a local range, because they both contain the conclusion that "as long as Batch Size is sufficiently large, the learning rate can be arbitrarily large," which is obviously impossible. Additionally, the work in the previous two sections revolves around variance, but our fundamental task is to reduce the loss function. Therefore, a loss function-oriented approach may be more fundamental.</p>
+                
+                <h3 id="monotonic-with-bound">Monotonic with Bound<a href="#monotonic-with-bound">#</a></h3>
+                
+                <p>The classic work from this perspective is OpenAI's <a href="https://papers.cool/arxiv/1812.06162" target="_blank">"An Empirical Model of Large-Batch Training"</a>, which analyzes the optimal learning rate of SGD through the second-order approximation of the loss function, concluding that "the learning rate increases monotonically with Batch Size but has an upper bound." The same idea also appeared in the slightly earlier <a href="https://papers.cool/arxiv/1705.07774" target="_blank">"Dissecting Adam: The Sign, Magnitude and Variance of Stochastic Gradients"</a>, although that paper was not used to analyze the effect of Batch Size.</p>
+                
+                <p>The most crucial idea in the entire derivation process is to treat the learning rate as an optimization parameter: let the loss function be $\mathcal{L}(\boldsymbol{w})$, the current batch gradient be $\tilde{\boldsymbol{g}}_B$, then the loss function after SGD is $\mathcal{L}(\boldsymbol{w} - \eta\tilde{\boldsymbol{g}}_B)$. We formulate the solution of the optimal learning rate as an optimization problem:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(6)</span>
+                        \[
+                        \eta^* = \mathop{\text{argmin}}_{\eta} \mathbb{E}[\mathcal{L}(\boldsymbol{w} - \eta\tilde{\boldsymbol{g}}_B)]
+                        \]
+                    </div>
+                </div>
+                
+                <p>This objective is obviously intuitive: choose the learning rate so that <u>on average</u> the training efficiency is highest (the loss function decreases the fastest). To solve this problem, we approximate the loss function with a second-order expansion:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(7)</span>
+                        \[
+                        \mathcal{L}(\boldsymbol{w} - \eta\tilde{\boldsymbol{g}}_B) \approx \mathcal{L}(\boldsymbol{w}) - \eta\tilde{\boldsymbol{g}}_B^{\top}\underbrace{\frac{\partial \mathcal{L}(\boldsymbol{w})}{\partial\boldsymbol{w}}}_{\text{is }\boldsymbol{g}} + \frac{1}{2}\eta^2 \tilde{\boldsymbol{g}}_B^{\top}\underbrace{\frac{\partial^2 \mathcal{L}(\boldsymbol{w})}{\partial\boldsymbol{w}^2}}_{\text{denoted as }\boldsymbol{H}}\tilde{\boldsymbol{g}}_B = \mathcal{L}(\boldsymbol{w}) - \eta\tilde{\boldsymbol{g}}_B^{\top}\boldsymbol{g} + \frac{1}{2}\eta^2 \tilde{\boldsymbol{g}}_B^{\top}\boldsymbol{H}\tilde{\boldsymbol{g}}_B
+                        \]
+                    </div>
+                </div>
+                
+                <p>Here $\boldsymbol{H}$ is the Hessian matrix, and $\frac{\partial \mathcal{L}(\boldsymbol{w})}{\partial\boldsymbol{w}}$ is the gradient of the loss function. The ideal objective function is based on the full dataset, which is why its gradient is the mean $\boldsymbol{g}$ of $\tilde{\boldsymbol{g}}_B$. Next, taking the expectation, we get:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(8)</span>
+                        \[
+                        \mathbb{E}[\mathcal{L}(\boldsymbol{w} - \eta\tilde{\boldsymbol{g}}_B)] \approx \mathbb{E}[\mathcal{L}(\boldsymbol{w}) - \eta\tilde{\boldsymbol{g}}_B^{\top}\boldsymbol{g} + \frac{1}{2}\eta^2 \tilde{\boldsymbol{g}}_B^{\top}\boldsymbol{H}\tilde{\boldsymbol{g}}_B] = \mathcal{L}(\boldsymbol{w}) - \eta\boldsymbol{g}^{\top}\boldsymbol{g} + \frac{1}{2}\eta^2 \mathbb{E}[\tilde{\boldsymbol{g}}_B^{\top}\boldsymbol{H}\tilde{\boldsymbol{g}}_B]
+                        \]
+                    </div>
+                </div>
+                
+                <p>The last term requires a slight trick:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(9)</span>
+                        \[
+                        \newcommand{tr}{\mathop{\text{tr}}}\begin{aligned}
+                        \mathbb{E}[\tilde{\boldsymbol{g}}_B^{\top}\boldsymbol{H}\tilde{\boldsymbol{g}}_B] =&\, \mathbb{E}[\tr(\tilde{\boldsymbol{g}}_B^{\top}\boldsymbol{H}\tilde{\boldsymbol{g}}_B)]= \mathbb{E}[\tr(\tilde{\boldsymbol{g}}_B\tilde{\boldsymbol{g}}_B^{\top}\boldsymbol{H})] = \tr(\mathbb{E}[\tilde{\boldsymbol{g}}_B\tilde{\boldsymbol{g}}_B^{\top}]\boldsymbol{H})\\[5pt]
+                        =&\, \tr((\boldsymbol{g}\boldsymbol{g}^{\top} + \boldsymbol{\Sigma}/B)\boldsymbol{H}) = \boldsymbol{g}^{\top}\boldsymbol{H}\boldsymbol{g} + \tr(\boldsymbol{\Sigma}\boldsymbol{H})/B
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>The transformation mainly utilizes $\tr(\boldsymbol{A}\boldsymbol{B}) = \tr(\boldsymbol{B}\boldsymbol{A})$. Now, assuming the positive definiteness of $\boldsymbol{H}$, the problem becomes minimizing a quadratic function, easily solving for:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(10)</span>
+                        \[
+                        \eta^* \approx \frac{\boldsymbol{g}^{\top}\boldsymbol{g}}{\boldsymbol{g}^{\top}\boldsymbol{H}\boldsymbol{g} + \tr(\boldsymbol{\Sigma}\boldsymbol{H})/B}
+                        \]
+                    </div>
+                </div>
+                
+                <p>We can rewrite this as:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(11)</span>
+                        \[
+                        \eta^* \approx \frac{\eta_{\max}}{1 + \mathcal{B}_{\text{noise}}/B}
+                        \]
+                    </div>
+                </div>
+                
+                <p>This yields the result of "monotonically increasing with $B$ but having an upper bound," where:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(12)</span>
+                        \[
+                        \eta_{\max} = \frac{\boldsymbol{g}^{\top}\boldsymbol{g}}{\boldsymbol{g}^{\top}\boldsymbol{H}\boldsymbol{g}},\qquad\mathcal{B}_{\text{noise}} = \frac{\tr(\boldsymbol{\Sigma}\boldsymbol{H})}{\boldsymbol{g}^{\top}\boldsymbol{H}\boldsymbol{g}}
+                        \]
+                    </div>
+                </div>
+                
+                <h3 id="practical-analysis">Practical Analysis<a href="#practical-analysis">#</a></h3>
+                
+                <p>When $B \ll \mathcal{B}_{\text{noise}}$, $1 + \mathcal{B}_{\text{noise}}/B\approx \mathcal{B}_{\text{noise}}/B$, so $\eta^* \approx \eta_{\max}B/\mathcal{B}_{\text{noise}}\propto B$, i.e., linear scaling. This again shows that linear scaling is only a local approximation for small Batch Sizes; when $B > \mathcal{B}_{\text{noise}}$, $\eta^*$ gradually saturates to the maximum value $\eta_{\max}$, meaning that the increase in training cost far outweighs the improvement in training efficiency. Therefore, $\mathcal{B}_{\text{noise}}$ acts as a watershed: when Batch Size exceeds this value, there is no need to continue investing computing power to increase Batch Size.</p>
+                
+                <div class="practical-box">
+                    <div class="practical-header">
+                        <i class="fas fa-cogs"></i>
+                        Practical Implementation
+                    </div>
+                    <p><strong>Estimating $\mathcal{B}_{\text{simple}}$:</strong> Since $\mathcal{B}_{\text{noise}}$ is computationally expensive (requires Hessian), we use the approximation $\mathcal{B}_{\text{simple}} = \frac{\tr(\boldsymbol{\Sigma})}{\boldsymbol{g}^{\top}\boldsymbol{g}}$, which only requires computing gradient variances, not the full Hessian.</p>
+                    <p><strong>Estimating $\eta_{\max}$:</strong> Perform grid search for learning rate at a small batch size to find approximate $\eta^*$, then combine with estimated $\mathcal{B}_{\text{simple}}$ to back-calculate $\eta_{\max}$.</p>
+                    <p><strong>Monitoring:</strong> Since these values change during training, it's best to compute $\mathcal{B}_{\text{simple}}$ after the model has entered a "steady state" of training, or continuously monitor it throughout training.</p>
+                </div>
+                
+                <p>For practice, the most critical question is undoubtedly how to estimate $\eta_{\max}$ and $\mathcal{B}_{\text{noise}}$, especially $\mathcal{B}_{\text{noise}}$, which directly relates to the scaling law of learning rate and the saturation of training efficiency. Direct computation of both involves the Hessian matrix $\boldsymbol{H}$, with computational cost proportional to the square of the number of parameters. In today's era where models with hundreds of millions of parameters are considered small, computing the Hessian matrix is clearly impractical, so more efficient computational methods must be sought.</p>
+                
+                <p>Let's first look at $\mathcal{B}_{\text{noise}}$. Its expression is $\frac{\tr(\boldsymbol{\Sigma}\boldsymbol{H})}{\boldsymbol{g}^{\top}\boldsymbol{H}\boldsymbol{g}}$, with $\boldsymbol{H}$ in both numerator and denominator, giving us an impulse to "cancel them out." Indeed, the simplification idea is the same: assuming $\boldsymbol{H}$ is approximately some multiple of the identity matrix, we get:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(13)</span>
+                        \[
+                        \mathcal{B}_{\text{noise}} = \frac{\tr(\boldsymbol{\Sigma}\boldsymbol{H})}{\boldsymbol{g}^{\top}\boldsymbol{H}\boldsymbol{g}}\approx \frac{\tr(\boldsymbol{\Sigma})}{\boldsymbol{g}^{\top}\boldsymbol{g}}\triangleq \mathcal{B}_{\text{simple}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>$\mathcal{B}_{\text{simple}}$ is more feasible to compute, and experiments show it is usually a good approximation of $\mathcal{B}_{\text{noise}}$, so we choose to estimate $\mathcal{B}_{\text{simple}}$ rather than $\mathcal{B}_{\text{noise}}$. Note that $\tr(\boldsymbol{\Sigma})$ only requires diagonal elements, so the full covariance matrix does not need to be computed; only the variance of each gradient component needs to be calculated separately and then summed. In data parallel scenarios, the gradient computed on each device can be directly used to estimate the gradient variance.</p>
+                
+                <p>It should be pointed out that results like Equation (11) are actually dynamic; that is, theoretically, $\eta_{\max}$, $\mathcal{B}_{\text{noise}}$, $\mathcal{B}_{\text{simple}}$ are different at each training step. So if we want to obtain a static law, we need to train for a period until the model's training enters a "steady state," at which point the computed $\mathcal{B}_{\text{simple}}$ is reliable. Alternatively, we can continuously monitor $\mathcal{B}_{\text{simple}}$ during training to judge the gap between the current settings and the optimum.</p>
+                
+                <p>As for $\eta_{\max}$, there is actually no need to estimate it according to the formula. Simply perform a grid search for the learning rate at a small Batch Size to find an approximate $\eta^*$, then combine it with the estimated $\mathcal{B}_{\text{simple}}$ to back-calculate $\eta_{\max}$.</p>
+                
+                <h3 id="data-efficiency">Data Efficiency<a href="#data-efficiency">#</a></h3>
+                
+                <p>Starting from the above results, we can also derive an asymptotic relationship between training data volume and training steps. The derivation is also simple: substituting Equation (11) into the loss function, we can calculate that under the optimal learning rate, the loss function reduction per iteration step is:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(14)</span>
+                        \[
+                        \overline{\Delta\mathcal{L}} = \mathcal{L}(\boldsymbol{w}) - \mathbb{E}[\mathcal{L}(\boldsymbol{w} - \eta^*\tilde{\boldsymbol{g}}_B)] \approx \frac{\Delta\mathcal{L}_{\max}}{1 + \mathcal{B}_{\text{noise}}/B}
+                        \]
+                    </div>
+                </div>
+                
+                <p>where $\Delta\mathcal{L}_{\max} = \frac{(\boldsymbol{g}^{\top}\boldsymbol{g})^2}{2\boldsymbol{g}^{\top}\boldsymbol{H}\boldsymbol{g}}$. The next focus is on interpreting this result.</p>
+                
+                <p>When $B\to\infty$, i.e., full-batch SGD, the loss function reduction per step reaches the maximum $\Delta\mathcal{L}_{\max}$. At this point, the fewest training steps (denoted $S_{\min}$) can be used to reach the target point. When $B$ is finite, the average loss reduction per step is only $\overline{\Delta\mathcal{L}}$, meaning we need $1 + \mathcal{B}_{\text{noise}}/B$ steps to achieve the reduction of a single full-batch SGD step. Therefore, the total training steps are roughly $S = (1 + \mathcal{B}_{\text{noise}}/B)S_{\min}$.</p>
+                
+                <p>Since the Batch Size is $B$, the total number of samples consumed in the training process is $E = BS = (B + \mathcal{B}_{\text{noise}})S_{\min}$, which is an increasing function of $B$. When $B\to 0$, $E_{\min} = \mathcal{B}_{\text{noise}}S_{\min}$, indicating that as long as we use a sufficiently small Batch Size to train the model, the total training samples $E$ required will also decrease accordingly, at the cost of many training steps $S$. Further, using these notations, we can write the relationship between them as:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(15)</span>
+                        \[
+                        \left(\frac{S}{S_{\min}} - 1\right)\left(\frac{E}{E_{\min}} - 1\right) = 1
+                        \]
+                    </div>
+                </div>
+                
+                <p>This is the scaling law between training data volume and training steps, indicating that with smaller data volumes, we should reduce the Batch Size and allow more training steps to have a better chance of reaching a better solution. This derivation has been simplified by the author, assuming the invariance of $\mathcal{B}_{\text{noise}}$ and $\Delta\mathcal{L}_{\max}$ throughout the training process. If necessary, the original paper's appendix can be followed to more finely handle dynamic changes using integrals (but this requires introducing the assumption $B = \sqrt{r\mathcal{B}_{\text{noise}}}$), which will not be expanded here.</p>
+                
+                <p>Additionally, since $\mathcal{B}_{\text{noise}} = E_{\min}/S_{\min}$, the above equation also provides another scheme for estimating $\mathcal{B}_{\text{noise}}$: obtain multiple $(S,E)$ pairs through multiple experiments and grid search, then fit the above equation to estimate $E_{\min},S_{\min}$, and then calculate $\mathcal{B}_{\text{noise}}$.</p>
+                
+                <h2 id="adaptive-optimizers">Adaptive Optimizers<a href="#adaptive-optimizers">#</a></h2>
+                
+                <p>It must be said that OpenAI is indeed a pioneer in various Scaling Laws. The aforementioned analysis is quite brilliant, and the results are also quite rich. More commendably, the entire derivation process is not complicated, giving a sense of simplicity being the ultimate sophistication. However, the current conclusions are all derived based on SGD, and the applicability to Adam and other adaptive learning rate optimizers is still unclear. This part of the content was completed by <a href="https://papers.cool/arxiv/2405.14578" target="_blank">"Surge Phenomenon in Optimal Learning Rate and Batch Size Scaling"</a>.</p>
+                
+                <h3 id="sign-approximation">Sign Approximation<a href="#sign-approximation">#</a></h3>
+                
+                <p>The approach for analyzing Adam is the same as for SGD, both based on second-order expansion. The difference is that the direction vector changes from $\tilde{\boldsymbol{g}}_B$ to a general vector $\tilde{\boldsymbol{\varphi}}_B$. At this point, we have:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(16)</span>
+                        \[
+                        \mathbb{E}[\mathcal{L}(\boldsymbol{w} - \eta\tilde{\boldsymbol{\varphi}}_B)] \approx \mathcal{L}(\boldsymbol{w}) - \eta\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]^{\top}\boldsymbol{g} + \frac{1}{2}\eta^2 \tr(\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]\boldsymbol{H})
+                        \]
+                    </div>
+                </div>
+                
+                <p>Now we need to determine $\tilde{\boldsymbol{\varphi}}_B$ and compute the corresponding $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]$ and $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]$. Since only an asymptotic relationship is needed, similar to <a href="/archives/10001" target="_blank">"Can LoRA Gain More with Different Learning Rates?"</a>, we choose SignSGD, i.e., $\newcommand{sign}{\mathop{\text{sign}}}\tilde{\boldsymbol{\varphi}}_B = \sign(\tilde{\boldsymbol{g}}_B)$, as an approximation for Adam. The earliest source of this practice might be <a href="https://papers.cool/arxiv/1705.07774" target="_blank">"Dissecting Adam: The Sign, Magnitude and Variance of Stochastic Gradients"</a>. The rationality of this approximation is reflected in two points:</p>
+                
+                <blockquote>
+                    <p>1. Regardless of the values of $\beta_1,\beta_2$, Adam's first update vector is $\sign(\tilde{\boldsymbol{g}}_B)$;</p>
+                    <p>2. When $\beta_1=\beta_2=0$, Adam's update vector is always $\sign(\tilde{\boldsymbol{g}}_B)$.</p>
+                </blockquote>
+                
+                <p>To compute $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]$ and $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]$, we also need to assume, as in the "Linear Scaling" section, that $\tilde{\boldsymbol{g}}_B$ follows the distribution $\mathcal{N}(\boldsymbol{g},\boldsymbol{\Sigma}/B)$. To simplify calculations, we further assume $\boldsymbol{\Sigma}$ is a diagonal matrix $\text{diag}(\sigma_1^2,\sigma_2^2,\sigma_3^2,\cdots)$, i.e., assuming components are independent, allowing us to handle each component independently. According to the reparameterization trick, we know $\tilde{g}_B\sim \mathcal{N}(g, \sigma^2/B)$ is equivalent to $\tilde{g}_B=g + \sigma z/\sqrt{B},z\sim\mathcal{N}(0,1)$, therefore:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(17)</span>
+                        \[
+                        \begin{aligned}
+                        \mathbb{E}[\tilde{\varphi}_B] =&\, \mathbb{E}[\sign(g + \sigma z/\sqrt{B})] = \mathbb{E}[\sign(g\sqrt{B}/\sigma + z)] \\[5pt]
+                        =&\,\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty} \sign(g\sqrt{B}/\sigma + z) e^{-z^2/2}dz \\[5pt]
+                        =&\,\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{-g\sqrt{B}/\sigma}  (-1)\times e^{-z^2/2}dz + \frac{1}{\sqrt{2\pi}}\int_{-g\sqrt{B}/\sigma}^{\infty}  1\times e^{-z^2/2}dz \\[5pt]
+                        =&\,\text{erf}\left(\frac{g}{\sigma}\sqrt{\frac{B}{2}}\right)
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Here $\text{erf}$ is the <a href="https://en.wikipedia.org/wiki/Error_function" target="_blank">error function</a>, an S-shaped function with range $(-1,1)$ similar to $\tanh$, which can serve as a smooth approximation of $\sign$. However, $\text{erf}$ itself has no elementary function expression, so we better find an elementary function approximation to more intuitively observe the change pattern. We previously discussed this topic in <a href="/archives/7309" target="_blank">"Where Do the Two Elementary Function Approximations of GELU Come From?"</a>, but the approximation there was too complex (involving exponentiation). Here we use a simpler one:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(18)</span>
+                        \[
+                        \text{erf}(x)\approx \sign(x) = \frac{x}{|x|} = \frac{x}{\sqrt{x^2}}\approx \frac{x}{\sqrt{x^2+c}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>We choose $c=\pi/4$, so that the first-order approximation of this approximation at $x=0$ equals the first-order approximation of $\text{erf}$. Of course, after so many approximations, the value of $c$ is not very important; we only need to know there exists such a $c > 0$. Based on this approximation, we get:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(19)</span>
+                        \[
+                        \mathbb{E}[\tilde{\varphi}_B] \approx \frac{g/\sigma}{\sqrt{\pi/2B+(g/\sigma)^2}}\quad\Rightarrow\quad\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]_i \approx \frac{g_i/\sigma_i}{\sqrt{\pi/2B+(g_i/\sigma_i)^2}}\triangleq \mu_i
+                        \]
+                    </div>
+                </div>
+                
+                <p>It can be seen that a clear difference between Adam and SGD is that $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]$ is already related to $B$ at this step. Fortunately, the second moment at this point is simpler because the square of $\sign(x)$ must be 1, so:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(20)</span>
+                        \[
+                        \mathbb{E}[\tilde{\varphi}_B^2] = 1\quad\Rightarrow\quad\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]_{i,j} \to\left\{\begin{aligned}&=1, & i = j \\
+                        &\approx\mu_i \mu_j,&\,i\neq j\end{aligned}\right.
+                        \]
+                    </div>
+                </div>
+                
+                <p>Using these results, we can obtain:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(21)</span>
+                        \[
+                        \eta^* \approx \frac{\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]^{\top}\boldsymbol{g}}{\tr(\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]\boldsymbol{H})} \approx \frac{\sum_i \mu_i g_i}{\sum_i H_{i,i} + \sum_{i\neq j} \mu_i \mu_j H_{i,j}}
+                        \]
+                    </div>
+                </div>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(22)</span>
+                        \[
+                        \overline{\Delta\mathcal{L}} = \mathcal{L}(\boldsymbol{w}) - \mathbb{E}[\mathcal{L}(\boldsymbol{w} - \eta^*\tilde{\boldsymbol{\varphi}}_B)] \approx \frac{1}{2}\frac{(\sum_i \mu_i g_i)^2}{\sum_i H_{i,i} + \sum_{i\neq j} \mu_i \mu_j H_{i,j}}
+                        \]
+                    </div>
+                </div>
+                
+                <h3 id="two-special-cases">Two Special Cases<a href="#two-special-cases">#</a></h3>
+                
+                <p>Compared to SGD's Equation (11), Adam's Equation (21) is more complex, making it impossible to intuitively see its dependence on $B$. Therefore, we start with a few special cases.</p>
+                
+                <p>First consider $B\to\infty$, at which point $\mu_i = \sign(g_i)$, so:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(23)</span>
+                        \[
+                        \eta^* \approx \frac{\sum_i |g_i|}{\sum_i H_{i,i} + \sum_{i\neq j} \sign(g_i g_j) H_{i,j}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Its difference from SGD's $\eta_{\max}$ is that it is not homogeneous with respect to the gradient but proportional to the gradient's scale.</p>
+                
+                <p>Next, we consider the example where $\boldsymbol{H}$ is a diagonal matrix, i.e., $H_{i,j}=0$ when $i\neq j$. At this point:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(24)</span>
+                        \[
+                        \eta^* \approx \frac{\sum_i \mu_i g_i}{\sum_i H_{i,i}}=\frac{1}{\sum_i H_{i,i}}\sum_i \frac{g_i^2/\sigma_i}{\sqrt{\pi/2B+(g_i/\sigma_i)^2}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Each term in the summation is monotonically increasing with $B$ and has an upper bound, so the overall result is the same. To capture the most essential pattern, we can consider further simplifying $\mu_i$ (starting here, it differs from the original paper):</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(25)</span>
+                        \[
+                        \mu_i = \frac{g_i/\sigma_i}{\sqrt{\pi/2B+(g_i/\sigma_i)^2}} = \frac{\sign(g_i)}{\sqrt{1 + \pi(\sigma_i/g_i)^2/2B}} \approx \frac{\sign(g_i)}{\sqrt{1 + \pi\kappa^2/2B}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>The assumption here is that there exists some constant $\kappa^2$ independent of $i$ [for example, consider taking some kind of mean of all $(\sigma_i/g_i)^2$; actually, this $\kappa^2$ is similar to the previous $\mathcal{B}_{\text{simple}}$, and estimating according to the definition of $\mathcal{B}_{\text{simple}}$ is also possible], such that replacing $(\sigma_i/g_i)^2$ with $\kappa^2$ for any $i$ is a good approximation, thus:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(26)</span>
+                        \[
+                        \eta^* \approx \frac{\sum_i \mu_i g_i}{\sum_i H_{i,i}}\approx \frac{\sum_i |g_i|}{\sum_i H_{i,i}}\frac{1}{\sqrt{1 + \pi\kappa^2/2B}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>When $\pi\kappa^2\gg 2B$, i.e., $B \ll \pi\kappa^2/2$, we can further write the approximation:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(27)</span>
+                        \[
+                        \eta^* \approx \frac{\sum_i |g_i|}{\kappa\sum_i H_{i,i}}\sqrt{\frac{2B}{\pi}} \propto \sqrt{B}
+                        \]
+                    </div>
+                </div>
+                
+                <p>This shows that when Batch Size itself is small, Adam indeed follows the square root scaling law.</p>
+                
+                <h3 id="emergent-behavior">Emergent Behavior<a href="#emergent-behavior">#</a></h3>
+                
+                <p>If we apply approximation (25) to the original Equation (21), we find it exhibits some new characteristics. Specifically, we have:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(28)</span>
+                        \[
+                        \eta^* \approx \frac{\sum_i \mu_i g_i}{\sum_i H_{i,i} + \sum_{i\neq j} \mu_i \mu_j H_{i,j}} \approx \frac{\eta_{\max}}{\frac{1}{2}\left(\frac{\beta_{\text{noise}}}{\beta} + \frac{\beta}{\beta_{\text{noise}}}\right)}
+                        \]
+                    </div>
+                </div>
+                
+                <p>where $\beta = (1 + \pi\kappa^2/2B)^{-1/2}$, and:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(29)</span>
+                        \[
+                        \beta_{\text{noise}} = \sqrt{\frac{\sum_i H_{i,i}}{\sum_{i\neq j}\sign(g_i g_j) H_{i,j}}},\quad \eta_{\max} = \frac{\sum_i |g_i|}{2\sqrt{\left(\sum_i H_{i,i}\right)\left(\sum_{i\neq j} \sign(g_i g_j) H_{i,j}\right)}}
+                        \]
+                    </div>
+                </div>
+                
+                <div class="analysis-box">
+                    <div class="analysis-header">
+                        <i class="fas fa-chart-line"></i>
+                        Surge Phenomenon Analysis
+                    </div>
+                    <p>Note that $\beta$ is a monotonically increasing function of $B$, but the final approximation in Equation (28) is not a monotonically increasing function of $\beta$; it first increases then decreases, with the maximum reached at $\beta=\beta_{\text{noise}}$. This means there exists a corresponding $\mathcal{B}_{\text{noise}}$. When Batch Size exceeds this $\mathcal{B}_{\text{noise}}$, the optimal learning rate should not increase but rather decrease! This is the so-called "Surge phenomenon" mentioned in the original paper's title. (Of course, there is also a limitation here: $\beta$ is always less than $1$. If $\beta_{\text{noise}} \geq 1$, then the relationship between the optimal learning rate and Batch Size is still monotonically increasing.)</p>
+                </div>
+                
+                <p>Regarding Adam's $\eta^*$, OpenAI actually "guessed" without proof in the paper's appendix that Adam's optimal learning rate should be:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(30)</span>
+                        \[
+                        \eta^* \approx \frac{\eta_{\max}}{(1 + \mathcal{B}_{\text{noise}}/B)^{\alpha}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>where $0.5 < \alpha < 1$. It now appears that this form is only an approximation result when the diagonal elements of the Hessian matrix dominate. When the role of off-diagonal elements cannot be ignored, the Surge phenomenon of "when Batch Size is large enough, the learning rate should instead decrease" may emerge.</p>
+                
+                <p>How to intuitively understand the Surge phenomenon? The author believes this is essentially a manifestation of the <strong>suboptimality</strong> of adaptive learning rate strategies. Still taking the approximation $\tilde{\boldsymbol{\varphi}}_B = \sign(\tilde{\boldsymbol{g}}_B)$ as an example, the larger $B$ is, the more accurate $\tilde{\boldsymbol{g}}_B$ becomes; $B\to \infty$ gives $\sign(\boldsymbol{g})$. However, is $\sign(\boldsymbol{g})$ the most scientific update direction? Not necessarily, especially in later training stages where such adaptive strategies might have negative effects. Therefore, when $B$ takes an appropriate value, the noise in $\sign(\tilde{\boldsymbol{g}}_B)$ might correct this suboptimality, while when $B$ continues to increase, the noise decreases, reducing the chance of correction, thus requiring more cautious lowering of the learning rate.</p>
+                
+                <h3 id="efficiency-relationship">Efficiency Relationship<a href="#efficiency-relationship">#</a></h3>
+                
+                <p>Similar to the SGD analysis, we can also consider $\overline{\Delta\mathcal{L}}$. Substituting Equation (28) into Equation (22), restoring the notation $B$ and simplifying (the simplification process requires no approximation), we get:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(31)</span>
+                        \[
+                        \overline{\Delta\mathcal{L}} \approx \frac{\Delta\mathcal{L}_{\max}}{1 + \mathcal{B}_{\text{noise-2}}/B}
+                        \]
+                    </div>
+                </div>
+                
+                <p>where:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(32)</span>
+                        \[
+                        \Delta\mathcal{L}_{\max} = \frac{\beta_{\text{noise}}\eta_{\max}\sum_i|g_i|}{1 + \beta_{\text{noise}}^2},\quad \mathcal{B}_{\text{noise-2}} = \frac{\pi\kappa^2\beta_{\text{noise}}^2}{2(1 + \beta_{\text{noise}}^2)}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Note that $\mathcal{B}_{\text{noise-2}}$ here is a new notation; it is not $\mathcal{B}_{\text{noise}}$. The latter is the theoretically optimal Batch Size solved inversely from $\beta=\beta_{\text{noise}}$, resulting in:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(33)</span>
+                        \[
+                        \mathcal{B}_{\text{noise}} = \frac{\pi\kappa^2\beta_{\text{noise}}^2}{2(1 - \beta_{\text{noise}}^2)}
+                        \]
+                    </div>
+                </div>
+                
+                <p>The relationship between them is:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(34)</span>
+                        \[
+                        \frac{1}{\mathcal{B}_{\text{noise-2}}} - \frac{1}{\mathcal{B}_{\text{noise}}} = \frac{4}{\pi\kappa^2}\quad\Rightarrow\quad \mathcal{B}_{\text{noise}} = \left(\frac{1}{\mathcal{B}_{\text{noise-2}}} - \frac{4}{\pi\kappa^2}\right)^{-1}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Since Equation (31) has the same form as SGD's Equation (14), the analysis in that section similarly applies, thus also deriving Equation (15):</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(35)</span>
+                        \[
+                        \left(\frac{S}{S_{\min}} - 1\right)\left(\frac{E}{E_{\min}} - 1\right) = 1
+                        \]
+                    </div>
+                </div>
+                
+                <p>Only now $E_{\min}/S_{\min} = \mathcal{B}_{\text{noise-2}}$. This way, we have another scheme to estimate $\beta_{\text{noise}}$ and $\mathcal{B}_{\text{noise}}$: obtain multiple $(S,E)$ pairs through multiple experiments, during which $\kappa^2$ can also be estimated incidentally, then fit the above equation to obtain $E_{\min},S_{\min}$, subsequently estimate $\mathcal{B}_{\text{noise-2}}$, and finally solve for $\beta_{\text{noise}}$ using Equation (32).</p>
+                
+                <p>If $\beta_{\text{noise}} \geq 1$, then there is no optimal $\mathcal{B}_{\text{noise}}$; if $\beta_{\text{noise}} \gg 1$, it indicates that the diagonal elements of the Hessian matrix dominate, at which point the scaling law (26) applies, and increasing Batch Size can always appropriately increase the learning rate; when $\beta_{\text{noise}} < 1$, the optimal $\mathcal{B}_{\text{noise}}$ can be solved from Equation (34). When Batch Size exceeds this value, the learning rate should instead decrease.</p>
+                
+                <h3 id="article-summary">Article Summary<a href="#article-summary">#</a></h3>
+                
+                <div class="insight-box">
+                    <div class="insight-header">
+                        <i class="fas fa-check-circle"></i>
+                        Key Takeaways
+                    </div>
+                    <p><strong>For SGD:</strong> Learning rate increases with batch size but saturates at $\eta_{\max}$. Linear scaling ($\eta \propto B$) is a local approximation for small batch sizes.</p>
+                    <p><strong>For Adam:</strong> More complex behavior: square root scaling ($\eta \propto \sqrt{B}$) for small batches, but may exhibit "Surge phenomenon" where optimal learning rate decreases after certain batch size threshold.</p>
+                    <p><strong>Practical Implications:</strong> There's a computational sweet spot $\mathcal{B}_{\text{noise}}$ beyond which increasing batch size yields diminishing returns. Adaptive optimizers may require more careful tuning than SGD for large-batch training.</p>
+                </div>
+                
+                <p>It should be pointed out that the starting point and final conclusions of the above few sections are actually similar to the original paper <a href="https://papers.cool/arxiv/2405.14578" target="_blank">"Surge Phenomenon in Optimal Learning Rate and Batch Size Scaling"</a>, but the intermediate approximation treatments differ.</p>
+                
+                <p>Most conclusions obtained in the original paper are approximate results under the assumption $B \ll \pi(\sigma_i/g_i)^2/2$, so they conclude that the Surge phenomenon almost always occurs, which is not very scientific. The most obvious issue is that the form of the assumption $B \ll \pi(\sigma_i/g_i)^2/2$ itself is somewhat problematic; its right side depends on $i$. We cannot assign a separate Batch Size to each component, so to obtain a global result, it would have to be $B \ll \min_i \pi(\sigma_i/g_i)^2/2$, but this is somewhat too stringent.</p>
+                
+                <p>The approach in this article is to introduce approximation (25), which can be seen as a mean-field approximation, intuitively more reasonable than the pointwise assumption $B \ll \pi(\sigma_i/g_i)^2/2$. Therefore, in principle, the conclusions will be more accurate, such as obtaining the conclusion that "even if the off-diagonal elements of the Hessian matrix cannot be ignored, the Surge phenomenon does not necessarily occur" (depending on $\beta_{\text{noise}}$). In particular, this accuracy does not sacrifice simplicity; for example, Equation (28) is also quite clear and concise, the form of Equation (31) is also consistent with the original paper, and no additional approximation assumptions are needed, etc.</p>
+                
+                <p>Finally, a slight reflection: OpenAI's analysis of SGD was actually work from 2018, while the Surge phenomenon paper was only released in mid-2024. It took six years from SGD to Adam, which is quite surprising, largely due to OpenAI's "prestige" and the guess (30), making people think there was nothing more to do with Adam, not expecting Adam might have some new characteristics. Of course, questions such as how reasonable $\tilde{\boldsymbol{\varphi}}_B = \sign(\tilde{\boldsymbol{g}}_B)$ is as an approximation for Adam and to what extent it represents actual situations are, in the author's opinion, still worth further consideration.</p>
+                
+                <h2 id="conclusion">Conclusion<a href="#conclusion">#</a></h2>
+                
+                <p>This article discusses the classic topic of "Scaling Laws between Batch Size and Learning Rate" from multiple perspectives, with a focus on introducing OpenAI's derivation and conclusions based on the second-order approximation of the loss function, as well as subsequent work using the same ideas to analyze the Adam optimizer.</p>
+
+                <div class="citation-section">
+                    <div class="citation-header">
+                        <i class="fas fa-quote-right"></i>
+                        Citation Information
+                    </div>
+                    <p><strong>Original Article:</strong> Su Jianlin. How Should Learning Rate Scale with Batch Size?. <em>Scientific Spaces</em>.</p>
+                    
+                    <p><strong>How to cite this translation:</strong></p>
+                    <div class="citation-box">
+                        Su, J. How Should Learning Rate Scale with Batch Size? [Translated by Juanxi Tian]. 
+                        <em>Scientific Spaces</em>.
+                    </div>
+                    <p style="margin-top: 0.8rem;"><strong>BibTeX:</strong></p>
+                    <div class="citation-box">
+                        @article{su2025learning_rate_scaling,
+                            title   = {How Should Learning Rate Scale with Batch Size?},
+                            author  = {Su, Jianlin},
+                            journal = {Scientific Spaces},
+                            year    = {2025},
+                            url     = {https://kexue.fm/archives/10542},
+                            note    = {Translated by Juanxi Tian (ScalingOpt Team)}
+                          }
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="translation-credit">
+                <i class="fas fa-user-graduate"></i>
+                Academic Translation by Juanxi Tian (ScalingOpt Team)
+            </div>
+            <div class="copyright">
+                © 2009-2025 Scientific Spaces. All rights reserved.<br>
+                Original content licensed under Creative Commons BY-NC-ND 2.5 China
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript for Interactive Features -->
+    <script>
+        // Scroll Progress Bar
+        window.addEventListener('scroll', function() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            scrollProgress.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Table of Contents Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            const sections = document.querySelectorAll('h2[id]');
+            
+            // Set active section based on scroll position
+            function setActiveSection() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 50)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', setActiveSection);
+            setActiveSection(); // Initial call
+            
+            // Smooth scroll for TOC links
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 50,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+
+        // MathJax Configuration
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                tags: 'ams'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    
+    <!-- MathJax CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</body>
+</html>

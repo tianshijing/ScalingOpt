@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muon Sequel: Why We Chose to Experiment with Muon? | Scientific Spaces</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a6bca;
+            --primary-dark: #1357a8;
+            --primary-light: #e8f1fc;
+            --secondary: #2c3e50;
+            --accent: #3498db;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f5f7fa;
+            --gray-200: #e4e7eb;
+            --gray-300: #cbd2d9;
+            --gray-600: #7b8794;
+            --gray-700: #52606d;
+            --gray-900: #323f4b;
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 6px 24px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: #f0f5fc;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.5rem 1.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -8%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+        }
+
+        .meta-item i {
+            font-size: 0.85rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Translation Notice */
+        .translation-notice {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1.2rem;
+            margin: 0;
+        }
+
+        .translation-notice-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .translation-text h3 {
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .translation-text p {
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        .translator-badge {
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(26, 107, 202, 0.2);
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+        }
+
+        @media (max-width: 850px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            padding-left: 1rem;
+        }
+
+        .toc {
+            position: sticky;
+            top: 1rem;
+        }
+
+        .toc-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .toc-header i {
+            font-size: 0.9rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.4rem;
+            position: relative;
+        }
+
+        .toc-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            transition: var(--transition);
+            border-left: 2px solid transparent;
+            padding-left: 8px;
+        }
+
+        .toc-link:hover {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            transform: translateX(2px);
+        }
+
+        .toc-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .toc-number {
+            font-weight: 500;
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            min-width: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-right: 1.2rem;
+            padding-left: 0;
+        }
+
+        @media (max-width: 850px) {
+            .sidebar {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 0 1rem;
+            }
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 1.5rem 0 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: relative;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 35px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        h2 a {
+            color: var(--accent);
+            font-size: 0.7rem;
+            margin-left: 6px;
+            text-decoration: none;
+        }
+
+        h2 a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            color: var(--gray-900);
+            line-height: 1.65;
+        }
+
+        /* Equation Styling */
+        .equation-container {
+            margin: 0.8rem 0;
+        }
+
+        .equation {
+            background: var(--primary-light);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1rem;
+            border-radius: 0 5px 5px 0;
+            font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', serif;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .equation-number {
+            color: var(--primary);
+            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin-right: 6px;
+            display: inline-block;
+            min-width: 18px;
+        }
+
+        /* Code Block Styling */
+        .code-container {
+            margin: 1rem 0;
+            background: #2d2d2d;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .code-header {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 0.6rem 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .code-content {
+            padding: 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #f8f8f2;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+        }
+
+        /* Reference Box */
+        .reference-box {
+            background: linear-gradient(to right, #f8fafc, var(--primary-light));
+            border: 1px solid var(--gray-200);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .reference-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .reference-header i {
+            font-size: 0.9rem;
+        }
+
+        .reference-list {
+            list-style: none;
+        }
+
+        .reference-item {
+            padding: 0.3rem 0 0.3rem 0.8rem;
+            position: relative;
+            margin-bottom: 0.4rem;
+            color: var(--gray-700);
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .reference-item::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 0.65rem;
+        }
+
+        /* Citation Section */
+        .citation-section {
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .citation-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .citation-box {
+            background: var(--white);
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid var(--gray-300);
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-top: 0.6rem;
+            overflow-x: auto;
+            color: var(--gray-900);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--secondary);
+            color: white;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .translation-credit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 6px 16px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(26, 107, 202, 0.2);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            margin-top: 0.6rem;
+        }
+
+        /* Utility Classes */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-light), #e8f2ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .math {
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.1s ease;
+            z-index: 1000;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 1rem 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 0.6rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem 0;
+            }
+            
+            .main-content {
+                padding-right: 0.8rem;
+            }
+            
+            .sidebar {
+                padding-left: 0.8rem;
+            }
+            
+            .meta-info {
+                gap: 0.6rem;
+            }
+            
+            .meta-item {
+                font-size: 0.75rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .translation-notice-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .translator-badge {
+                align-self: flex-start;
+            }
+        }
+
+        /* Links styling */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* 优化长公式显示 */
+        .equation {
+            word-break: break-word;
+        }
+        
+        /* 优化列表显示 */
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.3rem;
+            line-height: 1.5;
+        }
+        
+        /* 优化数学公式间距 */
+        .MathJax_Display {
+            margin: 0.6em 0 !important;
+        }
+        
+        /* Image container styling */
+        .pic-container {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+        
+        .pic-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .typecho-caption {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        
+        /* Quote block styling */
+        blockquote.cite {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+        }
+        
+        blockquote.cite div {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        blockquote.cite a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>Muon Sequel: Why We Chose to Experiment with Muon?</h1>
+                <div class="subtitle">A Practical Investigation of the Muon Optimizer for Large-Scale LLM Training</div>
+                
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>Su Jianlin</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-eye"></i>
+                        <span>Scientific Spaces</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <div class="tag">Optimizer Research</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Translation Notice -->
+        <div class="translation-notice">
+            <div class="translation-notice-content">
+                <div class="translation-text">
+                    <h3><i class="fas fa-language"></i> Academic Translation</h3>
+                    <p>This is an academic English translation maintaining technical accuracy while adapting to English academic conventions.</p>
+                </div>
+                <div class="translator-badge">
+                    <i class="fas fa-user-graduate"></i>
+                    Translated by Juanxi Tian (ScalingOpt Team)
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Sidebar Table of Contents -->
+            <aside class="sidebar">
+                <nav class="toc">
+                    <div class="toc-header">
+                        <i class="fas fa-list"></i>
+                        Contents
+                    </div>
+                    <ul class="toc-list">
+                        <li class="toc-item">
+                            <a href="#optimization-principles" class="toc-link">
+                                <span class="toc-number">1</span>
+                                <span>Optimization Principles</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#matrix-norms" class="toc-link">
+                                <span class="toc-number">2</span>
+                                <span>Matrix Norms</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#weight-decay" class="toc-link">
+                                <span class="toc-number">3</span>
+                                <span>Weight Decay</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#rms-alignment" class="toc-link">
+                                <span class="toc-number">4</span>
+                                <span>RMS Alignment</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#experimental-analysis" class="toc-link">
+                                <span class="toc-number">5</span>
+                                <span>Experimental Analysis</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#extended-thoughts" class="toc-link">
+                                <span class="toc-number">6</span>
+                                <span>Extended Thoughts</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#summary" class="toc-link">
+                                <span class="toc-number">7</span>
+                                <span>Summary</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Article Content -->
+            <main class="main-content">
+                <p>This article interprets our latest technical report <a href="https://papers.cool/arxiv/2502.16982" target="_blank">"Muon is Scalable for LLM Training"</a>, which shares our large-scale practice with the Muon optimizer previously introduced in <a href="/archives/10592" target="_blank">"Muon Optimizer Appreciation: The Essential Leap from Vectors to Matrices"</a>, and open-sources the corresponding model (we call it "<a href="https://github.com/MoonshotAI/Moonlight" target="_blank">Moonlight</a>", currently a 3B/16B MoE model). We discovered a rather surprising conclusion: under our experimental setup, Muon achieves nearly 2x training efficiency compared to Adam.</p>
+                
+                <div class="pic-container">
+                    <div class="typecho-caption" style="max-width: 520px; margin: 0 auto">
+                        <div style="margin: 5px">
+                            <img src="https://kexue.fm/usr/uploads/2025/02/1300601661.png" style="max-width: 100%" alt="Muon's Scaling Law and Moonlight's MMLU Performance" />
+                        </div>
+                        <p class="typecho-caption-text">Muon's Scaling Law and Moonlight's MMLU Performance</p>
+                    </div>
+                </div>
+                
+                <p>There aren't too many optimizer developments, but there are certainly some. Why did we choose Muon as a new experimental direction? How can we quickly transition from a well-tuned Adam optimizer to Muon for experimentation? How do Muon and Adam compare in performance when scaling up models? We will share our thought process next.</p>
+
+                <h2 id="optimization-principles">Optimization Principles<a href="#optimization-principles">#</a></h2>
+                
+                <p>Regarding optimizers, the author previously commented in <a href="/archives/10592" target="_blank">"Muon Optimizer Appreciation: The Essential Leap from Vectors to Matrices"</a> that most optimizer improvements are essentially minor patches—not entirely worthless but ultimately failing to convey a sense of depth or amazement.</p>
+                
+                <p>We need to consider what constitutes a good optimizer from more fundamental principles. Intuitively, an ideal optimizer should possess two characteristics: <strong>stability</strong> and <strong>speed</strong>. Specifically, each step of an ideal optimizer should satisfy two points: 1. Minimize model perturbation; 2. Maximize loss reduction. More directly, we don't want major model changes (stability), yet we want substantial loss reduction (speed)—a classic "both...and..." scenario.</p>
+                
+                <p>How do we translate these characteristics into mathematical language? <strong>Stability</strong> can be understood as a constraint on the update magnitude, while <strong>speed</strong> can be interpreted as finding the update that most rapidly decreases the loss function. This transforms into a constrained optimization problem. Using previous notation, for matrix parameter $\boldsymbol{W}\in\mathbb{R}^{n\times m}$ with gradient $\boldsymbol{G}\in\mathbb{R}^{n\times m}$, when the parameter changes from $\boldsymbol{W}$ to $\boldsymbol{W}+\Delta\boldsymbol{W}$, the loss function change is:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(1)</span>
+                        \(\text{Tr}(\boldsymbol{G}^{\top}\Delta\boldsymbol{W})\)
+                    </div>
+                </div>
+                
+                <p>Thus, seeking the <strong>fastest</strong> update under <strong>stable</strong> conditions can be expressed as:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(2)</span>
+                        \(\mathop{\text{argmin}}_{\Delta\boldsymbol{W}}\text{Tr}(\boldsymbol{G}^{\top}\Delta\boldsymbol{W})\quad\text{s.t.}\quad \rho(\Delta\boldsymbol{W})\leq \eta\)
+                    </div>
+                </div>
+                
+                <p>Here, $\rho(\Delta\boldsymbol{W})\geq 0$ is some metric of <strong>stability</strong>, where smaller values indicate greater stability, and $\eta$ is a constant less than 1 representing our requirement for <strong>stability</strong>. Later we will see this is essentially the optimizer's learning rate. If readers don't mind, we can mimic theoretical physics concepts and call this principle the optimizer's "<strong><font color="orange">Least Action Principle</font></strong>".</p>
+
+                <h2 id="matrix-norms">Matrix Norms<a href="#matrix-norms">#</a></h2>
+                
+                <p>The only uncertainty in Equation (2) is the stability metric $\rho(\Delta\boldsymbol{W})$. Once $\rho(\Delta\boldsymbol{W})$ is selected, $\Delta\boldsymbol{W}$ can be explicitly solved (at least theoretically). To some extent, we can consider the fundamental difference between optimizers as their varying definitions of <strong>stability</strong>.</p>
+                
+                <p>Many readers likely encountered statements like "the negative gradient direction is the direction of steepest local descent" when first learning SGD. In this framework, it simply chooses the matrix $F$-norm $\Vert\Delta\boldsymbol{W}\Vert_F$ as the stability metric. That is, "the direction of steepest descent" isn't immutable; it's determined only after selecting the metric. With a different norm, it might not be the negative gradient direction.</p>
+                
+                <p>The natural question is: which norm most appropriately measures <strong>stability</strong>? If we impose strong constraints, stability is achieved, but the optimizer struggles, converging only to suboptimal solutions. Conversely, weak constraints allow the optimizer to run wild, making training extremely unpredictable. Thus, the ideal scenario is finding the most precise metric for <strong>stability</strong>. Considering neural networks primarily involve matrix multiplication, take $\boldsymbol{y}=\boldsymbol{x}\boldsymbol{W}$ as an example:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(3)</span>
+                        \(\Vert\Delta \boldsymbol{y}\Vert = \Vert\boldsymbol{x}(\boldsymbol{W} + \Delta\boldsymbol{W}) - \boldsymbol{x}\boldsymbol{W}\Vert = \Vert\boldsymbol{x} \Delta\boldsymbol{W}\Vert\leq \rho(\Delta\boldsymbol{W}) \Vert\boldsymbol{x}\Vert\)
+                    </div>
+                </div>
+                
+                <p>This equation means when parameters change from $\boldsymbol{W}$ to $\boldsymbol{W}+\Delta\boldsymbol{W}$, the model output change is $\Delta\boldsymbol{y}$. We hope this change's magnitude can be controlled by $\Vert\boldsymbol{x}\Vert$ and a function $\rho(\Delta\boldsymbol{W})$ related to $\Delta\boldsymbol{W}$, which we use as the stability metric. From linear algebra, $\rho(\Delta\boldsymbol{W})$'s most accurate value is $\Delta\boldsymbol{W}$'s spectral norm $\Vert\Delta\boldsymbol{W}\Vert_2$. Substituting into Equation (2):</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(4)</span>
+                        \(\mathop{\text{argmin}}_{\Delta\boldsymbol{W}}\text{Tr}(\boldsymbol{G}^{\top}\Delta\boldsymbol{W})\quad\text{s.t.}\quad \Vert\Delta\boldsymbol{W}\Vert_2\leq \eta\)
+                    </div>
+                </div>
+                
+                <p>Solving this optimization problem yields Muon with $\beta=0$:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(5)</span>
+                        \(\Delta\boldsymbol{W} = -\eta\, \text{msign}(\boldsymbol{G}) = -\eta\,\boldsymbol{U}_{[:,:r]}\boldsymbol{V}_{[:,:r]}^{\top}, \quad \boldsymbol{U},\boldsymbol{\Sigma},\boldsymbol{V}^{\top} = \mathop{\text{SVD}}(\boldsymbol{G})\)
+                    </div>
+                </div>
+                
+                <p>When $\beta > 0$, $\boldsymbol{G}$ is replaced by momentum $\boldsymbol{M}$, which can be viewed as a smoother estimate of the gradient. Thus, the conclusion still holds. Therefore, we can assert that "Muon is the steepest descent under the spectral norm." Details like Newton-Schulz iteration are computational approximations and won't be elaborated here. The detailed derivation was provided in <a href="/archives/10592" target="_blank">"Muon Optimizer Appreciation: The Essential Leap from Vectors to Matrices"</a> and won't be repeated.</p>
+
+                <h2 id="weight-decay">Weight Decay<a href="#weight-decay">#</a></h2>
+                
+                <p>Thus far, we can answer the first question: Why choose Muon for experimentation? Like SGD, Muon also provides the direction of steepest descent, but its spectral norm constraint is more precise than SGD's $F$-norm, giving it greater potential. Additionally, improving optimizers from the perspective of "selecting the most appropriate constraints for different parameters" seems more fundamental than various patch-like modifications.</p>
+                
+                <p>However, potential doesn't guarantee capability. Validating Muon on larger models presents several "traps." First is the Weight Decay problem. Although we included Weight Decay when introducing Muon in <a href="/archives/10592" target="_blank">"Muon Optimizer Appreciation: The Essential Leap from Vectors to Matrices"</a>, the original Muon proposal lacked it. Initially implementing the official version, we found Muon converged quickly early on but was soon caught by Adam, with various "internal issues" showing signs of collapse.</p>
+                
+                <p>We quickly realized this might be a Weight Decay issue and added it:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(6)</span>
+                        \(\Delta\boldsymbol{W} = -\eta\, [\text{msign}(\boldsymbol{M})+ \lambda \boldsymbol{W}]\)
+                    </div>
+                </div>
+                
+                <p>Continuing experiments, as expected, Muon now maintained its lead over Adam, as shown in the paper's Figure 2:</p>
+                
+                <div class="pic-container">
+                    <div class="typecho-caption" style="max-width: 520px; margin: 0 auto">
+                        <div style="margin: 5px">
+                            <img src="https://kexue.fm/usr/uploads/2025/02/3675708776.png" style="max-width: 100%" alt="Performance Comparison With and Without Weight Decay" />
+                        </div>
+                        <p class="typecho-caption-text">Performance Comparison With and Without Weight Decay</p>
+                    </div>
+                </div>
+                
+                <p>What role does Weight Decay play? Post-analysis suggests a key function may be keeping parameter norms bounded:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(7)</span>
+                        \[
+                        \begin{aligned}
+                        \Vert\boldsymbol{W}_t\Vert =&\, \Vert\boldsymbol{W}_{t-1} - \eta_t (\boldsymbol{\Phi}_t + \lambda \boldsymbol{W}_{t-1})\Vert \\[5pt]
+                        =&\, \Vert(1 - \eta_t \lambda)\boldsymbol{W}_{t-1} - \eta_t \lambda (\boldsymbol{\Phi}_t/\lambda)\Vert \\[5pt]
+                        \leq &\,(1 - \eta_t \lambda)\Vert\boldsymbol{W}_{t-1}\Vert + \eta_t \lambda \Vert\boldsymbol{\Phi}_t/\lambda\Vert \\[5pt]
+                        \leq &\,\max(\Vert\boldsymbol{W}_{t-1}\Vert,\Vert\boldsymbol{\Phi}_t/\lambda\Vert) \\[5pt]
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Here $\Vert\cdot\Vert$ is any matrix norm—the inequality holds for any matrix norm. $\boldsymbol{\Phi}_t$ is the update vector provided by the optimizer; for Muon, it's $\text{msign}(\boldsymbol{M})$. Taking the spectral norm, $\Vert\text{msign}(\boldsymbol{M})\Vert_2 = 1$. Thus for Muon:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(8)</span>
+                        \(\Vert\boldsymbol{W}_t\Vert_2 \leq \max(\Vert\boldsymbol{W}_{t-1}\Vert_2,1/\lambda)\leq\cdots \leq \max(\Vert\boldsymbol{W}_0\Vert_2,1/\lambda)\)
+                    </div>
+                </div>
+                
+                <p>This ensures model "internal health" because $\Vert\boldsymbol{x}\boldsymbol{W}\Vert\leq \Vert\boldsymbol{x}\Vert\Vert\boldsymbol{W}\Vert_2$. Controlling $\Vert\boldsymbol{W}\Vert_2$ means controlling $\Vert\boldsymbol{x}\boldsymbol{W}\Vert$, preventing explosion risks—particularly important for issues like Attention Logits explosion. This bound remains relatively loose in most cases; in practice, parameter spectral norms are often significantly smaller than this bound. This inequality simply shows Weight Decay's norm-controlling property.</p>
+
+                <h2 id="rms-alignment">RMS Alignment<a href="#rms-alignment">#</a></h2>
+                
+                <p>When deciding to experiment with a new optimizer, a major headache is quickly finding near-optimal hyperparameters. For Muon, there are at least two: learning rate $\eta_t$ and decay rate $\lambda$. Grid search is possible but time-consuming. Here we propose an Update RMS alignment hyperparameter transfer strategy, enabling reuse of Adam-tuned hyperparameters in other optimizers.</p>
+                
+                <p>First, for a matrix $\boldsymbol{W}\in\mathbb{R}^{n\times m}$, its RMS (Root Mean Square) is defined as:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(9)</span>
+                        \(\text{RMS}(\boldsymbol{W}) = \frac{\Vert \boldsymbol{W}\Vert_F}{\sqrt{nm}} = \sqrt{\frac{1}{nm}\sum_{i=1}^n\sum_{j=1}^m W_{i,j}^2}\)
+                    </div>
+                </div>
+                
+                <p>Simply put, RMS measures the average magnitude of each matrix element. We observe that Adam's update RMS is relatively stable, typically between 0.2 and 0.4, which is why <a href="/archives/10542" target="_blank">theoretical analysis</a> often uses SignSGD as an Adam approximation. Based on this, we suggest aligning new optimizers' Update RMS to 0.2 via RMS Norm:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(10)</span>
+                        \[
+                        \begin{gather}
+                        \boldsymbol{W}_t =\boldsymbol{W}_{t-1} - \eta_t (\boldsymbol{\Phi}_t + \lambda \boldsymbol{W}_{t-1}) \\[6pt]
+                        \downarrow \notag\\[6pt]
+                        \boldsymbol{W}_t = \boldsymbol{W}_{t-1} - \eta_t (0.2\, \boldsymbol{\Phi}_t/\text{RMS}(\boldsymbol{\Phi}_t) + \lambda \boldsymbol{W}_{t-1})
+                        \end{gather}
+                        \]
+                    </div>
+                </div>
+                
+                <p>This allows reuse of Adam's $\eta_t$ and $\lambda$, achieving roughly equivalent parameter update magnitudes per step. Practice shows this simple strategy from Adam to Muon yields results significantly better than Adam, approaching those from further Muon hyperparameter fine-tuning. Notably, Muon's $\text{RMS}(\boldsymbol{\Phi}_t)=\text{RMS}(\boldsymbol{U}_{[:,:r]}\boldsymbol{V}_{[:,:r]}^{\top})$ can be computed analytically:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(11)</span>
+                        \[
+                        \begin{aligned}
+                        nm\,\text{RMS}(\boldsymbol{\Phi}_t)^2 &= \sum_{i=1}^n\sum_{j=1}^m \sum_{k=1}^r U_{i,k}^2V_{k,j}^2 \\
+                        &= \sum_{k=1}^r\left(\sum_{i=1}^n U_{i,k}^2\right)\left(\sum_{j=1}^m V_{k,j}^2\right) = \sum_{k=1}^r 1 = r
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Thus $\text{RMS}(\boldsymbol{\Phi}_t) = \sqrt{r/nm}$. In practice, the probability of a matrix being strictly low-rank is small, so we consider $r = \min(n,m)$, yielding $\text{RMS}(\boldsymbol{\Phi}_t) = \sqrt{1/\max(n,m)}$. Therefore, we ultimately used the equivalent analytic version instead of RMS Norm:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(12)</span>
+                        \(\boldsymbol{W}_t = \boldsymbol{W}_{t-1} - \eta_t (0.2\, \boldsymbol{\Phi}_t\,\sqrt{\max(n,m)} + \lambda \boldsymbol{W}_{t-1})\)
+                    </div>
+                </div>
+                
+                <p>This final equation indicates that in Muon, using a single learning rate for all parameters is inappropriate. For example, Moonlight is an MoE model with many matrix parameter shapes deviating from square matrices, with $\max(n,m)$ spanning a wide range. A single learning rate would inevitably cause asynchronous learning—some parameters learning too fast or too slow—affecting final performance.</p>
+
+                <h2 id="experimental-analysis">Experimental Analysis<a href="#experimental-analysis">#</a></h2>
+                
+                <p>We conducted thorough comparisons between Adam and Muon on 2.4B/16B MoE models, finding Muon significantly outperforms in both convergence speed and final results. For detailed comparisons, we recommend reading the original paper; here we share only partial insights.</p>
+                
+                <blockquote class="cite">
+                    <div><strong>Github: <a href="https://github.com/MoonshotAI/Moonlight" target="_blank">https://github.com/MoonshotAI/Moonlight</a></strong></div>
+                </blockquote>
+                
+                <p>First is a relatively objective comparison table, including our controlled variable training comparisons between Muon and Adam, and comparisons with externally (DeepSeek) Adam-trained models of identical architecture (for fairness, Moonlight's architecture matches DSV3-Small exactly), highlighting Muon's unique advantages:</p>
+                
+                <div class="pic-container">
+                    <div class="typecho-caption" style="max-width: 520px; margin: 0 auto">
+                        <div style="margin: 5px">
+                            <img src="https://kexue.fm/usr/uploads/2025/02/2528279021.png" style="max-width: 100%" alt="Muon (Moonlight) vs Adam (Moonlight-A and DSV3-small) Comparison" />
+                        </div>
+                        <p class="typecho-caption-text">Muon (Moonlight) vs Adam (Moonlight-A and DSV3-small) Comparison</p>
+                    </div>
+                </div>
+                
+                <p>How do Muon-trained models differ? Since we earlier stated Muon is steepest descent under the spectral norm—where the spectral norm is the largest singular value—we considered monitoring and analyzing singular values. Indeed, we found interesting signals: parameters trained with Muon exhibit relatively more uniform singular value distributions. We use singular value entropy to quantify this phenomenon:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(13)</span>
+                        \(H(\boldsymbol{\sigma}) = -\frac{1}{\log n}\sum_{i=1}^n \frac{\sigma_i^2}{\sum_{j=1}^n\sigma_j^2}\log \frac{\sigma_i^2}{\sum_{j=1}^n\sigma_j^2}\)
+                    </div>
+                </div>
+                
+                <p>Here $\boldsymbol{\sigma}=(\sigma_1,\sigma_2,\cdots,\sigma_n)$ are all singular values of a parameter. Muon-trained parameters have higher entropy—more uniform singular value distributions—meaning parameters are less compressible. This indicates Muon more fully utilizes parameter potential:</p>
+                
+                <div class="pic-container">
+                    <div class="typecho-caption" style="max-width: 520px; margin: 0 auto">
+                        <div style="margin: 5px">
+                            <img src="https://kexue.fm/usr/uploads/2025/02/3782823216.png" style="max-width: 100%" alt="Muon-Trained Weights Have Higher Singular Value Entropy" />
+                        </div>
+                        <p class="typecho-caption-text">Muon-Trained Weights Have Higher Singular Value Entropy</p>
+                    </div>
+                </div>
+                
+                <p>Another interesting discovery: using Muon for fine-tuning (SFT) might yield suboptimal solutions if pre-training didn't use Muon. Specifically, if both pre-training and fine-tuning use Muon, performance is best. But for the other three combinations (Adam+Muon, Muon+Adam, Adam+Adam), performance superiority doesn't show clear patterns.</p>
+                
+                <div class="pic-container">
+                    <div class="typecho-caption" style="max-width: 520px; margin: 0 auto">
+                        <div style="margin: 5px">
+                            <img src="https://kexue.fm/usr/uploads/2025/02/2697758072.png" style="max-width: 100%" alt="Pre-training/Fine-tuning Combinations Test (Muon/Adam)" />
+                        </div>
+                        <p class="typecho-caption-text">Pre-training/Fine-tuning Combinations Test (Muon/Adam)</p>
+                    </div>
+                </div>
+                
+                <div class="pic-container">
+                    <div class="typecho-caption" style="max-width: 520px; margin: 0 auto">
+                        <div style="margin: 5px">
+                            <img src="https://kexue.fm/usr/uploads/2025/02/3565677851.png" style="max-width: 100%" alt="Attempts to Fine-Tune Open-Source Models with Muon/Adam" />
+                        </div>
+                        <p class="typecho-caption-text">Attempts to Fine-Tune Open-Source Models with Muon/Adam</p>
+                    </div>
+                </div>
+                
+                <p>This phenomenon suggests certain initializations are unfavorable for Muon—conversely, some may be more favorable. We are still exploring underlying principles.</p>
+
+                <h2 id="extended-thoughts">Extended Thoughts<a href="#extended-thoughts">#</a></h2>
+                
+                <p>Overall, in our experiments, Muon's performance appears highly competitive compared to Adam. As a new optimizer with significantly different formulation from Adam, this performance isn't merely "commendable"; it suggests Muon may capture some essential characteristics.</p>
+                
+                <p>Previously, the community circulated a view: Adam performs well because mainstream model architecture improvements have been "overfitting" to Adam. This view likely originated from <a href="https://parameterfree.com/2020/12/06/neural-network-maybe-evolved-to-make-adam-the-best-optimizer/" target="_blank">"Neural Networks (Maybe) Evolved to Make Adam The Best Optimizer"</a>, seemingly absurd but profoundly meaningful. Consider: when we attempt model improvements, we train with Adam to evaluate performance; good results are retained, otherwise abandoned. But does good performance stem from inherent superiority or better compatibility with Adam?</p>
+                
+                <p>This is thought-provoking. Certainly, at least some work shows better performance because it matches Adam better, so over time, model architectures evolve toward directions favorable to Adam. In this context, an optimizer significantly different from Adam still "breaking through" deserves particular attention and reflection. Note that the author and affiliated company are not Muon's proposers, so these remarks are sincere without self-promotion.</p>
+                
+                <p>What work remains for Muon? Actually, quite a bit. For example, the "Adam pre-training + Muon fine-tuning" performance issue mentioned above warrants further analysis—valuable and necessary, especially since most open-source model weights are Adam-trained. If Muon fine-tuning fails, it inevitably hinders adoption. We can also deepen understanding of Muon through this opportunity (learning through bugs).</p>
+                
+                <p>Another extension consideration: Muon is based on the spectral norm—the largest singular value. In fact, we can construct a series of norms based on singular values, like <a href="https://en.wikipedia.org/wiki/Schatten_norm" target="_blank">Schatten norms</a>. Extending to these broader norms and tuning parameters could theoretically yield better results. Additionally, after Moonlight's release, some readers asked how to design <a href="https://papers.cool/arxiv/2203.03466" target="_blank">µP (maximal update parametrization)</a> under Muon—another urgent problem to solve.</p>
+
+                <h2 id="summary">Summary<a href="#summary">#</a></h2>
+                
+                <p>This article introduces our large-scale practice with the Muon optimizer (Moonlight) and shares our latest reflections on the Muon optimizer.</p>
+
+                <div class="citation-section">
+                    <div class="citation-header">
+                        <i class="fas fa-quote-right"></i>
+                        Citation Information
+                    </div>
+                    <p><strong>Original Article:</strong> Su Jianlin. Muon Sequel: Why We Chose to Experiment with Muon? <em>Scientific Spaces</em>.</p>
+                    
+                    <p><strong>How to cite this translation:</strong></p>
+                    <div class="citation-box">
+                        Su, J. Muon Sequel: Why We Chose to Experiment with Muon? [Translated by Juanxi Tian]. 
+                        <em>Scientific Spaces</em>.
+                    </div>
+                    <p style="margin-top: 0.8rem;"><strong>BibTeX:</strong></p>
+                    <div class="citation-box">
+                        @article{su2025whymuon,
+                            title   = {Muon Sequel: Why We Chose to Experiment with Muon?},
+                            author  = {Su, Jianlin},
+                            journal = {Scientific Spaces},
+                            year    = {2025},
+                            url     = {https://kexue.fm/archives/10739},
+                            note    = {Translated by Juanxi Tian (ScalingOpt Team)}
+                          }
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="translation-credit">
+                <i class="fas fa-user-graduate"></i>
+                Academic Translation by Juanxi Tian (ScalingOpt Team)
+            </div>
+            <div class="copyright">
+                © 2009-2025 Scientific Spaces. All rights reserved.<br>
+                Original content licensed under Creative Commons BY-NC-ND 2.5 China
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript for Interactive Features -->
+    <script>
+        // Scroll Progress Bar
+        window.addEventListener('scroll', function() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            scrollProgress.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Table of Contents Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            const sections = document.querySelectorAll('h2[id]');
+            
+            // Set active section based on scroll position
+            function setActiveSection() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 50)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', setActiveSection);
+            setActiveSection(); // Initial call
+            
+            // Smooth scroll for TOC links
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 50,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+
+        // MathJax Configuration
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                tags: 'ams'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    
+    <!-- MathJax CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</body>
+</html>

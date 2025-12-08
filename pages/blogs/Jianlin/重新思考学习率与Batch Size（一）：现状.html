@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rethinking Learning Rate and Batch Size (Part 1): Current Landscape | Scientific Spaces</title>
+    <meta name="description" content="An in-depth analysis of the theoretical relationship between learning rate and batch size, examining existing analytical frameworks and their computational challenges in the context of modern optimizers.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a6bca;
+            --primary-dark: #1357a8;
+            --primary-light: #e8f1fc;
+            --secondary: #2c3e50;
+            --accent: #3498db;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f5f7fa;
+            --gray-200: #e4e7eb;
+            --gray-300: #cbd2d9;
+            --gray-600: #7b8794;
+            --gray-700: #52606d;
+            --gray-900: #323f4b;
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 6px 24px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: #f0f5fc;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.5rem 1.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -8%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+        }
+
+        .meta-item i {
+            font-size: 0.85rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Translation Notice */
+        .translation-notice {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1.2rem;
+            margin: 0;
+        }
+
+        .translation-notice-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .translation-text h3 {
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .translation-text p {
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        .translator-badge {
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(26, 107, 202, 0.2);
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+        }
+
+        @media (max-width: 850px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            padding-left: 1rem;
+        }
+
+        .toc {
+            position: sticky;
+            top: 1rem;
+        }
+
+        .toc-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .toc-header i {
+            font-size: 0.9rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.4rem;
+            position: relative;
+        }
+
+        .toc-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            transition: var(--transition);
+            border-left: 2px solid transparent;
+            padding-left: 8px;
+        }
+
+        .toc-link:hover {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            transform: translateX(2px);
+        }
+
+        .toc-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .toc-number {
+            font-weight: 500;
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            min-width: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-right: 1.2rem;
+            padding-left: 0;
+        }
+
+        @media (max-width: 850px) {
+            .sidebar {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 0 1rem;
+            }
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 1.5rem 0 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: relative;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 35px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        h2 a {
+            color: var(--accent);
+            font-size: 0.7rem;
+            margin-left: 6px;
+            text-decoration: none;
+        }
+
+        h2 a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            color: var(--gray-900);
+            line-height: 1.65;
+        }
+
+        /* Equation Styling */
+        .equation-container {
+            margin: 0.8rem 0;
+        }
+
+        .equation {
+            background: var(--primary-light);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1rem;
+            border-radius: 0 5px 5px 0;
+            font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', serif;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .equation-number {
+            color: var(--primary);
+            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin-right: 6px;
+            display: inline-block;
+            min-width: 18px;
+        }
+
+        /* Code Block Styling */
+        .code-container {
+            margin: 1rem 0;
+            background: #2d2d2d;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .code-header {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 0.6rem 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .code-content {
+            padding: 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #f8f8f2;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+        }
+
+        /* Reference Box */
+        .reference-box {
+            background: linear-gradient(to right, #f8fafc, var(--primary-light));
+            border: 1px solid var(--gray-200);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .reference-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .reference-header i {
+            font-size: 0.9rem;
+        }
+
+        .reference-list {
+            list-style: none;
+        }
+
+        .reference-item {
+            padding: 0.3rem 0 0.3rem 0.8rem;
+            position: relative;
+            margin-bottom: 0.4rem;
+            color: var(--gray-700);
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .reference-item::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 0.65rem;
+        }
+
+        /* Citation Section */
+        .citation-section {
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .citation-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .citation-box {
+            background: var(--white);
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid var(--gray-300);
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-top: 0.6rem;
+            overflow-x: auto;
+            color: var(--gray-900);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--secondary);
+            color: white;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .translation-credit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 6px 16px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(26, 107, 202, 0.2);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            margin-top: 0.6rem;
+        }
+
+        /* Utility Classes */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-light), #e8f2ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .math {
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.1s ease;
+            z-index: 1000;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 1rem 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 0.6rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem 0;
+            }
+            
+            .main-content {
+                padding-right: 0.8rem;
+            }
+            
+            .sidebar {
+                padding-left: 0.8rem;
+            }
+            
+            .meta-info {
+                gap: 0.6rem;
+            }
+            
+            .meta-item {
+                font-size: 0.75rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .translation-notice-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .translator-badge {
+                align-self: flex-start;
+            }
+        }
+
+        /* Links styling */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Optimize long formula display */
+        .equation {
+            word-break: break-word;
+        }
+        
+        /* Optimize list display */
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.3rem;
+            line-height: 1.5;
+        }
+        
+        /* Optimize math formula spacing */
+        .MathJax_Display {
+            margin: 0.6em 0 !important;
+        }
+        
+        /* Image container styling */
+        .pic-container {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+        
+        .pic-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .typecho-caption {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        
+        /* Quote block styling */
+        blockquote.cite {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+        }
+        
+        blockquote.cite div {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        blockquote.cite a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        /* Blockquote styling */
+        blockquote {
+            background: linear-gradient(to right, var(--gray-100), var(--primary-light));
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+            position: relative;
+        }
+
+        blockquote p {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+
+        blockquote p:before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Underline styling */
+        u {
+            text-decoration: none;
+            border-bottom: 1px dotted var(--primary);
+        }
+
+        /* List styling inside main content */
+        .main-content ol, .main-content ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .main-content li {
+            margin-bottom: 0.4rem;
+            line-height: 1.6;
+        }
+
+        /* Highlight box for important notes */
+        .note-box {
+            background: linear-gradient(to right, #fff8e1, #fff3cd);
+            border-left: 3px solid #ffc107;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .note-box strong {
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>Rethinking Learning Rate and Batch Size (Part 1): Current Landscape</h1>
+                <div class="subtitle">A Theoretical Analysis of Learning Rate Scaling Laws and Their Computational Challenges in Modern Optimizers</div>
+                
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>Su Jianlin</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-eye"></i>
+                        <span>Scientific Spaces</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <div class="tag">Optimization Theory</div>
+                        <div class="tag">Learning Rate Scaling</div>
+                        <div class="tag">Batch Size Analysis</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Translation Notice -->
+        <div class="translation-notice">
+            <div class="translation-notice-content">
+                <div class="translation-text">
+                    <h3><i class="fas fa-language"></i> Academic Translation</h3>
+                    <p>This is an academic English translation maintaining technical accuracy while adapting to English academic conventions.</p>
+                </div>
+                <div class="translator-badge">
+                    <i class="fas fa-user-graduate"></i>
+                    Translated by Juanxi Tian (ScalingOpt Team)
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Sidebar Table of Contents -->
+            <aside class="sidebar">
+                <nav class="toc">
+                    <div class="toc-header">
+                        <i class="fas fa-list"></i>
+                        Contents
+                    </div>
+                    <ul class="toc-list">
+                        <li class="toc-item">
+                            <a href="#method-overview" class="toc-link">
+                                <span class="toc-number">1</span>
+                                <span>Method Overview</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#warm-up-exercise" class="toc-link">
+                                <span class="toc-number">2</span>
+                                <span>Warm-up Exercise</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#data-efficiency" class="toc-link">
+                                <span class="toc-number">3</span>
+                                <span>Data Efficiency</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#analysis-challenges" class="toc-link">
+                                <span class="toc-number">4</span>
+                                <span>Analysis Challenges</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#to-be-continued" class="toc-link">
+                                <span class="toc-number">5</span>
+                                <span>To Be Continued</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Article Content -->
+            <main class="main-content">
+                <p>In previous articles <a href="/archives/10542" target="_blank">"How Should Learning Rate Scale with Batch Size?"</a> and <a href="/archives/10563" target="_blank">"How Does Adam's Epsilon Affect Learning Rate Scaling Laws?"</a>, we theoretically discussed the scaling relationship between learning rate and batch size. The classical part of this analysis, which expands to second order, was proposed by OpenAI. However, when dealing with non-SGD optimizers, the computational process of this analytical method often becomes quite complex, leaving one feeling somewhat overwhelmed.</p>
+                
+                <p>In the following series of articles, I will reorganize and reconsider the relevant details from the aforementioned articles, attempting to simplify some of the derivation steps, providing a more general and elegant derivation path, and exploring the possibility of extending this to the Muon optimizer.</p>
+                
+                <h2 id="method-overview">Method Overview<a href="#method-overview">#</a></h2>
+                
+                <p>First, let's review the previous analytical approach. In <a href="/archives/10542" target="_blank">"How Should Learning Rate Scale with Batch Size?"</a>, we introduced several analytical perspectives on the relationship between learning rate and batch size. The main focus was on the second-order approximation analysis proposed by OpenAI in <a href="https://papers.cool/arxiv/1812.06162" target="_blank">"An Empirical Model of Large-Batch Training"</a>, and this article follows the same line of thought.</p>
+                
+                <p>Next, we need to introduce some notation. Let the loss function be $\mathcal{L}(\boldsymbol{w})$, where $\boldsymbol{w}\in\mathbb{R}^N$ is the parameter vector, and $\boldsymbol{g}$ is its gradient. Note that the ideal loss function is computed as an expectation over the entire training dataset, but in practice we can only sample a batch to compute it, which introduces randomness into the gradient. We denote the gradient for a single sample as $\tilde{\boldsymbol{g}}$, whose mean is $\boldsymbol{g}$, and its covariance matrix as $\boldsymbol{\Sigma}$. When the batch size is $B$, the gradient is denoted as $\tilde{\boldsymbol{g}}_B$, whose mean remains $\boldsymbol{g}$, but the covariance matrix becomes $\boldsymbol{\Sigma}/B$.</p>
+                
+                <p>Furthermore, let the current learning rate be $\eta$, and the update vector be $\tilde{\boldsymbol{\varphi}}_B$. Then the loss function after update will be:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(1)</span>
+                        \[
+                        \begin{aligned}
+                        \mathcal{L}(\boldsymbol{w} - \eta\tilde{\boldsymbol{\varphi}}_B) \approx&\, \mathcal{L}(\boldsymbol{w}) - \eta \tilde{\boldsymbol{\varphi}}_B^{\top}\boldsymbol{g} + \frac{1}{2}\eta^2\tilde{\boldsymbol{\varphi}}_B^{\top}\boldsymbol{H}\tilde{\boldsymbol{\varphi}}_B \\[5pt]
+                        =&\, \mathcal{L}(\boldsymbol{w}) - \eta \tilde{\boldsymbol{\varphi}}_B^{\top}\boldsymbol{g} + \frac{1}{2}\eta^2\newcommand{tr}{\mathop{\text{tr}}}\tr(\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}\boldsymbol{H})
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>On the right side, we have Taylor expanded to second order, where $\boldsymbol{H}$ is the Hessian matrix, $\tr$ is the matrix trace, and the second equality uses the identity $\tr(\boldsymbol{A}\boldsymbol{B})=\tr(\boldsymbol{B}\boldsymbol{A})$. To obtain a deterministic result, we take expectations on both sides:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(2)</span>
+                        \[
+                        \mathbb{E}[\mathcal{L}(\boldsymbol{w} - \eta\tilde{\boldsymbol{\varphi}}_B)] \approx \mathcal{L}(\boldsymbol{w}) - \eta\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]^{\top}\boldsymbol{g} + \frac{1}{2}\eta^2 \tr(\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]\boldsymbol{H})
+                        \]
+                    </div>
+                </div>
+                
+                <p>We view the right-hand side as a quadratic function in $\eta$, and assume the quadratic coefficient is positive (a stronger assumption is that the $\boldsymbol{H}$ matrix is positive definite). Then we can obtain the minimum point:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(3)</span>
+                        \[
+                        \eta^* \approx \frac{\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]^{\top}\boldsymbol{g}}{\tr(\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]\boldsymbol{H})}
+                        \]
+                    </div>
+                </div>
+                
+                <p>This is <u>on average</u> the learning rate that minimizes the loss function most rapidly—the theoretical optimal learning rate. Our task is to compute $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]$ and $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]$ for specific $\tilde{\boldsymbol{\varphi}}_B$, and then extract its relationship with batch size (i.e., $B$) from the above equation.</p>
+                
+                <h2 id="warm-up-exercise">Warm-up Exercise<a href="#warm-up-exercise">#</a></h2>
+                
+                <p>As our first example, we naturally consider the simplest case: SGD. Here, $\tilde{\boldsymbol{\varphi}}_B=\tilde{\boldsymbol{g}}_B$. We can easily obtain $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]=\boldsymbol{g}$ and $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]=\boldsymbol{g}\boldsymbol{g}^{\top} + \boldsymbol{\Sigma}/B$. Thus:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(4)</span>
+                        \[
+                        \eta^* \approx \frac{\boldsymbol{g}^{\top}\boldsymbol{g}}{\tr((\boldsymbol{g}\boldsymbol{g}^{\top} + \boldsymbol{\Sigma}/B)\boldsymbol{H})} = \frac{\boldsymbol{g}^{\top}\boldsymbol{g}}{\boldsymbol{g}^{\top}\boldsymbol{H}\boldsymbol{g} + \tr(\boldsymbol{\Sigma}\boldsymbol{H})/B} = \frac{\eta_{\max}}{1 + \mathcal{B}_{\text{noise}}/B}
+                        \]
+                    </div>
+                </div>
+                
+                <p>where:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(5)</span>
+                        \[
+                        \eta_{\max} = \frac{\boldsymbol{g}^{\top}\boldsymbol{g}}{\boldsymbol{g}^{\top}\boldsymbol{H}\boldsymbol{g}},\qquad\mathcal{B}_{\text{noise}} = \frac{\tr(\boldsymbol{\Sigma}\boldsymbol{H})}{\boldsymbol{g}^{\top}\boldsymbol{H}\boldsymbol{g}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>We can interpret result (4) in several ways. First, it is a monotonically increasing but bounded function, with an upper bound of $\eta_{\max}$. This indicates that the learning rate cannot increase indefinitely—consistent with our intuition compared to simple linear or square root scaling laws. When $B \ll \mathcal{B}_{\text{noise}}$, we have:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(6)</span>
+                        \[
+                        \eta^* \approx \frac{\eta_{\max}}{1 + \mathcal{B}_{\text{noise}}/B} \approx \frac{\eta_{\max}}{\mathcal{B}_{\text{noise}}/B} = \eta_{\max} B / \mathcal{B}_{\text{noise}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>This shows that when batch size is relatively small, SGD's learning rate indeed scales linearly with batch size, while also suggesting that $\mathcal{B}_{\text{noise}}$ is a key statistical quantity. However, the definition of $\mathcal{B}_{\text{noise}}$ depends on the Hessian matrix $\boldsymbol{H}$, which is nearly impossible to compute precisely in LLMs. Therefore, in practice, we typically assume it is the identity matrix (or a multiple thereof), yielding a simplified form:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(7)</span>
+                        \[
+                        \mathcal{B}_{\text{simple}} = \frac{\tr(\boldsymbol{\Sigma})}{\boldsymbol{g}^{\top}\boldsymbol{g}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>This result takes the form of noise intensity ($\tr(\boldsymbol{\Sigma})$) divided by signal intensity ($\boldsymbol{g}^{\top}\boldsymbol{g}$)—essentially the inverse of the signal-to-noise ratio. It indicates that with a smaller signal-to-noise ratio, a larger batch size is required to achieve the same $\eta_{\max}$, which aligns with our intuitive understanding. Note that $\tr(\boldsymbol{\Sigma})$ depends only on the diagonal elements of $\boldsymbol{\Sigma}$, meaning we only need to independently estimate the mean and variance for each parameter—a feasible approach in practice.</p>
+                
+                <h2 id="data-efficiency">Data Efficiency<a href="#data-efficiency">#</a></h2>
+                
+                <p>Beyond the direct relationship between learning rate and batch size, I believe the derived asymptotic relationship between training data volume and training steps is an essential and insightful aspect that must be studied. In particular, this conclusion seems more general than the learning rate relationship (4), as we will later see that SignSGD also yields a similar form of conclusion, though its learning rate pattern is not given by equation (4).</p>
+                
+                <p>The original paper's discussion of this part is rather complex; the derivation below has been simplified by the author. Specifically, substituting $\eta^*$ back into $\mathcal{L}(\boldsymbol{w} - \eta\tilde{\boldsymbol{g}}_B)$ yields:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(8)</span>
+                        \[
+                        \overline{\Delta\mathcal{L}} = \mathcal{L}(\boldsymbol{w}) - \mathbb{E}[\mathcal{L}(\boldsymbol{w} - \eta^*\tilde{\boldsymbol{g}}_B)] \approx \frac{\Delta\mathcal{L}_{\max}}{1 + \mathcal{B}_{\text{noise}}/B}
+                        \]
+                    </div>
+                </div>
+                
+                <p>where $\Delta\mathcal{L}_{\max} = \frac{(\boldsymbol{g}^{\top}\boldsymbol{g})^2}{2\boldsymbol{g}^{\top}\boldsymbol{H}\boldsymbol{g}}$. How should we interpret this result? First, it is a monotonically increasing function of $B$. When $B\to\infty$, it equals $\Delta\mathcal{L}_{\max}$. In other words, if we could use an infinitely large batch size, the loss reduction per step would be $\Delta\mathcal{L}_{\max}$, requiring the minimum number of training steps, denoted as $S_{\min}$.</p>
+                
+                <p>If the batch size is finite, the average loss reduction per step is only $\overline{\Delta\mathcal{L}}$. This means that, on average, we need $1 + \mathcal{B}_{\text{noise}}/B$ steps to achieve the reduction that would be achieved in 1 step with infinite batch size. Therefore, to reach the same loss level, we need to train for $S = (1 + \mathcal{B}_{\text{noise}}/B)S_{\min}$ steps.</p>
+                
+                <p>Since the batch size is $B$, we can easily derive that the total training data consumed is $E = BS = (B + \mathcal{B}_{\text{noise}})S_{\min}$. This result shows that after increasing the batch size, to achieve the same effect, we also need to appropriately increase the data volume $E$; when $B\to 0$, the required data volume is minimized, at $E_{\min} = \mathcal{B}_{\text{noise}}S_{\min}$. Using these notations, we can write:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(9)</span>
+                        \[
+                        \left(\frac{S}{S_{\min}} - 1\right)\left(\frac{E}{E_{\min}} - 1\right) = 1
+                        \]
+                    </div>
+                </div>
+                
+                <p>This is the classical relationship between training data volume and training steps, containing two parameters $S_{\min}$ and $E_{\min}$. We can also experimentally search for multiple $(S,E)$ pairs to fit the above equation, thereby estimating $S_{\min}$ and $E_{\min}$, and subsequently estimating $\mathcal{B}_{\text{noise}} = E_{\min} / S_{\min}$. For more analytical details, please refer back to the previous article <a href="/archives/10542" target="_blank">"How Should Learning Rate Scale with Batch Size?"</a> or OpenAI's original paper <a href="https://papers.cool/arxiv/1812.06162" target="_blank">"An Empirical Model of Large-Batch Training"</a>.</p>
+                
+                <h2 id="analysis-challenges">Analysis Challenges<a href="#analysis-challenges">#</a></h2>
+                
+                <p>The discussion so far remains within the realm of SGD. From a computational perspective, SGD is trivial. The real complexity arises when $\tilde{\boldsymbol{\varphi}}_B$ nonlinearly depends on $\tilde{\boldsymbol{g}}_B$—for instance, SignSGD corresponds to $\newcommand{sign}{\mathop{\text{sign}}}\tilde{\boldsymbol{\varphi}}_B=\sign(\tilde{\boldsymbol{g}}_B)$, which is often used as an approximation for Adam in theoretical analyses. A more accurate approximation is SoftSignSGD that incorporates $\epsilon$, which we attempted to analyze in <a href="/archives/10563" target="_blank">"How Does Adam's Epsilon Affect Learning Rate Scaling Laws?"</a>.</p>
+                
+                <p>In these nonlinear scenarios, computing $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]$ and $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]$ is often quite challenging, even if we assume $\tilde{\boldsymbol{g}}_B$ follows a simple normal distribution (note: in the SGD analysis, we did not need to assume any specific distributional form). For example, in the previous article, for SignSGD with $\tilde{\boldsymbol{\varphi}}_B=\sign(\tilde{\boldsymbol{g}}_B)$, we went through the following steps to compute $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]$:</p>
+                
+                <blockquote>
+                    <p>1. Assume the components of $\tilde{\boldsymbol{g}}_B$ are independent, reducing the problem to the expectation of a single component $\tilde{\varphi}_B=\sign(\tilde{g}_B)$ (not bold);</p>
+                    <p>2. Assume $\tilde{g}_B$ (now a scalar) follows a normal distribution, then compute $\mathbb{E}[\tilde{\varphi}_B]$, with the answer expressed using the $\newcommand{erf}{\mathop{\text{erf}}}\erf$ function;</p>
+                    <p>3. Approximate the $\erf$ function using a function of the form $x/\sqrt{x^2+c}$ to simplify the result.</p>
+                </blockquote>
+                
+                <p>That is, we had to go through numerous convoluted steps to barely compute an approximate result that could be further analyzed (this process first appeared in Tencent's paper <a href="https://papers.cool/arxiv/2405.14578" target="_blank">"Surge Phenomenon in Optimal Learning Rate and Batch Size Scaling"</a>). And this is considered relatively simple, because for SoftSignSGD, it becomes even more complex:</p>
+                
+                <blockquote>
+                    <p>1. Assume the components of $\tilde{\boldsymbol{g}}_B$ are independent, reducing the problem to the expectation of a single component $\tilde{\varphi}_B=\newcommand{softsign}{\mathop{\text{softsign}}}\softsign(\tilde{g}_B, \epsilon)$;</p>
+                    <p>2. Approximate the $\softsign$ function using a piecewise linear function to enable integration;</p>
+                    <p>3. Assume $\tilde{g}_B$ follows a normal distribution, combine with the approximation from step 2, and compute $\mathbb{E}[\tilde{\varphi}_B]$, resulting in a complex function containing $\erf$;</p>
+                    <p>4. Approximate the complex function using a function of the form $x/\sqrt{x^2+c}$ to simplify the result.</p>
+                </blockquote>
+                
+                <p>But that's not all. After expending such great effort and making so many assumptions, we have barely managed to compute $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B]$. Next, we still need to compute $\mathbb{E}[\tilde{\boldsymbol{\varphi}}_B\tilde{\boldsymbol{\varphi}}_B^{\top}]$, which is often even more complex (SignSGD is an exception because $\sign(x)^2$ is always 1, making it simpler). However, computational complexity is secondary; the main issue is that these steps appear to have no generalizable pattern, seemingly requiring case-by-case analysis, which is mentally exhausting.</p>
+                
+                <h2 id="to-be-continued">To Be Continued<a href="#to-be-continued">#</a></h2>
+                
+                <p>To avoid making this article excessively long, we will pause here for now, having briefly reviewed the existing analytical results and computational difficulties. In the next article, I will introduce some attempts I have made to reduce the mental burden in the derivation process.</p>
+
+                <div class="citation-section">
+                    <div class="citation-header">
+                        <i class="fas fa-quote-right"></i>
+                        Citation Information
+                    </div>
+                    <p><strong>Original Article:</strong> Su Jianlin. Rethinking Learning Rate and Batch Size (Part 1): Current Landscape. <em>Scientific Spaces</em>.</p>
+                    
+                    <p><strong>How to cite this translation:</strong></p>
+                    <div class="citation-box">
+                        Su, J. Rethinking Learning Rate and Batch Size (Part 1): Current Landscape [Translated by Juanxi Tian]. 
+                        <em>Scientific Spaces</em>.
+                    </div>
+                    <p style="margin-top: 0.8rem;"><strong>BibTeX:</strong></p>
+                    <div class="citation-box">
+                        @article{su2025rethinking_lr_bs_part1,
+                            title   = {Rethinking Learning Rate and Batch Size (Part 1): Current Landscape},
+                            author  = {Su, Jianlin},
+                            journal = {Scientific Spaces},
+                            year    = {2025},
+                            url     = {https://kexue.fm/archives/11260},
+                            note    = {Translated by Juanxi Tian (ScalingOpt Team)}
+                          }
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="translation-credit">
+                <i class="fas fa-user-graduate"></i>
+                Academic Translation by Juanxi Tian (ScalingOpt Team)
+            </div>
+            <div class="copyright">
+                © 2009-2025 Scientific Spaces. All rights reserved.<br>
+                Original content licensed under Creative Commons BY-NC-ND 2.5 China
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript for Interactive Features -->
+    <script>
+        // Scroll Progress Bar
+        window.addEventListener('scroll', function() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            scrollProgress.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Table of Contents Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            const sections = document.querySelectorAll('h2[id]');
+            
+            // Set active section based on scroll position
+            function setActiveSection() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 50)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', setActiveSection);
+            setActiveSection(); // Initial call
+            
+            // Smooth scroll for TOC links
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 50,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+
+        // MathJax Configuration
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                tags: 'ams'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    
+    <!-- MathJax CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</body>
+</html>
