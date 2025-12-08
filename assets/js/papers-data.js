@@ -1,5 +1,29 @@
 const papers = [
   {
+    id: 'stabilizing-rl-llms-2025',
+    title: 'Stabilizing Reinforcement Learning with LLMs: Formulation and Practices',
+    authors: ['Chujie Zheng', 'Kai Dang', 'Bowen Yu', 'Mingze Li', 'Huiqiang Jiang', 'Junrong Lin', 'Yuqiong Liu', 'Hao Lin', 'Chencan Wu', 'Feng Hu', 'An Yang', 'Jingren Zhou', 'Junyang Lin'],
+    year: 2025,
+    venue: 'arXiv preprint',
+    category: 'Analysis',
+    abstract: 'This paper proposes a novel formulation for reinforcement learning (RL) with large language models, explaining why and under what conditions the true sequence-level reward can be optimized via a surrogate token-level objective in policy gradient methods such as REINFORCE. Specifically, through a first-order approximation, we show that this surrogate becomes increasingly valid only when both the training-inference discrepancy and policy staleness are minimized. This insight provides a principled explanation for the crucial role of several widely adopted techniques in stabilizing RL training, including importance sampling correction, clipping, and particularly Routing Replay for Mixture-of-Experts (MoE) models. Through extensive experiments with a 30B MoE model totaling hundreds of thousands of GPU hours, we show that for on-policy training, the basic policy gradient algorithm with importance sampling correction achieves the highest training stability. When off-policy updates are introduced to accelerate convergence, combining clipping and Routing Replay becomes essential to mitigate the instability caused by policy staleness. Notably, once training is stabilized, prolonged optimization consistently yields comparable final performance regardless of cold-start initialization. We hope that the shared insights and the developed recipes for stable RL training will facilitate future research.',
+    arxivUrl: 'https://arxiv.org/abs/2512.01374',
+    tags: ['Reinforcement Learning', 'LLM', 'Policy Gradient', 'Stability', 'Mixture-of-Experts'],
+    featured: true
+  },
+  {
+    id: 'universal-weight-subspace-2025',
+    title: 'The Universal Weight Subspace Hypothesis',
+    authors: ['Prakhar Kaushik', 'Shravan Chaudhari', 'Ankit Vaidya', 'Rama Chellappa', 'Alan Yuille'],
+    year: 2025,
+    venue: 'arXiv preprint',
+    category: 'Analysis',
+    abstract: 'We show that deep neural networks trained across diverse tasks exhibit remarkably similar low-dimensional parametric subspaces. We provide the first large-scale empirical evidence that demonstrates that neural networks systematically converge to shared spectral subspaces regardless of initialization, task, or domain. Through mode-wise spectral analysis of over 1100 models - including 500 Mistral-7B LoRAs, 500 Vision Transformers, and 50 LLaMA-8B models - we identify universal subspaces capturing majority variance in just a few principal directions. By applying spectral decomposition techniques to the weight matrices of various architectures trained on a wide range of tasks and datasets, we identify sparse, joint subspaces that are consistently exploited, within shared architectures across diverse tasks and datasets. Our findings offer new insights into the intrinsic organization of information within deep networks and raise important questions about the possibility of discovering these universal subspaces without the need for extensive data and computational resources. Furthermore, this inherent structure has significant implications for model reusability, multi-task learning, model merging, and the development of training and inference-efficient algorithms, potentially reducing the carbon footprint of large-scale neural models.',
+    arxivUrl: 'https://arxiv.org/abs/2512.05117',
+    tags: ['Weight Subspace', 'Neural Networks', 'Spectral Analysis', 'Model Merging', 'Efficiency'],
+    featured: true
+  },
+  {
     id: 'learning-rate-decay-curriculum-2025',
     title: 'How Learning Rate Decay Wastes Your Best Data in Curriculum-Based LLM Pretraining',
     authors: ['Kairong Luo', 'Zhenbo Sun', 'Haodong Wen', 'Xinyu Shi', 'Jiarui Cui', 'Chenyi Dang', 'Kaifeng Lyu', 'Wenguang Chen'],
