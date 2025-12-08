@@ -215,63 +215,18 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8" data-aos="fade-up" data-aos-delay="100">
                     <div class="bg-white rounded-xl shadow-lg p-6 text-center">
                         <i data-lucide="file-text" class="w-8 h-8 text-blue-600 mx-auto mb-2"></i>
-                        <div class="text-2xl font-bold text-gray-900" id="articles-count">4</div>
+                        <div class="text-2xl font-bold text-gray-900" id="articles-count">0</div>
                         <div class="text-gray-600">Articles</div>
                     </div>
                     <div class="bg-white rounded-xl shadow-lg p-6 text-center">
                         <i data-lucide="user" class="w-8 h-8 text-green-600 mx-auto mb-2"></i>
-                        <div class="text-2xl font-bold text-gray-900" id="authors-count">3</div>
+                        <div class="text-2xl font-bold text-gray-900" id="authors-count">0</div>
                         <div class="text-gray-600">Authors</div>
                     </div>
                     <div class="bg-white rounded-xl shadow-lg p-6 text-center">
                         <i data-lucide="tag" class="w-8 h-8 text-orange-600 mx-auto mb-2"></i>
-                        <div class="text-2xl font-bold text-gray-900" id="topics-count">15</div>
+                        <div class="text-2xl font-bold text-gray-900" id="topics-count">0</div>
                         <div class="text-gray-600">Topics</div>
-                    </div>
-                </div>
-
-                <!-- Featured Posts -->
-                <div class="mb-12" data-aos="fade-up" data-aos-delay="200">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Featured Articles</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="featured-posts">
-                        <!-- Featured posts will be dynamically loaded here -->
-                    </div>
-                </div>
-
-                <!-- Search and Filter -->
-                <div class="bg-white rounded-xl shadow-lg p-6 mb-8" data-aos="fade-up" data-aos-delay="300">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="md:col-span-2">
-                            <div class="relative">
-                                <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
-                                <input
-                                    type="text"
-                                    id="search-input"
-                                    placeholder="Search articles..."
-                                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                />
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <div class="relative">
-                                <i data-lucide="filter" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
-                                <select
-                                    id="category-filter"
-                                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
-                                >
-                                    <option value="All">All Categories</option>
-                                    <option value="Research">Research</option>
-                                    <option value="Tutorial">Tutorial</option>
-                                    <option value="News">News</option>
-                                    <option value="Opinion">Opinion</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-4 text-sm text-gray-600">
-                        Showing <span id="filtered-count">4</span> of 4 articles
                     </div>
                 </div>
 
@@ -759,6 +714,43 @@
                     </div>
                 </div>
 
+                <!-- Search and Filter -->
+                <div class="bg-white rounded-xl shadow-lg p-6 mb-8" data-aos="fade-up" data-aos-delay="300">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="md:col-span-2">
+                            <div class="relative">
+                                <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+                                <input
+                                    type="text"
+                                    id="search-input"
+                                    placeholder="Search articles..."
+                                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="relative">
+                                <i data-lucide="filter" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+                                <select
+                                    id="category-filter"
+                                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
+                                >
+                                    <option value="All">All Categories</option>
+                                    <option value="Research">Research</option>
+                                    <option value="Tutorial">Tutorial</option>
+                                    <option value="News">News</option>
+                                    <option value="Opinion">Opinion</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 text-sm text-gray-600">
+                        Showing <span id="filtered-count">4</span> of 4 articles
+                    </div>
+                </div>
+
                 <!-- All Posts -->
                 <div class="mb-8">
                     <h2 class="text-2xl font-bold text-gray-900 mb-6">All Articles</h2>
@@ -939,6 +931,172 @@
                 tags: ['Optimizers', 'Training Dynamics', 'Convergence', 'Neural Networks', 'Practical Guide'],
                 featured: true,
                 externalUrl: 'https://hackmd.io/@l_WDq7lkQq29Pz-KD1JPNA/SJL6n1PYgg'
+            },
+            // Jianlin Su's Posts
+            {
+                id: 'jianlin-weight-decay-ema',
+                title: 'Weight Decay and Learning Rate from a Moving Average Perspective',
+                excerpt: 'A Theoretical Analysis of Optimal Scheduling in Large Language Model Pre-training. Viewing the training process as a moving average memory of the training data.',
+                author: 'Jianlin Su',
+                publishDate: '2024-01-01',
+                readTime: '5 min read',
+                category: 'Research',
+                tags: ['Optimization', 'Jianlin Su'],
+                externalUrl: 'blogs/Jianlin/滑动平均视角下的权重衰减和学习率.html'
+            },
+            {
+                id: 'jianlin-muon-appreciation',
+                title: 'Muon Optimizer Appreciation: The Essential Leap from Vectors to Matrices',
+                excerpt: 'An In-Depth Analysis of the Matrix-Centric Muon Optimizer. Exploring why Muon is efficient and how it embodies essential differences between vectors and matrices.',
+                author: 'Jianlin Su',
+                publishDate: '2024-01-01',
+                readTime: '5 min read',
+                category: 'Research',
+                tags: ['Optimizer', 'Jianlin Su'],
+                externalUrl: 'blogs/Jianlin/Muon优化器赏析：从向量到矩阵的本质跨越.html'
+            },
+            {
+                id: 'jianlin-adamw-rms-1',
+                title: 'Asymptotic Estimation of Weight RMS in AdamW (Part 1)',
+                excerpt: 'Using Mean-Field Approximation to Derive Asymptotic Weight RMS Expressions. Revealing how weight norms are embedded in optimizer hyperparameters.',
+                author: 'Jianlin Su',
+                publishDate: '2024-01-01',
+                readTime: '5 min read',
+                category: 'Research',
+                tags: ['Theory', 'Jianlin Su'],
+                externalUrl: 'blogs/Jianlin/AdamW的Weight RMS的渐近估计（上）.html'
+            },
+            {
+                id: 'jianlin-adamw-rms-2',
+                title: 'Asymptotic Estimation of Weight RMS in AdamW (Part 2)',
+                excerpt: 'Extension to Dynamic Weight Decay and Learning Rate Schedules. Generalizing the asymptotic estimation to practical training scenarios.',
+                author: 'Jianlin Su',
+                publishDate: '2024-01-01',
+                readTime: '5 min read',
+                category: 'Research',
+                tags: ['Theory', 'Jianlin Su'],
+                externalUrl: 'blogs/Jianlin/AdamW的Weight RMS的渐近估计（下）.html'
+            },
+            {
+                id: 'jianlin-muon-sequel',
+                title: 'Muon Sequel: Why We Chose to Experiment with Muon?',
+                excerpt: 'A Practical Investigation of the Muon Optimizer for Large-Scale LLM Training. Discussing the motivation and initial results of applying Muon to scale-up.',
+                author: 'Jianlin Su',
+                publishDate: '2024-01-01',
+                readTime: '5 min read',
+                category: 'Research',
+                tags: ['Optimizer', 'Jianlin Su'],
+                externalUrl: 'blogs/Jianlin/Muon续集：为什么我们选择尝试Muon.html'
+            },
+            {
+                id: 'jianlin-qk-clip',
+                title: 'QK-Clip: Advancing Muon Further in Scale-up',
+                excerpt: 'A novel method to address MaxLogit explosion in large-scale transformer training, enabling stable training of trillion-parameter models with Muon optimizer.',
+                author: 'Jianlin Su',
+                publishDate: '2024-01-01',
+                readTime: '5 min read',
+                category: 'Research',
+                tags: ['Technique', 'Jianlin Su'],
+                externalUrl: 'blogs/Jianlin/QK-Clip：让Muon在Scaleup之路上更进一步.html'
+            },
+            {
+                id: 'jianlin-higher-order-mup',
+                title: 'Higher-Order MuP: A More Concise Yet Profound Spectral Condition Scaling',
+                excerpt: 'A sophisticated spectral condition approach for cross-model hyperparameter transfer, providing intuitive algebraic insights into initialization and learning rate scaling laws.',
+                author: 'Jianlin Su',
+                publishDate: '2024-01-01',
+                readTime: '5 min read',
+                category: 'Research',
+                tags: ['Scaling Law', 'Jianlin Su'],
+                externalUrl: 'blogs/Jianlin/高阶MuP：更简明但更高明的谱条件缩放.html'
+            },
+            {
+                id: 'jianlin-mup-preliminary',
+                title: 'A Preliminary Exploration of MuP: Cross-Model Scaling Laws for Hyperparameters',
+                excerpt: 'An in-depth analysis of Maximal Update Parametrization (MuP) for zero-shot hyperparameter transfer across model scales.',
+                author: 'Jianlin Su',
+                publishDate: '2024-01-01',
+                readTime: '5 min read',
+                category: 'Research',
+                tags: ['Scaling Law', 'Jianlin Su'],
+                externalUrl: 'blogs/Jianlin/初探MuP：超参数的跨模型尺度迁移规律.html'
+            },
+            {
+                id: 'jianlin-rethinking-lr-bs-1',
+                title: 'Rethinking Learning Rate and Batch Size (Part 1): Current Landscape',
+                excerpt: 'A Theoretical Analysis of Learning Rate Scaling Laws and Their Computational Challenges in Modern Optimizers.',
+                author: 'Jianlin Su',
+                publishDate: '2024-01-01',
+                readTime: '5 min read',
+                category: 'Research',
+                tags: ['Analysis', 'Jianlin Su'],
+                externalUrl: 'blogs/Jianlin/重新思考学习率与Batch Size（一）：现状.html'
+            },
+            {
+                id: 'jianlin-rethinking-lr-bs-2',
+                title: 'Rethinking Learning Rate and Batch Size (Part 2): Mean Field Theory',
+                excerpt: 'Applying mean field approximations to simplify the analysis of learning rate scaling laws for non-linear optimizers like SignSGD.',
+                author: 'Jianlin Su',
+                publishDate: '2024-01-01',
+                readTime: '5 min read',
+                category: 'Research',
+                tags: ['Theory', 'Jianlin Su'],
+                externalUrl: 'blogs/Jianlin/重新思考学习率与Batch Size（二）：平均场.html'
+            },
+            {
+                id: 'jianlin-rethinking-lr-bs-3',
+                title: 'Rethinking Learning Rate and Batch Size (Part 3): Muon Analysis',
+                excerpt: 'Applying mean field theory to analyze learning rate scaling laws for the Muon optimizer, revealing its asymptotic similarity to SignSGD.',
+                author: 'Jianlin Su',
+                publishDate: '2024-01-01',
+                readTime: '5 min read',
+                category: 'Research',
+                tags: ['Optimizer', 'Jianlin Su'],
+                externalUrl: 'blogs/Jianlin/重新思考学习率与Batch Size（三）：Muon.html'
+            },
+            {
+                id: 'jianlin-rethinking-lr-bs-4',
+                title: 'Rethinking Learning Rate and Batch Size (Part 4): EMA Effects',
+                excerpt: 'Analyzing how Exponential Moving Averages in optimizers affect learning rate scaling laws, with implications for Adam and the Surge phenomenon.',
+                author: 'Jianlin Su',
+                publishDate: '2024-01-01',
+                readTime: '5 min read',
+                category: 'Research',
+                tags: ['Theory', 'Jianlin Su'],
+                externalUrl: 'blogs/Jianlin/重新思考学习率与Batch Size（四）：EMA.html'
+            },
+            {
+                id: 'jianlin-adam-rms-02',
+                title: 'Why is Adam\'s Update RMS 0.2?',
+                excerpt: 'A Theoretical and Empirical Investigation of Adam Optimizer\'s Update RMS Stability.',
+                author: 'Jianlin Su',
+                publishDate: '2024-01-01',
+                readTime: '5 min read',
+                category: 'Research',
+                tags: ['Analysis', 'Jianlin Su'],
+                externalUrl: 'blogs/Jianlin/为什么Adam的Update RMS是0.2.html'
+            },
+            {
+                id: 'jianlin-adam-epsilon',
+                title: 'How Does Adam\'s Epsilon Affect Learning Rate Scaling Laws?',
+                excerpt: 'Analyzing the impact of Adam\'s epsilon parameter on learning rate scaling laws with batch size, exploring the transition between SignSGD and SGD behaviors.',
+                author: 'Jianlin Su',
+                publishDate: '2024-01-01',
+                readTime: '5 min read',
+                category: 'Research',
+                tags: ['Analysis', 'Jianlin Su'],
+                externalUrl: 'blogs/Jianlin/Adam的epsilon如何影响学习率的Scaling Law.html'
+            },
+            {
+                id: 'jianlin-lr-scale-bs',
+                title: 'How Should Learning Rate Scale with Batch Size?',
+                excerpt: 'A comprehensive analysis of scaling laws between learning rate and batch size from multiple perspectives, covering SGD, Adam, and their variants.',
+                author: 'Jianlin Su',
+                publishDate: '2024-01-01',
+                readTime: '5 min read',
+                category: 'Research',
+                tags: ['Analysis', 'Jianlin Su'],
+                externalUrl: 'blogs/Jianlin/当Batch Size增大时，学习率该如何随之变化.html'
             }
         ];
     </script>
@@ -1000,6 +1158,32 @@
             });
         });
 
+        // Stats Update Function
+        function updateStats() {
+            const articlesCount = blogPosts.length;
+            const uniqueAuthors = new Set(blogPosts.map(post => post.author)).size;
+            const uniqueTopics = new Set(blogPosts.flatMap(post => post.tags)).size;
+            
+            animateValue("articles-count", 0, articlesCount, 1000);
+            animateValue("authors-count", 0, uniqueAuthors, 1000);
+            animateValue("topics-count", 0, uniqueTopics, 1000);
+        }
+
+        function animateValue(id, start, end, duration) {
+            const obj = document.getElementById(id);
+            if (!obj) return;
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.innerHTML = Math.floor(progress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
         // Filter and search functionality
         let filteredPosts = [...blogPosts];
 
@@ -1013,86 +1197,13 @@
             return colors[category] || 'bg-gray-100 text-gray-800 border-gray-200';
         }
 
-        function renderFeaturedPosts(postsToRender) {
-            const container = document.getElementById('featured-posts');
-            const featuredPosts = postsToRender.filter(post => post.featured);
-
-            container.innerHTML = featuredPosts.map(post => `
-                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 overflow-hidden group">
-                    <div class="h-48 bg-gray-100 relative overflow-hidden">
-                        ${post.image ? `
-                            <img 
-                                src="../assets/img/blogs/${post.image}" 
-                                alt="${post.title}" 
-                                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center\'><i data-lucide=\'file-text\' class=\'w-16 h-16 text-white\'></i></div>'; lucide.createIcons();"
-                            />
-                        ` : `
-                            <div class="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                                <i data-lucide="file-text" class="w-16 h-16 text-white"></i>
-                            </div>
-                        `}
-                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 pointer-events-none"></div>
-                    </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${getCategoryColor(post.category)}">
-                                ${post.category}
-                            </span>
-                        </div>
-                        
-                        <h3 class="text-lg font-bold text-gray-900 mb-2 line-clamp-2">
-                            ${post.title}
-                        </h3>
-                        
-                        <p class="text-gray-600 text-sm mb-4 line-clamp-3">
-                            ${post.excerpt}
-                        </p>
-                        
-                        <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
-                            <span>${post.author}</span>
-                            <div class="flex items-center space-x-3">
-                                <span class="flex items-center">
-                                    <i data-lucide="calendar" class="w-4 h-4 mr-1"></i>
-                                    ${new Date(post.publishDate).toLocaleDateString()}
-                                </span>
-                                <span class="flex items-center">
-                                    <i data-lucide="clock" class="w-4 h-4 mr-1"></i>
-                                    ${post.readTime}
-                                </span>
-                            </div>
-                        </div>
-                        
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            ${post.tags.slice(0, 3).map(tag => `
-                                <span class="inline-flex items-center px-2 py-1 rounded text-xs bg-gray-100 text-gray-600">
-                                    ${tag}
-                                </span>
-                            `).join('')}
-                        </div>
-                        
-                        <a
-                            href="${post.externalUrl}"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium text-sm"
-                        >
-                            Read More
-                            <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
-                        </a>
-                    </div>
-                </div>
-            `).join('');
-
-            // Re-initialize icons for the new content
-            lucide.createIcons();
-        }
-
         function renderAllPosts(postsToRender) {
             const container = document.getElementById('all-posts');
             const filteredCount = document.getElementById('filtered-count');
 
-            filteredCount.textContent = postsToRender.length;
+            if (filteredCount) {
+                filteredCount.textContent = postsToRender.length;
+            }
 
             container.innerHTML = postsToRender.map(post => `
                 <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 p-6 group">
@@ -1104,7 +1215,7 @@
                                         src="../assets/img/blogs/${post.image}" 
                                         alt="${post.title}" 
                                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                        onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center\'><i data-lucide=\'file-text\' class=\'w-8 h-8 text-white\'></i></div>'; lucide.createIcons();"
+                                        onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center\\'><i data-lucide=\\'file-text\\' class=\\'w-8 h-8 text-white\\'></i></div>'; lucide.createIcons();"
                                     />
                                 ` : `
                                     <div class="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
@@ -1131,16 +1242,6 @@
                             
                             <div class="flex items-center justify-between text-sm text-gray-500 mb-3">
                                 <span>By ${post.author}</span>
-                                <div class="flex items-center space-x-4">
-                                    <span class="flex items-center">
-                                        <i data-lucide="calendar" class="w-4 h-4 mr-1"></i>
-                                        ${new Date(post.publishDate).toLocaleDateString()}
-                                    </span>
-                                    <span class="flex items-center">
-                                        <i data-lucide="clock" class="w-4 h-4 mr-1"></i>
-                                        ${post.readTime}
-                                    </span>
-                                </div>
                             </div>
                             
                             <div class="flex items-center justify-between">
@@ -1183,7 +1284,6 @@
                 return matchesCategory && matchesSearch;
             });
 
-            renderFeaturedPosts(filteredPosts);
             renderAllPosts(filteredPosts);
         }
 
@@ -1192,7 +1292,7 @@
         document.getElementById('category-filter').addEventListener('change', filterPosts);
 
         // Initial render
-        renderFeaturedPosts(filteredPosts);
+        updateStats();
         renderAllPosts(filteredPosts);
 
         function toggleSection(id) {

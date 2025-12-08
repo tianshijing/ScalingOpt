@@ -84,77 +84,71 @@
                 </div>
             </section>
 
-            <!-- Stats Section -->
+            <!-- News Section -->
             <section class="py-20 bg-white border-y border-gray-100">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16" data-aos="fade-up">
                         <h2 class="text-3xl font-bold text-gray-900 mb-4">
-                            Platform Statistics
+                            Latest News
                         </h2>
-                        <p class="text-lg text-gray-600">Real-time data from our comprehensive optimizer database</p>
+                        <p class="text-lg text-gray-600">Recent updates from the ScalingOpt community</p>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <!-- News Item 1 -->
                         <div class="group" data-aos="fade-up" data-aos-delay="0">
-                            <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-                                <div class="text-center">
-                                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-xl mb-6 bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
-                                        <i data-lucide="zap" class="w-8 h-8"></i>
-                                    </div>
-                                    <div class="text-4xl font-bold text-gray-900 mb-2" id="optimizer-count">
-                                        62
-                                    </div>
-                                    <div class="text-sm font-medium text-gray-500 uppercase tracking-wide">
-                                        Optimizers
-                                    </div>
+                            <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 h-full flex flex-col">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">New Paper</span>
+                                    <span class="text-gray-500 text-sm">Dec 2025</span>
                                 </div>
+                                <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
+                                    Stabilizing RL with LLMs
+                                </h3>
+                                <p class="text-gray-600 mb-4 flex-grow">
+                                    New paper on stabilizing Reinforcement Learning with LLMs: Formulation and Practices added to our collection.
+                                </p>
+                                <a href="pages/papers.html" class="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium mt-auto">
+                                    Read Paper <i data-lucide="arrow-right" class="ml-2 w-4 h-4"></i>
+                                </a>
                             </div>
                         </div>
-                        
+
+                        <!-- News Item 2 -->
                         <div class="group" data-aos="fade-up" data-aos-delay="100">
-                            <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-                                <div class="text-center">
-                                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-xl mb-6 bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
-                                        <i data-lucide="book-open" class="w-8 h-8"></i>
-                                    </div>
-                                    <div class="text-4xl font-bold text-gray-900 mb-2" id="papers-count">
-                                        95
-                                    </div>
-                                    <div class="text-sm font-medium text-gray-500 uppercase tracking-wide">
-                                        Research Papers
-                                    </div>
+                            <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 h-full flex flex-col">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Blog Update</span>
+                                    <span class="text-gray-500 text-sm">Dec 2025</span>
                                 </div>
+                                <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
+                                    Jianlin Su's Blog Collection
+                                </h3>
+                                <p class="text-gray-600 mb-4 flex-grow">
+                                    Added 15 profound articles from Jianlin Su (Scientific Spaces) covering optimization theory, Muon, and scaling laws.
+                                </p>
+                                <a href="pages/blogs.html" class="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium mt-auto">
+                                    Explore Blogs <i data-lucide="arrow-right" class="ml-2 w-4 h-4"></i>
+                                </a>
                             </div>
                         </div>
-                        
+
+                        <!-- News Item 3 -->
                         <div class="group" data-aos="fade-up" data-aos-delay="200">
-                            <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-                                <div class="text-center">
-                                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-xl mb-6 bg-cyan-50 text-cyan-600 group-hover:bg-cyan-600 group-hover:text-white transition-colors duration-300">
-                                        <i data-lucide="bar-chart-3" class="w-8 h-8"></i>
-                                    </div>
-                                    <div class="text-4xl font-bold text-gray-900 mb-2" id="benchmarks-count">
-                                        5
-                                    </div>
-                                    <div class="text-sm font-medium text-gray-500 uppercase tracking-wide">
-                                        Benchmarks
-                                    </div>
+                            <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 h-full flex flex-col">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">Community</span>
+                                    <span class="text-gray-500 text-sm">Dec 2025</span>
                                 </div>
-                            </div>
-                        </div>
-                        
-                        <div class="group" data-aos="fade-up" data-aos-delay="300">
-                            <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-                                <div class="text-center">
-                                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-xl mb-6 bg-teal-50 text-teal-600 group-hover:bg-teal-600 group-hover:text-white transition-colors duration-300">
-                                        <i data-lucide="users" class="w-8 h-8"></i>
-                                    </div>
-                                    <div class="text-4xl font-bold text-gray-900 mb-2" id="visitor-count">
-                                        100
-                                    </div>
-                                    <div class="text-sm font-medium text-gray-500 uppercase tracking-wide">
-                                        Total Visitors
-                                    </div>
-                                </div>
+                                <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
+                                    ScalingOpt Community Growth
+                                </h3>
+                                <p class="text-gray-600 mb-4 flex-grow">
+                                    Our optimizer database has grown to over 60 implementations! Join us in building the most comprehensive optimization resource.
+                                </p>
+                                <a href="pages/community.html" class="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium mt-auto">
+                                    Join Us <i data-lucide="arrow-right" class="ml-2 w-4 h-4"></i>
+                                </a>
                             </div>
                         </div>
                     </div>
