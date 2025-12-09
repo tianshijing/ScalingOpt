@@ -1,0 +1,1590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>From Spectral Norm Gradient to Novel Weight Decay: A Theoretical Exploration | Scientific Spaces</title>
+    <meta name="description" content="Deriving spectral norm gradients and proposing novel weight decay mechanisms based on spectral norm regularization for improved model generalization.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a6bca;
+            --primary-dark: #1357a8;
+            --primary-light: #e8f1fc;
+            --secondary: #2c3e50;
+            --accent: #3498db;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f5f7fa;
+            --gray-200: #e4e7eb;
+            --gray-300: #cbd2d9;
+            --gray-600: #7b8794;
+            --gray-700: #52606d;
+            --gray-900: #323f4b;
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 6px 24px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: #f0f5fc;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.5rem 1.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -8%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+        }
+
+        .meta-item i {
+            font-size: 0.85rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Translation Notice */
+        .translation-notice {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1.2rem;
+            margin: 0;
+        }
+
+        .translation-notice-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .translation-text h3 {
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .translation-text p {
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        .translator-badge {
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(26, 107, 202, 0.2);
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+        }
+
+        @media (max-width: 850px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            padding-left: 1rem;
+        }
+
+        .toc {
+            position: sticky;
+            top: 1rem;
+        }
+
+        .toc-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .toc-header i {
+            font-size: 0.9rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.4rem;
+            position: relative;
+        }
+
+        .toc-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            transition: var(--transition);
+            border-left: 2px solid transparent;
+            padding-left: 8px;
+        }
+
+        .toc-link:hover {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            transform: translateX(2px);
+        }
+
+        .toc-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .toc-number {
+            font-weight: 500;
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            min-width: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-right: 1.2rem;
+            padding-left: 0;
+        }
+
+        @media (max-width: 850px) {
+            .sidebar {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 0 1rem;
+            }
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 1.5rem 0 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: relative;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 35px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        h2 a {
+            color: var(--accent);
+            font-size: 0.7rem;
+            margin-left: 6px;
+            text-decoration: none;
+        }
+
+        h2 a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            color: var(--gray-900);
+            line-height: 1.65;
+        }
+
+        /* Equation Styling */
+        .equation-container {
+            margin: 0.8rem 0;
+        }
+
+        .equation {
+            background: var(--primary-light);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1rem;
+            border-radius: 0 5px 5px 0;
+            font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', serif;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .equation-number {
+            color: var(--primary);
+            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin-right: 6px;
+            display: inline-block;
+            min-width: 18px;
+        }
+
+        /* Code Block Styling */
+        .code-container {
+            margin: 1rem 0;
+            background: #2d2d2d;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .code-header {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 0.6rem 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .code-content {
+            padding: 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #f8f8f2;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+
+        /* Inline code styling */
+        code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background: var(--gray-100);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.85rem;
+            color: var(--primary-dark);
+        }
+
+        /* Reference Box */
+        .reference-box {
+            background: linear-gradient(to right, #f8fafc, var(--primary-light));
+            border: 1px solid var(--gray-200);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .reference-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .reference-header i {
+            font-size: 0.9rem;
+        }
+
+        .reference-list {
+            list-style: none;
+        }
+
+        .reference-item {
+            padding: 0.3rem 0 0.3rem 0.8rem;
+            position: relative;
+            margin-bottom: 0.4rem;
+            color: var(--gray-700);
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .reference-item::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 0.65rem;
+        }
+
+        /* Citation Section */
+        .citation-section {
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .citation-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .citation-box {
+            background: var(--white);
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid var(--gray-300);
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-top: 0.6rem;
+            overflow-x: auto;
+            color: var(--gray-900);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--secondary);
+            color: white;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .translation-credit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 6px 16px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(26, 107, 202, 0.2);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            margin-top: 0.6rem;
+        }
+
+        /* Utility Classes */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-light), #e8f2ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .math {
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.1s ease;
+            z-index: 1000;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 1rem 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 0.6rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem 0;
+            }
+            
+            .main-content {
+                padding-right: 0.8rem;
+            }
+            
+            .sidebar {
+                padding-left: 0.8rem;
+            }
+            
+            .meta-info {
+                gap: 0.6rem;
+            }
+            
+            .meta-item {
+                font-size: 0.75rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .translation-notice-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .translator-badge {
+                align-self: flex-start;
+            }
+        }
+
+        /* Links styling */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Optimize long formula display */
+        .equation {
+            word-break: break-word;
+        }
+        
+        /* Optimize list display */
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.3rem;
+            line-height: 1.5;
+        }
+        
+        /* Optimize math formula spacing */
+        .MathJax_Display {
+            margin: 0.6em 0 !important;
+        }
+        
+        /* Quote block styling */
+        blockquote.cite {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+        }
+        
+        blockquote.cite div {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        blockquote.cite a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        /* Blockquote styling */
+        blockquote {
+            background: linear-gradient(to right, var(--gray-100), var(--primary-light));
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+            position: relative;
+        }
+
+        blockquote p {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+
+        blockquote p:before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Underline styling */
+        u {
+            text-decoration: none;
+            border-bottom: 1px dotted var(--primary);
+        }
+
+        /* List styling inside main content */
+        .main-content ol, .main-content ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .main-content li {
+            margin-bottom: 0.4rem;
+            line-height: 1.6;
+        }
+
+        /* Highlight box for important notes */
+        .note-box {
+            background: linear-gradient(to right, #fff8e1, #fff3cd);
+            border-left: 3px solid #ffc107;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .note-box strong {
+            color: #856404;
+        }
+
+        /* Definition list styling */
+        .definition {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 3px solid #4caf50;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .definition-header {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Mathematical proof styling */
+        .proof {
+            background: linear-gradient(to right, #f3e5f5, #f8f4ff);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .proof-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Insight box styling */
+        .insight-box {
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+            border-left: 3px solid #1976d2;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .insight-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Analysis box styling */
+        .analysis-box {
+            background: linear-gradient(to right, #fff3e0, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .analysis-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Technical box styling */
+        .technical-box {
+            background: linear-gradient(to right, #fce4ec, #f8bbd9);
+            border-left: 3px solid #e91e63;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .technical-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Matrix inversion box styling */
+        .inversion-box {
+            background: linear-gradient(to right, #e0f2f1, #b2dfdb);
+            border-left: 3px solid #009688;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .inversion-header {
+            color: #00796b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Complexity analysis box styling */
+        .complexity-box {
+            background: linear-gradient(to right, #fff3e0, #ffcc80);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .complexity-header {
+            color: #e65100;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Algorithm box styling */
+        .algorithm-box {
+            background: linear-gradient(to right, #e8eaf6, #c5cae9);
+            border-left: 3px solid #3f51b5;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .algorithm-header {
+            color: #303f9f;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Implementation box styling */
+        .implementation-box {
+            background: linear-gradient(to right, #f3e5f5, #e1bee7);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .implementation-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Matrix visualization styling */
+        .matrix-visualization {
+            text-align: center;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            background: linear-gradient(to right, #f0f7ff, #e8f1fc);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .matrix-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+        }
+
+        .matrix-element {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            background: var(--white);
+            border: 1px solid var(--gray-300);
+            border-radius: 3px;
+            font-family: 'Cambria Math', serif;
+        }
+
+        .matrix-operation {
+            display: inline-block;
+            margin: 0 1rem;
+            font-size: 1.2rem;
+            vertical-align: middle;
+            color: var(--primary-dark);
+        }
+
+        /* Complexity notation styling */
+        .complexity {
+            font-family: 'Consolas', monospace;
+            color: var(--primary-dark);
+            font-weight: 600;
+            background: var(--primary-light);
+            padding: 0.1rem 0.4rem;
+            border-radius: 3px;
+        }
+
+        /* Spectral norm specific styling */
+        .spectral-box {
+            background: linear-gradient(to right, #e8f5e8, #d0e9d0);
+            border-left: 3px solid #4caf50;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .spectral-header {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Weight decay specific styling */
+        .weight-decay-box {
+            background: linear-gradient(to right, #fff3e0, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .weight-decay-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Gradient derivation styling */
+        .gradient-box {
+            background: linear-gradient(to right, #e1f5fe, #b3e5fc);
+            border-left: 3px solid #0288d1;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .gradient-header {
+            color: #01579b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Numerical computation styling */
+        .numerical-box {
+            background: linear-gradient(to right, #f3e5f5, #e1bee7);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .numerical-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* SVD and eigenvalue decomposition styling */
+        .svd-box {
+            background: linear-gradient(to right, #fff8e1, #ffecb3);
+            border-left: 3px solid #ffb300;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .svd-header {
+            color: #ff8f00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Power iteration styling */
+        .power-iteration-box {
+            background: linear-gradient(to right, #fce4ec, #f8bbd9);
+            border-left: 3px solid #e91e63;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .power-iteration-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Key findings styling */
+        .key-finding {
+            background: linear-gradient(to right, #fff3e0, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 0.8rem 1rem;
+            margin: 0.8rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .key-finding:before {
+            content: '🔑';
+            position: absolute;
+            left: 0.5rem;
+            top: 0.8rem;
+            font-size: 1rem;
+        }
+
+        /* Matrix norm comparison styling */
+        .norm-comparison-box {
+            background: linear-gradient(to right, #e8eaf6, #c5cae9);
+            border-left: 3px solid #3f51b5;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .norm-comparison-header {
+            color: #303f9f;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>From Spectral Norm Gradient to Novel Weight Decay: A Theoretical Exploration</h1>
+                <div class="subtitle">Deriving spectral norm gradients and proposing novel weight decay mechanisms based on spectral norm regularization for improved model generalization and parameter efficiency.</div>
+                
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>Su Jianlin</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-eye"></i>
+                        <span>Scientific Spaces</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <div class="tag">Matrix Norms</div>
+                        <div class="tag">Weight Decay</div>
+                        <div class="tag">Spectral Norm</div>
+                        <div class="tag">Optimization</div>
+                        <div class="tag">Regularization</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Translation Notice -->
+        <div class="translation-notice">
+            <div class="translation-notice-content">
+                <div class="translation-text">
+                    <h3><i class="fas fa-language"></i> Academic Translation</h3>
+                    <p>This is an academic English translation maintaining technical accuracy while adapting to English academic conventions.</p>
+                </div>
+                <div class="translator-badge">
+                    <i class="fas fa-user-graduate"></i>
+                    Translated by Academic Translation Team
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Sidebar Table of Contents -->
+            <aside class="sidebar">
+                <nav class="toc">
+                    <div class="toc-header">
+                        <i class="fas fa-list"></i>
+                        Contents
+                    </div>
+                    <ul class="toc-list">
+                        <li class="toc-item">
+                            <a href="#introduction" class="toc-link">
+                                <span class="toc-number">1</span>
+                                <span>Introduction</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#fundamentals" class="toc-link">
+                                <span class="toc-number">2</span>
+                                <span>Fundamentals</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#gradient-derivation" class="toc-link">
+                                <span class="toc-number">3</span>
+                                <span>Gradient Derivation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#weight-decay" class="toc-link">
+                                <span class="toc-number">4</span>
+                                <span>Weight Decay</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#numerical-computation" class="toc-link">
+                                <span class="toc-number">5</span>
+                                <span>Numerical Computation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#iterative-proof" class="toc-link">
+                                <span class="toc-number">6</span>
+                                <span>Iterative Proof</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#related-work" class="toc-link">
+                                <span class="toc-number">7</span>
+                                <span>Related Work</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#conclusion" class="toc-link">
+                                <span class="toc-number">8</span>
+                                <span>Conclusion</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Article Content -->
+            <main class="main-content">
+                <div class="spectral-box">
+                    <div class="spectral-header">
+                        <i class="fas fa-calculator"></i>
+                        Research Motivation
+                    </div>
+                    <p>In the article <a href="/archives/10592" target="_blank">"Appreciation of the Muon Optimizer: From Vector to Matrix Essential Leap"</a>, we introduced a new optimizer named "Muon," which can be understood as steepest gradient descent under spectral norm regularization. This perspective seems to reveal more fundamental optimization directions for matrix parameters. As is well known, for matrix parameters, we often apply weight decay, which can be interpreted as the gradient of the Frobenius norm squared. From the Muon perspective, could constructing new weight decay through the gradient of spectral norm squared potentially yield better results?</p>
+                    
+                    <p>This raises the question: what does the gradient or derivative of the spectral norm look like? And what would the new weight decay designed from it look like? In the following sections, we explore these questions in detail.</p>
+                </div>
+                
+                <h2 id="fundamentals">Fundamentals<a href="#fundamentals">#</a></h2>
+                
+                <div class="norm-comparison-box">
+                    <div class="norm-comparison-header">
+                        <i class="fas fa-ruler-combined"></i>
+                        Spectral Norm Properties
+                    </div>
+                    <p>The spectral norm, also known as the "2-norm," is one of the most commonly used matrix norms. Compared to the simpler Frobenius norm, it often reveals more fundamental signals related to matrix multiplication, as its definition inherently connects to matrix multiplication: for a matrix parameter <span class="complexity">$\boldsymbol{W}\in\mathbb{R}^{n\times m}$</span>, its spectral norm is defined as:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(1)</span>
+                            \[
+                            \Vert\boldsymbol{W}\Vert_2 \triangleq \max_{\Vert\boldsymbol{x}\Vert=1} \Vert\boldsymbol{W}\boldsymbol{x}\Vert
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Here, <span class="complexity">$\boldsymbol{x}\in\mathbb{R}^m$</span> is a column vector, and the <span class="complexity">$\Vert\Vert$</span> on the right-hand side denotes vector magnitude (Euclidean norm). From another perspective, the spectral norm is the smallest constant <span class="complexity">$C$</span> that makes the following inequality hold for all <span class="complexity">$\boldsymbol{x}\in\mathbb{R}^m$</span>:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(2)</span>
+                            \[
+                            \Vert\boldsymbol{W}\boldsymbol{x}\Vert \leq C\Vert\boldsymbol{x}\Vert
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>It's not difficult to prove that when <span class="complexity">$C$</span> takes the Frobenius norm <span class="complexity">$\Vert \boldsymbol{W}\Vert_F$</span>, the above inequality also holds. Therefore, we can write <span class="complexity">$\Vert \boldsymbol{W}\Vert_2\leq \Vert \boldsymbol{W}\Vert_F$</span> (since <span class="complexity">$\Vert \boldsymbol{W}\Vert_F$</span> is just one <span class="complexity">$C$</span> that makes the inequality hold, while <span class="complexity">$\Vert \boldsymbol{W}\Vert_2$</span> is the smallest such <span class="complexity">$C$</span>). This conclusion also indicates that if we want to control output magnitude, using spectral norm as a regularization term is more precise than using Frobenius norm.</p>
+                    
+                    <div class="key-finding">
+                        As early as six years ago in <a href="/archives/6051" target="_blank">"Lipschitz Constraints in Deep Learning: Generalization and Generative Models"</a>, we discussed spectral norms with two application scenarios: first, WGAN explicitly imposes Lipschitz constraints on discriminators, with one implementation method based on spectral norm normalization; second, some works demonstrate that spectral norm as a regularization term yields better performance compared to Frobenius norm regularization.
+                    </div>
+                </div>
+                
+                <h2 id="gradient-derivation">Gradient Derivation<a href="#gradient-derivation">#</a></h2>
+                
+                <div class="gradient-box">
+                    <div class="gradient-header">
+                        <i class="fas fa-project-diagram"></i>
+                        Spectral Norm Gradient Derivation
+                    </div>
+                    <p>Now let's get to the main topic and attempt to derive the gradient of the spectral norm <span class="complexity">$\nabla_{\boldsymbol{W}} \Vert\boldsymbol{W}\Vert_2$</span>. We know that numerically, the spectral norm equals its maximum singular value. We provided proof for this in the "<a href="/archives/10407#%E7%9F%A9%E9%98%B5%E8%8C%83%E6%95%B0" target="_blank">Matrix Norms</a>" section of <a href="/archives/10407" target="_blank">"Low-Rank Approximation Path (II): SVD"</a>. This means that if <span class="complexity">$\boldsymbol{W}$</span> can be SVD decomposed as <span class="complexity">$\sum\limits_{i=1}^{\min(n,m)}\sigma_i \boldsymbol{u}_i\boldsymbol{v}_i^{\top}$</span>, then:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(3)</span>
+                            \[
+                            \Vert\boldsymbol{W}\Vert_2 = \sigma_1 = \boldsymbol{u}_1^{\top}\boldsymbol{W}\boldsymbol{v}_1
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>where <span class="complexity">$\sigma_1 \geq \sigma_2 \geq \cdots \geq \sigma_{\min(n,m)} \geq 0$</span> are the singular values of <span class="complexity">$\boldsymbol{W}$</span>. Taking differentials on both sides, we obtain:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(4)</span>
+                            \[
+                            d\Vert\boldsymbol{W}\Vert_2 = d\boldsymbol{u}_1^{\top}\boldsymbol{W}\boldsymbol{v}_1 + \boldsymbol{u}_1^{\top}d\boldsymbol{W}\boldsymbol{v}_1 + \boldsymbol{u}_1^{\top}\boldsymbol{W}d\boldsymbol{v}_1
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Observing that:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(5)</span>
+                            \[
+                            d\boldsymbol{u}_1^{\top}\boldsymbol{W}\boldsymbol{v}_1 = d\boldsymbol{u}_1^{\top}\sum_{i=1}^{\min(n,m)}\sigma_i \boldsymbol{u}_i\boldsymbol{v}_i^{\top}\boldsymbol{v}_1 = d\boldsymbol{u}_1^{\top}\sigma_1 \boldsymbol{u}_1 = \frac{1}{2}\sigma_1 d(\Vert\boldsymbol{u}_1\Vert^2)=0
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Similarly, <span class="complexity">$\boldsymbol{u}_1^{\top}\boldsymbol{W}d\boldsymbol{v}_1=0$</span>. Therefore:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(6)</span>
+                            \[
+                            d\Vert\boldsymbol{W}\Vert_2 = \boldsymbol{u}_1^{\top}d\boldsymbol{W}\boldsymbol{v}_1 = \text{Tr}((\boldsymbol{u}_1 \boldsymbol{v}_1^{\top})^{\top} d\boldsymbol{W}) \quad\Rightarrow\quad \nabla_{\boldsymbol{W}}\Vert\boldsymbol{W}\Vert_2 = \boldsymbol{u}_1 \boldsymbol{v}_1^{\top}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <div class="note-box">
+                        <strong>Note:</strong> This proof process relies on a key condition: <span class="complexity">$\sigma_1 > \sigma_2$</span>. If <span class="complexity">$\sigma_1=\sigma_2$</span>, then <span class="complexity">$\Vert\boldsymbol{W}\Vert_2$</span> could be expressed as either <span class="complexity">$\boldsymbol{u}_1^{\top}\boldsymbol{W}\boldsymbol{v}_1$</span> or <span class="complexity">$\boldsymbol{u}_2^{\top}\boldsymbol{W}\boldsymbol{v}_2$</span>. Using the same method to compute gradients yields <span class="complexity">$\boldsymbol{u}_1 \boldsymbol{v}_1^{\top}$</span> and <span class="complexity">$\boldsymbol{u}_2 \boldsymbol{v}_2^{\top}$</span> respectively, with non-unique results indicating gradient non-existence. From a practical perspective, however, the probability of two numbers being exactly equal is very small, so this can be disregarded.
+                    </div>
+                    
+                    <p>(Note: This proof process references a <a href="https://math.stackexchange.com/a/3000223" target="_blank">response on Stack Exchange</a>, but that answer did not prove <span class="complexity">$d\boldsymbol{u}_1^{\top}\boldsymbol{W}\boldsymbol{v}_1=0$</span> and <span class="complexity">$\boldsymbol{u}_1^{\top}\boldsymbol{W}d\boldsymbol{v}_1=0$</span>; this portion has been completed by the author.)</p>
+                </div>
+                
+                <h2 id="weight-decay">Weight Decay<a href="#weight-decay">#</a></h2>
+                
+                <div class="weight-decay-box">
+                    <div class="weight-decay-header">
+                        <i class="fas fa-weight-hanging"></i>
+                        Spectral Norm-Based Weight Decay
+                    </div>
+                    <p>Based on this result and the chain rule, we have:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(7)</span>
+                            \[
+                            \nabla_{\boldsymbol{W}}\left(\frac{1}{2}\Vert\boldsymbol{W}\Vert_2^2\right) = \Vert\boldsymbol{W}\Vert_2\nabla_{\boldsymbol{W}}\Vert\boldsymbol{W}\Vert_2 = \sigma_1 \boldsymbol{u}_1 \boldsymbol{v}_1^{\top}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Comparing with the result under Frobenius norm:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(8)</span>
+                            \[
+                            \nabla_{\boldsymbol{W}}\left(\frac{1}{2}\Vert\boldsymbol{W}\Vert_F^2\right) = \boldsymbol{W} = \sum_{i=1}^{\min(n,m)}\sigma_i \boldsymbol{u}_i \boldsymbol{v}_i^{\top}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Comparing these side by side reveals a clear distinction: weight decay derived from Frobenius norm squared as a regularization term penalizes all singular values simultaneously; whereas weight decay corresponding to spectral norm squared penalizes only the maximum singular value. If our goal is to compress output magnitude, penalizing the maximum singular value is "just right," while penalizing all singular values may achieve similar objectives but could also compress parameter expressive capacity.</p>
+                    
+                    <div class="insight-box">
+                        <div class="insight-header">
+                            <i class="fas fa-lightbulb"></i>
+                            Interpretation via Low-Rank Approximation
+                        </div>
+                        <p>According to the "<a href="/archives/10407#%E8%BF%91%E4%BC%BC%E5%AE%9A%E7%90%86" target="_blank">Eckart-Young-Mirsky Theorem</a>," the rightmost result in equation (7) has another interpretation: it represents the "optimal rank-1 approximation" of matrix <span class="complexity">$\boldsymbol{W}$</span>. In other words, spectral norm-based weight decay changes each step of subtracting the matrix itself to subtracting its optimal rank-1 approximation, weakening the penalty strength while making the penalty more "essential."</p>
+                    </div>
+                </div>
+                
+                <h2 id="numerical-computation">Numerical Computation<a href="#numerical-computation">#</a></h2>
+                
+                <div class="numerical-box">
+                    <div class="numerical-header">
+                        <i class="fas fa-laptop-code"></i>
+                        Efficient Computation Methods
+                    </div>
+                    <p>For practical implementation, the most crucial question arises: how do we compute <span class="complexity">$\sigma_1 \boldsymbol{u}_1 \boldsymbol{v}_1^{\top}$</span>? SVD is certainly the most straightforward solution, but its computational complexity is undoubtedly the highest; we must find more efficient computational approaches.</p>
+                    
+                    <p>Without loss of generality, assume <span class="complexity">$n\geq m$</span>. First, observe that:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(9)</span>
+                            \[
+                            \sigma_1 \boldsymbol{u}_1 \boldsymbol{v}_1^{\top} = \sum_{i=1}^m\sigma_i \boldsymbol{u}_i \boldsymbol{v}_i^{\top} \boldsymbol{v}_1 \boldsymbol{v}_1^{\top} = \boldsymbol{W}\boldsymbol{v}_1 \boldsymbol{v}_1^{\top}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>This shows that computing <span class="complexity">$\sigma_1 \boldsymbol{u}_1 \boldsymbol{v}_1^{\top}$</span> only requires knowledge of <span class="complexity">$\boldsymbol{v}_1$</span>. According to our discussion in <a href="/archives/10407#%E5%A5%87%E5%BC%82%E5%88%86%E8%A7%A3" target="_blank">"Low-Rank Approximation Path (II): SVD"</a>, <span class="complexity">$\boldsymbol{v}_1$</span> is actually the eigenvector corresponding to the maximum eigenvalue of matrix <span class="complexity">$\boldsymbol{W}^{\top}\boldsymbol{W}$</span>. Thus, we transform the problem from SVD of general matrix <span class="complexity">$\boldsymbol{W}$</span> to eigenvalue decomposition of real symmetric matrix <span class="complexity">$\boldsymbol{W}^{\top}\boldsymbol{W}$</span>, which actually reduces complexity since eigenvalue decomposition is typically significantly faster than SVD.</p>
+                    
+                    <div class="power-iteration-box">
+                        <div class="power-iteration-header">
+                            <i class="fas fa-sync-alt"></i>
+                            Power Iteration Algorithm
+                        </div>
+                        <p>If this is still considered slow, we need to introduce the principle behind many eigenvalue decomposition algorithms—"<a href="https://en.wikipedia.org/wiki/Power_iteration" target="_blank">Power Iteration</a>":</p>
+                        
+                        <blockquote class="cite"><div>When <span class="complexity">$\sigma_1 > \sigma_2$</span>, the iteration
+                        \begin{equation}\boldsymbol{x}_{t+1} = \frac{\boldsymbol{W}^{\top}\boldsymbol{W}\boldsymbol{x}_t}{\Vert\boldsymbol{W}^{\top}\boldsymbol{W}\boldsymbol{x}_t\Vert}\end{equation}
+                        converges to <span class="complexity">$\boldsymbol{v}_1$</span> at a rate of <span class="complexity">$(\sigma_2/\sigma_1)^{2t}$</span>.</div></blockquote>
+                        
+                        <p>Power iteration requires only two "matrix-vector" multiplications per step, with complexity <span class="complexity">$\mathcal{O}(nm)$</span>. For <span class="complexity">$t$</span> iterations, total complexity is <span class="complexity">$\mathcal{O}(tnm)$</span>, which is very efficient. The drawback is slower convergence when <span class="complexity">$\sigma_1,\sigma_2$</span> are close. However, power iteration's practical performance often surpasses theoretical expectations; early work even achieved good results with just one iteration, because when <span class="complexity">$\sigma_1,\sigma_2$</span> are close, they and their eigenvectors are somewhat interchangeable to some extent. Even if power iteration doesn't fully converge, it yields an average of both eigenvectors, which is completely sufficient.</p>
+                    </div>
+                </div>
+                
+                <h2 id="iterative-proof">Iterative Proof<a href="#iterative-proof">#</a></h2>
+                
+                <div class="proof">
+                    <div class="proof-header">
+                        <i class="fas fa-check-double"></i>
+                        Power Iteration Convergence Proof
+                    </div>
+                    <p>This section completes the proof of power iteration. It's not difficult to see that power iteration can be equivalently written as:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(11)</span>
+                            \[
+                            \lim_{t\to\infty} \frac{(\boldsymbol{W}^{\top}\boldsymbol{W})^t \boldsymbol{x}_0}{\Vert(\boldsymbol{W}^{\top}\boldsymbol{W})^t \boldsymbol{x}_0\Vert} = \boldsymbol{v}_1
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>To prove this limit, starting from <span class="complexity">$\boldsymbol{W}=\sum\limits_{i=1}^m\sigma_i \boldsymbol{u}_i\boldsymbol{v}_i^{\top}$</span>, substituting and calculating yields:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(12)</span>
+                            \[
+                            \boldsymbol{W}^{\top}\boldsymbol{W} = \sum_{i=1}^m\sigma_i^2 \boldsymbol{v}_i\boldsymbol{v}_i^{\top},\qquad(\boldsymbol{W}^{\top}\boldsymbol{W})^t = \sum_{i=1}^m\sigma_i^{2t} \boldsymbol{v}_i\boldsymbol{v}_i^{\top}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Since <span class="complexity">$\boldsymbol{v}_1,\boldsymbol{v}_2,\cdots,\boldsymbol{v}_m$</span> form an orthonormal basis for <span class="complexity">$\mathbb{R}^m$</span>, <span class="complexity">$\boldsymbol{x}_0$</span> can be expressed as <span class="complexity">$\sum\limits_{j=1}^m c_j \boldsymbol{v}_j$</span>. Thus, we have:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(13)</span>
+                            \[
+                            (\boldsymbol{W}^{\top}\boldsymbol{W})^t \boldsymbol{x}_0 = \sum_{i=1}^m\sigma_i^{2t} \boldsymbol{v}_i\boldsymbol{v}_i^{\top}\sum_{j=1}^m c_j \boldsymbol{v}_j = \sum_{i=1}^m\sum_{j=1}^m c_j\sigma_i^{2t} \boldsymbol{v}_i\underbrace{\boldsymbol{v}_i^{\top}  \boldsymbol{v}_j}_{=\delta_{i,j}} = \sum_{i=1}^m c_i\sigma_i^{2t} \boldsymbol{v}_i
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>And:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(14)</span>
+                            \[
+                            \Vert(\boldsymbol{W}^{\top}\boldsymbol{W})^t \boldsymbol{x}_0\Vert = \left\Vert \sum_{i=1}^m c_i\sigma_i^{2t} \boldsymbol{v}_i\right\Vert = \sqrt{\sum_{i=1}^m c_i^2\sigma_i^{4t}}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Due to random initialization, the probability of <span class="complexity">$c_1=0$</span> is extremely small, so we can assume <span class="complexity">$c_1\neq 0$</span>. Then:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(15)</span>
+                            \[
+                            \frac{(\boldsymbol{W}^{\top}\boldsymbol{W})^t \boldsymbol{x}_0}{\Vert(\boldsymbol{W}^{\top}\boldsymbol{W})^t \boldsymbol{x}_0\Vert} = \frac{\sum\limits_{i=1}^m c_i\sigma_i^{2t} \boldsymbol{v}_i}{\sqrt{\sum\limits_{i=1}^m c_i^2\sigma_i^{4t}}} = \frac{\boldsymbol{v}_1 + \sum\limits_{i=2}^m (c_i/c_1)(\sigma_i/\sigma_1)^{2t} \boldsymbol{v}_i}{\sqrt{1 + \sum\limits_{i=2}^m (c_i/c_1)^2(\sigma_i/\sigma_1)^{4t}}}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>When <span class="complexity">$\sigma_1 > \sigma_2$</span>, all <span class="complexity">$\sigma_i/\sigma_1(i\geq 2)$</span> are less than 1. Therefore, as <span class="complexity">$t\to \infty$</span>, corresponding terms become 0, and the final limit is <span class="complexity">$\boldsymbol{v}_1$</span>.</p>
+                </div>
+                
+                <h2 id="related-work">Related Work<a href="#related-work">#</a></h2>
+                
+                <div class="analysis-box">
+                    <div class="analysis-header">
+                        <i class="fas fa-history"></i>
+                        Historical Context and Comparisons
+                    </div>
+                    <p>The earliest paper proposing spectral norm regularization appears to be the 2017 work <a href="https://papers.cool/arxiv/1705.10941" target="_blank">"Spectral Norm Regularization for Improving the Generalizability of Deep Learning"</a>, which compared weight decay, adversarial training, spectral norm regularization, and other methods, finding that spectral norm regularization performed best in terms of generalization capability.</p>
+                    
+                    <p>The approach in that paper was not to compute <span class="complexity">$\nabla_{\boldsymbol{W}}\Vert\boldsymbol{W}\Vert_2^2 = 2\sigma_1\boldsymbol{u}_1 \boldsymbol{v}_1^{\top}$</span> as we do in this article, but rather to directly estimate <span class="complexity">$\Vert\boldsymbol{W}\Vert_2$</span> through power iteration, then weight <span class="complexity">$\Vert\boldsymbol{W}\Vert_2^2$</span> into the loss function and let the optimizer compute gradients itself. This approach is somewhat less efficient and also makes it difficult to decouple weight decay from the optimizer in a form similar to AdamW. Our approach here is relatively more flexible, allowing us to separate weight decay from main loss function optimization, similar to AdamW.</p>
+                    
+                    <div class="key-finding">
+                        From today's LLM perspective, the biggest problem with those early experiments is their small scale, making them insufficiently convincing. However, given that the Muon optimizer based on spectral norm is "a gem already shining," I believe it's worth rethinking and attempting spectral norm weight decay. Of course, whether it's Frobenius norm or spectral norm weight decay, these techniques aimed at "generalization" often contain some element of luck; we should maintain balanced expectations.
+                    </div>
+                    
+                    <p>My preliminary experimental results on language models show weak improvements at the Loss level (hopefully not illusory; at worst, there's no degradation). The experimental process involves using power iteration to find an approximation of <span class="complexity">$\boldsymbol{v}_1$</span> (initialized as an all-ones vector, iterated 10 times), then modifying the original weight decay <span class="complexity">$-\lambda \boldsymbol{W}$</span> to <span class="complexity">$-\lambda \boldsymbol{W}\boldsymbol{v}_1\boldsymbol{v}_1^{\top}$</span>, with the <span class="complexity">$\lambda$</span> value unchanged.</p>
+                </div>
+                
+                <h2 id="conclusion">Conclusion<a href="#conclusion">#</a></h2>
+                
+                <div class="insight-box">
+                    <div class="insight-header">
+                        <i class="fas fa-check-circle"></i>
+                        Summary and Implications
+                    </div>
+                    <p>This article derived the gradient of the spectral norm, leading to a new form of weight decay, and shared my reflections on it.</p>
+                    
+                    <div class="key-finding">
+                        The key insight is that spectral norm-based weight decay selectively penalizes only the maximum singular value, offering a more targeted regularization approach compared to Frobenius norm weight decay.
+                    </div>
+                    
+                    <p>The main contributions of this work include:</p>
+                    
+                    <ol>
+                        <li><strong>Gradient Derivation</strong>: Providing a complete derivation of the spectral norm gradient <span class="complexity">$\nabla_{\boldsymbol{W}}\Vert\boldsymbol{W}\Vert_2 = \boldsymbol{u}_1 \boldsymbol{v}_1^{\top}$</span> under the assumption of distinct singular values.</li>
+                        
+                        <li><strong>Novel Weight Decay Formulation</strong>: Proposing <span class="complexity">$-\lambda \boldsymbol{W}\boldsymbol{v}_1\boldsymbol{v}_1^{\top}$</span> as an alternative to traditional Frobenius norm weight decay <span class="complexity">$-\lambda \boldsymbol{W}$</span>.</li>
+                        
+                        <li><strong>Efficient Computation</strong>: Demonstrating that the required computation reduces to finding the principal right singular vector <span class="complexity">$\boldsymbol{v}_1$</span>, which can be efficiently approximated via power iteration.</li>
+                        
+                        <li><strong>Theoretical Interpretation</strong>: Explaining the new weight decay as subtracting the optimal rank-1 approximation of the weight matrix, providing both computational and theoretical advantages.</li>
+                        
+                        <li><strong>Implementation Guidance</strong>: Offering practical recommendations for implementation, including power iteration with 10 iterations for approximating <span class="complexity">$\boldsymbol{v}_1$</span>.</li>
+                    </ol>
+                    
+                    <p>Potential advantages of spectral norm-based weight decay include:</p>
+                    
+                    <ul>
+                        <li><strong>Targeted Regularization</strong>: Focusing penalty on the most influential singular value that controls output magnitude.</li>
+                        
+                        <li><strong>Parameter Efficiency</strong>: Potentially preserving expressive capacity while controlling model complexity.</li>
+                        
+                        <li><strong>Theoretical Justification</strong>: Connection to Lipschitz continuity and output magnitude control.</li>
+                        
+                        <li><strong>Implementation Flexibility</strong>: Can be integrated similarly to AdamW-style decoupled weight decay.</li>
+                    </ul>
+                    
+                    <p>Future research directions could explore:</p>
+                    
+                    <ul>
+                        <li>Empirical evaluation on larger-scale models and diverse tasks</li>
+                        <li>Analysis of convergence properties with spectral norm weight decay</li>
+                        <li>Combination with other regularization techniques</li>
+                        <li>Theoretical analysis of generalization bounds</li>
+                        <li>Extension to other matrix norms and their applications</li>
+                    </ul>
+                    
+                    <p>While preliminary results show promise, further experimentation and theoretical analysis are needed to fully understand the benefits and limitations of this approach. The connection between spectral norm regularization and weight decay opens new avenues for developing more effective regularization techniques in deep learning.</p>
+                </div>
+
+                <div class="citation-section">
+                    <div class="citation-header">
+                        <i class="fas fa-quote-right"></i>
+                        Citation Information
+                    </div>
+                    <p><strong>Original Article:</strong> Su Jianlin. From Spectral Norm Gradient to Novel Weight Decay: A Theoretical Exploration. <em>Scientific Spaces</em>.</p>
+                    
+                    <p><strong>How to cite this translation:</strong></p>
+                    <div class="citation-box">
+                        Su, J. From Spectral Norm Gradient to Novel Weight Decay: A Theoretical Exploration [Translated by Academic Translation Team]. 
+                        <em>Scientific Spaces</em>.
+                    </div>
+                    <p style="margin-top: 0.8rem;"><strong>BibTeX:</strong></p>
+                    <div class="citation-box">
+                        @article{su2025spectral_norm_weight_decay,
+                            title   = {From Spectral Norm Gradient to Novel Weight Decay: A Theoretical Exploration},
+                            author  = {Su, Jianlin},
+                            journal = {Scientific Spaces},
+                            year    = {2025},
+                            url     = {https://kexue.fm/archives/xxxx},
+                            note    = {Translated by Academic Translation Team}
+                          }
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="translation-credit">
+                <i class="fas fa-user-graduate"></i>
+                Academic Translation by Academic Translation Team
+            </div>
+            <div class="copyright">
+                © 2009-2025 Scientific Spaces. All rights reserved.<br>
+                Original content licensed under Creative Commons BY-NC-ND 2.5 China
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript for Interactive Features -->
+    <script>
+        // Scroll Progress Bar
+        window.addEventListener('scroll', function() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            scrollProgress.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Table of Contents Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            const sections = document.querySelectorAll('h2[id]');
+            
+            // Set active section based on scroll position
+            function setActiveSection() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 50)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', setActiveSection);
+            setActiveSection(); // Initial call
+            
+            // Smooth scroll for TOC links
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 50,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+
+        // MathJax Configuration
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                tags: 'ams'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    
+    <!-- MathJax CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</body>
+</html>

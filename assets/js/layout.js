@@ -19,7 +19,7 @@ function injectLayout() {
                 </div>
 
                 <!-- Desktop Navigation -->
-                <div class="hidden md:flex items-center space-x-8">
+                <div class="hidden md:flex items-center space-x-5">
                     <a href="${rootPath}pages/about_us.html" class="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium nav-link" data-page="about_us.html">About Us</a>
                     <a href="${rootPath}pages/optimizers.html" class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium nav-link" data-page="optimizers.html">
                         <i data-lucide="search" class="w-4 h-4"></i>

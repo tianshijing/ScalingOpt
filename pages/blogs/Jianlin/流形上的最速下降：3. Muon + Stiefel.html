@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manifold Gradient Descent: 3. Muon on Stiefel Manifold | Scientific Spaces</title>
+    <meta name="description" content="Completing the solution for orthogonal constraints on non-square matrices (Stiefel manifolds) with Muon optimizer, deriving iterative algorithms and comparing with heuristic approaches.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a6bca;
+            --primary-dark: #1357a8;
+            --primary-light: #e8f1fc;
+            --secondary: #2c3e50;
+            --accent: #3498db;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f5f7fa;
+            --gray-200: #e4e7eb;
+            --gray-300: #cbd2d9;
+            --gray-600: #7b8794;
+            --gray-700: #52606d;
+            --gray-900: #323f4b;
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 6px 24px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: #f0f5fc;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.5rem 1.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -8%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+        }
+
+        .meta-item i {
+            font-size: 0.85rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Translation Notice */
+        .translation-notice {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1.2rem;
+            margin: 0;
+        }
+
+        .translation-notice-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .translation-text h3 {
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .translation-text p {
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        .translator-badge {
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(26, 107, 202, 0.2);
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+        }
+
+        @media (max-width: 850px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            padding-left: 1rem;
+        }
+
+        .toc {
+            position: sticky;
+            top: 1rem;
+        }
+
+        .toc-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .toc-header i {
+            font-size: 0.9rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.4rem;
+            position: relative;
+        }
+
+        .toc-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            transition: var(--transition);
+            border-left: 2px solid transparent;
+            padding-left: 8px;
+        }
+
+        .toc-link:hover {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            transform: translateX(2px);
+        }
+
+        .toc-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .toc-number {
+            font-weight: 500;
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            min-width: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-right: 1.2rem;
+            padding-left: 0;
+        }
+
+        @media (max-width: 850px) {
+            .sidebar {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 0 1rem;
+            }
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 1.5rem 0 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: relative;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 35px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        h2 a {
+            color: var(--accent);
+            font-size: 0.7rem;
+            margin-left: 6px;
+            text-decoration: none;
+        }
+
+        h2 a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            color: var(--gray-900);
+            line-height: 1.65;
+        }
+
+        /* Equation Styling */
+        .equation-container {
+            margin: 0.8rem 0;
+        }
+
+        .equation {
+            background: var(--primary-light);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1rem;
+            border-radius: 0 5px 5px 0;
+            font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', serif;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .equation-number {
+            color: var(--primary);
+            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin-right: 6px;
+            display: inline-block;
+            min-width: 18px;
+        }
+
+        /* Code Block Styling */
+        .code-container {
+            margin: 1rem 0;
+            background: #2d2d2d;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .code-header {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 0.6rem 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .code-content {
+            padding: 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #f8f8f2;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+        }
+
+        /* Reference Box */
+        .reference-box {
+            background: linear-gradient(to right, #f8fafc, var(--primary-light));
+            border: 1px solid var(--gray-200);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .reference-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .reference-header i {
+            font-size: 0.9rem;
+        }
+
+        .reference-list {
+            list-style: none;
+        }
+
+        .reference-item {
+            padding: 0.3rem 0 0.3rem 0.8rem;
+            position: relative;
+            margin-bottom: 0.4rem;
+            color: var(--gray-700);
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .reference-item::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 0.65rem;
+        }
+
+        /* Citation Section */
+        .citation-section {
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .citation-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .citation-box {
+            background: var(--white);
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid var(--gray-300);
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-top: 0.6rem;
+            overflow-x: auto;
+            color: var(--gray-900);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--secondary);
+            color: white;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .translation-credit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 6px 16px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(26, 107, 202, 0.2);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            margin-top: 0.6rem;
+        }
+
+        /* Utility Classes */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-light), #e8f2ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .math {
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.1s ease;
+            z-index: 1000;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 1rem 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 0.6rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem 0;
+            }
+            
+            .main-content {
+                padding-right: 0.8rem;
+            }
+            
+            .sidebar {
+                padding-left: 0.8rem;
+            }
+            
+            .meta-info {
+                gap: 0.6rem;
+            }
+            
+            .meta-item {
+                font-size: 0.75rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .translation-notice-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .translator-badge {
+                align-self: flex-start;
+            }
+        }
+
+        /* Links styling */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Optimize long formula display */
+        .equation {
+            word-break: break-word;
+        }
+        
+        /* Optimize list display */
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.3rem;
+            line-height: 1.5;
+        }
+        
+        /* Optimize math formula spacing */
+        .MathJax_Display {
+            margin: 0.6em 0 !important;
+        }
+        
+        /* Image container styling */
+        .pic-container {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+        
+        .pic-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .typecho-caption {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        
+        /* Quote block styling */
+        blockquote.cite {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+        }
+        
+        blockquote.cite div {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        blockquote.cite a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        /* Blockquote styling */
+        blockquote {
+            background: linear-gradient(to right, var(--gray-100), var(--primary-light));
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+            position: relative;
+        }
+
+        blockquote p {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+
+        blockquote p:before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Underline styling */
+        u {
+            text-decoration: none;
+            border-bottom: 1px dotted var(--primary);
+        }
+
+        /* List styling inside main content */
+        .main-content ol, .main-content ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .main-content li {
+            margin-bottom: 0.4rem;
+            line-height: 1.6;
+        }
+
+        /* Highlight box for important notes */
+        .note-box {
+            background: linear-gradient(to right, #fff8e1, #fff3cd);
+            border-left: 3px solid #ffc107;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .note-box strong {
+            color: #856404;
+        }
+
+        /* Definition list styling */
+        .definition {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 3px solid #4caf50;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .definition-header {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Mathematical proof styling */
+        .proof {
+            background: linear-gradient(to right, #f3e5f5, #f8f4ff);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .proof-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Insight box styling */
+        .insight-box {
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+            border-left: 3px solid #1976d2;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .insight-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Analysis box styling */
+        .analysis-box {
+            background: linear-gradient(to right, #fff3e0, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .analysis-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Technical box styling */
+        .technical-box {
+            background: linear-gradient(to right, #fce4ec, #f8bbd9);
+            border-left: 3px solid #e91e63;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .technical-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Stiefel manifold box */
+        .stiefel-box {
+            background: linear-gradient(to right, #fce4ec, #f8bbd9);
+            border-left: 3px solid #e91e63;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stiefel-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Lyapunov equation box */
+        .lyapunov-box {
+            background: linear-gradient(to right, #e0f2f1, #b2dfdb);
+            border-left: 3px solid #009688;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .lyapunov-header {
+            color: #00796b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Iterative method box */
+        .iterative-box {
+            background: linear-gradient(to right, #fff3e0, #ffcc80);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .iterative-header {
+            color: #e65100;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Numerical methods box */
+        .numerical-box {
+            background: linear-gradient(to right, #e8eaf6, #c5cae9);
+            border-left: 3px solid #3f51b5;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .numerical-header {
+            color: #303f9f;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Heuristic methods box */
+        .heuristic-box {
+            background: linear-gradient(to right, #f3e5f5, #e1bee7);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .heuristic-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Computational precision box */
+        .precision-box {
+            background: linear-gradient(to right, #fff8e1, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .precision-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>Manifold Gradient Descent: 3. Muon on Stiefel Manifold</h1>
+                <div class="subtitle">Completing the solution for orthogonal constraints on non-square matrices, deriving iterative algorithms for Stiefel manifolds with spectral norm constraints, and comparing with heuristic approaches.</div>
+                
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>Su Jianlin</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-eye"></i>
+                        <span>Scientific Spaces</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <div class="tag">Stiefel Manifold</div>
+                        <div class="tag">Lyapunov Equation</div>
+                        <div class="tag">Iterative Methods</div>
+                        <div class="tag">Orthogonal Constraints</div>
+                        <div class="tag">Numerical Optimization</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Translation Notice -->
+        <div class="translation-notice">
+            <div class="translation-notice-content">
+                <div class="translation-text">
+                    <h3><i class="fas fa-language"></i> Academic Translation</h3>
+                    <p>This is an academic English translation maintaining technical accuracy while adapting to English academic conventions.</p>
+                </div>
+                <div class="translator-badge">
+                    <i class="fas fa-user-graduate"></i>
+                    Translated by Juanxi Tian (ScalingOpt Team)
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Sidebar Table of Contents -->
+            <aside class="sidebar">
+                <nav class="toc">
+                    <div class="toc-header">
+                        <i class="fas fa-list"></i>
+                        Contents
+                    </div>
+                    <ul class="toc-list">
+                        <li class="toc-item">
+                            <a href="#problem-formulation" class="toc-link">
+                                <span class="toc-number">1</span>
+                                <span>Problem Formulation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#equation-transformation" class="toc-link">
+                                <span class="toc-number">2</span>
+                                <span>Equation Transformation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#iterative-solution" class="toc-link">
+                                <span class="toc-number">3</span>
+                                <span>Iterative Solution</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#implementation-considerations" class="toc-link">
+                                <span class="toc-number">4</span>
+                                <span>Implementation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#related-approaches" class="toc-link">
+                                <span class="toc-number">5</span>
+                                <span>Related Approaches</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#experimental-tests" class="toc-link">
+                                <span class="toc-number">6</span>
+                                <span>Experimental Tests</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#extensions-considerations" class="toc-link">
+                                <span class="toc-number">7</span>
+                                <span>Extensions</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#summary" class="toc-link">
+                                <span class="toc-number">8</span>
+                                <span>Summary</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Article Content -->
+            <main class="main-content">
+                <p>As discussed previously, when we shift optimization parameters from vectors to matrices and adopt the more matrix-appropriate spectral norm constraint, the Muon optimizer emerges naturally. Further, we considered the steepest descent direction under additional orthogonal constraints, dividing the discussion into square and non-square matrices. The square matrix case was resolved in the previous article, but the non-square case remained open.</p>
+                
+                <p>The goal of this article is to complete the solution for the non-square case, fully resolving optimization under orthogonal constraints.</p>
+                
+                <h2 id="problem-formulation">Problem Formulation<a href="#problem-formulation">#</a></h2>
+                
+                <div class="stiefel-box">
+                    <div class="stiefel-header">
+                        <i class="fas fa-th"></i>
+                        Stiefel Manifold Optimization Problem
+                    </div>
+                    <p>Let us briefly review results from the previous article <a href="/archives/11215" target="_blank">"Manifold Gradient Descent: 2. Muon with Orthogonal Constraints"</a>. The objective to solve is:</p>
+                    <div class="equation">
+                        \[
+                        \newcommand{tr}{\mathop{\text{tr}}}\max_{\boldsymbol{\Phi}} \tr(\boldsymbol{G}^{\top}\boldsymbol{\Phi}) \qquad \text{subject to}\qquad \Vert\boldsymbol{\Phi}\Vert_2 = 1,\,\, \boldsymbol{W}^{\top}\boldsymbol{W}=\boldsymbol{I},\,\,(\boldsymbol{W} - \eta \boldsymbol{\Phi})^{\top}(\boldsymbol{W} - \eta \boldsymbol{\Phi})=\boldsymbol{I}
+                        \]
+                    </div>
+                    <p>where $\boldsymbol{W},\boldsymbol{\Phi}\in\mathbb{R}^{n\times m}(n \geq m)$, and $\Vert\cdot\Vert_2$ is the spectral norm. Based on the "first-order approximation suffices" principle, this simplifies to:</p>
+                    <div class="equation">
+                        \[
+                        \max_{\boldsymbol{\Phi}} \tr(\boldsymbol{G}^{\top}\boldsymbol{\Phi}) \qquad \text{subject to}\qquad \Vert\boldsymbol{\Phi}\Vert_2 = 1,\,\, \boldsymbol{W}^{\top}\boldsymbol{W}=\boldsymbol{I},\,\,\boldsymbol{W}^{\top}\boldsymbol{\Phi}+\boldsymbol{\Phi}^{\top}\boldsymbol{W} = \boldsymbol{0}\label{eq:ori-obj}
+                        \]
+                    </div>
+                    <p>The set of all $\boldsymbol{\Phi}$ satisfying $\boldsymbol{W}^{\top}\boldsymbol{\Phi}+\boldsymbol{\Phi}^{\top}\boldsymbol{W} = \boldsymbol{0}$ is called the "tangent space" of $\boldsymbol{W}^{\top}\boldsymbol{W}=\boldsymbol{I}$. In the previous article, we derived the general solution form:</p>
+                    <div class="equation">
+                        \[
+                        \boldsymbol{\Phi} = \newcommand{msign}{\mathop{\text{msign}}}\msign(\boldsymbol{G} + \boldsymbol{W}\boldsymbol{X})
+                        \]
+                    </div>
+                    <p>where $\boldsymbol{X}\in\mathbb{R}^{m\times m}$ is an undetermined symmetric matrix.</p>
+                    <p>The remaining challenge is providing a method to compute the symmetric matrix $\boldsymbol{X}$ such that $\boldsymbol{W}^{\top}\boldsymbol{\Phi}$ is a skew-symmetric matrix. Once solved, the corresponding $\boldsymbol{\Phi}$ is naturally the optimal solution. For $n=m$, we already obtained the closed-form solution $\boldsymbol{X}=-[\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{sym}}$; the truly difficult case is $n > m$, also known as the "Stiefel manifold," which constitutes the Open problem noted in <a href="https://docs.modula.systems/algorithms/manifold/orthogonal/#open-problem-extending-to-the-stiefel-manifold" target="_blank">"Orthogonal manifold"</a>.</p>
+                </div>
+                
+                <h2 id="equation-transformation">Equation Transformation<a href="#equation-transformation">#</a></h2>
+                
+                <p>In essence, our current task is to solve the equation system:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(1)</span>
+                        \[
+                        \boldsymbol{W}^{\top}\msign(\boldsymbol{G} + \boldsymbol{W}\boldsymbol{X})+\msign(\boldsymbol{G} + \boldsymbol{W}\boldsymbol{X})^{\top}\boldsymbol{W} = \boldsymbol{0}\label{eq:start}
+                        \]
+                    </div>
+                </div>
+                
+                <p>When $n=m$, $\boldsymbol{W}^{\top}$ can be directly absorbed into $\msign$, simplifying the solution. However, for $n > m$, such absorption is not possible, constituting the core difficulty. The author posits that for $n > m$, no simple explicit solution exists, so we seek numerical algorithms.</p>
+                
+                <p>According to the definition $\msign(\boldsymbol{M})=\boldsymbol{M}(\boldsymbol{M}^{\top}\boldsymbol{M})^{-1/2}$, we can write:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(2)</span>
+                        \[
+                        \boldsymbol{W}^{\top}\msign(\boldsymbol{G} + \boldsymbol{W}\boldsymbol{X}) = \boldsymbol{W}^{\top}(\boldsymbol{G} + \boldsymbol{W}\boldsymbol{X})\boldsymbol{Q}^{-1} = (\boldsymbol{W}^{\top}\boldsymbol{G} + \boldsymbol{X})\boldsymbol{Q}^{-1}
+                        \]
+                    </div>
+                </div>
+                
+                <p>where $\boldsymbol{Q} = ((\boldsymbol{G} + \boldsymbol{W}\boldsymbol{X})^{\top}(\boldsymbol{G} + \boldsymbol{W}\boldsymbol{X}))^{1/2}$. In this new notation, the equation system becomes:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(3)</span>
+                        \[
+                        (\boldsymbol{W}^{\top}\boldsymbol{G} + \boldsymbol{X})\boldsymbol{Q}^{-1} + \boldsymbol{Q}^{-1}(\boldsymbol{G}^{\top}\boldsymbol{W} + \boldsymbol{X}) = \boldsymbol{0}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Left- and right-multiplying by $\boldsymbol{Q}$ yields:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(4)</span>
+                        \[
+                        \boldsymbol{Q}(\boldsymbol{W}^{\top}\boldsymbol{G} + \boldsymbol{X}) + (\boldsymbol{G}^{\top}\boldsymbol{W} + \boldsymbol{X})\boldsymbol{Q} = \boldsymbol{0}\label{eq:r-x}
+                        \]
+                    </div>
+                </div>
+                
+                <p>where $\boldsymbol{Q}$ also satisfies:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(5)</span>
+                        \[
+                        \boldsymbol{Q} = (\boldsymbol{G} + \boldsymbol{W}\boldsymbol{X})^{\top}\msign(\boldsymbol{G} + \boldsymbol{W}\boldsymbol{X})\label{eq:r-q}
+                        \]
+                    </div>
+                </div>
+                
+                <h2 id="iterative-solution">Iterative Solution<a href="#iterative-solution">#</a></h2>
+                
+                <div class="iterative-box">
+                    <div class="iterative-header">
+                        <i class="fas fa-sync-alt"></i>
+                        Fixed-Point Iteration Method
+                    </div>
+                    <p>The author's approach is to start from an initial guess $\boldsymbol{X}$, substitute into Equation $\eqref{eq:r-q}$ to obtain $\boldsymbol{Q}$, then substitute $\boldsymbol{Q}$ into equation system $\eqref{eq:r-x}$ to solve for a new $\boldsymbol{X}$, iterating until convergence. Given $\msign$, Equation $\eqref{eq:r-q}$ can be computed explicitly, so the sole difficulty lies in solving equation system $\eqref{eq:r-x}$.</p>
+                    <p>We can rearrange Equation $\eqref{eq:r-x}$:</p>
+                    <div class="equation">
+                        \[
+                        \boldsymbol{Q}\boldsymbol{X} + \boldsymbol{X}\boldsymbol{Q} =  -2[\boldsymbol{Q}\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{sym}}\label{eq:r-xx}
+                        \]
+                    </div>
+                    <p>Given $\boldsymbol{Q}$, this is a linear equation system in $\boldsymbol{X}$, known as the "<a href="https://en.wikipedia.org/wiki/Lyapunov_equation" target="_blank">continuous Lyapunov equation</a>", or a special case of the "<a href="https://en.wikipedia.org/wiki/Sylvester_equation" target="_blank">Sylvester equation</a>". If using CPU computation, Scipy includes a built-in function <code class="language-python">scipy.linalg.solve_continuous_lyapunov</code> that can be called directly.</p>
+                </div>
+                
+                <div class="lyapunov-box">
+                    <div class="lyapunov-header">
+                        <i class="fas fa-calculator"></i>
+                        Lyapunov Equation and Initialization
+                    </div>
+                    <p>Regarding initial value selection, we can consider the square matrix solution $-[\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{sym}}$, which constitutes a natural transition from square to non-square matrices. We can also examine the reasonableness of the initial value $-[\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{sym}}$ through another equivalent form of Equation $\eqref{eq:r-xx}$:</p>
+                    <div class="equation">
+                        \[
+                        \boldsymbol{Q}(\boldsymbol{X} + [\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{sym}}) + (\boldsymbol{X} + [\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{sym}})\boldsymbol{Q}  =[\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{skew}}\boldsymbol{Q} -\boldsymbol{Q}[\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{skew}}
+                        \]
+                    </div>
+                    <p>Thus, the accuracy of $-[\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{sym}}$ depends on the commutativity of $[\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{skew}}$ and $\boldsymbol{Q}$. The closer they are to commuting, the more accurate $-[\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{sym}}$ becomes. However, subsequent experimental results show that our iterative algorithm is not particularly sensitive to initial values; even initializing with an all-zero matrix poses little problem.</p>
+                </div>
+                
+                <h2 id="implementation-considerations">Implementation Considerations<a href="#implementation-considerations">#</a></h2>
+                
+                <div class="numerical-box">
+                    <div class="numerical-header">
+                        <i class="fas fa-laptop-code"></i>
+                        Self-Implementation of Lyapunov Solver
+                    </div>
+                    <p>As mentioned, Scipy includes a built-in Lyapunov equation solver, allowing direct calls without concern for the solution process. However, this is limited to CPU-based Scipy. The author notes that neither Torch nor Jax have equivalent functions, so for GPU computation, one must "self-reliance."</p>
+                    <p>There are two approaches to programmatically solve Equation $\eqref{eq:r-xx}$. The first follows the approach in <a href="/archives/11056" target="_blank">"What Can the Matrix Sign Function mcsgn Compute?"</a>, using $\newcommand{mcsgn}{\mathop{\text{mcsgn}}}\mcsgn$ (not $\msign$) to solve:</p>
+                    <div class="equation">
+                        \[
+                        \boldsymbol{X} = \mcsgn\left(\begin{bmatrix}-\boldsymbol{Q} & -[\boldsymbol{Q}\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{sym}} \\ \boldsymbol{0} & \boldsymbol{Q}\end{bmatrix}\right)_{[:m,m:]}
+                        \]
+                    </div>
+                    <p>The second is based on SVD, a method we already used when computing $\msign$ gradients in <a href="/archives/11025" target="_blank">"Derivative of msign"</a>. Combining with Equation $\eqref{eq:r-xx}$, we reintroduce it here. From $\boldsymbol{Q}$'s definition, it is symmetric positive definite, thus can be eigendecomposed as $\boldsymbol{V}\boldsymbol{\Sigma}\boldsymbol{V}^{\top}$, where $\boldsymbol{V}$ is orthogonal and $\boldsymbol{\Sigma}=\mathop{\text{diag}}(\sigma_1,\cdots,\sigma_m)$ is diagonal. Substituting into Equation $\eqref{eq:r-xx}$ yields:</p>
+                    <div class="equation">
+                        \[
+                        \boldsymbol{\Sigma}(\boldsymbol{V}^{\top}\boldsymbol{X}\boldsymbol{V}) + (\boldsymbol{V}^{\top}\boldsymbol{X}\boldsymbol{V})\boldsymbol{\Sigma} =  -2\boldsymbol{V}^{\top}[\boldsymbol{Q}\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{sym}}\boldsymbol{V}
+                        \]
+                    </div>
+                    <p>The left side can be expressed as $(\boldsymbol{V}^{\top}\boldsymbol{X}\boldsymbol{V})\otimes \boldsymbol{S}$, where $\otimes$ denotes the Hadamard product, and $\boldsymbol{S}_{i,j} = \sigma_i + \sigma_j$. Consequently, we can solve:</p>
+                    <div class="equation">
+                        \[
+                        \boldsymbol{X} =  -2\boldsymbol{V}((\boldsymbol{V}^{\top}[\boldsymbol{Q}\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{sym}}\boldsymbol{V})\oslash \boldsymbol{S})\boldsymbol{V}^{\top}
+                        \]
+                    </div>
+                    <p>where $\oslash$ denotes the Hadamard quotient. An interesting aspect here is that performing eigendecomposition on $\boldsymbol{Q}$ is essentially equivalent to performing SVD on $\boldsymbol{G} + \boldsymbol{W}\boldsymbol{X}$, and performing SVD on $\boldsymbol{G} + \boldsymbol{W}\boldsymbol{X}$ can also be used to compute $\msign(\boldsymbol{G} + \boldsymbol{W}\boldsymbol{X})$. Thus, a single SVD can compute both $\msign$ and the solution to Equation $\eqref{eq:r-xx}$.</p>
+                </div>
+                
+                <div class="technical-box">
+                    <div class="technical-header">
+                        <i class="fas fa-balance-scale"></i>
+                        Trade-offs Between Implementation Approaches
+                    </div>
+                    <p>Both approaches have distinct characteristics. Approach 1 requires computing $\msign$ for an $m\times m$ matrix, then $\mcsgn$ for a $2m\times 2m$ matrix. Although both can be efficiently computed via Newton-Schulz iterations, the cost is non-trivial. Additionally, we must select coefficients that ensure convergence and high accuracy (recommending results from <a href="/archives/10996" target="_blank">"Newton-Schulz Iteration for msign Operator (Part 2)"</a>); otherwise, neither $\mcsgn$ nor $\msign$ will converge, let alone $\boldsymbol{X}$.</p>
+                    <p>Approach 2 requires SVD. Although SVD has higher computational complexity and often forces FP32 precision, in this problem, each iteration only requires one SVD to simultaneously compute $\msign$ and $\boldsymbol{X}$, so overall efficiency is not too poor. If the number of orthogonally constrained matrix parameters is small, SVD may be the simplest choice.</p>
+                </div>
+                
+                <h2 id="related-approaches">Related Approaches<a href="#related-approaches">#</a></h2>
+                
+                <div class="heuristic-box">
+                    <div class="heuristic-header">
+                        <i class="fas fa-lightbulb"></i>
+                        Heuristic Solutions by @leloy
+                    </div>
+                    <p>Prior to this article, <a href="https://x.com/leloykun" target="_blank">@leloy</a> proposed two heuristic solution methods for the original objective $\eqref{eq:ori-obj}$ in his blog post <a href="https://leloykun.github.io/ponder/steepest-descent-stiefel/" target="_blank">"Heuristic Solutions for Steepest Descent on the Stiefel Manifold"</a>. Here, "heuristic" means that in most cases, it yields a reasonably good solution but cannot guarantee optimality. Let's examine these as well.</p>
+                    <p>The first method can be described as purely geometric. First, we define a projection operator:</p>
+                    <div class="equation">
+                        \[
+                        \newcommand{proj}{\mathop{\mathcal{P}}}\proj\nolimits_{\boldsymbol{W}}(\boldsymbol{M}) = \boldsymbol{M} - \boldsymbol{W}[\boldsymbol{W}^{\top}\boldsymbol{M}]_{\text{sym}}
+                        \]
+                    </div>
+                    <p>It can be verified that $\boldsymbol{W}^{\top}\proj\nolimits_{\boldsymbol{W}}(\boldsymbol{M})$ is always skew-symmetric, meaning $\proj\nolimits_{\boldsymbol{W}}(\boldsymbol{M})$ always lies in the tangent space. Thus, we consider it as the projection of an arbitrary matrix $\boldsymbol{M}$ onto the tangent space of $\boldsymbol{W}^{\top}\boldsymbol{W}=\boldsymbol{I}$.</p>
+                    <p>Starting from gradient $\boldsymbol{G}$, $\proj\nolimits_{\boldsymbol{W}}(\boldsymbol{M})$ is certainly in the tangent space. However, we know Muon's update must be an orthogonal matrix (when full-rank), while $\proj\nolimits_{\boldsymbol{W}}(\boldsymbol{M})$ may not be orthogonal. Thus, we can use $\msign$ to find the nearest orthogonal matrix, i.e., $\msign(\proj\nolimits_{\boldsymbol{W}}(\boldsymbol{M}))$. Yet, after $\msign$, it may no longer be in the tangent space, so we can project it back, then find the nearest orthogonal matrix again, iterating:</p>
+                    <div class="equation">
+                        \[
+                        \boldsymbol{\Phi} = (\msign\circ\proj\nolimits_{\boldsymbol{W}}\circ\cdots\circ\msign\circ\proj\nolimits_{\boldsymbol{W}})(\boldsymbol{M})
+                        \]
+                    </div>
+                    <p>This is @leloy's first approach: alternating projections onto the tangent space and orthogonal space until convergence, which is quite intuitive. Under relatively random conditions, it closely approximates the optimal solution, sometimes even accurate to four decimal places, leading the author initially to believe it was the exact solution. However, after searching, cases with sufficiently large deviations from the optimal solution were found, confirming this is coincidental, not optimal.</p>
+                </div>
+                
+                <div class="analysis-box">
+                    <div class="analysis-header">
+                        <i class="fas fa-search"></i>
+                        Line Search Approach
+                    </div>
+                    <p>The second method can be termed line search. Specifically, when $n > m$, we can consider extending $\boldsymbol{W}$ to a standard $n\times n$ orthogonal matrix $[\boldsymbol{W},\overline{\boldsymbol{W}}]$, then decompose the desired $\boldsymbol{\Phi}$ into $\boldsymbol{W}^{\top}\boldsymbol{\Phi}$ and $\overline{\boldsymbol{W}}{}^{\top}\boldsymbol{\Phi}$ components. @leloy then makes a greedy approximation: first find the optimal solution for $\boldsymbol{W}^{\top}\boldsymbol{\Phi}$, then for $\overline{\boldsymbol{W}}{}^{\top}\boldsymbol{\Phi}$, introducing a line search between the two to improve accuracy.</p>
+                    <p>This procedure yields a reasonably accurate approximation, guaranteed to lie in the tangent space and satisfy orthogonality. The solution process requires computing spectral norm, $\msign$, and <a href="https://en.wikipedia.org/wiki/Cholesky_decomposition" target="_blank">Cholesky decomposition</a>; details can be found in the author's article. Additionally, when $m=2$, theoretically it can search for the optimal solution, because $2\times 2$ skew-symmetric matrices have only one degree of freedom, matching the single degree of freedom in line search.</p>
+                </div>
+                
+                <h2 id="experimental-tests">Experimental Tests<a href="#experimental-tests">#</a></h2>
+                
+                <p>Below, we test the above methods in NumPy, with the primary goal of verifying correctness, so we directly implement $\msign$ and $\mcsgn$ using singular value decomposition and eigendecomposition.</p>
+                
+                <div class="code-container">
+                    <div class="code-header">
+                        <i class="fas fa-code"></i>
+                        Python Implementation for Experimental Validation
+                    </div>
+                    <div class="code-content">
+                        <pre><code class="language-python">import numpy as np
+import scipy as sp
+
+def mcsgn(x):
+    """Precise computation of mcsgn via eigendecomposition
+    """
+    s, v = np.linalg.eig(x)
+    return v @ np.diag(np.sign(s)) @ np.linalg.inv(v)
+
+def msign(g):
+    """Precise computation of msign via SVD
+    """
+    u, s, vh = np.linalg.svd(g, full_matrices=False)
+    return u @ np.diag(np.sign(s)) @ vh
+
+def sym(x):
+    """Symmetrization
+    """
+    return (x + x.T) * 0.5
+
+def skew(x):
+    """Skew-symmetrization
+    """
+    return (x - x.T) * 0.5
+
+def proj(g, w):
+    """Projection onto orthogonal tangent space
+    """
+    return g - w @ sym(w.T @ g)
+
+def jianlin_by_mcsgn(g, w, steps=20):
+    """Iterative construction via mcsgn (author's method)
+    """
+    n, m = g.shape
+    x = -sym(w.T @ g)
+    for i in range(1, steps + 1):
+        phi = msign(z := g + w @ x)
+        print('step:', i, ', inner product:', (phi * g).sum(), ', tangent error:', np.abs(sym(w.T @ phi)).mean())
+        if i == steps:
+            return phi
+        q = z.T @ phi
+        x = mcsgn(np.block([[-q, -sym(q @ w.T @ g)], [np.zeros_like(q), q]]))[:m, m:]
+        # x = -2 * sp.linalg.solve_continuous_lyapunov(q, sym(q @ w.T @ g))
+
+def jianlin_by_svd(g, w, steps=20):
+    """Iterative construction via SVD (author's method)
+    """
+    x = -sym(w.T @ g)
+    for i in range(1, steps + 1):
+        u, s, vh = np.linalg.svd(z := g + w @ x, full_matrices=False)
+        phi = (u * np.sign(s)) @ vh
+        print('step:', i, ', inner product:', (phi * g).sum(), ', tangent error:', np.abs(sym(w.T @ phi)).mean())
+        if i == steps:
+            return phi
+        x = -2 * vh.T @ (vh @ sym(z.T @ phi @ w.T @ g) @ vh.T / (s + s[:, None])) @ vh
+
+def leloy_v1(g, w, steps=20):
+    """Alternating projection onto tangent and orthogonal spaces
+    """
+    phi = g
+    for i in range(1, steps + 1):
+        phi = msign(proj(phi, w))
+        print('step:', i, ', inner product:', (phi * g).sum(), ', tangent error:', np.abs(sym(w.T @ phi)).mean())
+    return phi
+
+def leloy_v2(g, w, steps=20):
+    """Component-wise greedy solution + line search (simplified by author)
+    """
+    n, m = g.shape
+    taus = np.linspace(0, 1, steps + 2)[1:-1]
+    p_max, tau_opt, phi_opt = 0, 0, None
+    for tau in taus:
+        b = (b := skew(w.T @ g)) * tau / max(np.linalg.norm(b, ord=2), 1e-8)
+        r = np.linalg.cholesky(np.eye(m) - b.T @ b)
+        c = msign((np.eye(n) - w @ w.T) @ g @ r) @ r
+        phi = w @ b + c
+        print('tau:', tau, ', inner product:', p := (phi * g).sum())
+        if p > p_max:
+            p_max, tau_opt, phi_opt = p, tau, phi
+    print('best inner product:', p_max, ', tau:', tau_opt)
+    return phi_opt
+
+# Test case 1
+w = np.array([[ 0.69453734, -0.26590866, -0.44721806,  0.2753041 ],
+              [-0.11738148, -0.5588003 , -0.17580748,  0.3218624 ],
+              [-0.4515288 , -0.23489913, -0.26683152, -0.25739142],
+              [ 0.02392521,  0.02664689,  0.48423648,  0.6193399 ],
+              [ 0.45194831, -0.25206333,  0.27654836, -0.60242337],
+              [ 0.21197332, -0.09174792,  0.24521762, -0.08484317],
+              [-0.15496767, -0.26446804, -0.34942415, -0.01877318],
+              [-0.16181251, -0.6474956 ,  0.45243263, -0.01776086]])
+
+g = np.array([[-17.85745   , -10.758921  ,  -2.9583392 ,   6.245008  ],
+              [-28.883093  ,  19.772121  ,   8.086545  , -21.564013  ],
+              [ -1.6274693 , -14.96859   ,   3.4465332 ,   3.1070817 ],
+              [ -7.8890743 ,   1.5304767 ,  -8.949573  ,   9.579629  ],
+              [  2.246596  ,  14.46572   ,  12.8451    ,  -2.7370298 ],
+              [ -0.9496974 ,   6.9879804 ,   2.849277  ,   1.1148484 ],
+              [ -8.115278  , -18.054405  ,  -0.19287404,   7.0389237 ],
+              [-15.062008  , -15.02901   ,   2.9083247 ,  21.706533  ]])
+
+phi1 = jianlin_by_mcsgn(g, w, steps=100)
+phi2 = jianlin_by_svd(g, w, steps=100)
+phi3 = leloy_v1(g, w, steps=100)
+phi4 = leloy_v2(g, w, steps=100)
+assert np.allclose(phi1, phi2)
+
+# Test case 2 (random)
+w = np.linalg.qr(np.random.randn(100, 50))[0]
+g = np.random.randn(100, 50)
+
+phi1 = jianlin_by_mcsgn(g, w, steps=10)
+phi2 = jianlin_by_svd(g, w, steps=10)
+phi3 = leloy_v1(g, w, steps=10)
+phi4 = leloy_v2(g, w, steps=10)
+assert np.allclose(phi1, phi2)</code></pre>
+                    </div>
+                </div>
+                
+                <p>For the first set of $\boldsymbol{W},\boldsymbol{G}$ given in the code, the author's method yields an optimal $\tr(\boldsymbol{G}^{\top} \boldsymbol{\Phi})$ approximately 90, and results from $\mcsgn$ and SVD are identical. @leloy's first method yields approximately 70, and the second method approximately 80, both deviating from the optimal solution.</p>
+                
+                <p>However, the first $\boldsymbol{W},\boldsymbol{G}$ set is an extreme example specifically searched to highlight differences. If we replace with relatively random values, the author's solution and @leloy's first method become very close, requiring fewer iterations (5–10 steps). In such cases, @leloy's second method deviates more from the optimal solution. Readers can construct additional examples for testing.</p>
+                
+                <h2 id="extensions-considerations">Extensions and Considerations<a href="#extensions-considerations">#</a></h2>
+                
+                <div class="precision-box">
+                    <div class="precision-header">
+                        <i class="fas fa-exclamation-circle"></i>
+                        Computational Precision Considerations
+                    </div>
+                    <p>The solution to the original problem $\eqref{eq:ori-obj}$ is now temporarily concluded. Next, we supplement discussion on several potentially confusing details.</p>
+                    <p>First, for descriptive convenience, the iterative solution process presented earlier carries an implicit assumption: $\boldsymbol{G} + \boldsymbol{W}\boldsymbol{X}$ remains full-rank (rank $m$) throughout; otherwise, matrix $\boldsymbol{S}$ would have zero components, and $\oslash\boldsymbol{S}$ becomes problematic. However, this difficulty is not fundamental because Equation $\eqref{eq:start}$ must have a solution. Thus, when encountering zero denominators, numerators must also be zero. Therefore, we simply need to replace zero components of $\boldsymbol{S}$ with a small positive number to obtain correct results.</p>
+                    <p>From a numerical computation perspective, we rarely encounter singular values that are exactly zero, so this concern can be largely ignored, assuming $\boldsymbol{G} + \boldsymbol{W}\boldsymbol{X}$ is full-rank by default. Under this default assumption, the retraction operation becomes simple because:</p>
+                    <div class="equation">
+                        \[
+                        (\boldsymbol{W} - \eta\boldsymbol{\Phi})^{\top}(\boldsymbol{W} - \eta\boldsymbol{\Phi}) = \boldsymbol{W}^{\top} \boldsymbol{W} - \eta(\boldsymbol{W}^{\top} \boldsymbol{\Phi} + \boldsymbol{\Phi}^{\top}\boldsymbol{W}) + \eta^2 \boldsymbol{\Phi}^{\top}\boldsymbol{\Phi}
+                        \]
+                    </div>
+                    <p>By Stiefel manifold definition, the right-hand first term is $\boldsymbol{I}$; by tangent space condition, the second term is $\boldsymbol{0}$; finally, when full-rank, $\msign$ yields a Stiefel manifold matrix, so the third term is $\eta^2 \boldsymbol{I}$, resulting in $(1+\eta^2)\boldsymbol{I}$. Simply dividing by $\sqrt{1+\eta^2}$ achieves retraction:</p>
+                    <div class="equation">
+                        \[
+                        \boldsymbol{W}\quad\leftarrow\quad\frac{\boldsymbol{W} - \eta\boldsymbol{\Phi}}{\sqrt{1+\eta^2}}
+                        \]
+                    </div>
+                    <p>At this point, the author should notice a deeper issue: whether for relatively simple orthogonal manifolds or more complex Stiefel manifolds, what computational precision should we use? "Orthogonal" is an exact quantitative constraint; $\boldsymbol{W}^{\top}\boldsymbol{W}=\boldsymbol{I}$ contains $m(m+1)/2$ equality constraints. It is foreseeable that using the above iteration in low precision will gradually cause severe deviation from orthogonality, not to mention errors in solving $\boldsymbol{\Phi}$.</p>
+                    <p>Therefore, the author believes that unless we periodically apply orthogonalization operations to parameters (i.e., $\boldsymbol{W}\leftarrow\msign(\boldsymbol{W})$) to pull them back onto the orthogonal manifold, the computational precision for the solution process should start at FP32. Considering that typically few parameters require orthogonal constraints, this generally does not constitute excessive cost.</p>
+                </div>
+                
+                <h2 id="summary">Summary<a href="#summary">#</a></h2>
+                
+                <p>This article extends the previous article's "Muon + orthogonal manifold" to the more general "Muon + Stiefel manifold," primarily discovering an iterative algorithm for solving the corresponding update direction.</p>
+
+                <div class="citation-section">
+                    <div class="citation-header">
+                        <i class="fas fa-quote-right"></i>
+                        Citation Information
+                    </div>
+                    <p><strong>Original Article:</strong> Su Jianlin. Manifold Gradient Descent: 3. Muon on Stiefel Manifold. <em>Scientific Spaces</em>.</p>
+                    
+                    <p><strong>How to cite this translation:</strong></p>
+                    <div class="citation-box">
+                        Su, J. Manifold Gradient Descent: 3. Muon on Stiefel Manifold [Translated by Juanxi Tian]. 
+                        <em>Scientific Spaces</em>.
+                    </div>
+                    <p style="margin-top: 0.8rem;"><strong>BibTeX:</strong></p>
+                    <div class="citation-box">
+                        @article{su2025manifold_gradient_muon_stiefel,
+                            title   = {Manifold Gradient Descent: 3. Muon on Stiefel Manifold},
+                            author  = {Su, Jianlin},
+                            journal = {Scientific Spaces},
+                            year    = {2025},
+                            url     = {https://kexue.fm/archives/11215},
+                            note    = {Translated by Juanxi Tian (ScalingOpt Team)}
+                          }
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="translation-credit">
+                <i class="fas fa-user-graduate"></i>
+                Academic Translation by Juanxi Tian (ScalingOpt Team)
+            </div>
+            <div class="copyright">
+                © 2009-2025 Scientific Spaces. All rights reserved.<br>
+                Original content licensed under Creative Commons BY-NC-ND 2.5 China
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript for Interactive Features -->
+    <script>
+        // Scroll Progress Bar
+        window.addEventListener('scroll', function() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            scrollProgress.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Table of Contents Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            const sections = document.querySelectorAll('h2[id]');
+            
+            // Set active section based on scroll position
+            function setActiveSection() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 50)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', setActiveSection);
+            setActiveSection(); // Initial call
+            
+            // Smooth scroll for TOC links
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 50,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+
+        // MathJax Configuration
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                tags: 'ams'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    
+    <!-- MathJax CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</body>
+</html>

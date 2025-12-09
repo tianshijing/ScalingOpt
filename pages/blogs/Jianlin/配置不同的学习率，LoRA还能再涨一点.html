@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Different Learning Rates for LoRA: Can LoRA Improve Further? | Scientific Spaces</title>
+    <meta name="description" content="Analyzing the theoretical basis and empirical evidence for assigning different learning rates to LoRA matrices, with practical recommendations for improved fine-tuning performance.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a6bca;
+            --primary-dark: #1357a8;
+            --primary-light: #e8f1fc;
+            --secondary: #2c3e50;
+            --accent: #3498db;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f5f7fa;
+            --gray-200: #e4e7eb;
+            --gray-300: #cbd2d9;
+            --gray-600: #7b8794;
+            --gray-700: #52606d;
+            --gray-900: #323f4b;
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 6px 24px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: #f0f5fc;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.5rem 1.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -8%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+        }
+
+        .meta-item i {
+            font-size: 0.85rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Translation Notice */
+        .translation-notice {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1.2rem;
+            margin: 0;
+        }
+
+        .translation-notice-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .translation-text h3 {
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .translation-text p {
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        .translator-badge {
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(26, 107, 202, 0.2);
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+        }
+
+        @media (max-width: 850px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            padding-left: 1rem;
+        }
+
+        .toc {
+            position: sticky;
+            top: 1rem;
+        }
+
+        .toc-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .toc-header i {
+            font-size: 0.9rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.4rem;
+            position: relative;
+        }
+
+        .toc-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            transition: var(--transition);
+            border-left: 2px solid transparent;
+            padding-left: 8px;
+        }
+
+        .toc-link:hover {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            transform: translateX(2px);
+        }
+
+        .toc-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .toc-number {
+            font-weight: 500;
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            min-width: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-right: 1.2rem;
+            padding-left: 0;
+        }
+
+        @media (max-width: 850px) {
+            .sidebar {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 0 1rem;
+            }
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 1.5rem 0 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: relative;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 35px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        h2 a {
+            color: var(--accent);
+            font-size: 0.7rem;
+            margin-left: 6px;
+            text-decoration: none;
+        }
+
+        h2 a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            color: var(--gray-900);
+            line-height: 1.65;
+        }
+
+        /* Equation Styling */
+        .equation-container {
+            margin: 0.8rem 0;
+        }
+
+        .equation {
+            background: var(--primary-light);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1rem;
+            border-radius: 0 5px 5px 0;
+            font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', serif;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .equation-number {
+            color: var(--primary);
+            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin-right: 6px;
+            display: inline-block;
+            min-width: 18px;
+        }
+
+        /* Code Block Styling */
+        .code-container {
+            margin: 1rem 0;
+            background: #2d2d2d;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .code-header {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 0.6rem 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .code-content {
+            padding: 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #f8f8f2;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+        }
+
+        /* Reference Box */
+        .reference-box {
+            background: linear-gradient(to right, #f8fafc, var(--primary-light));
+            border: 1px solid var(--gray-200);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .reference-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .reference-header i {
+            font-size: 0.9rem;
+        }
+
+        .reference-list {
+            list-style: none;
+        }
+
+        .reference-item {
+            padding: 0.3rem 0 0.3rem 0.8rem;
+            position: relative;
+            margin-bottom: 0.4rem;
+            color: var(--gray-700);
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .reference-item::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 0.65rem;
+        }
+
+        /* Citation Section */
+        .citation-section {
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .citation-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .citation-box {
+            background: var(--white);
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid var(--gray-300);
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-top: 0.6rem;
+            overflow-x: auto;
+            color: var(--gray-900);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--secondary);
+            color: white;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .translation-credit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 6px 16px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(26, 107, 202, 0.2);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            margin-top: 0.6rem;
+        }
+
+        /* Utility Classes */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-light), #e8f2ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .math {
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.1s ease;
+            z-index: 1000;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 1rem 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 0.6rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem 0;
+            }
+            
+            .main-content {
+                padding-right: 0.8rem;
+            }
+            
+            .sidebar {
+                padding-left: 0.8rem;
+            }
+            
+            .meta-info {
+                gap: 0.6rem;
+            }
+            
+            .meta-item {
+                font-size: 0.75rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .translation-notice-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .translator-badge {
+                align-self: flex-start;
+            }
+        }
+
+        /* Links styling */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Optimize long formula display */
+        .equation {
+            word-break: break-word;
+        }
+        
+        /* Optimize list display */
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.3rem;
+            line-height: 1.5;
+        }
+        
+        /* Optimize math formula spacing */
+        .MathJax_Display {
+            margin: 0.6em 0 !important;
+        }
+        
+        /* Image container styling */
+        .pic-container {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+        
+        .pic-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .typecho-caption {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        
+        /* Quote block styling */
+        blockquote.cite {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+        }
+        
+        blockquote.cite div {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        blockquote.cite a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        /* Blockquote styling */
+        blockquote {
+            background: linear-gradient(to right, var(--gray-100), var(--primary-light));
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+            position: relative;
+        }
+
+        blockquote p {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+
+        blockquote p:before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Underline styling */
+        u {
+            text-decoration: none;
+            border-bottom: 1px dotted var(--primary);
+        }
+
+        /* List styling inside main content */
+        .main-content ol, .main-content ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .main-content li {
+            margin-bottom: 0.4rem;
+            line-height: 1.6;
+        }
+
+        /* Highlight box for important notes */
+        .note-box {
+            background: linear-gradient(to right, #fff8e1, #fff3cd);
+            border-left: 3px solid #ffc107;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .note-box strong {
+            color: #856404;
+        }
+
+        /* Definition list styling */
+        .definition {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 3px solid #4caf50;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .definition-header {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Mathematical proof styling */
+        .proof {
+            background: linear-gradient(to right, #f3e5f5, #f8f4ff);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .proof-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Insight box styling */
+        .insight-box {
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+            border-left: 3px solid #1976d2;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .insight-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Analysis box styling */
+        .analysis-box {
+            background: linear-gradient(to right, #fff3e0, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .analysis-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Technical box styling */
+        .technical-box {
+            background: linear-gradient(to right, #fce4ec, #f8bbd9);
+            border-left: 3px solid #e91e63;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .technical-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* LoRA box styling */
+        .lora-box {
+            background: linear-gradient(to right, #e0f2f1, #b2dfdb);
+            border-left: 3px solid #009688;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .lora-header {
+            color: #00796b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Optimization box styling */
+        .optimization-box {
+            background: linear-gradient(to right, #fff3e0, #ffcc80);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .optimization-header {
+            color: #e65100;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Gradient analysis box styling */
+        .gradient-box {
+            background: linear-gradient(to right, #e8eaf6, #c5cae9);
+            border-left: 3px solid #3f51b5;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .gradient-header {
+            color: #303f9f;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Numerical stability box */
+        .stability-box {
+            background: linear-gradient(to right, #f3e5f5, #e1bee7);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stability-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Adam optimizer box */
+        .adam-box {
+            background: linear-gradient(to right, #fff8e1, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .adam-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Special styling for LoRA matrices visualization */
+        .lora-matrix {
+            display: inline-block;
+            text-align: center;
+            vertical-align: middle;
+            margin: 0.5rem;
+            padding: 1.5rem 1rem;
+            border: 2px solid #D79B00;
+            background-color: #FFE6CC;
+            font-family: 'Cambria Math', serif;
+            color: #333;
+        }
+
+        .pretrained-matrix {
+            display: inline-block;
+            text-align: center;
+            vertical-align: middle;
+            margin: 0.5rem;
+            padding: 1.5rem 1rem;
+            border: 2px solid #6C8EBF;
+            background-color: #DAE8FC;
+            font-family: 'Cambria Math', serif;
+            color: #333;
+        }
+
+        .matrix-operation {
+            display: inline-block;
+            margin: 0 0.5rem;
+            font-size: 1.2rem;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>Different Learning Rates for LoRA: Can LoRA Improve Further?</h1>
+                <div class="subtitle">Theoretical analysis and empirical evidence for assigning different learning rates to LoRA matrices, with optimal learning rate ratio derived from numerical stability considerations.</div>
+                
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>Su Jianlin</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-eye"></i>
+                        <span>Scientific Spaces</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <div class="tag">LoRA</div>
+                        <div class="tag">Fine-tuning</div>
+                        <div class="tag">Learning Rate</div>
+                        <div class="tag">Numerical Stability</div>
+                        <div class="tag">Adam Optimizer</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Translation Notice -->
+        <div class="translation-notice">
+            <div class="translation-notice-content">
+                <div class="translation-text">
+                    <h3><i class="fas fa-language"></i> Academic Translation</h3>
+                    <p>This is an academic English translation maintaining technical accuracy while adapting to English academic conventions.</p>
+                </div>
+                <div class="translator-badge">
+                    <i class="fas fa-user-graduate"></i>
+                    Translated by Juanxi Tian (ScalingOpt Team)
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Sidebar Table of Contents -->
+            <aside class="sidebar">
+                <nav class="toc">
+                    <div class="toc-header">
+                        <i class="fas fa-list"></i>
+                        Contents
+                    </div>
+                    <ul class="toc-list">
+                        <li class="toc-item">
+                            <a href="#conclusion-analysis" class="toc-link">
+                                <span class="toc-number">1</span>
+                                <span>Conclusion Analysis</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#numerical-stability" class="toc-link">
+                                <span class="toc-number">2</span>
+                                <span>Numerical Stability</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#equal-contribution" class="toc-link">
+                                <span class="toc-number">3</span>
+                                <span>Equal Contribution</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#quick-derivation" class="toc-link">
+                                <span class="toc-number">4</span>
+                                <span>Quick Derivation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#article-summary" class="toc-link">
+                                <span class="toc-number">5</span>
+                                <span>Summary</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Article Content -->
+            <main class="main-content">
+                <div class="lora-box">
+                    <div class="lora-header">
+                        <i class="fas fa-cogs"></i>
+                        LoRA Background
+                    </div>
+                    <p>LoRA (<span style="color:red">Lo</span>w-<span style="color:red">R</span>ank <span style="color:red">A</span>daptation) represents one of the parameter-efficient fine-tuning methods for Large Language Models (LLMs). We previously discussed LoRA from a gradient perspective in <a href="/archives/9590" target="_blank">"LoRA from a Gradient Perspective: Introduction, Analysis, Conjectures, and Extensions"</a>. In this article, we explore a new finding regarding LoRA:</p>
+                    
+                    <blockquote class="cite">
+                        <div><strong>By assigning different learning rates to the two matrices in LoRA, the effectiveness of LoRA can be further enhanced.</strong></div>
+                    </blockquote>
+                    
+                    <p>This conclusion originates from the recent paper <a href="https://papers.cool/arxiv/2402.12354" target="_blank">"LoRA+: Efficient Low Rank Adaptation of Large Models"</a> (hereinafter referred to as "LoRA+"). At first glance, this finding may not appear particularly remarkable, as introducing different learning rates essentially adds new hyperparameters, and typically any carefully tuned hyperparameter can lead to improvements. What distinguishes "LoRA+" is that it theoretically justifies this necessity and asserts that the optimal solution invariably requires the learning rate of the right matrix to exceed that of the left matrix. In summary, "LoRA+" serves as a classic example where theoretical guidance in training proves effective in practice, warranting careful examination.</p>
+                </div>
+                
+                <h2 id="conclusion-analysis">Conclusion Analysis<a href="#conclusion-analysis">#</a></h2>
+                
+                <p>Suppose the pre-trained parameters are represented by $W_0 \in \mathbb{R}^{n\times m}$. If full-parameter fine-tuning were employed, the update would also be an $n\times m$ matrix. To reduce the number of parameters, LoRA constrains the update to a low-rank matrix by setting $W = W_0 + AB$, where $A \in \mathbb{R}^{n\times r}$, $B \in \mathbb{R}^{r\times m}$, and $r \ll \min(n, m)$. The model's original parameters are then replaced with the new $W$, while $W_0$ remains fixed during training, with only $A$ and $B$ being updated, as illustrated below:</p>
+                
+                <div class="equation" style="text-align: center; padding: 1.5rem; margin: 1.5rem 0; background: linear-gradient(to right, #DAE8FC, #FFE6CC);">
+                    <span class="pretrained-matrix" style="display: inline-block; width: 200px; height: 120px; line-height: 120px; margin: 0 0.5rem; padding: 0; border: 2px solid #6C8EBF; background-color: #DAE8FC; font-family: 'Cambria Math', serif; color: #333;">$W_0\in\mathbb{R}^{n\times m}$</span>
+                    <span class="matrix-operation" style="display: inline-block; margin: 0 0.5rem; font-size: 1.2rem; vertical-align: middle;">$+$</span>
+                    <span class="lora-matrix" style="display: inline-block; width: 80px; height: 120px; line-height: 120px; margin: 0 0.5rem; padding: 0; border: 2px solid #D79B00; background-color: #FFE6CC; font-family: 'Cambria Math', serif; color: #333;">$A\in\mathbb{R}^{n\times r}$</span>
+                    <span class="matrix-operation" style="display: inline-block; margin: 0 0.5rem; font-size: 1.2rem; vertical-align: middle;">$\times$</span>
+                    <span class="lora-matrix" style="display: inline-block; width: 200px; height: 40px; line-height: 40px; margin: 0 0.5rem; padding: 0; border: 2px solid #D79B00; background-color: #FFE6CC; font-family: 'Cambria Math', serif; color: #333;">$B\in\mathbb{R}^{r\times m}$</span>
+                </div>
+                
+                <p>Note that LoRA is typically applied to dense layers, but the original paper's analysis is based on left-multiplication of weights, whereas implementations generally use right-multiplication of inputs. To avoid confusion, this article aligns notation with implementation: assuming the layer input is $X \in \mathbb{R}^{b\times n}$, the layer operation is $XW = X(W_0 + AB)$. Since the "LoRA+" conclusion is independent of pre-trained weights, we can without loss of generality set $W_0 = 0$, simplifying the layer operation to $Y = XAB \in \mathbb{R}^{b\times m}$.</p>
+                
+                <p>The conclusion of "LoRA+" is:</p>
+                
+                <blockquote class="cite">
+                    <div>To maximize LoRA's effectiveness and approximate the optimal solution as closely as possible, the learning rate for weight $B$ should exceed that for weight $A$.</div>
+                </blockquote>
+                
+                <p>Note that to ensure the initial model is equivalent to the original pre-trained model, LoRA typically initializes either $A$ or $B$ entirely to zero. Initially, the author assumed this conclusion might depend on which matrix is zero-initialized, but careful reading reveals that the conclusion claimed by "LoRA+" is independent of zero initialization. In other words, although $A$ and $B$ appear symmetric superficially, they possess inherent asymmetry such that regardless of whether $A$ or $B$ is zero-initialized, the conclusion remains that $B$'s learning rate should exceed $A$'s. This makes the finding particularly interesting.</p>
+                
+                <p>However, it must be noted that the original "LoRA+" paper's explanation is rather convoluted, so what follows is the author's simplified derivation. Essentially, it rests on two assumptions:</p>
+                
+                <blockquote>
+                    <p>1. <strong>Numerical Stability</strong>: The output values of each layer in the model should be numerically stable and independent of network width.</p>
+                    <p>2. <strong>Equal Contribution</strong>: For optimal LoRA performance, matrices $A$ and $B$ should contribute equally to the model's effectiveness.</p>
+                </blockquote>
+                
+                <p>We now analyze and quantify these two assumptions one by one.</p>
+                
+                <h2 id="numerical-stability">Numerical Stability<a href="#numerical-stability">#</a></h2>
+                
+                <div class="stability-box">
+                    <div class="stability-header">
+                        <i class="fas fa-balance-scale"></i>
+                        Numerical Stability Analysis
+                    </div>
+                    <p>First, numerical stability means that each component of $X$, $XA$, and $XAB$ should be $\mathcal{O}(1)$ in magnitude, independent of network width $n$ and $m$. Here, $\mathcal{O}(1)$ primarily denotes zero-order dependence on network width, not that the absolute values are necessarily close to 1. This assumption should be uncontroversial, as it is difficult to imagine a numerically unstable network achieving good predictive performance. However, some readers might question the necessity of "$XA$ being $\mathcal{O}(1)$" since $X$ is the input and $XAB$ is the output—requiring their numerical stability seems reasonable—but $XA$ is merely an intermediate variable. Must it also be numerically stable?</p>
+                    
+                    <p>From a forward propagation perspective alone, numerical stability of $XA$ is indeed not strictly necessary. However, if $XA$ is numerically unstable while $XAB$ remains stable, two scenarios arise: if $XA$ has large magnitude and $B$ has small magnitude, according to differentiation formulas, this would cause $A$'s gradients to be small and $B$'s gradients to be large; conversely, if $XA$ has small magnitude and $B$ has large magnitude, $A$'s gradients would be large and $B$'s gradients small. In summary, numerical instability in $XA$ leads to unstable gradients for $A$ and $B$, increasing optimization difficulty. Thus, imposing numerical stability on $XA$ as a condition is preferable.</p>
+                    
+                    <p>This numerical stability condition recalls "<a href="/archives/8620" target="_blank">LeCun initialization</a>", which states that if $W \in \mathbb{R}^{n\times m}$ is sampled i.i.d. from a distribution with mean 0 and variance $1/n$, then the magnitude of each component in $XW$ is roughly the same as that of $X$'s components. Following the same principle, if input $X$ is already $\mathcal{O}(1)$, then to ensure $XA$ and $XAB$ components remain $\mathcal{O}(1)$, $A$ and $B$ should be initialized with variances $1/n$ and $1/r$, respectively (mean defaults to 0 and will not be repeated).</p>
+                    
+                    <p>As mentioned earlier, LoRA typically zero-initializes either $A$ or $B$ to maintain identity initialization, but this detail is less critical. We only need to recognize that variances $1/n$ and $1/r$ can keep $XA$ and $XAB$ numerically stable, suggesting that after training, $A$ and $B$ likely approximate these variances. Given $r \ll n$, this implies that $A$'s component magnitudes will be significantly smaller than $B$'s component magnitudes, which is the source of asymmetry between $A$ and $B$.</p>
+                </div>
+                
+                <h2 id="equal-contribution">Equal Contribution<a href="#equal-contribution">#</a></h2>
+                
+                <div class="optimization-box">
+                    <div class="optimization-header">
+                        <i class="fas fa-chart-line"></i>
+                        Equal Contribution Principle
+                    </div>
+                    <p>Next, we examine the second assumption: $A$ and $B$ should contribute equally to model effectiveness. This assumption appears reasonable since in LLM+LoRA scenarios, typically $m = n$, meaning $A$ and $B$ have the same number of parameters, so equal contribution seems fair. If $m \neq n$, we can generalize this assumption to state that contribution is proportional to parameter count. The most fundamental metric for effectiveness is naturally the loss function, denoted here as $\mathcal{L}$.</p>
+                    
+                    <p>We aim to measure the change in loss function when $A \to A + \Delta A$ and $B \to B + \Delta B$:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(1)</span>
+                            \[
+                            \mathcal{L}(A+\Delta A,B+\Delta B) - \mathcal{L}(A,B)\approx \left\langle \frac{\partial\mathcal{L}}{\partial A},\Delta A\right\rangle + \left\langle \frac{\partial\mathcal{L}}{\partial B},\Delta B\right\rangle
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Here, a first-order linear approximation is used, where $\frac{\partial\mathcal{L}}{\partial A}$ and $\frac{\partial\mathcal{L}}{\partial B}$ are gradients of $A$ and $B$, and $\langle\cdot,\cdot\rangle$ denotes the Frobenius inner product. The two terms on the right can be interpreted as the respective contributions of $A$ and $B$ to effectiveness. However, note that the validity of linear approximation depends on increments $\Delta A$ and $\Delta B$ being small. For well-trained weights, increments relative to original weights may not necessarily be small. Therefore, we modify the "equal contribution" assumption to: "$A$ and $B$ should contribute equally to effectiveness in each update step." Since single-step updates are typically small, linear approximation holds reasonably well.</p>
+                    
+                    <p>Considering each step's update naturally leads us to optimizer considerations. Currently, Adam is the mainstream optimizer for both pre-training and fine-tuning. Adam maintains two sets of moving average states with corresponding hyperparameters $\beta_1$ and $\beta_2$, making precise analysis challenging. However, for the purposes of this article, we only require an order-of-magnitude estimate. Thus, we consider an extreme case and assume it yields the same order-of-magnitude result as the general case. This case is $\beta_1 = \beta_2 = 0$, where Adam reduces to <a href="/archives/9473" target="_blank">SignSGD</a>:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(2)</span>
+                            \[
+                            \Delta A = -\eta_A\,\text{sign}\left(\frac{\partial\mathcal{L}}{\partial A}\right),\quad\Delta B = -\eta_B\,\text{sign}\left(\frac{\partial\mathcal{L}}{\partial B}\right)
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>where $\eta_A$ and $\eta_B$ are respective learning rates. The "LoRA+" conclusion is that $\eta_B \gg \eta_A$.</p>
+                    
+                    <p>Substituting SignSGD increments from Equation (2) into Equation (1) yields:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(3)</span>
+                            \[
+                            \mathcal{L}(A+\Delta A,B+\Delta B) - \mathcal{L}(A,B)\approx \underbrace{-\,\eta_A \left\Vert\frac{\partial\mathcal{L}}{\partial A}\right\Vert_1}_{\Delta \mathcal{L}_A}\,\underbrace{-\,\eta_B \left\Vert \frac{\partial\mathcal{L}}{\partial B}\right\Vert_1}_{\Delta \mathcal{L}_B}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Here, $\Vert\cdot\Vert_1$ is the $L_1$ norm, i.e., the sum of absolute values of all components. "Equal contribution" means $\Delta \mathcal{L}_A$ and $\Delta \mathcal{L}_B$ should be of the same order of magnitude.</p>
+                </div>
+                
+                <h2 id="quick-derivation">Quick Derivation<a href="#quick-derivation">#</a></h2>
+                
+                <div class="gradient-box">
+                    <div class="gradient-header">
+                        <i class="fas fa-bolt"></i>
+                        Gradient Analysis and Derivation
+                    </div>
+                    <p>Further analysis requires explicit gradient expressions. Setting $Y = XAB$ again, we can compute:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(4)</span>
+                            \[
+                            \frac{\partial \mathcal{L}}{\partial A} = X^{\top}\frac{\partial \mathcal{L}}{\partial Y}B^{\top},\quad \frac{\partial \mathcal{L}}{\partial B} = A^{\top} X^{\top}\frac{\partial \mathcal{L}}{\partial Y}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Readers unfamiliar with matrix calculus might find these derivations confusing; the author admits the same. However, a simple technique can be employed. For $\frac{\partial \mathcal{L}}{\partial A}$, we know it is an $n\times r$ matrix (same shape as $A$). Similarly, $\frac{\partial \mathcal{L}}{\partial Y}$ is a $b\times m$ matrix. According to the chain rule, $\frac{\partial \mathcal{L}}{\partial A}$ should be a product of $\frac{\partial \mathcal{L}}{\partial Y}$, $X$, and $B$. We simply consider how these three matrices multiply to yield an $n\times r$ matrix according to matrix multiplication rules.</p>
+                    
+                    <p>With explicit forms of $\frac{\partial \mathcal{L}}{\partial A}$ and $\frac{\partial \mathcal{L}}{\partial B}$, we have a quick way to understand LoRA+. First, $\Delta \mathcal{L}_A$ is proportional to $\left\Vert\frac{\partial\mathcal{L}}{\partial A}\right\Vert_1$, which is the sum of absolute values of $nr$ components. Assuming each component is comparable, $\Delta \mathcal{L}_A$ roughly scales with $nr$. Then, $\frac{\partial\mathcal{L}}{\partial A}$ is linear in $B$, so each component magnitude roughly scales with $B$'s component magnitude. Combined, $\Delta \mathcal{L}_A$ scales with both $nr$ and $B$'s magnitude. Similarly, $\Delta \mathcal{L}_B$ roughly scales with both $mr$ and $A$'s magnitude. As discussed in the <a href="#numerical-stability">Numerical Stability</a> section, for forward numerical stability, $B$'s magnitude should exceed $A$'s magnitude (proportional to their approximate standard deviations $\sqrt{1/r}$ and $\sqrt{1/n}$, respectively). To ensure $\Delta \mathcal{L}_A$ and $\Delta \mathcal{L}_B$ are comparable, we have the approximate relation:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(5)</span>
+                            \[
+                            \eta_A \times nr \times \sqrt{1/r} \approx  \eta_B \times mr \times \sqrt{1/n}\quad\Rightarrow\quad \frac{\eta_B}{\eta_A} \approx \frac{n}{m}\sqrt{\frac{n}{r}}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Considering practical usage often has $m = n$ and $r = \mathcal{O}(1)$, we can simply write:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(6)</span>
+                            \[
+                            \frac{\eta_B}{\eta_A} = \mathcal{O}(\sqrt{n})
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>But we are not done yet—we must check consistency since one condition we used, "forward numerical stability," remains an ideal assumption. How can we make this assumption as plausible as possible? We combat one assumption with another:</p>
+                    
+                    <blockquote class="cite">
+                        <div>In the Adam optimizer, if the learning rate ratio between two parameters is $\lambda$, then after prolonged training, the magnitude ratio of these two parameters will also be approximately $\lambda$.</div>
+                    </blockquote>
+                    
+                    <p>According to Adam's approximation in Equation (2), each step's increment magnitude indeed scales with learning rate. However, the cumulative update result is not simply a sum of individual steps, so this assumption feels "somewhat plausible but not entirely convincing." Nevertheless, assumptions often have this character—somewhat plausible is sufficient, and the rest relies on faith. Under this assumption, if we train with $\frac{\eta_B}{\eta_A} = \mathcal{O}(\sqrt{n})$, then the magnitude ratio of $B$ to $A$ will also be $\mathcal{O}(\sqrt{n})$. Earlier we expected them to have approximate standard deviations $\sqrt{1/r}$ and $\sqrt{1/n}$, whose ratio is precisely $\mathcal{O}(\sqrt{n})$—perfectly consistent!</p>
+                    
+                    <p>The original paper's result slightly differs from the above, giving $\mathcal{O}(n)$. This discrepancy arises because the original paper considers $\Delta A$ and $\Delta B$ contributing equally to $Y$, but $Y$ is merely the layer output, not the final effectiveness metric, making this approach questionable. Although the original paper attempts to link $Y$'s increment to $\mathcal{L}$'s increment, it does not thoroughly compute, leading to deviation. Additionally, the original derivation原则上 only applies to the special case $b=1, r=1, m=n$, with $b > 1, r > 1$ cases directly extended, meaning the analysis lacks generality.</p>
+                    
+                    <p>Of course, whether it is $\mathcal{O}(n)$ or $\mathcal{O}(\sqrt{n})$ is not critically important—practical tuning is still required. However, LoRA+ conducted experiments on models of various sizes with $r$ typically 8 and $n$ ranging from 768 to 4096, ultimately recommending a default learning rate ratio of $2^4 = 16$, which aligns with $\sqrt{n/r}$. Thus, the optimal value is closer to $\mathcal{O}(\sqrt{n})$ than $\mathcal{O}(n)$.</p>
+                </div>
+                
+                <h2 id="article-summary">Article Summary<a href="#article-summary">#</a></h2>
+                
+                <div class="lora-box">
+                    <div class="lora-header">
+                        <i class="fas fa-check-circle"></i>
+                        Key Takeaways
+                    </div>
+                    <p>In this article, we introduced and derived a result known as "LoRA+", which supports the inherent asymmetry between the two low-rank matrices $A$ and $B$ in LoRA. Regardless of which matrix is zero-initialized, $B$'s learning rate should be set larger than $A$'s to achieve better performance.</p>
+                    
+                    <p>The theoretical analysis combines considerations of numerical stability during forward propagation with the principle of equal contribution during optimization. The derived optimal learning rate ratio $\frac{\eta_B}{\eta_A} \approx \frac{n}{m}\sqrt{\frac{n}{r}}$ provides practical guidance for LoRA fine-tuning, with empirical experiments supporting a default ratio around 16 for typical model configurations.</p>
+                    
+                    <p>This work exemplifies how theoretical insights can guide practical optimization strategies in deep learning, demonstrating that even simple modifications like adjusting individual learning rates for different parameter groups can yield measurable improvements when properly justified by analysis.</p>
+                </div>
+
+                <div class="citation-section">
+                    <div class="citation-header">
+                        <i class="fas fa-quote-right"></i>
+                        Citation Information
+                    </div>
+                    <p><strong>Original Article:</strong> Su Jianlin. Different Learning Rates for LoRA: Can LoRA Improve Further? <em>Scientific Spaces</em>.</p>
+                    
+                    <p><strong>How to cite this translation:</strong></p>
+                    <div class="citation-box">
+                        Su, J. Different Learning Rates for LoRA: Can LoRA Improve Further? [Translated by Juanxi Tian]. 
+                        <em>Scientific Spaces</em>.
+                    </div>
+                    <p style="margin-top: 0.8rem;"><strong>BibTeX:</strong></p>
+                    <div class="citation-box">
+                        @article{su2025lora_different_learning_rates,
+                            title   = {Different Learning Rates for LoRA: Can LoRA Improve Further?},
+                            author  = {Su, Jianlin},
+                            journal = {Scientific Spaces},
+                            year    = {2025},
+                            url     = {https://kexue.fm/archives/11216},
+                            note    = {Translated by Juanxi Tian (ScalingOpt Team)}
+                          }
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="translation-credit">
+                <i class="fas fa-user-graduate"></i>
+                Academic Translation by Juanxi Tian (ScalingOpt Team)
+            </div>
+            <div class="copyright">
+                © 2009-2025 Scientific Spaces. All rights reserved.<br>
+                Original content licensed under Creative Commons BY-NC-ND 2.5 China
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript for Interactive Features -->
+    <script>
+        // Scroll Progress Bar
+        window.addEventListener('scroll', function() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            scrollProgress.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Table of Contents Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            const sections = document.querySelectorAll('h2[id]');
+            
+            // Set active section based on scroll position
+            function setActiveSection() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 50)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', setActiveSection);
+            setActiveSection(); // Initial call
+            
+            // Smooth scroll for TOC links
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 50,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+
+        // MathJax Configuration
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                tags: 'ams'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    
+    <!-- MathJax CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</body>
+</html>

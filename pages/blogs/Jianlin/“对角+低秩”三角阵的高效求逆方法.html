@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Efficient Inversion Methods for "Diagonal + Low-Rank" Triangular Matrices | Scientific Spaces</title>
+    <meta name="description" content="Efficient algorithms for inverting triangular matrices with diagonal plus low-rank structure commonly appearing in modern linear attention architectures.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a6bca;
+            --primary-dark: #1357a8;
+            --primary-light: #e8f1fc;
+            --secondary: #2c3e50;
+            --accent: #3498db;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f5f7fa;
+            --gray-200: #e4e7eb;
+            --gray-300: #cbd2d9;
+            --gray-600: #7b8794;
+            --gray-700: #52606d;
+            --gray-900: #323f4b;
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 6px 24px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: #f0f5fc;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.5rem 1.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -8%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+        }
+
+        .meta-item i {
+            font-size: 0.85rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Translation Notice */
+        .translation-notice {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1.2rem;
+            margin: 0;
+        }
+
+        .translation-notice-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .translation-text h3 {
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .translation-text p {
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        .translator-badge {
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(26, 107, 202, 0.2);
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+        }
+
+        @media (max-width: 850px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            padding-left: 1rem;
+        }
+
+        .toc {
+            position: sticky;
+            top: 1rem;
+        }
+
+        .toc-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .toc-header i {
+            font-size: 0.9rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.4rem;
+            position: relative;
+        }
+
+        .toc-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            transition: var(--transition);
+            border-left: 2px solid transparent;
+            padding-left: 8px;
+        }
+
+        .toc-link:hover {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            transform: translateX(2px);
+        }
+
+        .toc-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .toc-number {
+            font-weight: 500;
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            min-width: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-right: 1.2rem;
+            padding-left: 0;
+        }
+
+        @media (max-width: 850px) {
+            .sidebar {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 0 1rem;
+            }
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 1.5rem 0 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: relative;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 35px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        h2 a {
+            color: var(--accent);
+            font-size: 0.7rem;
+            margin-left: 6px;
+            text-decoration: none;
+        }
+
+        h2 a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            color: var(--gray-900);
+            line-height: 1.65;
+        }
+
+        /* Equation Styling */
+        .equation-container {
+            margin: 0.8rem 0;
+        }
+
+        .equation {
+            background: var(--primary-light);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1rem;
+            border-radius: 0 5px 5px 0;
+            font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', serif;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .equation-number {
+            color: var(--primary);
+            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin-right: 6px;
+            display: inline-block;
+            min-width: 18px;
+        }
+
+        /* Code Block Styling */
+        .code-container {
+            margin: 1rem 0;
+            background: #2d2d2d;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .code-header {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 0.6rem 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .code-content {
+            padding: 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #f8f8f2;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+
+        /* Inline code styling */
+        code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background: var(--gray-100);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.85rem;
+            color: var(--primary-dark);
+        }
+
+        /* Reference Box */
+        .reference-box {
+            background: linear-gradient(to right, #f8fafc, var(--primary-light));
+            border: 1px solid var(--gray-200);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .reference-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .reference-header i {
+            font-size: 0.9rem;
+        }
+
+        .reference-list {
+            list-style: none;
+        }
+
+        .reference-item {
+            padding: 0.3rem 0 0.3rem 0.8rem;
+            position: relative;
+            margin-bottom: 0.4rem;
+            color: var(--gray-700);
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .reference-item::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 0.65rem;
+        }
+
+        /* Citation Section */
+        .citation-section {
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .citation-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .citation-box {
+            background: var(--white);
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid var(--gray-300);
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-top: 0.6rem;
+            overflow-x: auto;
+            color: var(--gray-900);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--secondary);
+            color: white;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .translation-credit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 6px 16px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(26, 107, 202, 0.2);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            margin-top: 0.6rem;
+        }
+
+        /* Utility Classes */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-light), #e8f2ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .math {
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.1s ease;
+            z-index: 1000;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 1rem 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 0.6rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem 0;
+            }
+            
+            .main-content {
+                padding-right: 0.8rem;
+            }
+            
+            .sidebar {
+                padding-left: 0.8rem;
+            }
+            
+            .meta-info {
+                gap: 0.6rem;
+            }
+            
+            .meta-item {
+                font-size: 0.75rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .translation-notice-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .translator-badge {
+                align-self: flex-start;
+            }
+        }
+
+        /* Links styling */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Optimize long formula display */
+        .equation {
+            word-break: break-word;
+        }
+        
+        /* Optimize list display */
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.3rem;
+            line-height: 1.5;
+        }
+        
+        /* Optimize math formula spacing */
+        .MathJax_Display {
+            margin: 0.6em 0 !important;
+        }
+        
+        /* Quote block styling */
+        blockquote.cite {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+        }
+        
+        blockquote.cite div {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        blockquote.cite a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        /* Blockquote styling */
+        blockquote {
+            background: linear-gradient(to right, var(--gray-100), var(--primary-light));
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+            position: relative;
+        }
+
+        blockquote p {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+
+        blockquote p:before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Underline styling */
+        u {
+            text-decoration: none;
+            border-bottom: 1px dotted var(--primary);
+        }
+
+        /* List styling inside main content */
+        .main-content ol, .main-content ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .main-content li {
+            margin-bottom: 0.4rem;
+            line-height: 1.6;
+        }
+
+        /* Highlight box for important notes */
+        .note-box {
+            background: linear-gradient(to right, #fff8e1, #fff3cd);
+            border-left: 3px solid #ffc107;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .note-box strong {
+            color: #856404;
+        }
+
+        /* Definition list styling */
+        .definition {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 3px solid #4caf50;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .definition-header {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Mathematical proof styling */
+        .proof {
+            background: linear-gradient(to right, #f3e5f5, #f8f4ff);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .proof-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Insight box styling */
+        .insight-box {
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+            border-left: 3px solid #1976d2;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .insight-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Analysis box styling */
+        .analysis-box {
+            background: linear-gradient(to right, #fff3e0, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .analysis-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Technical box styling */
+        .technical-box {
+            background: linear-gradient(to right, #fce4ec, #f8bbd9);
+            border-left: 3px solid #e91e63;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .technical-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Matrix inversion box styling */
+        .inversion-box {
+            background: linear-gradient(to right, #e0f2f1, #b2dfdb);
+            border-left: 3px solid #009688;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .inversion-header {
+            color: #00796b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Complexity analysis box styling */
+        .complexity-box {
+            background: linear-gradient(to right, #fff3e0, #ffcc80);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .complexity-header {
+            color: #e65100;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Algorithm box styling */
+        .algorithm-box {
+            background: linear-gradient(to right, #e8eaf6, #c5cae9);
+            border-left: 3px solid #3f51b5;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .algorithm-header {
+            color: #303f9f;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Implementation box styling */
+        .implementation-box {
+            background: linear-gradient(to right, #f3e5f5, #e1bee7);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .implementation-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Matrix visualization styling */
+        .matrix-visualization {
+            text-align: center;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            background: linear-gradient(to right, #f0f7ff, #e8f1fc);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .matrix-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+        }
+
+        .matrix-element {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            background: var(--white);
+            border: 1px solid var(--gray-300);
+            border-radius: 3px;
+            font-family: 'Cambria Math', serif;
+        }
+
+        .matrix-operation {
+            display: inline-block;
+            margin: 0 1rem;
+            font-size: 1.2rem;
+            vertical-align: middle;
+            color: var(--primary-dark);
+        }
+
+        /* Complexity notation styling */
+        .complexity {
+            font-family: 'Consolas', monospace;
+            color: var(--primary-dark);
+            font-weight: 600;
+            background: var(--primary-light);
+            padding: 0.1rem 0.4rem;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>Efficient Inversion Methods for "Diagonal + Low-Rank" Triangular Matrices</h1>
+                <div class="subtitle">Optimized algorithms for inverting triangular matrices with diagonal plus low-rank structure, commonly arising in modern linear attention architectures.</div>
+                
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>Su Jianlin</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-eye"></i>
+                        <span>Scientific Spaces</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <div class="tag">Matrix Inversion</div>
+                        <div class="tag">Linear Attention</div>
+                        <div class="tag">Triangular Matrices</div>
+                        <div class="tag">Low-Rank Structure</div>
+                        <div class="tag">Computational Complexity</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Translation Notice -->
+        <div class="translation-notice">
+            <div class="translation-notice-content">
+                <div class="translation-text">
+                    <h3><i class="fas fa-language"></i> Academic Translation</h3>
+                    <p>This is an academic English translation maintaining technical accuracy while adapting to English academic conventions.</p>
+                </div>
+                <div class="translator-badge">
+                    <i class="fas fa-user-graduate"></i>
+                    Translated by Juanxi Tian (ScalingOpt Team)
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Sidebar Table of Contents -->
+            <aside class="sidebar">
+                <nav class="toc">
+                    <div class="toc-header">
+                        <i class="fas fa-list"></i>
+                        Contents
+                    </div>
+                    <ul class="toc-list">
+                        <li class="toc-item">
+                            <a href="#basic-results" class="toc-link">
+                                <span class="toc-number">1</span>
+                                <span>Basic Results</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#low-rank-structure" class="toc-link">
+                                <span class="toc-number">2</span>
+                                <span>Low-Rank Structure</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#multiplication-computation" class="toc-link">
+                                <span class="toc-number">3</span>
+                                <span>Multiplication Computation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#article-summary" class="toc-link">
+                                <span class="toc-number">4</span>
+                                <span>Article Summary</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Article Content -->
+            <main class="main-content">
+                <div class="inversion-box">
+                    <div class="inversion-header">
+                        <i class="fas fa-calculator"></i>
+                        Problem Context
+                    </div>
+                    <p>From the article <a href="/archives/11033" target="_blank">"A Brief History of Linear Attention: From Imitation and Innovation to Back-Feeding"</a>, we observe that DeltaNet and subsequent linear attention models are fundamentally associated with the inverse matrix \((\boldsymbol{I} + \boldsymbol{K}\boldsymbol{K}^{\top}\odot\boldsymbol{M}^-)^{-1}\). This article specifically investigates efficient computation methods for inverting such triangular matrices characterized by "diagonal plus low-rank" structure.</p>
+                </div>
+                
+                <h2 id="basic-results">Basic Results<a href="#basic-results">#</a></h2>
+                
+                <div class="technical-box">
+                    <div class="technical-header">
+                        <i class="fas fa-shapes"></i>
+                        Problem Formalization
+                    </div>
+                    <p>We formally define the problem as follows:</p>
+                    
+                    <blockquote class="cite">
+                        <div>Given matrices \(\boldsymbol{Q},\boldsymbol{K}\in\mathbb{R}^{n\times d}\) and a diagonal matrix \(\boldsymbol{\Lambda}\in\mathbb{R}^{n\times n}\), with \(n\gg d\), define
+                        \[
+                        \boldsymbol{T} = \boldsymbol{\Lambda} + \boldsymbol{Q}\boldsymbol{K}^{\top}\odot\boldsymbol{M}^-
+                        \]
+                        where \(\boldsymbol{M}^-=\boldsymbol{M} - \boldsymbol{I}\), and matrix \(\boldsymbol{M}\) is defined as
+                        \[
+                        M_{i,j} = \left\{\begin{aligned} &1, &i \geq j \\ &0, &i < j\end{aligned}\right.
+                        \]
+                        We seek to compute the inverse matrix \(\boldsymbol{T}^{-1}\) and prove its computational complexity is \(\mathcal{O}(n^2)\).</div>
+                    </blockquote>
+                    
+                    <p>First, without the lower triangular constraint \(\odot\boldsymbol{M}^-\), this could be directly solved using the "<a href="https://en.wikipedia.org/wiki/Woodbury_matrix_identity" target="_blank">Woodbury matrix identity</a>":</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(1)</span>
+                            \[
+                            (\boldsymbol{\Lambda} + \boldsymbol{Q}\boldsymbol{K}^{\top})^{-1} = \boldsymbol{\Lambda}^{-1} - \boldsymbol{\Lambda}^{-1} \boldsymbol{Q}(\boldsymbol{I} + \boldsymbol{K}^{\top}\boldsymbol{\Lambda}^{-1}\boldsymbol{Q})^{-1}\boldsymbol{K}^{\top}\boldsymbol{\Lambda}^{-1}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>It's easily verified that the right-hand side computation complexity is \(\mathcal{O}(n^2)\). However, with the addition of \(\odot\boldsymbol{M}^-\), \(\boldsymbol{T}\) itself no longer maintains the "diagonal plus low-rank" structure, thus cannot be directly solved by this identity. Given the lower triangular characteristic, a fundamental approach is recursion, as we have the block matrix identity:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(2)</span>
+                            \[
+                            \begin{bmatrix}\boldsymbol{A} & \boldsymbol{0} \\ \boldsymbol{C} & \boldsymbol{B}\end{bmatrix}^{-1} = \begin{bmatrix}\boldsymbol{A}^{-1} & \boldsymbol{0} \\ -\boldsymbol{B}^{-1}\boldsymbol{C}\boldsymbol{A}^{-1} & \boldsymbol{B}^{-1}\end{bmatrix}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>This allows us to transform \(\boldsymbol{T}^{-1}\) into recursive form (convention: without parentheses, slicing has highest priority):</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(3)</span>
+                            \[
+                            \boldsymbol{T}_{[:l+1,:l+1]}^{-1} = \begin{bmatrix}\boldsymbol{T}_{[:l,:l]}^{-1} & \boldsymbol{0} \\ -\boldsymbol{T}_{[l:l+1,l:l+1]}^{-1}\boldsymbol{T}_{[l:l+1,:l]}\boldsymbol{T}_{[:l,:l]}^{-1} & \boldsymbol{T}_{[l:l+1,l:l+1]}^{-1}\end{bmatrix}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>The primary computation involves \(\boldsymbol{T}_{[l:l+1,:l]}\boldsymbol{T}_{[:l,:l]}^{-1}\), which multiplies a \(1\times l\) matrix with an \(l\times l\) matrix, yielding complexity \(\mathcal{O}(l^2)\). That is, each iteration's complexity grows quadratically, resulting in total complexity \(\mathcal{O}(n^3)\).</p>
+                </div>
+                
+                <h2 id="low-rank-structure">Low-Rank Structure<a href="#low-rank-structure">#</a></h2>
+                
+                <div class="algorithm-box">
+                    <div class="algorithm-header">
+                        <i class="fas fa-sitemap"></i>
+                        Leveraging Low-Rank Structure
+                    </div>
+                    <p>Naturally, this is because we haven't yet utilized the low-rank structure of \(\boldsymbol{T}\) (before \(\odot\boldsymbol{M}^-\)). Now incorporating this structure, we obtain \(\boldsymbol{T}_{[l:l+1,:l]} = \boldsymbol{Q}_{[l:l+1]}\boldsymbol{K}_{[:l]}^{\top}\). Substituting into the above equation yields:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(4)</span>
+                            \[
+                            \boldsymbol{T}_{[:l+1,:l+1]}^{-1} = \begin{bmatrix}\boldsymbol{T}_{[:l,:l]}^{-1} & \boldsymbol{0} \\ -\boldsymbol{T}_{[l:l+1,l:l+1]}^{-1}\boldsymbol{Q}_{[l:l+1]}\boldsymbol{K}_{[:l]}^{\top}\boldsymbol{T}_{[:l,:l]}^{-1} & \boldsymbol{T}_{[l:l+1,l:l+1]}^{-1}\end{bmatrix}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Note that \(\boldsymbol{K}_{[:l]}^{\top}\boldsymbol{T}_{[:l,:l]}^{-1}\in\mathbb{R}^{d\times l}\). If we can treat it as a recursive variable, then each iteration's complexity reduces to \(\mathcal{O}(l)\), successfully lowering total complexity to \(\mathcal{O}(n^2)\). Following this approach, we have:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(5)</span>
+                            \[
+                            \begin{aligned}
+                            \boldsymbol{K}_{[:l+1]}^{\top}\boldsymbol{T}_{[:l+1,:l+1]}^{-1} =&\, \begin{bmatrix}\boldsymbol{K}_{[:l]}^{\top} & \boldsymbol{K}_{[l:l+1]}^{\top}\end{bmatrix}\begin{bmatrix}\boldsymbol{T}_{[:l,:l]}^{-1} & \boldsymbol{0} \\ -\boldsymbol{T}_{[l:l+1,l:l+1]}^{-1}\boldsymbol{Q}_{[l:l+1]}\boldsymbol{K}_{[:l]}^{\top}\boldsymbol{T}_{[:l,:l]}^{-1} & \boldsymbol{T}_{[l:l+1,l:l+1]}^{-1}\end{bmatrix} \\[6pt]
+                            =&\, \begin{bmatrix}\boldsymbol{K}_{[:l]}^{\top}\boldsymbol{T}_{[:l,:l]}^{-1} & \boldsymbol{0}\end{bmatrix} +  \boldsymbol{K}_{[l:l+1]}^{\top}\underbrace{\begin{bmatrix}-\boldsymbol{T}_{[l:l+1,l:l+1]}^{-1}\boldsymbol{Q}_{[l:l+1]}\boldsymbol{K}_{[:l]}^{\top}\boldsymbol{T}_{[:l,:l]}^{-1} & \boldsymbol{T}_{[l:l+1,l:l+1]}^{-1}\end{bmatrix}}_{\text{which is exactly }(\boldsymbol{T}^{-1})_{[l:l+1,:l+1]}}
+                            \end{aligned}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>We observe this recursive process also avoids \(\mathcal{O}(l^2)\) operations, so the approach is feasible—we simply need to introduce a new variable to cache \(\boldsymbol{K}_{[:l]}^{\top}\boldsymbol{T}_{[:l,:l]}^{-1}\). Replacing \(l+1\) with \(l+c\) yields chunked recursive format.</p>
+                    
+                    <div class="complexity-box">
+                        <div class="complexity-header">
+                            <i class="fas fa-tachometer-alt"></i>
+                            Complexity Analysis
+                        </div>
+                        <p>The key insight is that by maintaining the intermediate result \(\boldsymbol{K}_{[:l]}^{\top}\boldsymbol{T}_{[:l,:l]}^{-1}\) as a recursive variable, we avoid expensive matrix-matrix multiplications involving dimensions growing with \(l\). Instead, we only perform:</p>
+                        <ul>
+                            <li>\(\mathcal{O}(c^3)\) operations for inverting the \(c \times c\) diagonal block</li>
+                            <li>\(\mathcal{O}(c^2 d)\) operations for matrix multiplications involving the cached variable</li>
+                            <li>\(\mathcal{O}(c d^2)\) operations for updating the cached variable</li>
+                        </ul>
+                        <p>Since \(d\) and \(c\) are constants independent of \(n\), the total complexity becomes \(\mathcal{O}(n)\) per column or \(\mathcal{O}(n^2)\) for the full inverse.</p>
+                    </div>
+                </div>
+                
+                <div class="implementation-box">
+                    <div class="implementation-header">
+                        <i class="fas fa-code"></i>
+                        Implementation and Verification
+                    </div>
+                    <p>Test code for the full inverse computation:</p>
+                    
+                    <div class="code-container">
+                        <div class="code-header">
+                            <i class="fas fa-python"></i>
+                            Python Implementation
+                        </div>
+                        <div class="code-content">
+                            <pre><code class="language-python">import numpy as np
+
+n, d, c = 1000, 100, 200
+Q = np.random.randn(n, d) / d**0.5
+K = np.random.randn(n, d) / d**0.5
+T = np.tril(Q @ K.T, -1) + np.eye(n)
+
+# Initialize matrices
+Y, Z = np.zeros((n, n)), np.zeros((d, n))
+
+# Chunked recursive computation
+for l in range(0, n, c):
+    # Invert diagonal block
+    Y[l:l + c, l:l + c] = np.linalg.inv(T[l:l + c, l:l + c])
+    
+    # Compute off-diagonal blocks using cached variable
+    Y[l:l + c, :l] = - Y[l:l + c, l:l + c] @ Q[l:l + c] @ Z[:, :l]
+    
+    # Update cached variable
+    Z[:, :l + c] += K[l:l + c].T @ Y[l:l + c, :l + c]
+
+# Verification
+print("Verification result:", np.allclose(Y @ T, np.eye(n)))</code></pre>
+                        </div>
+                    </div>
+                    
+                    <p>This implementation demonstrates the \(\mathcal{O}(n^2)\) complexity algorithm for computing the full inverse matrix \(\boldsymbol{T}^{-1}\). The chunk size \(c\) provides a tunable parameter balancing memory access patterns and computational efficiency.</p>
+                </div>
+                
+                <h2 id="multiplication-computation">Multiplication Computation<a href="#multiplication-computation">#</a></h2>
+                
+                <div class="algorithm-box">
+                    <div class="algorithm-header">
+                        <i class="fas fa-times-circle"></i>
+                        Matrix-Vector Multiplication
+                    </div>
+                    <p>Using the same approach, we can also demonstrate:</p>
+                    
+                    <blockquote class="cite">
+                        <div>For any matrix \(\boldsymbol{V}\in\mathbb{R}^{n\times d}\), computing \(\boldsymbol{T}^{-1}\boldsymbol{V}\) requires only \(\mathcal{O}(n)\) complexity.</div>
+                    </blockquote>
+                    
+                    <p>The proof requires only slight modifications to the previous process. First, we have:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(6)</span>
+                            \[
+                            \begin{aligned}
+                            (\boldsymbol{T}^{-1}\boldsymbol{V})_{[:l+1]} =&\, \boldsymbol{T}_{[:l+1,:l+1]}^{-1}\boldsymbol{V}_{[:l+1]} \\[6pt]
+                            =&\, \begin{bmatrix}\boldsymbol{T}_{[:l,:l]}^{-1} & \boldsymbol{0} \\ -\boldsymbol{T}_{[l:l+1,l:l+1]}^{-1}\boldsymbol{Q}_{[l:l+1]}\boldsymbol{K}_{[:l]}^{\top}\boldsymbol{T}_{[:l,:l]}^{-1} & \boldsymbol{T}_{[l:l+1,l:l+1]}^{-1}\end{bmatrix}\begin{bmatrix}\boldsymbol{V}_{[:l]} \\ \boldsymbol{V}_{[l:l+1]}\end{bmatrix} \\[6pt]
+                            =&\, \begin{bmatrix}\boldsymbol{T}_{[:l,:l]}^{-1}\boldsymbol{V}_{[:l]} \\ -\boldsymbol{T}_{[l:l+1,l:l+1]}^{-1}\boldsymbol{Q}_{[l:l+1]}\boldsymbol{K}_{[:l]}^{\top}\boldsymbol{T}_{[:l,:l]}^{-1}\boldsymbol{V}_{[:l]} + \boldsymbol{T}_{[l:l+1,l:l+1]}^{-1}\boldsymbol{V}_{[l:l+1]}\end{bmatrix} \\[6pt]
+                            =&\, \begin{bmatrix}(\boldsymbol{T}^{-1}\boldsymbol{V})_{[:l]} \\ \boldsymbol{T}_{[l:l+1,l:l+1]}^{-1}(\boldsymbol{V}_{[l:l+1]} - \boldsymbol{Q}_{[l:l+1]}\boldsymbol{K}_{[:l]}^{\top}(\boldsymbol{T}^{-1}\boldsymbol{V})_{[:l]})\end{bmatrix}
+                            \end{aligned}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Then:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(7)</span>
+                            \[
+                            \begin{aligned}
+                            \boldsymbol{K}_{[:l+1]}^{\top}(\boldsymbol{T}^{-1}\boldsymbol{V})_{[:l+1]} =&\, \begin{bmatrix}\boldsymbol{K}_{[:l]}^{\top} & \boldsymbol{K}_{[l:l+1]}^{\top}\end{bmatrix}\begin{bmatrix}(\boldsymbol{T}^{-1}\boldsymbol{V})_{[:l]} \\ (\boldsymbol{T}^{-1}\boldsymbol{V})_{[l:l+1]} \end{bmatrix} \\[8pt]
+                            =&\,\boldsymbol{K}_{[:l]}^{\top}(\boldsymbol{T}^{-1}\boldsymbol{V})_{[:l]} + \boldsymbol{K}_{[l:l+1]}^{\top}(\boldsymbol{T}^{-1}\boldsymbol{V})_{[l:l+1]}
+                            \end{aligned}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Therefore, caching \(\boldsymbol{K}_{[:l]}^{\top}(\boldsymbol{T}^{-1}\boldsymbol{V})_{[:l]}\in\mathbb{R}^{d\times d}\) suffices to make each step's computational complexity independent of \(l\), yielding total complexity \(\mathcal{O}(n)\). Similarly, replacing \(l+1\) with \(l+c\) produces chunked format.</p>
+                    
+                    <div class="complexity-box">
+                        <div class="complexity-header">
+                            <i class="fas fa-chart-line"></i>
+                            Complexity Advantage
+                        </div>
+                        <p>The \(\mathcal{O}(n)\) complexity for computing \(\boldsymbol{T}^{-1}\boldsymbol{V}\) represents a significant improvement over the \(\mathcal{O}(n^3)\) naive approach or even the \(\mathcal{O}(n^2)\) full inverse computation. This efficiency is particularly valuable in linear attention applications where we typically need \(\boldsymbol{T}^{-1}\boldsymbol{V}\) rather than the full inverse matrix.</p>
+                        <p>The key optimization lies in maintaining the small \(d \times d\) matrix \(\boldsymbol{K}_{[:l]}^{\top}(\boldsymbol{T}^{-1}\boldsymbol{V})_{[:l]}\) as state, avoiding operations that scale with the growing dimension \(l\). Each chunk operation involves:</p>
+                        <ul>
+                            <li>\(\mathcal{O}(c^3)\) for diagonal block inversion</li>
+                            <li>\(\mathcal{O}(c^2 d)\) for matrix-vector operations</li>
+                            <li>\(\mathcal{O}(d^2)\) for state updates</li>
+                        </ul>
+                        <p>With \(n/c\) chunks, the total complexity is \(\mathcal{O}(n)\) for fixed \(c\) and \(d\).</p>
+                    </div>
+                </div>
+                
+                <div class="implementation-box">
+                    <div class="implementation-header">
+                        <i class="fas fa-laptop-code"></i>
+                        Implementation for Matrix Multiplication
+                    </div>
+                    <p>Test code for computing \(\boldsymbol{T}^{-1}\boldsymbol{V}\):</p>
+                    
+                    <div class="code-container">
+                        <div class="code-header">
+                            <i class="fas fa-python"></i>
+                            Python Implementation
+                        </div>
+                        <div class="code-content">
+                            <pre><code class="language-python">import numpy as np
+
+n, d, c = 1000, 100, 200
+Q = np.random.randn(n, d) / d**0.5
+K = np.random.randn(n, d) / d**0.5
+V = np.random.randn(n, d) / d**0.5
+T = np.tril(Q @ K.T, -1) + np.eye(n)
+
+# Initialize matrices
+Y, Z = np.zeros((n, d)), np.zeros((d, d))
+
+# Chunked recursive computation
+for l in range(0, n, c):
+    # Invert diagonal block
+    X = np.linalg.inv(T[l:l + c, l:l + c])
+    
+    # Compute current chunk using cached state
+    Y[l:l + c] = X @ (V[l:l + c] - Q[l:l + c] @ Z)
+    
+    # Update cached state
+    Z += K[l:l + c].T @ Y[l:l + c]
+
+# Verification
+print("Verification result:", np.allclose(T @ Y, V))</code></pre>
+                        </div>
+                    </div>
+                    
+                    <p>This implementation efficiently computes \(\boldsymbol{T}^{-1}\boldsymbol{V}\) with \(\mathcal{O}(n)\) complexity, making it highly practical for large-scale applications in linear attention models where such computations are frequent.</p>
+                </div>
+                
+                <h2 id="article-summary">Article Summary<a href="#article-summary">#</a></h2>
+                
+                <div class="insight-box">
+                    <div class="insight-header">
+                        <i class="fas fa-check-circle"></i>
+                        Summary and Implications
+                    </div>
+                    <p>This article examines efficient inversion methods for triangular matrices with "diagonal plus low-rank" structure, which commonly appear in modern linear attention models. The key contributions are:</p>
+                    
+                    <ol>
+                        <li><strong>Full Inverse Computation</strong>: We presented an \(\mathcal{O}(n^2)\) algorithm for computing the complete inverse \(\boldsymbol{T}^{-1}\) by leveraging the low-rank structure and maintaining appropriate cached variables during recursive computation.</li>
+                        
+                        <li><strong>Matrix Multiplication Optimization</strong>: We demonstrated that computing \(\boldsymbol{T}^{-1}\boldsymbol{V}\) can be achieved with \(\mathcal{O}(n)\) complexity, a significant improvement relevant for practical applications.</li>
+                        
+                        <li><strong>Chunked Implementation</strong>: Both algorithms can be implemented in chunked formats, providing flexibility for memory management and parallelization opportunities.</li>
+                        
+                        <li><strong>Practical Verification</strong>: Python implementations validate the correctness and efficiency of the proposed methods.</li>
+                    </ol>
+                    
+                    <p>These results have important implications for linear attention architectures like DeltaNet, where such matrix inversions are fundamental operations. The \(\mathcal{O}(n^2)\) and \(\mathcal{O}(n)\) complexities represent substantial improvements over naive \(\mathcal{O}(n^3)\) approaches, making these models more computationally feasible for long-sequence applications.</p>
+                    
+                    <p>The techniques developed here—leveraging structural properties, maintaining appropriate cached state, and employing chunked recursion—provide a template for optimizing other structured matrix computations in machine learning and numerical linear algebra.</p>
+                </div>
+
+                <div class="citation-section">
+                    <div class="citation-header">
+                        <i class="fas fa-quote-right"></i>
+                        Citation Information
+                    </div>
+                    <p><strong>Original Article:</strong> Su Jianlin. Efficient Inversion Methods for "Diagonal + Low-Rank" Triangular Matrices. <em>Scientific Spaces</em>.</p>
+                    
+                    <p><strong>How to cite this translation:</strong></p>
+                    <div class="citation-box">
+                        Su, J. Efficient Inversion Methods for "Diagonal + Low-Rank" Triangular Matrices [Translated by Juanxi Tian]. 
+                        <em>Scientific Spaces</em>.
+                    </div>
+                    <p style="margin-top: 0.8rem;"><strong>BibTeX:</strong></p>
+                    <div class="citation-box">
+                        @article{su2025efficient_inversion_diagonal_low_rank,
+                            title   = {Efficient Inversion Methods for "Diagonal + Low-Rank" Triangular Matrices},
+                            author  = {Su, Jianlin},
+                            journal = {Scientific Spaces},
+                            year    = {2025},
+                            url     = {https://kexue.fm/archives/11218},
+                            note    = {Translated by Juanxi Tian (ScalingOpt Team)}
+                          }
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="translation-credit">
+                <i class="fas fa-user-graduate"></i>
+                Academic Translation by Juanxi Tian (ScalingOpt Team)
+            </div>
+            <div class="copyright">
+                © 2009-2025 Scientific Spaces. All rights reserved.<br>
+                Original content licensed under Creative Commons BY-NC-ND 2.5 China
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript for Interactive Features -->
+    <script>
+        // Scroll Progress Bar
+        window.addEventListener('scroll', function() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            scrollProgress.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Table of Contents Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            const sections = document.querySelectorAll('h2[id]');
+            
+            // Set active section based on scroll position
+            function setActiveSection() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 50)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', setActiveSection);
+            setActiveSection(); // Initial call
+            
+            // Smooth scroll for TOC links
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 50,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+
+        // MathJax Configuration
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                tags: 'ams'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    
+    <!-- MathJax CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</body>
+</html>

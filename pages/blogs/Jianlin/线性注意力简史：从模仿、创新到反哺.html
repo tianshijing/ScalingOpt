@@ -1,0 +1,1882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Brief History of Linear Attention: From Imitation and Innovation to Back-Feeding | Scientific Spaces</title>
+    <meta name="description" content="Comprehensive overview of linear attention development from early approximations to modern innovations and reciprocal influences on softmax attention architectures.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a6bca;
+            --primary-dark: #1357a8;
+            --primary-light: #e8f1fc;
+            --secondary: #2c3e50;
+            --accent: #3498db;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f5f7fa;
+            --gray-200: #e4e7eb;
+            --gray-300: #cbd2d9;
+            --gray-600: #7b8794;
+            --gray-700: #52606d;
+            --gray-900: #323f4b;
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 6px 24px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: #f0f5fc;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.5rem 1.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -8%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+        }
+
+        .meta-item i {
+            font-size: 0.85rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Translation Notice */
+        .translation-notice {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1.2rem;
+            margin: 0;
+        }
+
+        .translation-notice-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .translation-text h3 {
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .translation-text p {
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        .translator-badge {
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(26, 107, 202, 0.2);
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+        }
+
+        @media (max-width: 850px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            padding-left: 1rem;
+        }
+
+        .toc {
+            position: sticky;
+            top: 1rem;
+        }
+
+        .toc-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .toc-header i {
+            font-size: 0.9rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.4rem;
+            position: relative;
+        }
+
+        .toc-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            transition: var(--transition);
+            border-left: 2px solid transparent;
+            padding-left: 8px;
+        }
+
+        .toc-link:hover {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            transform: translateX(2px);
+        }
+
+        .toc-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .toc-number {
+            font-weight: 500;
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            min-width: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-right: 1.2rem;
+            padding-left: 0;
+        }
+
+        @media (max-width: 850px) {
+            .sidebar {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 0 1rem;
+            }
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 1.5rem 0 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: relative;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 35px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        h2 a {
+            color: var(--accent);
+            font-size: 0.7rem;
+            margin-left: 6px;
+            text-decoration: none;
+        }
+
+        h2 a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            color: var(--gray-900);
+            line-height: 1.65;
+        }
+
+        /* Equation Styling */
+        .equation-container {
+            margin: 0.8rem 0;
+        }
+
+        .equation {
+            background: var(--primary-light);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1rem;
+            border-radius: 0 5px 5px 0;
+            font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', serif;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .equation-number {
+            color: var(--primary);
+            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin-right: 6px;
+            display: inline-block;
+            min-width: 18px;
+        }
+
+        /* Code Block Styling */
+        .code-container {
+            margin: 1rem 0;
+            background: #2d2d2d;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .code-header {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 0.6rem 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .code-content {
+            padding: 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #f8f8f2;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+        }
+
+        /* Reference Box */
+        .reference-box {
+            background: linear-gradient(to right, #f8fafc, var(--primary-light));
+            border: 1px solid var(--gray-200);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .reference-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .reference-header i {
+            font-size: 0.9rem;
+        }
+
+        .reference-list {
+            list-style: none;
+        }
+
+        .reference-item {
+            padding: 0.3rem 0 0.3rem 0.8rem;
+            position: relative;
+            margin-bottom: 0.4rem;
+            color: var(--gray-700);
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .reference-item::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 0.65rem;
+        }
+
+        /* Citation Section */
+        .citation-section {
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .citation-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .citation-box {
+            background: var(--white);
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid var(--gray-300);
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-top: 0.6rem;
+            overflow-x: auto;
+            color: var(--gray-900);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--secondary);
+            color: white;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .translation-credit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 6px 16px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(26, 107, 202, 0.2);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            margin-top: 0.6rem;
+        }
+
+        /* Utility Classes */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-light), #e8f2ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .math {
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.1s ease;
+            z-index: 1000;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 1rem 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 0.6rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem 0;
+            }
+            
+            .main-content {
+                padding-right: 0.8rem;
+            }
+            
+            .sidebar {
+                padding-left: 0.8rem;
+            }
+            
+            .meta-info {
+                gap: 0.6rem;
+            }
+            
+            .meta-item {
+                font-size: 0.75rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .translation-notice-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .translator-badge {
+                align-self: flex-start;
+            }
+        }
+
+        /* Links styling */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Optimize long formula display */
+        .equation {
+            word-break: break-word;
+        }
+        
+        /* Optimize list display */
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.3rem;
+            line-height: 1.5;
+        }
+        
+        /* Optimize math formula spacing */
+        .MathJax_Display {
+            margin: 0.6em 0 !important;
+        }
+        
+        /* Image container styling */
+        .pic-container {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+        
+        .pic-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .typecho-caption {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        
+        /* Quote block styling */
+        blockquote.cite {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+        }
+        
+        blockquote.cite div {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        blockquote.cite a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        /* Blockquote styling */
+        blockquote {
+            background: linear-gradient(to right, var(--gray-100), var(--primary-light));
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+            position: relative;
+        }
+
+        blockquote p {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+
+        blockquote p:before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Underline styling */
+        u {
+            text-decoration: none;
+            border-bottom: 1px dotted var(--primary);
+        }
+
+        /* List styling inside main content */
+        .main-content ol, .main-content ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .main-content li {
+            margin-bottom: 0.4rem;
+            line-height: 1.6;
+        }
+
+        /* Highlight box for important notes */
+        .note-box {
+            background: linear-gradient(to right, #fff8e1, #fff3cd);
+            border-left: 3px solid #ffc107;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .note-box strong {
+            color: #856404;
+        }
+
+        /* Definition list styling */
+        .definition {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 3px solid #4caf50;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .definition-header {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Mathematical proof styling */
+        .proof {
+            background: linear-gradient(to right, #f3e5f5, #f8f4ff);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .proof-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Insight box styling */
+        .insight-box {
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+            border-left: 3px solid #1976d2;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .insight-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Analysis box styling */
+        .analysis-box {
+            background: linear-gradient(to right, #fff3e0, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .analysis-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Technical box styling */
+        .technical-box {
+            background: linear-gradient(to right, #fce4ec, #f8bbd9);
+            border-left: 3px solid #e91e63;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .technical-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Linear Attention box styling */
+        .linear-attention-box {
+            background: linear-gradient(to right, #e0f2f1, #b2dfdb);
+            border-left: 3px solid #009688;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .linear-attention-header {
+            color: #00796b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Softmax Attention box styling */
+        .softmax-attention-box {
+            background: linear-gradient(to right, #fff3e0, #ffcc80);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .softmax-attention-header {
+            color: #e65100;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* RNN/Recurrent box styling */
+        .rnn-box {
+            background: linear-gradient(to right, #e8eaf6, #c5cae9);
+            border-left: 3px solid #3f51b5;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .rnn-header {
+            color: #303f9f;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* DeltaNet box styling */
+        .deltanet-box {
+            background: linear-gradient(to right, #f3e5f5, #e1bee7);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .deltanet-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* TTT box styling */
+        .ttt-box {
+            background: linear-gradient(to right, #fff8e1, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .ttt-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* PaTH box styling */
+        .path-box {
+            background: linear-gradient(to right, #fce4ec, #f8bbd9);
+            border-left: 3px solid #e91e63;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .path-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* MesaNet box styling */
+        .mesanet-box {
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+            border-left: 3px solid #1976d2;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .mesanet-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Comparison table styling */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        .comparison-table th {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            font-weight: 600;
+            padding: 0.8rem;
+            border: 1px solid var(--gray-300);
+            text-align: center;
+        }
+
+        .comparison-table td {
+            padding: 0.8rem;
+            border: 1px solid var(--gray-300);
+            vertical-align: top;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: var(--gray-100);
+        }
+
+        /* Matrix visualization styling */
+        .matrix-visualization {
+            text-align: center;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            background: linear-gradient(to right, #f0f7ff, #e8f1fc);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .matrix-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+        }
+
+        .matrix-element {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            background: var(--white);
+            border: 1px solid var(--gray-300);
+            border-radius: 3px;
+            font-family: 'Cambria Math', serif;
+        }
+
+        .matrix-operation {
+            display: inline-block;
+            margin: 0 1rem;
+            font-size: 1.2rem;
+            vertical-align: middle;
+            color: var(--primary-dark);
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>A Brief History of Linear Attention: From Imitation and Innovation to Back-Feeding</h1>
+                <div class="subtitle">Comprehensive overview of linear attention development from early approximations to modern innovations and reciprocal influences on softmax attention architectures.</div>
+                
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>Su Jianlin</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-eye"></i>
+                        <span>Scientific Spaces</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <div class="tag">Linear Attention</div>
+                        <div class="tag">Transformers</div>
+                        <div class="tag">RNN</div>
+                        <div class="tag">DeltaNet</div>
+                        <div class="tag">Sequence Modeling</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Translation Notice -->
+        <div class="translation-notice">
+            <div class="translation-notice-content">
+                <div class="translation-text">
+                    <h3><i class="fas fa-language"></i> Academic Translation</h3>
+                    <p>This is an academic English translation maintaining technical accuracy while adapting to English academic conventions.</p>
+                </div>
+                <div class="translator-badge">
+                    <i class="fas fa-user-graduate"></i>
+                    Translated by Juanxi Tian (ScalingOpt Team)
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Sidebar Table of Contents -->
+            <aside class="sidebar">
+                <nav class="toc">
+                    <div class="toc-header">
+                        <i class="fas fa-list"></i>
+                        Contents
+                    </div>
+                    <ul class="toc-list">
+                        <li class="toc-item">
+                            <a href="#quadratic-complexity" class="toc-link">
+                                <span class="toc-number">1</span>
+                                <span>Quadratic Complexity</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#original-form" class="toc-link">
+                                <span class="toc-number">2</span>
+                                <span>Original Form</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#varied-forgetting-gates" class="toc-link">
+                                <span class="toc-number">3</span>
+                                <span>Varied Forgetting Gates</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#test-time-training" class="toc-link">
+                                <span class="toc-number">4</span>
+                                <span>Test-Time Training</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#removing-old-adding-new" class="toc-link">
+                                <span class="toc-number">5</span>
+                                <span>Removing Old, Adding New</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#inversion-and-generalization" class="toc-link">
+                                <span class="toc-number">6</span>
+                                <span>Inversion and Generalization</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#back-feeding-ongoing" class="toc-link">
+                                <span class="toc-number">7</span>
+                                <span>Back-Feeding Ongoing</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#hardcore-encoding" class="toc-link">
+                                <span class="toc-number">8</span>
+                                <span>Hardcore Encoding</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#simplification-infinite-delight" class="toc-link">
+                                <span class="toc-number">9</span>
+                                <span>Simplification, Infinite Delight</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#unconventional-approaches" class="toc-link">
+                                <span class="toc-number">10</span>
+                                <span>Unconventional Approaches</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#nascent-development" class="toc-link">
+                                <span class="toc-number">11</span>
+                                <span>Nascent Development</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Article Content -->
+            <main class="main-content">
+                <div class="linear-attention-box">
+                    <div class="linear-attention-header">
+                        <i class="fas fa-history"></i>
+                        Historical Context
+                    </div>
+                    <p>Within the Chinese academic community, this site was relatively early in focusing on linear attention. When writing the first related blog post <a href="/archives/7546" target="_blank">"Exploring Linear Attention: Must Attention Have a Softmax?"</a> in 2020, discussions primarily centered around BERT-related softmax attention. In hindsight, considering linear attention during the BERT era wasn't particularly wise, as training lengths were relatively short, and models were primarily encoder-based, offering little advantage for linear attention. Regarding this perspective, the author also wrote <a href="/archives/8610" target="_blank">"Linear Transformer Probably Isn't the Model You've Been Waiting For"</a> to express this view.</p>
+                    
+                    <p>Until ChatGPT's emergence forced everyone to develop decoder-only generative models, which aligns highly with the RNN form of linear attention. Simultaneously, the pursuit of longer training lengths made the quadratic complexity bottleneck of softmax attention increasingly apparent. In this new context, linear attention has increasingly demonstrated competitiveness, even showing signs of "back-feeding" softmax attention.</p>
+                </div>
+                
+                <h2 id="quadratic-complexity">Quadratic Complexity<a href="#quadratic-complexity">#</a></h2>
+                
+                <div class="technical-box">
+                    <div class="technical-header">
+                        <i class="fas fa-calculator"></i>
+                        Formal Notation and Problem Definition
+                    </div>
+                    <p>First, we introduce some notation:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(1)</span>
+                            \[
+                            \begin{gathered}
+                            \boldsymbol{q}_i,\boldsymbol{k}_i,\boldsymbol{v}_i,\boldsymbol{o}_i \in \mathbb{R}^{d\times 1} \\[6pt]
+                            \boldsymbol{Q}=[\boldsymbol{q}_1,\boldsymbol{q}_2,\cdots,\boldsymbol{q}_n]^{\top}\in\mathbb{R}^{n\times d} \\[6pt]
+                            \boldsymbol{K}=[\boldsymbol{k}_1,\boldsymbol{k}_2,\cdots,\boldsymbol{k}_n]^{\top}\in\mathbb{R}^{n\times d} \\[6pt]
+                            \boldsymbol{V}=[\boldsymbol{v}_1,\boldsymbol{v}_2,\cdots,\boldsymbol{v}_n]^{\top}\in\mathbb{R}^{n\times d} \\[6pt]
+                            \boldsymbol{O}=[\boldsymbol{o}_1,\boldsymbol{o}_2,\cdots,\boldsymbol{o}_n]^{\top}\in\mathbb{R}^{n\times d} \\[6pt]
+                            \end{gathered}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>An attention model essentially constitutes a mapping \(\boldsymbol{Q},\boldsymbol{K},\boldsymbol{V}\to \boldsymbol{O}\). This article primarily concerns causal scenarios, meaning \(\boldsymbol{o}_t\) depends at most on \(\boldsymbol{Q}_{[:t]},\boldsymbol{K}_{[:t]},\boldsymbol{V}_{[:t]}\). In principle, the \(d\) of \(\boldsymbol{Q},\boldsymbol{K}\) can differ from that of \(\boldsymbol{V},\boldsymbol{O}\); for instance, <a href="/archives/8934" target="_blank">GAU</a> and <a href="/archives/10091" target="_blank">MLA</a> exemplify this, but simplifying them to the same dimension doesn't alter the essential problem.</p>
+                    
+                    <p>Standard softmax attention typically refers to the attention mechanism proposed in <a href="/archives/4765" target="_blank">"Attention is All You Need"</a>:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(2)</span>
+                            \[
+                            \boldsymbol{O} = \mathop{\text{softmax}}(\boldsymbol{Q}\boldsymbol{K}^{\top} + \log \boldsymbol{M})\boldsymbol{V}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Here, the scaling factor \(1/\sqrt{d}\) is omitted since it can always be absorbed into \(\boldsymbol{Q},\boldsymbol{K}\). \(\mathop{\text{softmax}}\) performs exponential normalization along the second dimension, and \(\boldsymbol{M}\in\mathbb{R}^{n\times n}\) is a lower triangular matrix called the mask matrix, defined as:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(3)</span>
+                            \[
+                            M_{i,j} = \left\{\begin{aligned} &1, &i \geq j \\ &0, &i < j\end{aligned}\right.
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>\(\log\boldsymbol{M}\) means taking the logarithm element-wise for \(\boldsymbol{M}\), where \(\log 0 = -\infty\). Writing softmax attention in component form yields:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(4)</span>
+                            \[
+                            \boldsymbol{o}_t = \frac{\sum_{j=1}^t \exp(\boldsymbol{q}_t^{\top}\boldsymbol{k}_j) \boldsymbol{v}_j}{\sum_{j=1}^t \exp(\boldsymbol{q}_t^{\top}\boldsymbol{k}_j) }
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>The denominator primarily maintains numerical stability; additionally, if we apply RMSNorm to \(\boldsymbol{O}\), the denominator automatically cancels. Thus, the core of softmax attention lies in the numerator part:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(5)</span>
+                            \[
+                            \boldsymbol{O} = \exp(\boldsymbol{Q}\boldsymbol{K}^{\top} + \log \boldsymbol{M})\boldsymbol{V} = (\exp(\boldsymbol{Q}\boldsymbol{K}^{\top})\odot \boldsymbol{M})\boldsymbol{V}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>where \(\odot\) denotes Hadamard product, and \(\exp\) is applied element-wise. The denominator simply replaces \(\boldsymbol{V}\) with an \(n\times 1\) all-ones matrix, which we can supplement if needed. The standard implementation of softmax attention requires computing the \(n\times n\) matrix \(\exp(\boldsymbol{Q}\boldsymbol{K}^{\top})\), so both space and time complexity are proportional to \(n^2\). The emergence of <a href="https://papers.cool/arxiv/2205.14135" target="_blank">Flash Attention</a> reduces space requirements, but quadratic time complexity remains unavoidable.</p>
+                </div>
+                
+                <h2 id="original-form">Original Form<a href="#original-form">#</a></h2>
+                
+                <div class="linear-attention-box">
+                    <div class="linear-attention-header">
+                        <i class="fas fa-baby"></i>
+                        Early Linear Attention Forms
+                    </div>
+                    <p>The earliest linear attention approaches mainly imitated and approximated softmax attention. The simplest scheme directly removes \(\exp\), yielding:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(6)</span>
+                            \[
+                            \boldsymbol{O} = (\boldsymbol{Q}\boldsymbol{K}^{\top}\odot \boldsymbol{M})\boldsymbol{V}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>For simplicity, we stipulate that <span style="color:red">matrix multiplication takes precedence over Hadamard product</span>, allowing us to omit a set of parentheses. Why is this form "linear" attention? To understand this quickly, consider the non-causal version without \(\odot \boldsymbol{M}\): \(\boldsymbol{O} = (\boldsymbol{Q}\boldsymbol{K}^{\top})\boldsymbol{V} = \boldsymbol{Q}(\boldsymbol{K}^{\top}\boldsymbol{V})\). Note that computing \(\boldsymbol{K}^{\top}\boldsymbol{V}\) has complexity \(\mathcal{O}(nd^2)\), resulting in a \(d\times d\) matrix, then multiplying by \(\boldsymbol{Q}\) also has complexity \(\mathcal{O}(nd^2)\), so overall complexity is linear in \(n\).</p>
+                    
+                    <p>For the causal version (6), we can understand it through component form:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(7)</span>
+                            \[
+                            \boldsymbol{o}_t = \sum_{j=1}^t \boldsymbol{v}_j (\boldsymbol{k}_j^{\top} \boldsymbol{q}_t) = \sum_{j=1}^t (\boldsymbol{v}_j \boldsymbol{k}_j^{\top}) \boldsymbol{q}_t = \left(\sum_{j=1}^t \boldsymbol{v}_j \boldsymbol{k}_j^{\top}\right) \boldsymbol{q}_t
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>If we denote the parenthesized part as \(\boldsymbol{S}_t\), then:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(8)</span>
+                            \[
+                            \boldsymbol{o}_t = \boldsymbol{S}_t \boldsymbol{q}_t, \qquad \boldsymbol{S}_t = \boldsymbol{S}_{t-1} + \boldsymbol{v}_t \boldsymbol{k}_t^{\top}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Thus, the causal attention form can be written as a linear RNN with state \(\boldsymbol{S}_t\), so each step's complexity is constant, and total complexity is proportional to sequence length \(n\). Note the emergence of "linear RNN"—a broader concept where linear attention constitutes one type of linear RNN. Linear RNNs have developed independently for some time, such as previously introduced <a href="/archives/9554" target="_blank">LRU</a> and <a href="/tag/ssm/" target="_blank">SSM</a>, but recently competitive linear architectures have taken the form of linear attention.</p>
+                    
+                    <p>Early linear attention exhibited obvious imitative characteristics of softmax attention, such as adding denominators to Equation (6) for normalization. To enable normalization, \(\boldsymbol{k}_j^{\top} \boldsymbol{q}_t\) must be non-negative, leading to applying non-negative activation functions to \(\boldsymbol{Q},\boldsymbol{K}\). A series of works represented by <a href="/archives/7921" target="_blank">Performer</a> and <a href="https://papers.cool/arxiv/2103.02143" target="_blank">RFA</a> even constructed models aiming to approximate \(\exp(\boldsymbol{Q}\boldsymbol{K}^{\top})\).</p>
+                    
+                    <p>However, subsequent research like <a href="https://papers.cool/arxiv/2210.10340" target="_blank">"The Devil in Linear Transformer"</a> found that normalization along the sequence dimension cannot completely avoid numerical instability; instead, post-hoc normalization is preferable, such as:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(9)</span>
+                            \[
+                            \boldsymbol{O} = \mathop{\text{RMSNorm}}((\boldsymbol{Q}\boldsymbol{K}^{\top}\odot \boldsymbol{M})\boldsymbol{V})
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Since normalization is unnecessary, applying non-negative activation functions to \(\boldsymbol{Q},\boldsymbol{K}\) to ensure \(\boldsymbol{k}_j^{\top} \boldsymbol{q}_t\) non-negativity becomes non-essential. Does applying (not necessarily non-negative) activation functions to \(\boldsymbol{Q},\boldsymbol{K}\) still have value? The author's view is that adding activation functions is researchers' freedom; it's not excluded that some activation functions might yield better results. However, adding activation functions doesn't change the linear attention form, so it doesn't affect our description. Moreover, existing results show that not adding them is already sufficiently good.</p>
+                </div>
+                
+                <h2 id="varied-forgetting-gates">Varied Forgetting Gates<a href="#varied-forgetting-gates">#</a></h2>
+                
+                <div class="rnn-box">
+                    <div class="rnn-header">
+                        <i class="fas fa-brain"></i>
+                        Forgetting Mechanisms in Linear RNNs
+                    </div>
+                    <p>From Equation (8), we can see that current linear attention essentially performs \(\mathop{\text{cumsum}}\), equally weighting all historical information. It's not hard to imagine that when enough tokens accumulate, each token's information proportion becomes extremely small, making it difficult for the fixed-size \(\boldsymbol{S}_t\) matrix to accurately reconstruct any token. An intuitive analogy is each token's memory becoming blurred.</p>
+                    
+                    <p>To alleviate this issue, <a href="https://papers.cool/arxiv/2307.08621" target="_blank">RetNet</a> introduced forgetting effects to linear attention:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(10)</span>
+                            \[
+                            \boldsymbol{o}_t = \boldsymbol{S}_t \boldsymbol{q}_t, \qquad \boldsymbol{S}_t = \gamma\boldsymbol{S}_{t-1} + \boldsymbol{v}_t \boldsymbol{k}_t^{\top}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>where decay factor \(\gamma\in(0,1)\) is set as a constant in RetNet, though some make it trainable or change \(\gamma\) to a diagonal matrix, etc. The linear attention used in <a href="https://papers.cool/arxiv/2501.08313" target="_blank">MiniMax-01</a> also follows this form. Note that decay factors existed before RetNet but mostly appeared in linear RNN forms like <a href="/archives/9554" target="_blank">LRU</a> and <a href="/tag/ssm/" target="_blank">SSM</a> mentioned earlier. RetNet was likely the first to combine it with linear attention. Adding decay factors makes models tend to forget more distant historical information, at least ensuring resolution for recent tokens—essentially embodying the "recency bias" characteristic aligned with language model properties, often leading to better performance.</p>
+                    
+                    <p>Additionally, a noteworthy detail is that RetNet also applies <a href="/archives/9403" target="_blank">RoPE</a> to \(\boldsymbol{Q},\boldsymbol{K}\), equivalent to extending the decay factor to complex numbers \(\gamma e^{\text{i}\theta}\). From the <a href="/archives/9554" target="_blank">LRU</a> perspective, this considers complex eigenvalues. Although adding position encoding to RNNs might seem somewhat incongruous, some experiments like recent <a href="https://papers.cool/arxiv/2506.09507" target="_blank">TransXSSM</a> show that adding RoPE to linear attention also has certain positive effects. Of course, this might depend on specific model variants and experimental settings.</p>
+                    
+                    <p>A simple generalization of Equation (10) replaces \(\gamma\) with a position-dependent function \(\gamma_t\), already seen in <a href="/tag/ssm/" target="_blank">SSM</a>. Later, works like <a href="https://papers.cool/arxiv/2210.04243" target="_blank">DFW</a>, <a href="https://papers.cool/arxiv/2312.00752" target="_blank">Mamba</a>, <a href="https://papers.cool/arxiv/2405.21060" target="_blank">Mamba2</a> extended this to input-dependent forms, forming a series of works on "data-dependent decay," already very similar to forget gates in nonlinear RNNs like GRU and LSTM, except that to maintain model linearity, dependence on State (like \(\boldsymbol{S}_t\)) is removed.</p>
+                    
+                    <p>Why do we prefer linear RNNs? Because linear RNNs can mostly find some way to parallelize training, making them more competitive than softmax attention—not inferior in either training or inference efficiency. Among these, the "universal solution" for parallelization converts to a <a href="https://en.wikipedia.org/wiki/Prefix_sum" target="_blank">Prefix Sum</a> problem then uses Associative Scan; we briefly introduced this general approach in the "Parallelization" section of <a href="/archives/9554" target="_blank">"Google's New Work Attempts to 'Revive' RNN: Can RNN Shine Again?"</a>.</p>
+                    
+                    <p>However, the "universal solution" isn't GPU-efficient. GPUs are most efficient with matrix multiplication, so finding parallel algorithms that heavily use matrix multiplication is ideal. Even without parallelization, finding chunk-by-chunk recursive formats that fully utilize matrix multiplication can significantly improve training efficiency. This in turn imposes requirements on models, such as only outer product-form forget gates can achieve this goal. A typical counterexample is Mamba, which has non-outer-product forget gates, unable to fully leverage GPU performance, leading to subsequent variants like Mamba2 and <a href="https://papers.cool/arxiv/2312.06635" target="_blank">GLA</a>.</p>
+                </div>
+                
+                <h2 id="test-time-training">Test-Time Training<a href="#test-time-training">#</a></h2>
+                
+                <div class="ttt-box">
+                    <div class="ttt-header">
+                        <i class="fas fa-graduation-cap"></i>
+                        Test-Time Training as Guiding Principle
+                    </div>
+                    <p>So far, linear attention has evolved from simple imitation of softmax attention to introducing static decay factors and even "data-dependent decay," forming its own characteristics and demonstrating value in many tasks. However, most progress relied on manual experience-based design. We can't help but ask: <strong>Are there higher-level principles guiding the design of linear attention or even general sequence models (Token-Mixer)?</strong></p>
+                    
+                    <p>For this question, <a href="https://papers.cool/arxiv/2407.04620" target="_blank">TTT (Test Time Training)</a> provides its own answer, treating sequence model construction as an "online learning" problem and proposing using optimizers to build (not necessarily linear) RNNs. Specifically, it views \(\boldsymbol{K},\boldsymbol{V}\) as corpus pairs \((\boldsymbol{k}_1, \boldsymbol{v}_1),(\boldsymbol{k}_2, \boldsymbol{v}_2),\cdots,(\boldsymbol{k}_t, \boldsymbol{v}_t)\), trains a model \(\boldsymbol{v} = \boldsymbol{f}(\boldsymbol{S}_t;\boldsymbol{k})\) based on this corpus, and finally outputs \(\boldsymbol{o}_t = \boldsymbol{f}(\boldsymbol{S}_t;\boldsymbol{q}_t)\), where \(\boldsymbol{S}_t\) are model parameters, and the model architecture is largely arbitrary.</p>
+                    
+                    <p>How does this relate to RNNs? Simple: optimizers like SGD, Adam, etc., are essentially RNNs over model parameters! Actually, this viewpoint isn't new; back in 2017 when Meta Learning was prevalent, researchers already proposed and utilized this, though the idea then was to try using RNNs (LSTM) to simulate better optimizers. Details can be found in <a href="https://openreview.net/forum?id=rJY0-Kcll" target="_blank">"Optimization as a Model for Few-Shot Learning"</a>.</p>
+                    
+                    <p>As they say, "What goes around comes around." After many years, TTT instead proposes building RNNs through optimizers. Its process is: First, current model parameters are \(\boldsymbol{S}_{t-1}\); the optimizer (SGD) receives new data \((\boldsymbol{k}_t, \boldsymbol{v}_t)\), updates model parameters to \(\boldsymbol{S}_t\) based on this data, and finally returns prediction result \(\boldsymbol{f}(\boldsymbol{S}_{t-1};\boldsymbol{q}_t)\) for \(\boldsymbol{q}_t\), and so on. Thus, the RNN implemented by TTT can be uniformly written as:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(11)</span>
+                            \[
+                            \boldsymbol{o}_t = \boldsymbol{f}(\boldsymbol{S}_t; \boldsymbol{q}_t), \qquad \boldsymbol{S}_t = \boldsymbol{S}_{t-1} - \eta_t\nabla_{\boldsymbol{S}_{t-1}}\mathcal{L}(\boldsymbol{f}(\boldsymbol{S}_{t-1};\boldsymbol{k}_t), \boldsymbol{v}_t)
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>where \(\mathcal{L}(\boldsymbol{f}(\boldsymbol{S}_{t-1};\boldsymbol{k}_t), \boldsymbol{v}_t)\) is the loss function for current data \((\boldsymbol{k}_t, \boldsymbol{v}_t)\) under current parameters \(\boldsymbol{S}_{t-1}\), and \(\eta_t\) is the learning rate parameter. Referring to the previous section's "data-dependent decay," it can also be made data-dependent. This form can cover many RNN models; for instance, Equations (8) and (10) are both special cases:</p>
+                    
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>RNN</th>
+                                <th>\(\boldsymbol{o}_t\)</th>
+                                <th>\(\boldsymbol{f}(\boldsymbol{S};\boldsymbol{k})\)</th>
+                                <th>\(\mathcal{L}(\boldsymbol{f}(\boldsymbol{S};\boldsymbol{k}),\boldsymbol{v})\)</th>
+                                <th>\(\eta_t\)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>(8)</td>
+                                <td>\(\boldsymbol{S}_t = \boldsymbol{S}_{t-1} + \boldsymbol{v}_t \boldsymbol{k}_t^{\top}\)</td>
+                                <td>\(\boldsymbol{o}_t = \boldsymbol{S}_t \boldsymbol{q}_t\)</td>
+                                <td>\(\boldsymbol{S}\boldsymbol{k}\)</td>
+                                <td>\(-\boldsymbol{v}^{\top}(\boldsymbol{S}\boldsymbol{k})\)</td>
+                                <td>1</td>
+                            </tr>
+                            <tr>
+                                <td>(10)</td>
+                                <td>\(\boldsymbol{S}_t = \gamma\boldsymbol{S}_{t-1} + \boldsymbol{v}_t \boldsymbol{k}_t^{\top}\)</td>
+                                <td>\(\boldsymbol{o}_t = \boldsymbol{S}_t \boldsymbol{q}_t\)</td>
+                                <td>\(\boldsymbol{S}\boldsymbol{k}\)</td>
+                                <td>\(-\boldsymbol{v}^{\top}(\boldsymbol{S}\boldsymbol{k}) + \frac{1-\gamma}{2}\Vert\boldsymbol{S}\Vert_F^2\)</td>
+                                <td>1</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <p>TTT's original paper explores nonlinear RNNs under mini-batch settings; later, <a href="https://papers.cool/arxiv/2501.00663" target="_blank">Titans</a> adds momentum to TTT's SGD; subsequently, <a href="https://papers.cool/arxiv/2505.23884" target="_blank">"Test-Time Training Done Right"</a> explores large-batch TTT usage and investigates "TTT + Muon" combinations. Note that TTT only uses optimizers to build RNNs; trainable parameters outside the RNN, like those in \(\boldsymbol{Q},\boldsymbol{K},\boldsymbol{V}\), are still trained with the overall optimizer after constructing the entire model.</p>
+                    
+                    <p>A more thought-provoking question: Why can TTT serve as a "guiding principle" for building RNNs? The core goal of RNNs is to effectively compress historical data into a fixed-size State, and model parameters are exactly fixed-size. Training models somewhat resembles compressing training data into model weights; TTT precisely leverages its high alignment with RNN objectives. Put bluntly, if viewing RNNs as compression tasks, TTT treats model \(\boldsymbol{f}\) as the "decompressor," its weights as the "compressed package," and the compression algorithm as SGD, with compression rate being loss \(\mathcal{L}\).</p>
+                    
+                    <p>Thus, we no longer need to spend effort constructing recursive formats; instead, we construct model \(\boldsymbol{f}\) and loss \(\mathcal{L}\). Whether an RNN is strong or reliable, we only need to examine corresponding \(\boldsymbol{f}\) and \(\mathcal{L}\) to have an idea.</p>
+                    
+                    <p>Additionally, TTT using online learning to build RNNs means resulting RNNs necessarily align well with ICL (In-Context Learning) tasks—another advantage of TTT as a "guiding principle." Previously, <a href="https://papers.cool/arxiv/2212.10559" target="_blank">"Why Can GPT Learn In-Context? Language Models Implicitly Perform Gradient Descent as Meta-Optimizers"</a> even reversed this, explaining ICL capability by removing softmax from softmax attention to get linear attention; from today's perspective, it constructed corresponding TTT.</p>
+                </div>
+                
+                <h2 id="removing-old-adding-new">Removing Old, Adding New<a href="#removing-old-adding-new">#</a></h2>
+                
+                <div class="deltanet-box">
+                    <div class="deltanet-header">
+                        <i class="fas fa-exchange-alt"></i>
+                        The Delta Rule Principle
+                    </div>
+                    <p>For example, the earliest linear attention's corresponding loss function is \(-\boldsymbol{v}^{\top}(\boldsymbol{S}\boldsymbol{k})\), which seems unreliable at first glance because it's unbounded below, potentially causing \(\boldsymbol{S}\) to approach infinity. In contrast, RetNet adds an L2 regularization term to the loss function, avoiding this risk and from an optimization perspective also mitigating overfitting risk, yielding a better RNN.</p>
+                    
+                    <p>However, using inner product as loss function, while concise and somewhat reasonable, doesn't directly encourage \(\boldsymbol{S}\boldsymbol{k}=\boldsymbol{v}\), so it's not an ideal regression loss. A better objective function should be squared loss: \(\frac{1}{2}\Vert\boldsymbol{S}\boldsymbol{k} - \boldsymbol{v}\Vert^2\). Substituting into TTT's formula (11) yields:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(12)</span>
+                            \[
+                            \boldsymbol{o}_t = \boldsymbol{f}(\boldsymbol{S}_t; \boldsymbol{q}_t), \qquad \boldsymbol{S}_t = \boldsymbol{S}_{t-1} - \eta_t \underbrace{(\boldsymbol{S}_{t-1} \boldsymbol{k}_t - \boldsymbol{v}_t)\boldsymbol{k}_t^{\top}}_{\nabla_{\boldsymbol{S}_{t-1}}\frac{1}{2}\Vert\boldsymbol{S}_{t-1}\boldsymbol{k}_t - \boldsymbol{v}_t\Vert^2}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>This is DeltaNet, named from <a href="https://papers.cool/arxiv/2406.06484" target="_blank">"Parallelizing Linear Transformers with the Delta Rule over Sequence Length"</a>, earlier proposed by <a href="https://papers.cool/arxiv/2102.11174" target="_blank">"Linear Transformers Are Secretly Fast Weight Programmers"</a>. Note that \(\eta_t (\boldsymbol{S}_{t-1} \boldsymbol{k}_t - \boldsymbol{v}_t)\boldsymbol{k}_t^{\top} = (\boldsymbol{S}_{t-1} (\sqrt{\eta_t}\boldsymbol{k}_t) - (\sqrt{\eta_t}\boldsymbol{v}_t))(\sqrt{\eta_t}\boldsymbol{k}_t)^{\top}\), meaning \(\eta_t\) can always be absorbed into definitions of \(\boldsymbol{k}_t,\boldsymbol{v}_t\), so subsequent analysis only considers \(\eta_t=1\):</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(13)</span>
+                            \[
+                            \begin{aligned}
+                            \boldsymbol{S}_t =&\, \boldsymbol{S}_{t-1} -(\boldsymbol{S}_{t-1} \boldsymbol{k}_t - \boldsymbol{v}_t)\boldsymbol{k}_t^{\top} \\
+                            =&\, \boldsymbol{S}_{t-1} -(\boldsymbol{S}_{t-1} \boldsymbol{k}_t)\boldsymbol{k}_t^{\top} + \boldsymbol{v}_t\boldsymbol{k}_t^{\top} \\
+                            =&\, \boldsymbol{S}_{t-1} (\boldsymbol{I} - \boldsymbol{k}_t\boldsymbol{k}_t^{\top}) + \boldsymbol{v}_t\boldsymbol{k}_t^{\top}
+                            \end{aligned}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>If needed, we can replace \(\boldsymbol{k}_t,\boldsymbol{v}_t\) with \(\sqrt{\eta_t}\boldsymbol{k}_t,\sqrt{\eta_t}\boldsymbol{v}_t\) to restore \(\eta_t\). Comparing with linear attention's earliest form (8), DeltaNet's difference is subtracting \((\boldsymbol{S}_{t-1} \boldsymbol{k}_t)\boldsymbol{k}_t^{\top}\) before adding \(\boldsymbol{v}_t\boldsymbol{k}_t^{\top}\), where \(\boldsymbol{S}_{t-1} \boldsymbol{k}_t\) can be interpreted as the prediction result of new input \(\boldsymbol{k}_t\) under old model \(\boldsymbol{S}_{t-1}\).</p>
+                    
+                    <p>Intuitively, "subtract then add" means first removing the model's old understanding of \(\boldsymbol{k}_t\), then supplementing new understanding based on \((\boldsymbol{k}_t,\boldsymbol{v}_t)\), achieving "remove old, add new" effect. This rule is called the "<a href="https://en.wikipedia.org/wiki/Delta_rule" target="_blank">Delta Rule</a>", precisely the source of "Delta" in DeltaNet. The Delta Rule isn't new; it's also called <a href="https://en.wikipedia.org/wiki/Least_mean_squares_filter" target="_blank">Least Mean Square</a>, Widrow-Hoff Algorithm, etc., dating back to the 1960s. In fact, this field has few completely new things; many modifications can trace back to some "ancient" work, with current efforts mainly focusing on mining scalable parts.</p>
+                    
+                    <p>Also note that chronologically, DeltaNet preceded TTT. Understanding RNNs from an online learning perspective had already sporadically appeared in some works before TTT, but TTT systematically proposed this "guiding principle" and applied it to build new RNN models, so we placed TTT first to make the entire introduction flow more naturally.</p>
+                    
+                    <p>Some readers might question: Does DeltaNet still count as linear RNN? The answer is yes. By linear RNN, we mean the recurrence formula's dependency on State variables is linear, but dependency on inputs or \(\boldsymbol{q},\boldsymbol{k},\boldsymbol{v}\) can be nonlinear (though different dependency forms have varying parallel efficiency). From Equation (13), the right side always involves only the first power of \(\boldsymbol{S}_{t-1}\), so it satisfies the linear definition.</p>
+                </div>
+                
+                <h2 id="inversion-and-generalization">Inversion and Generalization<a href="#inversion-and-generalization">#</a></h2>
+                
+                <div class="technical-box">
+                    <div class="technical-header">
+                        <i class="fas fa-cogs"></i>
+                        Matrix Inversion and Model Generalization
+                    </div>
+                    <p>As mentioned earlier, the most ideal (i.e., GPU-efficient) parallel algorithm for linear RNNs heavily utilizes matrix multiplication. To achieve this, first write DeltaNet as:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(14)</span>
+                            \[
+                            \boldsymbol{S}_t = \boldsymbol{S}_{t-1} + (\boldsymbol{v}_t - \boldsymbol{S}_{t-1} \boldsymbol{k}_t)\boldsymbol{k}_t^{\top}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Let \(\boldsymbol{u}_t = \boldsymbol{v}_t - \boldsymbol{S}_{t-1} \boldsymbol{k}_t\), then \(\boldsymbol{S}_t = \boldsymbol{S}_{t-1} + \boldsymbol{u}_t\boldsymbol{k}_t^{\top}\). That is, it simply replaces \(\boldsymbol{V}\) with \(\boldsymbol{U}=[\boldsymbol{u}_1,\boldsymbol{u}_2,\cdots,\boldsymbol{u}_n]^{\top}\) in the earliest linear attention. Iterating \(t-1\) times, we have:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(15)</span>
+                            \[
+                            \boldsymbol{S}_{t-1} = \sum_{j=1}^{t-1} \boldsymbol{u}_j\boldsymbol{k}_j^{\top}\qquad\Rightarrow\qquad \boldsymbol{u}_t = \boldsymbol{v}_t - \left(\sum_{j=1}^{t-1} \boldsymbol{u}_j\boldsymbol{k}_j^{\top}\right)\boldsymbol{k}_t = \boldsymbol{v}_t - \sum_{j=1}^{t-1} \boldsymbol{u}_j(\boldsymbol{k}_j^{\top}\boldsymbol{k}_t)
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>The final equality in matrix form is \(\boldsymbol{U} = \boldsymbol{V} - (\boldsymbol{K}\boldsymbol{K}^{\top}\odot \boldsymbol{M}^-)\boldsymbol{U}\), where \(\boldsymbol{M}^-=\boldsymbol{M} - \boldsymbol{I}\). This is a linear system; its solution can be directly expressed as:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(16)</span>
+                            \[
+                            \boldsymbol{U} = (\boldsymbol{I} + \underbrace{\boldsymbol{K}\boldsymbol{K}^{\top}\odot \boldsymbol{M}^-}_{\text{denoted }\boldsymbol{B}})^{-1}\boldsymbol{V}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Here appears \((\boldsymbol{I}+\boldsymbol{B})^{-1}\), the inverse of an \(n\times n\) matrix, with standard complexity \(\mathcal{O}(n^3)\), higher than softmax attention! Fortunately, we don't need explicit inverse but only \(\boldsymbol{U}\), which can be transformed to solving linear system \((\boldsymbol{I}+\boldsymbol{B})\boldsymbol{U}=\boldsymbol{V}\), reducing complexity to \(\mathcal{O}(n^2)\). Further, leveraging that \(\boldsymbol{I}+\boldsymbol{B}\) is lower triangular and \(\boldsymbol{B}\)'s low-rank structure, complexity can be reduced to linear. After writing as block matrix multiplication, GPU can be fully utilized. These details must be read in the original papers; this article first explains the main mathematical principles.</p>
+                    
+                    <p>After DeltaNet, <a href="https://papers.cool/arxiv/2412.06464" target="_blank">Gated DeltaNet (GDN)</a> further introduced forget gates into DeltaNet—a predictable variation. Gated DeltaNet's original formulation is:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(17)</span>
+                            \[
+                            \boldsymbol{S}_t = \alpha_t \boldsymbol{S}_{t-1} (\boldsymbol{I} - \beta_t\boldsymbol{k}_t\boldsymbol{k}_t^{\top}) + \beta_t\boldsymbol{v}_t\boldsymbol{k}_t^{\top}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>But personally, this formulation explicitly breaks the Delta Rule; a better formulation would be like <a href="https://papers.cool/arxiv/2506.02475" target="_blank">Comba</a>, only multiplying the first \(\boldsymbol{S}_{t-1}\):</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(18)</span>
+                            \[
+                            \boldsymbol{S}_t = \gamma_t\boldsymbol{S}_{t-1} + \eta_t(\boldsymbol{v}_t - \boldsymbol{S}_{t-1}\boldsymbol{k}_t)\boldsymbol{k}_t^{\top}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>This corresponds to taking loss function \(\frac{1}{2}\Vert\boldsymbol{S}\boldsymbol{k} - \boldsymbol{v}\Vert^2 + \frac{1-\gamma}{\eta}\Vert\boldsymbol{S}\Vert_F^2\). Mathematically, these two formulations are equivalent:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(19)</span>
+                            \[
+                            \alpha_t\boldsymbol{S}_{t-1} (\boldsymbol{I} - \beta_t\boldsymbol{k}_t\boldsymbol{k}_t^{\top}) + \beta_t\boldsymbol{v}_t\boldsymbol{k}_t^{\top} = \alpha_t \boldsymbol{S}_{t-1} + \alpha_t \beta_t (\boldsymbol{v}_t/\alpha_t - \boldsymbol{S}_{t-1}\boldsymbol{k}_t)\boldsymbol{k}_t^{\top}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>i.e., \(\gamma_t = \alpha_t, \eta_t = \alpha_t \beta_t\), then absorbing \(1/\alpha_t\) into \(\boldsymbol{v}_t\) converts to the latter. So mathematically, these two forms have no difference; since most \(\alpha_t\) are close to 1, capability likely also has little difference (Comba says (18) is slightly better), but the latter more intuitively retains the Delta Rule form.</p>
+                    
+                    <p>Theoretically, Gated DeltaNet can also be written in DeltaNet form: define \(\bar{\alpha}_t = \prod_{j=1}^t \alpha_t\), then dividing both sides of Equation (17) by \(\bar{\alpha}_t\) yields:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(20)</span>
+                            \[
+                            \bar{\alpha}_t^{-1}\boldsymbol{S}_t = \bar{\alpha}_{t-1}^{-1}\boldsymbol{S}_{t-1}  (\boldsymbol{I} - \beta_t\boldsymbol{k}_t\boldsymbol{k}_t^{\top}) + \beta_t(\bar{\alpha}_t^{-1}\boldsymbol{v}_t)\boldsymbol{k}_t^{\top}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Combined with \(\boldsymbol{o}_t = \boldsymbol{S}_t \boldsymbol{q}_t = (\bar{\alpha}_t^{-1}\boldsymbol{S}_t) (\bar{\alpha}_t\boldsymbol{q}_t)\), we find simply setting \(\bar{\alpha}_t\boldsymbol{q}_t,\bar{\alpha}_t^{-1}\boldsymbol{v}_t\) as new \(\boldsymbol{q}_t,\boldsymbol{v}_t\) reduces to DeltaNet form. However, this result only has theoretical derivation value in certain cases (e.g., deriving next section's attention matrix) because in practical computation, regardless of parameterization, for sufficiently large \(t\), either \(\bar{\alpha}_t\) or \(\bar{\alpha}_t^{-1}\) risks overflow.</p>
+                    
+                    <p>After DeltaNet, another generalization is <a href="https://papers.cool/arxiv/2502.10297" target="_blank">DeltaProduct</a>, which expands \(\boldsymbol{k},\boldsymbol{v}\) several times then applies DeltaNet or Gated DeltaNet, attempting to enhance model state tracking capability. However, in the author's aesthetic judgment, rather than expanding by constant factors like DeltaProduct, it's better to attempt quadratic complexity RNNs like <a href="/archives/10017" target="_blank">"The Space-Time Chapter: Treating Attention as Quadratic Complexity RNN"</a>, exploring opportunities to surpass softmax attention.</p>
+                </div>
+                
+                <h2 id="back-feeding-ongoing">Back-Feeding Ongoing<a href="#back-feeding-ongoing">#</a></h2>
+                
+                <div class="softmax-attention-box">
+                    <div class="softmax-attention-header">
+                        <i class="fas fa-retweet"></i>
+                        Linear Attention Influencing Softmax Attention
+                    </div>
+                    <p>Speaking of surpassing softmax attention, as mentioned at the beginning, today's linear attention not only competes with softmax attention but even begins "back-feeding" it. This seems incredible but upon reflection isn't hard to understand. In some sense, softmax attention has been regressing over the years—from MHA, GQA to MQA, all making reductions to compress KV Cache. Linear attention has no KV Cache issue, so it progresses toward better directions.</p>
+                    
+                    <p>To better see this, let's write aforementioned attention mechanisms in matrix form:</p>
+                    
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Formula</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Softmax Attention</td>
+                                <td>\((\exp(\boldsymbol{Q}\boldsymbol{K}^{\top})\odot \boldsymbol{M})\boldsymbol{V}\)</td>
+                            </tr>
+                            <tr>
+                                <td>Earliest Linear Attention</td>
+                                <td>\((\boldsymbol{Q}\boldsymbol{K}^{\top}\odot \boldsymbol{M})\boldsymbol{V}\)</td>
+                            </tr>
+                            <tr>
+                                <td>With Forget Gates</td>
+                                <td>\((\boldsymbol{Q}\boldsymbol{K}^{\top}\odot \boldsymbol{\Gamma})\boldsymbol{V}\)</td>
+                            </tr>
+                            <tr>
+                                <td>DeltaNet</td>
+                                <td>\((\boldsymbol{Q}\boldsymbol{K}^{\top}\odot \boldsymbol{M})(\boldsymbol{I} + \boldsymbol{K}\boldsymbol{K}^{\top}\odot \boldsymbol{M}^-)^{-1}\boldsymbol{V}\)</td>
+                            </tr>
+                            <tr>
+                                <td>Gated DeltaNet</td>
+                                <td>\(\begin{aligned}((\boldsymbol{Q}\boldsymbol{K}^{\top}\odot \boldsymbol{M})(\boldsymbol{I} + \boldsymbol{K}\boldsymbol{K}^{\top}\odot \boldsymbol{M}^-)^{-1}\odot\boldsymbol{\Gamma})\boldsymbol{V} \\ =(\boldsymbol{Q}\boldsymbol{K}^{\top}\odot \boldsymbol{\Gamma})(\boldsymbol{I} + \boldsymbol{K}\boldsymbol{K}^{\top}\odot \boldsymbol{\Gamma}^-)^{-1}\boldsymbol{V}\end{aligned}\)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <p>where</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(21)</span>
+                            \[
+                            \Gamma_{i,j} = \left\{\begin{aligned} &\prod_{\tau=j+1}^i \gamma_{\tau}, &i > j \\[6pt] &\qquad 1, &i = j \\[6pt] &\qquad 0, &i < j\end{aligned}\right.
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>and \(\boldsymbol{\Gamma}^- = \boldsymbol{\Gamma} - \boldsymbol{I}\). Viewed this way, softmax attention's form remains only at the earliest linear attention stage (though this also proves its power). How is "back-feeding" achieved? First, we need a method to transform softmax attention into linear attention—not difficult. As early as <a href="/archives/8601" target="_blank">"Transformer Upgrade Path 5: Linear Attention as Infinite-Dimensional"</a>, we summarized three schemes transforming softmax attention into <u>infinite-dimensional</u> linear attention.</p>
+                    
+                    <p>In short, there exists a mapping \(\phi\) mapping \(\boldsymbol{Q},\boldsymbol{K}\) from \(n\times d\) to \(n\times \infty\), satisfying \(\exp(\boldsymbol{Q}\boldsymbol{K}^{\top}) = \phi(\boldsymbol{Q})\phi(\boldsymbol{K})^{\top}\)—called the "kernel trick." Then things become simple: we just replace linear attention's \(\boldsymbol{Q},\boldsymbol{K}\) in the above table with \(\phi(\boldsymbol{Q}),\phi(\boldsymbol{K})\), finally recover \(\exp\) and normalize, obtaining new softmax attention variants. For example, substituting into forget gate formula:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(22)</span>
+                            \[
+                            (\phi(\boldsymbol{Q})\phi(\boldsymbol{K})^{\top}\odot \boldsymbol{\Gamma})\boldsymbol{V} = \exp(\boldsymbol{Q}\boldsymbol{K}^{\top} + \log\boldsymbol{\Gamma})\boldsymbol{V}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>If \(\gamma_t\) takes constant value, this is actually <a href="https://papers.cool/arxiv/2108.12409" target="_blank">"Train Short, Test Long: Attention with Linear Biases Enables Input Length Extrapolation"</a>'s proposed ALIBI; if \(\gamma_t\) is input-dependent, then it's <a href="https://papers.cool/arxiv/2503.02130" target="_blank">"Forgetting Transformer: Softmax Attention with a Forget Gate"</a>'s proposed FoX.</p>
+                    
+                    <p>A more interesting result is <a href="https://papers.cool/arxiv/2505.19488" target="_blank">"Understanding Transformer from the Perspective of Associative Memory"</a>'s proposed DeltaFormer—as the name suggests, it's the softmax attention version of DeltaNet. Replacing DeltaNet's \(\boldsymbol{Q},\boldsymbol{K}\) with \(\phi(\boldsymbol{Q}),\phi(\boldsymbol{K})\):</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(23)</span>
+                            \[
+                            \begin{aligned}
+                            &\,(\phi(\boldsymbol{Q})\phi(\boldsymbol{K})^{\top}\odot \boldsymbol{M})(\boldsymbol{I} + \phi(\boldsymbol{K})\phi(\boldsymbol{K})^{\top}\odot \boldsymbol{M}^-)^{-1}\boldsymbol{V} \\[8pt]
+                            =&\,\underbrace{\exp(\boldsymbol{Q} \boldsymbol{K}^{\top} + \log\boldsymbol{M})}_{\text{denoted }\boldsymbol{A}}(\boldsymbol{I} + \underbrace{\exp(\boldsymbol{K} \boldsymbol{K}^{\top} + \log\boldsymbol{M}^-)}_{\text{denoted }\boldsymbol{B}})^{-1}\boldsymbol{V}
+                            \end{aligned}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>If normalization needed, replace \(\exp\) with \(\text{softmax}\). Compared to softmax attention, DeltaFormer changes original \(\boldsymbol{A}\boldsymbol{V}\) to \(\boldsymbol{A}(\boldsymbol{I}+\boldsymbol{B})^{-1}\boldsymbol{V}\). Note:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(24)</span>
+                            \[
+                            \begin{aligned}
+                            \boldsymbol{A}(\boldsymbol{I}+\boldsymbol{B})^{-1}\boldsymbol{V} =&\, \boldsymbol{A}(\boldsymbol{I}-\boldsymbol{B}+\boldsymbol{B}^2- \boldsymbol{B}^3 + \cdots)\boldsymbol{V} \\
+                            =&\, \boldsymbol{A}(\boldsymbol{V}-\boldsymbol{B}\boldsymbol{V}+\boldsymbol{B}^2\boldsymbol{V}- \boldsymbol{B}^3\boldsymbol{V} + \cdots)
+                            \end{aligned}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>So DeltaFormer essentially first computes attention multiple times with \(\boldsymbol{K},\boldsymbol{K},\boldsymbol{V}\), sums results as new \(\boldsymbol{V}\), then computes attention once with \(\boldsymbol{Q},\boldsymbol{K}\). This characteristic makes it particularly effective for Multi-Hop tasks (e.g., Code). Additionally, this feature means DeltaFormer pairs especially well with MQA, because the \((\boldsymbol{I}+\boldsymbol{B})^{-1}\boldsymbol{V}\) part only involves \(\boldsymbol{K},\boldsymbol{V}\), and for MQA, \(\boldsymbol{K},\boldsymbol{V}\) only have Single-Head, significantly reducing computation compared to MHA.</p>
+                    
+                    <p>However, in the author's view, this fixed-coefficient summation might be "no free lunch"; for example, the author's experimental results show DeltaFormer's language model loss doesn't change much, meaning if certain tasks' losses significantly decrease, necessarily other tasks' losses increase.</p>
+                </div>
+                
+                <h2 id="hardcore-encoding">Hardcore Encoding<a href="#hardcore-encoding">#</a></h2>
+                
+                <div class="path-box">
+                    <div class="path-header">
+                        <i class="fas fa-code"></i>
+                        PaTH Attention: Advanced Position Encoding
+                    </div>
+                    <p>Another noteworthy back-feeding work is PaTH Attention, from <a href="https://papers.cool/arxiv/2505.16381" target="_blank">"PaTH Attention: Position Encoding via Accumulating Householder Transformations"</a>, which back-feeds DeltaNet to softmax attention from a position encoding perspective.</p>
+                    
+                    <p>In <a href="/archives/9403" target="_blank">"Transformer Upgrade Path 6: Completeness Analysis of Rotary Position Encoding"</a>, we pointed out that for any orthogonal matrix \(\boldsymbol{\Omega}\), \(\boldsymbol{R}_m = \boldsymbol{\Omega}^m\) is generalized RoPE. Besides rotation matrices, what other easily constructed orthogonal matrices exist? PaTH uses <a href="https://en.wikipedia.org/wiki/Householder_transformation" target="_blank">Householder matrices</a>: let \(\boldsymbol{w}\) be any column vector with length \(\sqrt{2}\), then \(\boldsymbol{I}-\boldsymbol{w}\boldsymbol{w}^{\top}\) is an orthogonal matrix, which we also derived in <a href="/archives/8453" target="_blank">"Orthogonal Matrix Transforming One Unit Vector to Another"</a>, with geometric meaning being mirror reflection.</p>
+                    
+                    <p>Easily seen, this is identical to \(\boldsymbol{I}-\boldsymbol{k}_t\boldsymbol{k}_t^{\top}\) multiplied by \(\boldsymbol{S}_{t-1}\) in DeltaNet, so PaTH directly copies this part, abandoning the \(\boldsymbol{\Omega}^m\) form and the \(\Vert\boldsymbol{w}\Vert=\sqrt{2}\) constraint, directly using a series of \(\boldsymbol{I}-\boldsymbol{w}\boldsymbol{w}^{\top}\) products to express position information:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(25)</span>
+                            \[
+                            \boldsymbol{q}_i^{\top}\boldsymbol{k}_j \qquad\to\qquad \boldsymbol{q}_i^{\top}\underbrace{(\boldsymbol{I}-\boldsymbol{w}_i\boldsymbol{w}_i^{\top})(\boldsymbol{I}-\boldsymbol{w}_{i-1}\boldsymbol{w}_{i-1}^{\top})\cdots(\boldsymbol{I}-\boldsymbol{w}_{j+1}\boldsymbol{w}_{j+1}^{\top})}_{\text{denoted }\boldsymbol{R}_{i,j}}\boldsymbol{k}_j
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Writing \(\boldsymbol{R}_{i,j}\) recursively: \(\boldsymbol{R}_{i,j} = (\boldsymbol{I}-\boldsymbol{w}_i\boldsymbol{w}_i^{\top})\boldsymbol{R}_{i-1,j},\boldsymbol{R}_{j,j} = \boldsymbol{I}\). Comparing with DeltaNet's Equation (13), the above equation corresponds to \(\boldsymbol{v}_t\) always zero, but initial value \(\boldsymbol{S}_0\) no longer zero. Using the same process as the "Matrix Inversion Assistance" section:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(26)</span>
+                            \[
+                            \boldsymbol{R}_{i,j} = \boldsymbol{I} - \boldsymbol{W}_{[j:i]}^{\top}(\boldsymbol{I} + \boldsymbol{W}_{[j:i]}\boldsymbol{W}_{[j:i]}^{\top}\odot\boldsymbol{M}^-)^{-1}\boldsymbol{W}_{[j:i]}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>where \(\boldsymbol{W}=[\boldsymbol{w}_1,\boldsymbol{w}_2,\cdots,\boldsymbol{w}_n]^{\top}\), slices interpreted as in NumPy, e.g., \(\boldsymbol{W}_{[j:i]}=[\boldsymbol{w}_{j+1},\boldsymbol{w}_{j+2},\cdots,\boldsymbol{w}_i]^{\top}\), with slice priority higher than transpose. Note inversion is of a lower triangular matrix; triangular matrices have important properties: inverse matrix diagonal elements equal reciprocals of original matrix diagonal elements; if block triangular, diagonal blocks also satisfy this property, so we can write:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(27)</span>
+                            \[
+                            (\boldsymbol{I} + \boldsymbol{W}_{[j:i]}\boldsymbol{W}_{[j:i]}^{\top}\odot\boldsymbol{M}^-)^{-1} = (\underbrace{(\boldsymbol{I} + \boldsymbol{W}\boldsymbol{W}^{\top}\odot\boldsymbol{M}^-)^{-1}}_{\text{denoted }\boldsymbol{J}})_{[j:i,j:i]}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Subsequent transformations might be easier understood in component form; after detailed derivations (omitted here for brevity), we obtain the full (pre-softmax) attention matrix:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(28)</span>
+                            \[
+                            \boldsymbol{A} = \boldsymbol{Q}\boldsymbol{K}^{\top}\odot\boldsymbol{M} - (\boldsymbol{Q}\boldsymbol{W}^{\top}\odot\boldsymbol{M})(\boldsymbol{I} + \boldsymbol{W}\boldsymbol{W}^{\top}\odot\boldsymbol{M}^-)^{-1}(\boldsymbol{W}\boldsymbol{K}^{\top}\odot\boldsymbol{M}^-)
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Impressed? There's more. Direct inversion complexity is \(\mathcal{O}(n^3)\), definitely unacceptable; we must leverage \(\boldsymbol{W}\boldsymbol{W}^{\top}\)'s low-rank characteristics to reduce complexity to \(\mathcal{O}(n^2)\), then derive backpropagation, finally implement efficiently similar to Flash Attention. These details must be explored in the original paper—extremely hardcore throughout.</p>
+                    
+                    <p>From a position encoding perspective, PaTH is a type of <a href="https://papers.cool/arxiv/2405.18719" target="_blank">CoPE (Contextual Position Encoding)</a>—positions aren't indices \(1,2,3,\cdots\) but automatically generated position signals based on context content. Similarly, FoX can be seen as contextual ALIBI. Context-dependent position information is a main characteristic of current linear attention and possibly the main direction for back-feeding softmax attention.</p>
+                </div>
+                
+                <h2 id="simplification-infinite-delight">Simplification, Infinite Delight<a href="#simplification-infinite-delight">#</a></h2>
+                
+                <div class="analysis-box">
+                    <div class="analysis-header">
+                        <i class="fas fa-search"></i>
+                        Special Cases and Simplifications
+                    </div>
+                    <p>Let's explore PaTH more deeply—this not only helps understand PaTH but also familiarizes us with DeltaNet, as they're highly related. This section examines two special cases of PaTH, helping better understand connections between PaTH and DeltaNet.</p>
+                    
+                    <p>The first special case: \(\boldsymbol{W}=\boldsymbol{K}\), substituting into (28) yields:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(29)</span>
+                            \[
+                            \begin{aligned}
+                            \boldsymbol{A} =&\, (\boldsymbol{Q}\boldsymbol{K}^{\top}\odot\boldsymbol{M})(\boldsymbol{I} - (\boldsymbol{I} + \boldsymbol{K}\boldsymbol{K}^{\top}\odot\boldsymbol{M}^-)^{-1}(\boldsymbol{K}\boldsymbol{K}^{\top}\odot\boldsymbol{M}^-)) \\[6pt]
+                            =&\, (\boldsymbol{Q}\boldsymbol{K}^{\top}\odot\boldsymbol{M})(\boldsymbol{I} + \boldsymbol{K}\boldsymbol{K}^{\top}\odot\boldsymbol{M}^-)^{-1}
+                            \end{aligned}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Does this look familiar? This is exactly DeltaNet's attention matrix! From this special case, PaTH and DeltaFormer's difference lies in: DeltaFormer applies \(\exp\) to DeltaNet's \(\boldsymbol{Q}\boldsymbol{K}^{\top}\) and \(\boldsymbol{K}\boldsymbol{K}^{\top}\) based on kernel trick, while PaTH directly applies \(\exp\) to DeltaNet's attention matrix.</p>
+                    
+                    <p>The second special case reintroduces \(\Vert\boldsymbol{w}\Vert=\sqrt{2}\) constraint. Then \(\boldsymbol{I}-\boldsymbol{w}\boldsymbol{w}^{\top}\) is orthogonal. Introducing:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(30)</span>
+                            \[
+                            \begin{aligned}
+                            \boldsymbol{R}_i \triangleq&\, (\boldsymbol{I}-\boldsymbol{w}_i\boldsymbol{w}_i^{\top})(\boldsymbol{I}-\boldsymbol{w}_{i-1}\boldsymbol{w}_{i-1}^{\top})\cdots(\boldsymbol{I}-\boldsymbol{w}_1\boldsymbol{w}_1^{\top}) \\
+                            =&\, \boldsymbol{I} - \boldsymbol{W}_{[:i]}^{\top}(\boldsymbol{I} + \boldsymbol{W}_{[:i]}\boldsymbol{W}_{[:i]}^{\top}\odot\boldsymbol{M}^-)^{-1}\boldsymbol{W}_{[:i]} \\
+                            =&\,\boldsymbol{R}_{i,0}
+                            \end{aligned}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Then \(\boldsymbol{R}_{i,j} = \boldsymbol{R}_i \boldsymbol{R}_j^{\top}\). This equality means we can implement relative-position PaTH using absolute position like RoPE: just multiply each \(\boldsymbol{q}_i^{\top},\boldsymbol{k}_i^{\top}\) by \(\boldsymbol{R}_i\), then apply standard softmax attention implementation. What operation is multiplying by \(\boldsymbol{R}_i\)? Repeating the previous section's expansion process, we obtain:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(31)</span>
+                            \[
+                            \boldsymbol{\boldsymbol{Q}} - (\boldsymbol{Q}\boldsymbol{W}^{\top}\odot\boldsymbol{M})(\boldsymbol{I} + \boldsymbol{W}\boldsymbol{W}^{\top}\odot\boldsymbol{M}^-)^{-1}\boldsymbol{W}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Does this look familiar? Actually, the second part is \(\text{DeltaNet}(\boldsymbol{Q},\boldsymbol{W},\boldsymbol{W})\)! So in this case, PaTH implementation equivalently achieves:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(32)</span>
+                            \[
+                            \mathop{\text{SoftmaxAttention}}(\underbrace{\boldsymbol{Q}-\mathop{\text{DeltaNet}}(\boldsymbol{Q},\boldsymbol{W},\boldsymbol{W})}_{\tilde{\boldsymbol{Q}}},\underbrace{\boldsymbol{K}-\mathop{\text{DeltaNet}}(\boldsymbol{K},\boldsymbol{W},\boldsymbol{W})}_{\tilde{\boldsymbol{K}}},\boldsymbol{V})
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>That is, using DeltaNet to add position encoding to \(\boldsymbol{Q},\boldsymbol{K}\). Viewed this way, PaTH (under \(\Vert\boldsymbol{w}\Vert=\sqrt{2}\) constraint) equates to some intra-layer mixture of softmax attention and DeltaNet. Of course, we could also consider abandoning previous derivations; even when \(\Vert\boldsymbol{w}\Vert\neq\sqrt{2}\), implement according to the above equation, similar to <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5240330" target="_blank">Canon Layers</a>' scheme, using convolution to add position information to \(\boldsymbol{Q},\boldsymbol{K}\)—except here convolution isn't short convolution but DeltaNet-style long convolution.</p>
+                </div>
+                
+                <h2 id="unconventional-approaches">Unconventional Approaches<a href="#unconventional-approaches">#</a></h2>
+                
+                <div class="mesanet-box">
+                    <div class="mesanet-header">
+                        <i class="fas fa-chess-knight"></i>
+                        MesaNet: Unconventional Path
+                    </div>
+                    <p>Finally, let's examine another recent linear attention model worth noting—MesaNet (and a similar contemporaneous work <a href="https://papers.cool/arxiv/2505.23735" target="_blank">Atlas</a>). TTT's online learning perspective tells us DeltaNet essentially uses SGD to optimize objective function \(\frac{1}{2}\Vert\boldsymbol{S}\boldsymbol{k} - \boldsymbol{v}\Vert^2\). Carefully observing, \(\boldsymbol{S}\boldsymbol{k}\) is only a linear function of \(\boldsymbol{k}\), so this is actually just a linear regression problem, and linear regression has analytical solution!</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(33)</span>
+                            \[
+                            \boldsymbol{S}_t = \boldsymbol{G}_t \boldsymbol{H}_t^{-1},\quad \boldsymbol{G}_t = \sum_{j=1}^t \boldsymbol{v}_j \boldsymbol{k}_j^{\top},\quad \boldsymbol{H}_t = \sum_{j=1}^t \boldsymbol{k}_j \boldsymbol{k}_j^{\top}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>MesaNet uses this analytical solution to build sequence models, originating from <a href="https://papers.cool/arxiv/2309.05858" target="_blank">"Uncovering mesa-optimization algorithms in Transformers"</a>, with efficient training implemented by <a href="https://papers.cool/arxiv/2506.05233" target="_blank">"MesaNet: Sequence Modeling by Locally Optimal Test-Time Training"</a>. MesaNet adds forget gates to \(\boldsymbol{G}_t,\boldsymbol{H}_t\) in the above formula, then adds diagonal matrix \(\boldsymbol{\Lambda}_t\) during inversion to avoid singularity. The overall model is:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(34)</span>
+                            \[
+                            \boldsymbol{o}_t = \boldsymbol{G}_t (\boldsymbol{H}_t + \boldsymbol{\Lambda}_t)^{-1} \boldsymbol{q}_t,\quad \boldsymbol{G}_t = \gamma_t \boldsymbol{G}_{t-1} +  \boldsymbol{v}_t \boldsymbol{k}_t^{\top},\quad\boldsymbol{H}_t = \gamma_t \boldsymbol{H}_{t-1} + \boldsymbol{k}_t \boldsymbol{k}_t^{\top}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Clearly, \(\boldsymbol{G}_t,\boldsymbol{H}_t\) have linear complexity in sequence length, so \(\boldsymbol{o}_t\)'s computational complexity is also linear. Thus MesaNet still belongs to linear attention category, and due to analytical solution, basically ensures it outperforms DeltaNet and even Gated DeltaNet in most cases. From a signal processing perspective, MesaNet and DeltaNet are <a href="https://en.wikipedia.org/wiki/Recursive_least_squares_filter" target="_blank">Recursive Least Square</a> and <a href="https://en.wikipedia.org/wiki/Least_mean_squares_filter" target="_blank">Least Mean Square</a> differences.</p>
+                    
+                    <p>Seemingly all advantages—why does the author categorize it as "unconventional"? In the author's view, MesaNet "succeeds due to analytical solution, fails due to analytical solution." Analytical solution makes it generally outperform DeltaNet but also gives a "stop here" feeling, because slight changes rarely have chance to obtain analytical solution. Throughout mathematical history, all branches relying on analytical solutions have almost faded today because analytical solutions are too rare, too unrepresentative.</p>
+                    
+                    <p>Implementation-wise, MesaNet needs to invert matrix \(\boldsymbol{H}_t + \boldsymbol{\Lambda}_t\), which isn't triangular. Although \((\boldsymbol{H}_t + \boldsymbol{\Lambda}_t)^{-1} \boldsymbol{q}_t\) can still be transformed to solving equations without explicit inverse, non-triangular nature increases solving complexity considerably. How to parallel compute all \((\boldsymbol{H}_t + \boldsymbol{\Lambda}_t)^{-1} \boldsymbol{q}_t\) as low-cost as possible will be MesaNet's long-term difficulty; current paper uses "<a href="https://en.wikipedia.org/wiki/Conjugate_gradient_method" target="_blank">conjugate gradient method</a>" for approximate solutions—usable but not perfect.</p>
+                    
+                    <p>Theoretically capability-wise, MesaNet isn't strictly superior to DeltaNet either. This is because MesaNet's \(\boldsymbol{G}_t,\boldsymbol{H}_t\) update rules are still simple moving averages, and its inversion doesn't involve token interactions, so its capability limit likely doesn't surpass DeltaNet with Delta Rule. Intuitively, MesaNet tries hard to remember all \(\boldsymbol{k},\boldsymbol{v}\); "wanting all" might lead to relatively blurred memory, while DeltaNet's principle is "remove old, add new"; due to "removing old," it can achieve long-term, precise memory of certain content.</p>
+                    
+                    <p>We can also understand this non-optimality from a special example: So far, all attention except MesaNet allows K,V sharing choice—"allows" meaning not necessarily optimal but at least can train non-trivial results. However, MesaNet doesn't work, because if K,V identical, MesaNet's \(\boldsymbol{S}_t\) becomes constant identity matrix.</p>
+                    
+                    <p>Overall, MesaNet is an aesthetically pleasing model, but analytical solution also increases its complexity and limits flexibility, leaving much room for exploration. Readers wanting to learn more about building sequence models based on linear regression can read <a href="https://papers.cool/arxiv/2501.12352" target="_blank">TTR</a>, which discusses various linear regression objective-based sequence models in detail.</p>
+                </div>
+                
+                <h2 id="nascent-development">Nascent Development<a href="#nascent-development">#</a></h2>
+                
+                <div class="insight-box">
+                    <div class="insight-header">
+                        <i class="fas fa-road"></i>
+                        Conclusion: Ongoing Development
+                    </div>
+                    <p>This article briefly outlines the development trajectory of linear attention and introduces mathematical principles of some models. Linear attention started by imitating softmax attention, gradually developed its own characteristics, and now has become a highly competitive sequence modeling solution, even reciprocally providing new ideas for softmax attention development. This process itself is full of interest and inspiration.</p>
+                    
+                    <p>From simple removal of exponential operations to introduction of forgetting mechanisms, from Delta Rule principles to TTT's online learning perspective, from hardware-efficient parallel algorithm design to back-feeding softmax attention, each advancement reflects the research community's deepening understanding of sequence modeling and continuous innovation in computational efficiency and model capability trade-offs.</p>
+                    
+                    <p>Looking ahead, as model scales continue expanding and sequence lengths increase, linear attention's advantages will likely become more pronounced. Meanwhile, cross-fertilization between linear and softmax attention will likely yield more interesting results. The development path of linear attention remains nascent, with unlimited possibilities awaiting exploration.</p>
+                </div>
+
+                <div class="citation-section">
+                    <div class="citation-header">
+                        <i class="fas fa-quote-right"></i>
+                        Citation Information
+                    </div>
+                    <p><strong>Original Article:</strong> Su Jianlin. A Brief History of Linear Attention: From Imitation and Innovation to Back-Feeding. <em>Scientific Spaces</em>.</p>
+                    
+                    <p><strong>How to cite this translation:</strong></p>
+                    <div class="citation-box">
+                        Su, J. A Brief History of Linear Attention: From Imitation and Innovation to Back-Feeding [Translated by Juanxi Tian]. 
+                        <em>Scientific Spaces</em>.
+                    </div>
+                    <p style="margin-top: 0.8rem;"><strong>BibTeX:</strong></p>
+                    <div class="citation-box">
+                        @article{su2025linear_attention_history,
+                            title   = {A Brief History of Linear Attention: From Imitation and Innovation to Back-Feeding},
+                            author  = {Su, Jianlin},
+                            journal = {Scientific Spaces},
+                            year    = {2025},
+                            url     = {https://kexue.fm/archives/11217},
+                            note    = {Translated by Juanxi Tian (ScalingOpt Team)}
+                          }
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="translation-credit">
+                <i class="fas fa-user-graduate"></i>
+                Academic Translation by Juanxi Tian (ScalingOpt Team)
+            </div>
+            <div class="copyright">
+                © 2009-2025 Scientific Spaces. All rights reserved.<br>
+                Original content licensed under Creative Commons BY-NC-ND 2.5 China
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript for Interactive Features -->
+    <script>
+        // Scroll Progress Bar
+        window.addEventListener('scroll', function() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            scrollProgress.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Table of Contents Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            const sections = document.querySelectorAll('h2[id]');
+            
+            // Set active section based on scroll position
+            function setActiveSection() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 50)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', setActiveSection);
+            setActiveSection(); // Initial call
+            
+            // Smooth scroll for TOC links
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 50,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+
+        // MathJax Configuration
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                tags: 'ams'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    
+    <!-- MathJax CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</body>
+</html>

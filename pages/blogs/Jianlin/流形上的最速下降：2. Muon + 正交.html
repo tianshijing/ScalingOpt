@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manifold Gradient Descent: 2. Muon with Orthogonal Constraints | Scientific Spaces</title>
+    <meta name="description" content="Extending the constrained optimization framework to matrix parameters with spectral norm constraints (Muon optimizer) and orthogonal manifold constraints, deriving steepest descent directions on orthogonal manifolds.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a6bca;
+            --primary-dark: #1357a8;
+            --primary-light: #e8f1fc;
+            --secondary: #2c3e50;
+            --accent: #3498db;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f5f7fa;
+            --gray-200: #e4e7eb;
+            --gray-300: #cbd2d9;
+            --gray-600: #7b8794;
+            --gray-700: #52606d;
+            --gray-900: #323f4b;
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 6px 24px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: #f0f5fc;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.5rem 1.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -8%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+        }
+
+        .meta-item i {
+            font-size: 0.85rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Translation Notice */
+        .translation-notice {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1.2rem;
+            margin: 0;
+        }
+
+        .translation-notice-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .translation-text h3 {
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .translation-text p {
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        .translator-badge {
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(26, 107, 202, 0.2);
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+        }
+
+        @media (max-width: 850px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            padding-left: 1rem;
+        }
+
+        .toc {
+            position: sticky;
+            top: 1rem;
+        }
+
+        .toc-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .toc-header i {
+            font-size: 0.9rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.4rem;
+            position: relative;
+        }
+
+        .toc-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            transition: var(--transition);
+            border-left: 2px solid transparent;
+            padding-left: 8px;
+        }
+
+        .toc-link:hover {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            transform: translateX(2px);
+        }
+
+        .toc-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .toc-number {
+            font-weight: 500;
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            min-width: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-right: 1.2rem;
+            padding-left: 0;
+        }
+
+        @media (max-width: 850px) {
+            .sidebar {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 0 1rem;
+            }
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 1.5rem 0 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: relative;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 35px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        h2 a {
+            color: var(--accent);
+            font-size: 0.7rem;
+            margin-left: 6px;
+            text-decoration: none;
+        }
+
+        h2 a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            color: var(--gray-900);
+            line-height: 1.65;
+        }
+
+        /* Equation Styling */
+        .equation-container {
+            margin: 0.8rem 0;
+        }
+
+        .equation {
+            background: var(--primary-light);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1rem;
+            border-radius: 0 5px 5px 0;
+            font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', serif;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .equation-number {
+            color: var(--primary);
+            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin-right: 6px;
+            display: inline-block;
+            min-width: 18px;
+        }
+
+        /* Code Block Styling */
+        .code-container {
+            margin: 1rem 0;
+            background: #2d2d2d;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .code-header {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 0.6rem 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .code-content {
+            padding: 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #f8f8f2;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+        }
+
+        /* Reference Box */
+        .reference-box {
+            background: linear-gradient(to right, #f8fafc, var(--primary-light));
+            border: 1px solid var(--gray-200);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .reference-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .reference-header i {
+            font-size: 0.9rem;
+        }
+
+        .reference-list {
+            list-style: none;
+        }
+
+        .reference-item {
+            padding: 0.3rem 0 0.3rem 0.8rem;
+            position: relative;
+            margin-bottom: 0.4rem;
+            color: var(--gray-700);
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .reference-item::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 0.65rem;
+        }
+
+        /* Citation Section */
+        .citation-section {
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .citation-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .citation-box {
+            background: var(--white);
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid var(--gray-300);
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-top: 0.6rem;
+            overflow-x: auto;
+            color: var(--gray-900);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--secondary);
+            color: white;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .translation-credit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 6px 16px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(26, 107, 202, 0.2);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            margin-top: 0.6rem;
+        }
+
+        /* Utility Classes */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-light), #e8f2ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .math {
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.1s ease;
+            z-index: 1000;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 1rem 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 0.6rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem 0;
+            }
+            
+            .main-content {
+                padding-right: 0.8rem;
+            }
+            
+            .sidebar {
+                padding-left: 0.8rem;
+            }
+            
+            .meta-info {
+                gap: 0.6rem;
+            }
+            
+            .meta-item {
+                font-size: 0.75rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .translation-notice-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .translator-badge {
+                align-self: flex-start;
+            }
+        }
+
+        /* Links styling */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Optimize long formula display */
+        .equation {
+            word-break: break-word;
+        }
+        
+        /* Optimize list display */
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.3rem;
+            line-height: 1.5;
+        }
+        
+        /* Optimize math formula spacing */
+        .MathJax_Display {
+            margin: 0.6em 0 !important;
+        }
+        
+        /* Image container styling */
+        .pic-container {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+        
+        .pic-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .typecho-caption {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        
+        /* Quote block styling */
+        blockquote.cite {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+        }
+        
+        blockquote.cite div {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        blockquote.cite a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        /* Blockquote styling */
+        blockquote {
+            background: linear-gradient(to right, var(--gray-100), var(--primary-light));
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+            position: relative;
+        }
+
+        blockquote p {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+
+        blockquote p:before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Underline styling */
+        u {
+            text-decoration: none;
+            border-bottom: 1px dotted var(--primary);
+        }
+
+        /* List styling inside main content */
+        .main-content ol, .main-content ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .main-content li {
+            margin-bottom: 0.4rem;
+            line-height: 1.6;
+        }
+
+        /* Highlight box for important notes */
+        .note-box {
+            background: linear-gradient(to right, #fff8e1, #fff3cd);
+            border-left: 3px solid #ffc107;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .note-box strong {
+            color: #856404;
+        }
+
+        /* Definition list styling */
+        .definition {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 3px solid #4caf50;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .definition-header {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Mathematical proof styling */
+        .proof {
+            background: linear-gradient(to right, #f3e5f5, #f8f4ff);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .proof-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Insight box styling */
+        .insight-box {
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+            border-left: 3px solid #1976d2;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .insight-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Analysis box styling */
+        .analysis-box {
+            background: linear-gradient(to right, #fff3e0, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .analysis-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Technical box styling */
+        .technical-box {
+            background: linear-gradient(to right, #fce4ec, #f8bbd9);
+            border-left: 3px solid #e91e63;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .technical-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Matrix optimization box */
+        .matrix-box {
+            background: linear-gradient(to right, #e0f2f1, #b2dfdb);
+            border-left: 3px solid #009688;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .matrix-header {
+            color: #00796b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Orthogonal constraint box */
+        .orthogonal-box {
+            background: linear-gradient(to right, #fff3e0, #ffcc80);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .orthogonal-header {
+            color: #e65100;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Spectral norm box */
+        .spectral-box {
+            background: linear-gradient(to right, #e8eaf6, #c5cae9);
+            border-left: 3px solid #3f51b5;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .spectral-header {
+            color: #303f9f;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Stiefel manifold box */
+        .stiefel-box {
+            background: linear-gradient(to right, #fce4ec, #f8bbd9);
+            border-left: 3px solid #e91e63;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stiefel-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Projection box */
+        .projection-box {
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+            border-left: 3px solid #1976d2;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .projection-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>Manifold Gradient Descent: 2. Muon with Orthogonal Constraints</h1>
+                <div class="subtitle">Extending constrained optimization to matrix parameters: spectral norm constraints yield Muon optimizer, orthogonal manifold constraints yield Muon on Stiefel manifolds, with rigorous derivation of steepest descent directions.</div>
+                
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>Su Jianlin</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-eye"></i>
+                        <span>Scientific Spaces</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <div class="tag">Matrix Optimization</div>
+                        <div class="tag">Orthogonal Manifold</div>
+                        <div class="tag">Spectral Norm</div>
+                        <div class="tag">Muon Optimizer</div>
+                        <div class="tag">Stiefel Manifold</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Translation Notice -->
+        <div class="translation-notice">
+            <div class="translation-notice-content">
+                <div class="translation-text">
+                    <h3><i class="fas fa-language"></i> Academic Translation</h3>
+                    <p>This is an academic English translation maintaining technical accuracy while adapting to English academic conventions.</p>
+                </div>
+                <div class="translator-badge">
+                    <i class="fas fa-user-graduate"></i>
+                    Translated by Juanxi Tian (ScalingOpt Team)
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Sidebar Table of Contents -->
+            <aside class="sidebar">
+                <nav class="toc">
+                    <div class="toc-header">
+                        <i class="fas fa-list"></i>
+                        Contents
+                    </div>
+                    <ul class="toc-list">
+                        <li class="toc-item">
+                            <a href="#problem-formulation" class="toc-link">
+                                <span class="toc-number">1</span>
+                                <span>Problem Formulation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#fundamental-result" class="toc-link">
+                                <span class="toc-number">2</span>
+                                <span>Fundamental Result</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#orthogonal-manifold" class="toc-link">
+                                <span class="toc-number">3</span>
+                                <span>Orthogonal Manifold</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#solution-process" class="toc-link">
+                                <span class="toc-number">4</span>
+                                <span>Solution Process</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#retraction-operation" class="toc-link">
+                                <span class="toc-number">5</span>
+                                <span>Retraction Operation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#summary" class="toc-link">
+                                <span class="toc-number">6</span>
+                                <span>Summary</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Article Content -->
+            <main class="main-content">
+                <p>This article continues our series on constrained optimization. In the previous article <a href="/archives/11196" target="_blank">"Manifold Gradient Descent: 1. SGD on Hyperspheres"</a>, we revisited the "Least Action Principle" for optimizers, proposing that the core distinction among different optimizers lies in the various constraints imposed on the update vector. If this constraint is the Euclidean norm, the corresponding steepest descent is SGD. Furthermore, we discussed results when simultaneously imposing magnitude constraints on parameters, constituting steepest descent on hyperspherical manifolds.</p>
+                
+                <p>However, the previous article should be considered merely a "warm-up," as it addressed relatively simple vector parameter optimization. This article formally enters more challenging territory—optimization parameters transition from vectors to matrices, with the incremental constraint changed to the spectral norm, giving rise to the Muon optimizer. Subsequently, we impose orthogonal constraints on parameters, yielding the Muon optimizer on orthogonal manifolds.</p>
+                
+                <h2 id="problem-formulation">Problem Formulation<a href="#problem-formulation">#</a></h2>
+                
+                <div class="matrix-box">
+                    <div class="matrix-header">
+                        <i class="fas fa-th"></i>
+                        Matrix Parameter Formulation
+                    </div>
+                    <p>Let the parameters to be optimized have matrix form $\boldsymbol{W}\in\mathbb{R}^{n\times m}$. Without loss of generality, assume $n\geq m$. According to the "Least Action Principle" from the previous article, the steepest descent increment $\Delta\boldsymbol{W}$ should satisfy:</p>
+                    <div class="equation">
+                        \[
+                        \min_{\Delta \boldsymbol{W}} \mathcal{L}(\boldsymbol{W} +\Delta\boldsymbol{W}) \qquad \text{subject to}\qquad \rho(\Delta\boldsymbol{W})\leq \eta
+                        \]
+                    </div>
+                    <p>If $\rho$ is taken as the Frobenius norm, the result will be identical to the previous section, since the Frobenius norm essentially computes the L2 norm of the vectorized matrix, resulting in SGD treating the matrix as a vector. To obtain results more revealing and intrinsic to matrix nature, here we choose the spectral norm (also denoted $\Vert\cdot\Vert_2$).</p>
+                </div>
+                
+                <p>As for why the spectral norm is selected, readers may refer to <a href="/archives/10592" target="_blank">"Muon Optimizer Appreciation: The Essential Leap from Vectors to Matrices"</a>, <a href="/archives/10739" target="_blank">"Muon Sequel: Why Did We Choose to Experiment with Muon?"</a>, and <a href="/archives/10795" target="_blank">"Higher-Order MuP: More Concise yet More Insightful Spectral Conditioning Scaling"</a>; we will not repeat the introduction here. In brief, the spectral norm is the most compact norm revealing linear layer transformations, making it more suitable as a measure of matrix "stability."</p>
+                
+                <p>Following previous steps, applying a first-order approximation to $\mathcal{L}(\boldsymbol{W} +\Delta\boldsymbol{W})$ yields $\mathcal{L}(\boldsymbol{W}) + \langle \boldsymbol{G}, \Delta\boldsymbol{W}\rangle_F$, where $\boldsymbol{G}=\nabla_{\boldsymbol{W}}\mathcal{L}(\boldsymbol{W})$. Here $\langle\cdot,\cdot\rangle_F$ denotes flattening both matrices to vectors and computing their inner product, equivalently $\newcommand{tr}{\mathop{\text{tr}}}\tr(\boldsymbol{G}^{\top}\Delta\boldsymbol{W})$. Setting $\Delta\boldsymbol{W} = -\eta \boldsymbol{\Phi}$, the original problem simplifies to:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(2)</span>
+                        \[
+                        \max_{\boldsymbol{\Phi}} \tr(\boldsymbol{G}^{\top}\boldsymbol{\Phi}) \qquad \text{subject to}\qquad \Vert\boldsymbol{\Phi}\Vert_2 = 1\label{eq:muon-obj}
+                        \]
+                    </div>
+                </div>
+                
+                <p>These transformation steps are general; if details are forgotten, please refer back to the previous article.</p>
+                
+                <h2 id="fundamental-result">Fundamental Result<a href="#fundamental-result">#</a></h2>
+                
+                <p>The solution process for objective $\eqref{eq:muon-obj}$ was already provided in the "Matrix Norms" section of <a href="/archives/10592" target="_blank">"Muon Optimizer Appreciation: The Essential Leap from Vectors to Matrices"</a>. However, for completeness, we restate it here. Let the SVD of $\boldsymbol{G}$ be $\boldsymbol{U}\boldsymbol{\Sigma}\boldsymbol{V}^{\top} = \sum\limits_{i=1}^r \sigma_i \boldsymbol{u}_i \boldsymbol{v}_i^{\top}$, where $r$ is the rank of $\boldsymbol{G}$. We have:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(3)</span>
+                        \[
+                        \tr(\boldsymbol{G}^{\top}\boldsymbol{\Phi})=\tr\left(\sum_{i=1}^r \sigma_i \boldsymbol{v}_i \boldsymbol{u}_i^{\top}\boldsymbol{\Phi}\right) = \sum_{i=1}^r \sigma_i \boldsymbol{u}_i^{\top}\boldsymbol{\Phi}\boldsymbol{v}_i
+                        \]
+                    </div>
+                </div>
+                
+                <p>By definition, when $\Vert\boldsymbol{\Phi}\Vert_2=1$, $\Vert\boldsymbol{\Phi}\boldsymbol{v}_i\Vert_2\leq \Vert\boldsymbol{v}_i\Vert_2=1$, hence $\boldsymbol{u}_i^{\top}\boldsymbol{\Phi}\boldsymbol{v}_i\leq 1$. Therefore:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(4)</span>
+                        \[
+                        \tr(\boldsymbol{G}^{\top}\boldsymbol{\Phi})\leq \sum_{i=1}^r \sigma_i = \Vert \boldsymbol{G}\Vert_*
+                        \]
+                    </div>
+                </div>
+                
+                <p>Here $\Vert\cdot\Vert_*$ is called the <a href="https://en.wikipedia.org/wiki/Schatten_norm" target="_blank">Nuclear Norm</a> of the matrix. Equality holds when all $\boldsymbol{u}_i^{\top}\boldsymbol{\Phi}\boldsymbol{v}_i$ equal 1, yielding:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(5)</span>
+                        \[
+                        \newcommand{msign}{\mathop{\text{msign}}}\boldsymbol{\Phi} = \sum_{i=1}^r \boldsymbol{u}_i \boldsymbol{v}_i^{\top} = \boldsymbol{U}_{[:,:r]}\boldsymbol{V}_{[:,:r]}^{\top} = \msign(\boldsymbol{G})
+                        \]
+                    </div>
+                </div>
+                
+                <div class="spectral-box">
+                    <div class="spectral-header">
+                        <i class="fas fa-exclamation-circle"></i>
+                        Notes on Solution Uniqueness
+                    </div>
+                    <p>Note that if $r < m$, adding terms $\boldsymbol{u}_{r+1} \boldsymbol{v}_{r+1}^{\top},\boldsymbol{u}_{r+2} \boldsymbol{v}_{r+2}^{\top},\cdots$ will also satisfy equality, meaning the solution is not unique. However, terms beyond $r$ cannot be uniquely determined, so the above expression can be considered a deterministic, minimal solution. Interested readers may also attempt to use the "heavy artillery"—the <a href="https://en.wikipedia.org/wiki/Trace_inequality#Von_Neumann's_trace_inequality_and_related_results" target="_blank">von Neumann trace inequality</a>—to find general solutions under <a href="https://en.wikipedia.org/wiki/Schatten_norm" target="_blank">Schatten-$p$ norms</a>, with the spectral norm corresponding to the special case $p\to\infty$.</p>
+                </div>
+                
+                <h2 id="orthogonal-manifold">Orthogonal Manifold<a href="#orthogonal-manifold">#</a></h2>
+                
+                <p>Thus far, we have demonstrated that for matrix parameters, the direction of steepest descent under spectral norm constraints is not the opposite gradient $-\boldsymbol{G}$, but requires an additional $\msign$ operator: $-\msign(\boldsymbol{G})$. This is precisely the Muon optimizer used in training <a href="/archives/11126" target="_blank">Kimi K2</a>, making it one of the most competitive optimizers currently. This conversely indicates that the spectral norm as a stability constraint for matrices is highly appropriate.</p>
+                
+                <p>Of course, the results so far are not new. Now we begin exploring novel territory—imposing orthogonal constraints $\boldsymbol{W}^{\top}\boldsymbol{W}=\boldsymbol{I}$ on parameters $\boldsymbol{W}$ (source: <a href="https://docs.modula.systems/algorithms/manifold/orthogonal/" target="_blank">"Orthogonal manifold"</a>). This divides into two cases: first, when $n=m$, $\boldsymbol{W}$ is a proper orthogonal matrix satisfying $\boldsymbol{W}^{\top}\boldsymbol{W}=\boldsymbol{W}\boldsymbol{W}^{\top}=\boldsymbol{I}$; second, when $n > m$, $\boldsymbol{W}\boldsymbol{W}^{\top}=\boldsymbol{I}$ cannot be satisfied, typically called a semi-orthogonal matrix, with the corresponding space termed the Stiefel manifold.</p>
+                
+                <div class="orthogonal-box">
+                    <div class="orthogonal-header">
+                        <i class="fas fa-vector-square"></i>
+                        Constrained Optimization on Orthogonal Manifold
+                    </div>
+                    <p>Specifically, we now need to solve:</p>
+                    <div class="equation">
+                        \[
+                        \max_{\boldsymbol{\Phi}} \tr(\boldsymbol{G}^{\top}\boldsymbol{\Phi}) \qquad \text{subject to}\qquad \Vert\boldsymbol{\Phi}\Vert_2 = 1,\,\, \boldsymbol{W}^{\top}\boldsymbol{W}=\boldsymbol{I},\,\,(\boldsymbol{W} - \eta \boldsymbol{\Phi})^{\top}(\boldsymbol{W} - \eta \boldsymbol{\Phi})=\boldsymbol{I}
+                        \]
+                    </div>
+                    <p>Adhering to the "first-order approximation suffices" principle, the last condition simplifies to $\boldsymbol{W}^{\top}\boldsymbol{\Phi}+\boldsymbol{\Phi}^{\top}\boldsymbol{W} = \boldsymbol{0}$, meaning $\boldsymbol{W}^{\top}\boldsymbol{\Phi}$ is a skew-symmetric matrix:</p>
+                    <div class="equation">
+                        \[
+                        \max_{\boldsymbol{\Phi}} \tr(\boldsymbol{G}^{\top}\boldsymbol{\Phi}) \qquad \text{subject to}\qquad \Vert\boldsymbol{\Phi}\Vert_2 = 1,\,\, \boldsymbol{W}^{\top}\boldsymbol{W}=\boldsymbol{I},\,\,\boldsymbol{W}^{\top}\boldsymbol{\Phi}+\boldsymbol{\Phi}^{\top}\boldsymbol{W} = \boldsymbol{0}\label{eq:muon-obj-orth}
+                        \]
+                    </div>
+                </div>
+                
+                <p>When might orthogonal constraints be applied? In fact, scenarios are not rare. For example, in classification problems, if classes are known to have little correlation, orthogonal constraints on class matrices may be considered, though often implemented through regularization terms $\Vert\boldsymbol{W}^{\top}\boldsymbol{W}-\boldsymbol{I}\Vert_F^2$ for approximate orthogonality. Another example is in LoRA scenarios, where parameterization of form $\boldsymbol{A}\boldsymbol{B}$ inherently contains redundancy, which can be reduced via orthogonal constraints (<a href="https://papers.cool/arxiv/2508.17901" target="_blank">reference</a>), etc.</p>
+                
+                <h2 id="solution-process">Solution Process<a href="#solution-process">#</a></h2>
+                
+                <p>To solve objective $\eqref{eq:muon-obj-orth}$, similar to the previous article, we introduce an undetermined coefficient matrix $\boldsymbol{\Lambda}\in\mathbb{R}^{m\times m}$, obtaining:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(6)</span>
+                        \[
+                        \begin{aligned}
+                        \tr(\boldsymbol{G}^{\top}\boldsymbol{\Phi}) =&\, \tr(\boldsymbol{G}^{\top}\boldsymbol{\Phi}) + \tr(\boldsymbol{\Lambda}^{\top}(\boldsymbol{W}^{\top}\boldsymbol{\Phi}+\boldsymbol{\Phi}^{\top}\boldsymbol{W})) \\
+                        =&\, \tr((\boldsymbol{G} + \boldsymbol{W}(\boldsymbol{\Lambda} + \boldsymbol{\Lambda}^{\top}))^{\top}\boldsymbol{\Phi}) \\
+                        \leq &\,\Vert\boldsymbol{G} + \boldsymbol{W}(\boldsymbol{\Lambda} + \boldsymbol{\Lambda}^{\top})\Vert_*
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>The second equality uses trace identities $\begin{equation}\tr(\boldsymbol{A}\boldsymbol{B}) = \tr(\boldsymbol{B}\boldsymbol{A}) = \tr(\boldsymbol{A}^{\top}\boldsymbol{B}^{\top}) = \tr(\boldsymbol{B}^{\top}\boldsymbol{A}^{\top})\end{equation}$. According to the previous Muon result, equality holds when:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(7)</span>
+                        \[
+                        \boldsymbol{\Phi} = \msign(\boldsymbol{G} + \boldsymbol{W}(\boldsymbol{\Lambda} + \boldsymbol{\Lambda}^{\top}))
+                        \]
+                    </div>
+                </div>
+                
+                <p>The remaining problem is finding the real symmetric matrix $\boldsymbol{X} = \boldsymbol{\Lambda} + \boldsymbol{\Lambda}^{\top}$ such that $\boldsymbol{W}^{\top}\boldsymbol{\Phi}$ is skew-symmetric. For $n=m$, this is easily solved because $\boldsymbol{W}^{\top}$ can be absorbed into $\msign$:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(8)</span>
+                        \[
+                        \boldsymbol{W}^{\top}\boldsymbol{\Phi} = \boldsymbol{W}^{\top}\msign(\boldsymbol{G} + \boldsymbol{W}\boldsymbol{X}) = \msign(\boldsymbol{W}^{\top}(\boldsymbol{G} + \boldsymbol{W}\boldsymbol{X})) = \msign(\boldsymbol{W}^{\top}\boldsymbol{G} +\boldsymbol{X})
+                        \]
+                    </div>
+                </div>
+                
+                <div class="technical-box">
+                    <div class="technical-header">
+                        <i class="fas fa-cogs"></i>
+                        Key Property of msign Operator
+                    </div>
+                    <p>Note that $\msign$ possesses an additional property: it preserves skew-symmetry. That is, if a square matrix $\boldsymbol{M}$ is skew-symmetric, then $\msign(\boldsymbol{M})$ is also skew-symmetric (please prove this). Therefore, to make $\boldsymbol{W}^{\top}\boldsymbol{\Phi}$ skew-symmetric, it suffices to make $\boldsymbol{W}^{\top}\boldsymbol{G} +\boldsymbol{X}$ skew-symmetric. Note that $\boldsymbol{X}$ is symmetric, so this is equivalent to decomposing $\boldsymbol{W}^{\top}\boldsymbol{G}$ into symmetric and skew-symmetric components—a problem with a ready solution:</p>
+                    <div class="equation">
+                        \[
+                        \boldsymbol{W}^{\top}\boldsymbol{G} = \underbrace{\frac{1}{2}(\boldsymbol{W}^{\top}\boldsymbol{G} + \boldsymbol{G}^{\top}\boldsymbol{W})}_{[\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{sym}}} + \underbrace{\frac{1}{2}(\boldsymbol{W}^{\top}\boldsymbol{G} - \boldsymbol{G}^{\top}\boldsymbol{W})}_{[\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{skew}}}
+                        \]
+                    </div>
+                    <p>where $[\boldsymbol{M}]_{\text{sym}} = (\boldsymbol{M}+\boldsymbol{M}^{\top})/2$ and $[\boldsymbol{M}]_{\text{skew}} = (\boldsymbol{M}-\boldsymbol{M}^{\top})/2$. Based on this identity, we directly obtain $\boldsymbol{X} = -[\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{sym}}$. Solving for the case $n > m$ is more complex and will be discussed in detail in the next article; this article aims to fully address the $n=m$ scenario.</p>
+                </div>
+                
+                <h2 id="retraction-operation">Retraction Operation<a href="#retraction-operation">#</a></h2>
+                
+                <p>In summary, for $n=m$, our final result is:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(9)</span>
+                        \[
+                        \begin{aligned}
+                        \boldsymbol{\Phi} =&\, \msign(\boldsymbol{G} - \boldsymbol{W}[\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{sym}}) \\
+                        =&\, \boldsymbol{W}\boldsymbol{W}^{\top}\msign(\boldsymbol{G} - \boldsymbol{W}[\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{sym}}) \\
+                        =&\, \boldsymbol{W}\msign(\boldsymbol{W}^{\top}\boldsymbol{G} - [\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{sym}}) \\
+                        =&\, \boldsymbol{W}\msign([\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{skew}}) \\
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Therefore, the updated variable is:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(10)</span>
+                        \[
+                        \boldsymbol{W} - \eta \boldsymbol{\Phi} = \boldsymbol{W}(\boldsymbol{I} - \eta\,\underbrace{\msign([\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{skew}})}_{\text{denoted as }\boldsymbol{O}})\label{eq:updated-W}
+                        \]
+                    </div>
+                </div>
+                
+                <p>This is not an orthogonal matrix but is accurate to $\mathcal{O}(\eta^2)$, consistent with our "first-order approximation suffices" principle. To verify this, simply check:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(11)</span>
+                        \[
+                        \begin{aligned}
+                        (\boldsymbol{I} - \eta\boldsymbol{O})^{\top}\boldsymbol{W}^{\top}\boldsymbol{W}(\boldsymbol{I} - \eta\boldsymbol{O}) =&\,(\boldsymbol{I} - \eta\boldsymbol{O})^{\top}(\boldsymbol{I} - \eta\boldsymbol{O}) \\
+                        =&\,\boldsymbol{I} - \eta(\boldsymbol{O}^{\top} + \boldsymbol{O}) + \eta^2\boldsymbol{O}^{\top}\boldsymbol{O} \\
+                        =&\,\boldsymbol{I} + \eta^2\boldsymbol{O}^{\top}\boldsymbol{O} \\
+                        \end{aligned}\label{eq:orth-check}
+                        \]
+                    </div>
+                </div>
+                
+                <div class="projection-box">
+                    <div class="projection-header">
+                        <i class="fas fa-project-diagram"></i>
+                        Retraction and Projection onto Orthogonal Manifold
+                    </div>
+                    <p>If $[\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{skew}}$ is full-rank, then $\boldsymbol{O}$ is an orthogonal matrix, i.e., $\boldsymbol{O}^{\top}\boldsymbol{O}=\boldsymbol{I}$. In this case, dividing by $\sqrt{1+\eta^2}$ would make $\eqref{eq:updated-W}$ satisfy orthogonality. However, when $[\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{skew}}$ is not full-rank, no simple transformation ensures orthogonality. The general approach is to find the nearest orthogonal matrix—which is precisely what $\msign$ accomplishes (refer to <a href="/archives/10592#%E7%AC%A6%E5%8F%B7%E5%87%BD%E6%95%B0" target="_blank">this section</a>). Therefore, the complete update rule is:</p>
+                    <div class="equation">
+                        \[
+                        \boldsymbol{W} \quad \leftarrow\quad \msign(\boldsymbol{W} - \eta \boldsymbol{\Phi}) = \msign(\boldsymbol{W}(\boldsymbol{I} - \eta\boldsymbol{O})) = \boldsymbol{W}\msign(\boldsymbol{I} - \eta\boldsymbol{O})
+                        \]
+                    </div>
+                    <p>But this requires computing $\msign$ twice; let's attempt to simplify. By definition and Equation $\eqref{eq:orth-check}$:</p>
+                    <div class="equation">
+                        \[
+                        \msign(\boldsymbol{I} - \eta\boldsymbol{O}) = (\boldsymbol{I} - \eta\boldsymbol{O})(\boldsymbol{I} + \eta^2\boldsymbol{O}^{\top}\boldsymbol{O})^{-1/2}
+                        \]
+                    </div>
+                    <p>Note that regardless of rank, $(\boldsymbol{O}^{\top}\boldsymbol{O})^2 = \boldsymbol{O}^{\top}\boldsymbol{O}$. Let $(1+\eta^2 x)^{-1/2}=1 + a_1 x + a_2 x^2 + a_3 x^3 + \cdots$. Then:</p>
+                    <div class="equation">
+                        \[
+                        \begin{aligned}
+                        (\boldsymbol{I} + \eta^2\boldsymbol{O}^{\top}\boldsymbol{O})^{-1/2} =&\, \boldsymbol{I} + a_1 (\boldsymbol{O}^{\top}\boldsymbol{O}) + a_2 (\boldsymbol{O}^{\top}\boldsymbol{O})^2 + a_3 (\boldsymbol{O}^{\top}\boldsymbol{O})^3 + \cdots \\
+                        =&\, \boldsymbol{I} + a_1 (\boldsymbol{O}^{\top}\boldsymbol{O}) + a_2 (\boldsymbol{O}^{\top}\boldsymbol{O}) + a_3 (\boldsymbol{O}^{\top}\boldsymbol{O}) + \cdots \\
+                        =&\, \boldsymbol{I} - \boldsymbol{O}^{\top}\boldsymbol{O} + \underbrace{(1 + a_1 + a_2  + a_3 + \cdots)}_{(1+\eta^2 x)^{-1/2}\text{ evaluated at }x=1}\boldsymbol{O}^{\top}\boldsymbol{O} \\
+                        \end{aligned}
+                        \]
+                    </div>
+                    <p>This eliminates one $\msign$ computation. The simplified complete result is:</p>
+                    <div class="equation">
+                        \[
+                        \boldsymbol{W} \quad \leftarrow\quad \boldsymbol{W}(\boldsymbol{I} - \eta\boldsymbol{O})\left(\boldsymbol{I} - \boldsymbol{O}^{\top}\boldsymbol{O} + \frac{\boldsymbol{O}^{\top}\boldsymbol{O}}{\sqrt{1+\eta^2}}\right)
+                        \]
+                    </div>
+                </div>
+                
+                <h2 id="summary">Summary<a href="#summary">#</a></h2>
+                
+                <p>In this article, we revisited the conclusion that imposing spectral norm constraints on matrix parameter updates yields the Muon optimizer. We then explored the form of the Muon optimizer when orthogonal constraints are imposed on parameters. If you wish parameters to remain orthogonal matrices during updates, this article may provide some reference value.</p>
+
+                <div class="citation-section">
+                    <div class="citation-header">
+                        <i class="fas fa-quote-right"></i>
+                        Citation Information
+                    </div>
+                    <p><strong>Original Article:</strong> Su Jianlin. Manifold Gradient Descent: 2. Muon with Orthogonal Constraints. <em>Scientific Spaces</em>.</p>
+                    
+                    <p><strong>How to cite this translation:</strong></p>
+                    <div class="citation-box">
+                        Su, J. Manifold Gradient Descent: 2. Muon with Orthogonal Constraints [Translated by Juanxi Tian]. 
+                        <em>Scientific Spaces</em>.
+                    </div>
+                    <p style="margin-top: 0.8rem;"><strong>BibTeX:</strong></p>
+                    <div class="citation-box">
+                        @article{su2025manifold_gradient_muon_orthogonal,
+                            title   = {Manifold Gradient Descent: 2. Muon with Orthogonal Constraints},
+                            author  = {Su, Jianlin},
+                            journal = {Scientific Spaces},
+                            year    = {2025},
+                            url     = {https://kexue.fm/archives/11196},
+                            note    = {Translated by Juanxi Tian (ScalingOpt Team)}
+                          }
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="translation-credit">
+                <i class="fas fa-user-graduate"></i>
+                Academic Translation by Juanxi Tian (ScalingOpt Team)
+            </div>
+            <div class="copyright">
+                © 2009-2025 Scientific Spaces. All rights reserved.<br>
+                Original content licensed under Creative Commons BY-NC-ND 2.5 China
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript for Interactive Features -->
+    <script>
+        // Scroll Progress Bar
+        window.addEventListener('scroll', function() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            scrollProgress.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Table of Contents Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            const sections = document.querySelectorAll('h2[id]');
+            
+            // Set active section based on scroll position
+            function setActiveSection() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 50)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', setActiveSection);
+            setActiveSection(); // Initial call
+            
+            // Smooth scroll for TOC links
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 50,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+
+        // MathJax Configuration
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                tags: 'ams'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    
+    <!-- MathJax CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</body>
+</html>

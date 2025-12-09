@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding Adaptive Learning Rate Optimizers from Hessian Approximation | Scientific Spaces</title>
+    <meta name="description" content="Analyzing Adam and related optimizers through the lens of Hessian approximation, revealing their connections to second-order Newton methods.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a6bca;
+            --primary-dark: #1357a8;
+            --primary-light: #e8f1fc;
+            --secondary: #2c3e50;
+            --accent: #3498db;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f5f7fa;
+            --gray-200: #e4e7eb;
+            --gray-300: #cbd2d9;
+            --gray-600: #7b8794;
+            --gray-700: #52606d;
+            --gray-900: #323f4b;
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 6px 24px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: #f0f5fc;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.5rem 1.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -8%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+        }
+
+        .meta-item i {
+            font-size: 0.85rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Translation Notice */
+        .translation-notice {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1.2rem;
+            margin: 0;
+        }
+
+        .translation-notice-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .translation-text h3 {
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .translation-text p {
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        .translator-badge {
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(26, 107, 202, 0.2);
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+        }
+
+        @media (max-width: 850px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            padding-left: 1rem;
+        }
+
+        .toc {
+            position: sticky;
+            top: 1rem;
+        }
+
+        .toc-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .toc-header i {
+            font-size: 0.9rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.4rem;
+            position: relative;
+        }
+
+        .toc-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            transition: var(--transition);
+            border-left: 2px solid transparent;
+            padding-left: 8px;
+        }
+
+        .toc-link:hover {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            transform: translateX(2px);
+        }
+
+        .toc-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .toc-number {
+            font-weight: 500;
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            min-width: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-right: 1.2rem;
+            padding-left: 0;
+        }
+
+        @media (max-width: 850px) {
+            .sidebar {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 0 1rem;
+            }
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 1.5rem 0 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: relative;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 35px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        h2 a {
+            color: var(--accent);
+            font-size: 0.7rem;
+            margin-left: 6px;
+            text-decoration: none;
+        }
+
+        h2 a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            color: var(--gray-900);
+            line-height: 1.65;
+        }
+
+        /* Equation Styling */
+        .equation-container {
+            margin: 0.8rem 0;
+        }
+
+        .equation {
+            background: var(--primary-light);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1rem;
+            border-radius: 0 5px 5px 0;
+            font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', serif;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .equation-number {
+            color: var(--primary);
+            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin-right: 6px;
+            display: inline-block;
+            min-width: 18px;
+        }
+
+        /* Code Block Styling */
+        .code-container {
+            margin: 1rem 0;
+            background: #2d2d2d;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .code-header {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 0.6rem 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .code-content {
+            padding: 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #f8f8f2;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+
+        /* Inline code styling */
+        code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background: var(--gray-100);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.85rem;
+            color: var(--primary-dark);
+        }
+
+        /* Reference Box */
+        .reference-box {
+            background: linear-gradient(to right, #f8fafc, var(--primary-light));
+            border: 1px solid var(--gray-200);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .reference-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .reference-header i {
+            font-size: 0.9rem;
+        }
+
+        .reference-list {
+            list-style: none;
+        }
+
+        .reference-item {
+            padding: 0.3rem 0 0.3rem 0.8rem;
+            position: relative;
+            margin-bottom: 0.4rem;
+            color: var(--gray-700);
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .reference-item::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 0.65rem;
+        }
+
+        /* Citation Section */
+        .citation-section {
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .citation-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .citation-box {
+            background: var(--white);
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid var(--gray-300);
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-top: 0.6rem;
+            overflow-x: auto;
+            color: var(--gray-900);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--secondary);
+            color: white;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .translation-credit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 6px 16px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(26, 107, 202, 0.2);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            margin-top: 0.6rem;
+        }
+
+        /* Utility Classes */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-light), #e8f2ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .math {
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.1s ease;
+            z-index: 1000;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 1rem 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 0.6rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem 0;
+            }
+            
+            .main-content {
+                padding-right: 0.8rem;
+            }
+            
+            .sidebar {
+                padding-left: 0.8rem;
+            }
+            
+            .meta-info {
+                gap: 0.6rem;
+            }
+            
+            .meta-item {
+                font-size: 0.75rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .translation-notice-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .translator-badge {
+                align-self: flex-start;
+            }
+        }
+
+        /* Links styling */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Optimize long formula display */
+        .equation {
+            word-break: break-word;
+        }
+        
+        /* Optimize list display */
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.3rem;
+            line-height: 1.5;
+        }
+        
+        /* Optimize math formula spacing */
+        .MathJax_Display {
+            margin: 0.6em 0 !important;
+        }
+        
+        /* Quote block styling */
+        blockquote.cite {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+        }
+        
+        blockquote.cite div {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        blockquote.cite a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        /* Blockquote styling */
+        blockquote {
+            background: linear-gradient(to right, var(--gray-100), var(--primary-light));
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+            position: relative;
+        }
+
+        blockquote p {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+
+        blockquote p:before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Underline styling */
+        u {
+            text-decoration: none;
+            border-bottom: 1px dotted var(--primary);
+        }
+
+        /* List styling inside main content */
+        .main-content ol, .main-content ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .main-content li {
+            margin-bottom: 0.4rem;
+            line-height: 1.6;
+        }
+
+        /* Highlight box for important notes */
+        .note-box {
+            background: linear-gradient(to right, #fff8e1, #fff3cd);
+            border-left: 3px solid #ffc107;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .note-box strong {
+            color: #856404;
+        }
+
+        /* Definition list styling */
+        .definition {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 3px solid #4caf50;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .definition-header {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Mathematical proof styling */
+        .proof {
+            background: linear-gradient(to right, #f3e5f5, #f8f4ff);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .proof-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Insight box styling */
+        .insight-box {
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+            border-left: 3px solid #1976d2;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .insight-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Analysis box styling */
+        .analysis-box {
+            background: linear-gradient(to right, #fff3e0, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .analysis-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Technical box styling */
+        .technical-box {
+            background: linear-gradient(to right, #fce4ec, #f8bbd9);
+            border-left: 3px solid #e91e63;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .technical-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Matrix inversion box styling */
+        .inversion-box {
+            background: linear-gradient(to right, #e0f2f1, #b2dfdb);
+            border-left: 3px solid #009688;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .inversion-header {
+            color: #00796b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Complexity analysis box styling */
+        .complexity-box {
+            background: linear-gradient(to right, #fff3e0, #ffcc80);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .complexity-header {
+            color: #e65100;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Algorithm box styling */
+        .algorithm-box {
+            background: linear-gradient(to right, #e8eaf6, #c5cae9);
+            border-left: 3px solid #3f51b5;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .algorithm-header {
+            color: #303f9f;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Implementation box styling */
+        .implementation-box {
+            background: linear-gradient(to right, #f3e5f5, #e1bee7);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .implementation-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Matrix visualization styling */
+        .matrix-visualization {
+            text-align: center;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            background: linear-gradient(to right, #f0f7ff, #e8f1fc);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .matrix-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+        }
+
+        .matrix-element {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            background: var(--white);
+            border: 1px solid var(--gray-300);
+            border-radius: 3px;
+            font-family: 'Cambria Math', serif;
+        }
+
+        .matrix-operation {
+            display: inline-block;
+            margin: 0 1rem;
+            font-size: 1.2rem;
+            vertical-align: middle;
+            color: var(--primary-dark);
+        }
+
+        /* Complexity notation styling */
+        .complexity {
+            font-family: 'Consolas', monospace;
+            color: var(--primary-dark);
+            font-weight: 600;
+            background: var(--primary-light);
+            padding: 0.1rem 0.4rem;
+            border-radius: 3px;
+        }
+
+        /* Optimization-specific styling */
+        .optimizer-box {
+            background: linear-gradient(to right, #e8f5e8, #d0e9d0);
+            border-left: 3px solid #4caf50;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .optimizer-header {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hessian-box {
+            background: linear-gradient(to right, #fff3e0, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .hessian-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .newton-box {
+            background: linear-gradient(to right, #e1f5fe, #b3e5fc);
+            border-left: 3px solid #0288d1;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .newton-header {
+            color: #01579b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Key findings styling */
+        .key-finding {
+            background: linear-gradient(to right, #fff3e0, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 0.8rem 1rem;
+            margin: 0.8rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .key-finding:before {
+            content: '🔑';
+            position: absolute;
+            left: 0.5rem;
+            top: 0.8rem;
+            font-size: 1rem;
+        }
+
+        /* Derivative box styling */
+        .derivative-box {
+            background: linear-gradient(to right, #f3e5f5, #e1bee7);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .derivative-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Approximations styling */
+        .approximation-box {
+            background: linear-gradient(to right, #e8eaf6, #c5cae9);
+            border-left: 3px solid #3f51b5;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .approximation-header {
+            color: #303f9f;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Statistical analysis styling */
+        .statistical-box {
+            background: linear-gradient(to right, #f9fbe7, #f0f4c3);
+            border-left: 3px solid #cddc39;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .statistical-header {
+            color: #827717;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Optimizer comparison styling */
+        .comparison-box {
+            background: linear-gradient(to right, #fff3e0, #ffcc80);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .comparison-header {
+            color: #e65100;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>Understanding Adaptive Learning Rate Optimizers from Hessian Approximation</h1>
+                <div class="subtitle">Analyzing Adam and related optimizers through the lens of Hessian approximation, revealing their connections to second-order Newton methods and providing theoretical insights into adaptive learning rate mechanisms.</div>
+                
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>Su Jianlin</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-eye"></i>
+                        <span>Scientific Spaces</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <div class="tag">Optimization</div>
+                        <div class="tag">Hessian Matrix</div>
+                        <div class="tag">Adam Optimizer</div>
+                        <div class="tag">Newton's Method</div>
+                        <div class="tag">Deep Learning</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Translation Notice -->
+        <div class="translation-notice">
+            <div class="translation-notice-content">
+                <div class="translation-text">
+                    <h3><i class="fas fa-language"></i> Academic Translation</h3>
+                    <p>This is an academic English translation maintaining technical accuracy while adapting to English academic conventions.</p>
+                </div>
+                <div class="translator-badge">
+                    <i class="fas fa-user-graduate"></i>
+                    Translated by Academic Translation Team
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Sidebar Table of Contents -->
+            <aside class="sidebar">
+                <nav class="toc">
+                    <div class="toc-header">
+                        <i class="fas fa-list"></i>
+                        Contents
+                    </div>
+                    <ul class="toc-list">
+                        <li class="toc-item">
+                            <a href="#introduction" class="toc-link">
+                                <span class="toc-number">1</span>
+                                <span>Introduction</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#newton-method" class="toc-link">
+                                <span class="toc-number">2</span>
+                                <span>Newton's Method</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#gradient-approximation" class="toc-link">
+                                <span class="toc-number">3</span>
+                                <span>Gradient Approximation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#related-work" class="toc-link">
+                                <span class="toc-number">4</span>
+                                <span>Related Work</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#additional-connections" class="toc-link">
+                                <span class="toc-number">5</span>
+                                <span>Additional Connections</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#conclusion" class="toc-link">
+                                <span class="toc-number">6</span>
+                                <span>Conclusion</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Article Content -->
+            <main class="main-content">
+                <div class="optimizer-box">
+                    <div class="optimizer-header">
+                        <i class="fas fa-chart-line"></i>
+                        Research Motivation
+                    </div>
+                    <p>Recently, I revisited a Meta paper from last year titled <a href="https://papers.cool/arxiv/2304.09871" target="_blank">"A Theory on Adam Instability in Large-Scale Machine Learning"</a>, which provides a novel perspective on Adam and other adaptive learning rate optimizers: it suggests that the exponential moving average of gradient squares approximately estimates the square of the Hessian matrix, implying that optimizers like Adam and RMSprop are effectively approximating second-order Newton methods.</p>
+                    
+                    <p>This perspective is quite novel and appears significantly different from previous Hessian approximations in the literature, making it worth studying and contemplating further.</p>
+                </div>
+                
+                <h2 id="newton-method">Newton's Method<a href="#newton-method">#</a></h2>
+                
+                <div class="newton-box">
+                    <div class="newton-header">
+                        <i class="fas fa-calculator"></i>
+                        Newton's Method Framework
+                    </div>
+                    <p>Let the loss function be <span class="complexity">$\mathcal{L}(\boldsymbol{\theta})$</span>, where the parameters to optimize are <span class="complexity">$\boldsymbol{\theta}$</span>. Our optimization objective is:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(1)</span>
+                            \[
+                            \boldsymbol{\theta}^* = \mathop{\text{argmin}}_{\boldsymbol{\theta}} \mathcal{L}(\boldsymbol{\theta})
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Assuming the current value of <span class="complexity">$\boldsymbol{\theta}$</span> is <span class="complexity">$\boldsymbol{\theta}_t$</span>, Newton's method seeks <span class="complexity">$\boldsymbol{\theta}_{t+1}$</span> by expanding the loss function to second order:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(2)</span>
+                            \[
+                            \mathcal{L}(\boldsymbol{\theta})\approx \mathcal{L}(\boldsymbol{\theta}_t) + \boldsymbol{g}_t^{\top}(\boldsymbol{\theta} - \boldsymbol{\theta}_t) + \frac{1}{2}(\boldsymbol{\theta} - \boldsymbol{\theta}_t)^{\top}\boldsymbol{\mathcal{H}}_t(\boldsymbol{\theta} - \boldsymbol{\theta}_t)
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>where <span class="complexity">$\boldsymbol{g}_t = \nabla_{\boldsymbol{\theta}_t}\mathcal{L}(\boldsymbol{\theta}_t)$</span> is the gradient and <span class="complexity">$\boldsymbol{\mathcal{H}}_t=\nabla_{\boldsymbol{\theta}_t}^2\mathcal{L}(\boldsymbol{\theta}_t)$</span> is the Hessian matrix. Assuming positive definiteness of the Hessian matrix, the right-hand side of the equation has a unique minimum at <span class="complexity">$\boldsymbol{\theta}_t - \boldsymbol{\mathcal{H}}_t^{-1}\boldsymbol{g}_t$</span>. Newton's method uses this as the next iteration <span class="complexity">$\boldsymbol{\theta}_{t+1}$</span>:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(3)</span>
+                            \[
+                            \boldsymbol{\theta}_{t+1} = \boldsymbol{\theta}_t-\boldsymbol{\mathcal{H}}_t^{-1}\boldsymbol{g}_t = \boldsymbol{\theta}_t - (\nabla_{\boldsymbol{\theta}_t}^2\mathcal{L})^{-1} \nabla_{\boldsymbol{\theta}_t}\mathcal{L}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Note that this equation contains no additional learning rate parameter, making Newton's method inherently an adaptive learning rate algorithm. However, since the complexity of the Hessian matrix scales quadratically with the number of parameters, full Newton's method in deep learning remains primarily theoretical. To practically apply Newton's method, significant simplifications must be made to the Hessian matrix, such as assuming diagonal or low-rank structures.</p>
+                    
+                    <div class="key-finding">
+                        From the Newton's method perspective, SGD assumes <span class="complexity">$\boldsymbol{\mathcal{H}}_t=\eta_t^{-1}\boldsymbol{I}$</span>, while Adam assumes <span class="complexity">$\boldsymbol{\mathcal{H}}_t=\eta_t^{-1}\text{diag}(\sqrt{\hat{\boldsymbol{v}}_t} + \epsilon)$</span>, where
+                    </div>
+                    
+                    <div class="algorithm-box">
+                        <div class="algorithm-header">
+                            <i class="fas fa-robot"></i>
+                            Adam Optimizer Algorithm
+                        </div>
+                        <div class="equation-container">
+                            <div class="equation">
+                                <span class="equation-number">(4)</span>
+                                \[
+                                \text{Adam}:=\left\{\begin{aligned}
+                                &\boldsymbol{m}_t = \beta_1 \boldsymbol{m}_{t-1} + \left(1 - \beta_1\right) \boldsymbol{g}_t\\
+                                &\boldsymbol{v}_t = \beta_2 \boldsymbol{v}_{t-1} + \left(1 - \beta_2\right) \boldsymbol{g}_t\odot\boldsymbol{g}_t\\
+                                &\hat{\boldsymbol{m}}_t = \boldsymbol{m}_t\left/\left(1 - \beta_1^t\right)\right.\\
+                                &\hat{\boldsymbol{v}}_t = \boldsymbol{v}_t\left/\left(1 - \beta_2^t\right)\right.\\
+                                &\boldsymbol{\theta}_t = \boldsymbol{\theta}_{t-1} - \eta_t \hat{\boldsymbol{m}}_t\left/\left(\sqrt{\hat{\boldsymbol{v}}_t} + \epsilon\right)\right.
+                                \end{aligned}\right.
+                                \]
+                            </div>
+                        </div>
+                        
+                        <p>Next, we aim to demonstrate that <span class="complexity">$\eta_t^{-1}\text{diag}(\sqrt{\hat{\boldsymbol{v}}_t})$</span> constitutes a superior approximation of <span class="complexity">$\boldsymbol{\mathcal{H}}_t$</span>.</p>
+                    </div>
+                </div>
+                
+                <h2 id="gradient-approximation">Gradient Approximation<a href="#gradient-approximation">#</a></h2>
+                
+                <div class="derivative-box">
+                    <div class="derivative-header">
+                        <i class="fas fa-project-diagram"></i>
+                        Gradient-Based Hessian Estimation
+                    </div>
+                    <p>The key to the proof lies in utilizing the first-order approximation of gradients:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(5)</span>
+                            \[
+                            \boldsymbol{g}_{\boldsymbol{\theta}} \approx \boldsymbol{g}_{\boldsymbol{\theta}^*} + \boldsymbol{\mathcal{H}}_{\boldsymbol{\theta}^*}(\boldsymbol{\theta} - \boldsymbol{\theta}^*)
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>where <span class="complexity">$\boldsymbol{g}_{\boldsymbol{\theta}^*}$</span> and <span class="complexity">$\boldsymbol{\mathcal{H}}_{\boldsymbol{\theta}^*}$</span> indicate expansion at <span class="complexity">$\boldsymbol{\theta}=\boldsymbol{\theta}^*$</span>. Here, <span class="complexity">$\boldsymbol{\theta}^*$</span> represents our optimization target from equation (1), where the model's gradient is zero. Thus, the equation simplifies to:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(6)</span>
+                            \[
+                            \boldsymbol{g}_{\boldsymbol{\theta}} \approx \boldsymbol{\mathcal{H}}_{\boldsymbol{\theta}^*}(\boldsymbol{\theta} - \boldsymbol{\theta}^*)
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Consequently,</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(7)</span>
+                            \[
+                            \boldsymbol{g}_{\boldsymbol{\theta}}\boldsymbol{g}_{\boldsymbol{\theta}}^{\top} \approx \boldsymbol{\mathcal{H}}_{\boldsymbol{\theta}^*}(\boldsymbol{\theta} - \boldsymbol{\theta}^*)(\boldsymbol{\theta} - \boldsymbol{\theta}^*)^{\top}\boldsymbol{\mathcal{H}}_{\boldsymbol{\theta}^*}^{\top}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Assuming the training has reached a "stable regime" where the model oscillates around <span class="complexity">$\boldsymbol{\theta}^*$</span> with slow, spiral convergence, we can to some extent treat <span class="complexity">$\boldsymbol{\theta} - \boldsymbol{\theta}^*$</span> as a random variable following a normal distribution <span class="complexity">$\mathcal{N}(\boldsymbol{0},\sigma^2\boldsymbol{I})$</span>. Then,</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(8)</span>
+                            \[
+                            \mathbb{E}[\boldsymbol{g}_{\boldsymbol{\theta}}\boldsymbol{g}_{\boldsymbol{\theta}}^{\top}] \approx  \boldsymbol{\mathcal{H}}_{\boldsymbol{\theta}^*}\mathbb{E}[(\boldsymbol{\theta} - \boldsymbol{\theta}^*)(\boldsymbol{\theta} - \boldsymbol{\theta}^*)^{\top}]\boldsymbol{\mathcal{H}}_{\boldsymbol{\theta}^*}^{\top} = \sigma^2\boldsymbol{\mathcal{H}}_{\boldsymbol{\theta}^*}\boldsymbol{\mathcal{H}}_{\boldsymbol{\theta}^*}^{\top}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Assuming the Hessian matrix is diagonal, we can retain only the diagonal elements of the above equation:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(9)</span>
+                            \[
+                            \text{diag}(\mathbb{E}[\boldsymbol{g}_{\boldsymbol{\theta}}\odot\boldsymbol{g}_{\boldsymbol{\theta}}]) \approx  \sigma^2\boldsymbol{\mathcal{H}}_{\boldsymbol{\theta}^*}^2\quad\Rightarrow\quad \boldsymbol{\mathcal{H}}_{\boldsymbol{\theta}^*} = \frac{1}{\sigma}\text{diag}(\sqrt{\mathbb{E}[\boldsymbol{g}_{\boldsymbol{\theta}}\odot\boldsymbol{g}_{\boldsymbol{\theta}}]})
+                            \]
+                        </div>
+                    </div>
+                    
+                    <div class="key-finding">
+                        Does this look familiar? Adam's <span class="complexity">$\hat{\boldsymbol{v}}_t$</span> is an exponential moving average of gradient squares, which can be viewed as approximating <span class="complexity">$\mathbb{E}[\boldsymbol{g}_{\boldsymbol{\theta}}\odot\boldsymbol{g}_{\boldsymbol{\theta}}]$</span>. Finally, if we assume <span class="complexity">$\boldsymbol{\mathcal{H}}_{\boldsymbol{\theta}_t}$</span> changes little compared to <span class="complexity">$\boldsymbol{\mathcal{H}}_{\boldsymbol{\theta}^*}$</span>, we arrive at the conclusion that <span class="complexity">$\eta_t^{-1}\text{diag}(\sqrt{\hat{\boldsymbol{v}}_t})$</span> approximates <span class="complexity">$\boldsymbol{\mathcal{H}}_t$</span>.
+                    </div>
+                    
+                    <div class="insight-box">
+                        <div class="insight-header">
+                            <i class="fas fa-lightbulb"></i>
+                            Interpretation of Hyperparameters
+                        </div>
+                        <p>This analysis also explains why Adam's <span class="complexity">$\beta_2$</span> is typically larger than <span class="complexity">$\beta_1$</span>. To estimate the Hessian more accurately, the moving average <span class="complexity">$\hat{\boldsymbol{v}}_t$</span> should be as "long-term" as possible (approaching a uniform average), so <span class="complexity">$\beta_2$</span> should be very close to 1. In contrast, the momentum <span class="complexity">$\hat{\boldsymbol{m}}_t$</span> is a moving average of gradients. If the gradient average becomes too long-term, the result would approach <span class="complexity">$\boldsymbol{g}_{\boldsymbol{\theta}^*}=\boldsymbol{0}$</span>, which is undesirable. Therefore, the momentum's moving average should be more local.</p>
+                    </div>
+                </div>
+                
+                <h2 id="related-work">Related Work<a href="#related-work">#</a></h2>
+                
+                <div class="comparison-box">
+                    <div class="comparison-header">
+                        <i class="fas fa-balance-scale"></i>
+                        Alternative Hessian Approximations
+                    </div>
+                    <p>For readers familiar with Hessian matrix theory, the first reaction to the above conclusion might be confusion rather than recognition. This is because a classical approximation of the Hessian matrix is the outer product of Jacobian matrices (similar to gradients), whereas the Hessian approximation here is the square root of the gradient outer product, differing by a square root.</p>
+                    
+                    <p>Specifically, let's consider squared error loss as an example:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(10)</span>
+                            \[
+                            \mathcal{L}(\boldsymbol{\theta}) = \frac{1}{2}\mathbb{E}_{(\boldsymbol{x},\boldsymbol{y})\sim\mathcal{D}}[\Vert \boldsymbol{y} - \boldsymbol{f}_{\boldsymbol{\theta}}(\boldsymbol{x})\Vert^2]
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Expanding around <span class="complexity">$\boldsymbol{\theta}_t$</span>, we have <span class="complexity">$\boldsymbol{f}_{\boldsymbol{\theta}}(\boldsymbol{x})\approx \boldsymbol{f}_{\boldsymbol{\theta}_t}(\boldsymbol{x}) + \boldsymbol{\mathcal{J}}_{\boldsymbol{\theta}_t}^{\top} (\boldsymbol{\theta} - \boldsymbol{\theta}_t)$</span>, where <span class="complexity">$\boldsymbol{\mathcal{J}}_{\boldsymbol{\theta}_t}=\nabla_{\boldsymbol{\theta}_t} \boldsymbol{f}_{\boldsymbol{\theta}_t}(\boldsymbol{x})$</span> is the Jacobian matrix. Substituting into the above equation yields:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(11)</span>
+                            \[
+                            \mathcal{L}(\boldsymbol{\theta}) \approx \frac{1}{2}\mathbb{E}_{(\boldsymbol{x},\boldsymbol{y})\sim\mathcal{D}}[\Vert \boldsymbol{y} - \boldsymbol{f}_{\boldsymbol{\theta}_t}(\boldsymbol{x}) - \boldsymbol{\mathcal{J}}_{\boldsymbol{\theta}_t}^{\top} (\boldsymbol{\theta} - \boldsymbol{\theta}_t)\Vert^2]
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>The simplified equation above is merely a quadratic form in <span class="complexity">$\boldsymbol{\theta}$</span>, allowing direct computation of its Hessian matrix:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(12)</span>
+                            \[
+                            \boldsymbol{\mathcal{H}}_{\boldsymbol{\theta}_t} \approx \mathbb{E}_{(\boldsymbol{x},\boldsymbol{y})\sim\mathcal{D}}[\boldsymbol{\mathcal{J}}_{\boldsymbol{\theta}_t}\boldsymbol{\mathcal{J}}_{\boldsymbol{\theta}_t}^{\top}]
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>This is the Hessian approximation based on the outer product of Jacobian matrices, forming the theoretical foundation of the "<a href="https://en.wikipedia.org/wiki/Gauss%E2%80%93Newton_algorithm" target="_blank">Gauss–Newton method</a>". Of course, <span class="complexity">$\boldsymbol{\mathcal{J}}$</span> is not yet <span class="complexity">$\boldsymbol{g}$</span>; we need to connect this result to <span class="complexity">$\boldsymbol{g}$</span>. Differentiating equation (10) directly gives:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(13)</span>
+                            \[
+                            \boldsymbol{g}_{\boldsymbol{\theta}} = \mathbb{E}_{(\boldsymbol{x},\boldsymbol{y})\sim\mathcal{D}}[\boldsymbol{\mathcal{J}}_{\boldsymbol{\theta}}(\boldsymbol{y} - \boldsymbol{f}_{\boldsymbol{\theta}}(\boldsymbol{x}))]
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>Thus,</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(14)</span>
+                            \[
+                            \begin{aligned}
+                            \boldsymbol{g}_{\boldsymbol{\theta}} \boldsymbol{g}_{\boldsymbol{\theta}}^{\top} =&\,  \big(\mathbb{E}_{(\boldsymbol{x},\boldsymbol{y})\sim\mathcal{D}}[\boldsymbol{\mathcal{J}}_{\boldsymbol{\theta}}(\boldsymbol{y} - \boldsymbol{f}_{\boldsymbol{\theta}}(\boldsymbol{x}))]\big)\big(\mathbb{E}_{(\boldsymbol{x},\boldsymbol{y})\sim\mathcal{D}}[\boldsymbol{\mathcal{J}}_{\boldsymbol{\theta}}(\boldsymbol{y} - \boldsymbol{f}_{\boldsymbol{\theta}}(\boldsymbol{x}))]\big)^{\top} \\[5pt]
+                            =&\,  \big(\mathbb{E}_{(\boldsymbol{x},\boldsymbol{y})\sim\mathcal{D}}[\boldsymbol{\mathcal{J}}_{\boldsymbol{\theta}}(\boldsymbol{y} - \boldsymbol{f}_{\boldsymbol{\theta}}(\boldsymbol{x}))]\big)\big(\mathbb{E}_{(\boldsymbol{x},\boldsymbol{y})\sim\mathcal{D}}[(\boldsymbol{y} - \boldsymbol{f}_{\boldsymbol{\theta}}(\boldsymbol{x}))^{\top}\boldsymbol{\mathcal{J}}_{\boldsymbol{\theta}}^{\top}]\big) \\[5pt]
+                            \approx&\, \mathbb{E}_{(\boldsymbol{x},\boldsymbol{y})\sim\mathcal{D}}\big[\boldsymbol{\mathcal{J}}_{\boldsymbol{\theta}}(\boldsymbol{y} - \boldsymbol{f}_{\boldsymbol{\theta}}(\boldsymbol{x}))(\boldsymbol{y} - \boldsymbol{f}_{\boldsymbol{\theta}}(\boldsymbol{x}))^{\top}\boldsymbol{\mathcal{J}}_{\boldsymbol{\theta}}^{\top}\big] \\[5pt]
+                            \approx&\, \mathbb{E}_{(\boldsymbol{x},\boldsymbol{y})\sim\mathcal{D}}\Big[\boldsymbol{\mathcal{J}}_{\boldsymbol{\theta}}\mathbb{E}_{(\boldsymbol{x},\boldsymbol{y})\sim\mathcal{D}}\big[(\boldsymbol{y} - \boldsymbol{f}_{\boldsymbol{\theta}}(\boldsymbol{x}))(\boldsymbol{y} - \boldsymbol{f}_{\boldsymbol{\theta}}(\boldsymbol{x}))^{\top}\big]\boldsymbol{\mathcal{J}}_{\boldsymbol{\theta}}^{\top}\Big] \\[5pt]
+                            \end{aligned}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>The two approximations above lack rigorous justification but can be loosely considered mean-field approximations. Since <span class="complexity">$\boldsymbol{y} - \boldsymbol{f}_{\boldsymbol{\theta}}(\boldsymbol{x})$</span> represents regression prediction residuals, we typically assume they follow <span class="complexity">$\mathcal{N}(\boldsymbol{0},\sigma^2\boldsymbol{I})$</span>. Therefore,</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(15)</span>
+                            \[
+                            \boldsymbol{g}_{\boldsymbol{\theta}} \boldsymbol{g}_{\boldsymbol{\theta}}^{\top} \approx \sigma^2\mathbb{E}_{(\boldsymbol{x},\boldsymbol{y})\sim\mathcal{D}}\big[\boldsymbol{\mathcal{J}}_{\boldsymbol{\theta}}\boldsymbol{\mathcal{J}}_{\boldsymbol{\theta}}^{\top}\big] \approx \sigma^2 \boldsymbol{\mathcal{H}}_{\boldsymbol{\theta}_t}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>This reveals the connection between <span class="complexity">$\boldsymbol{\mathcal{H}}_{\boldsymbol{\theta}_t}$</span> and <span class="complexity">$\boldsymbol{g}_{\boldsymbol{\theta}} \boldsymbol{g}_{\boldsymbol{\theta}}^{\top}$</span>. Comparing with equation (8) from the previous section, we observe an apparent discrepancy of a square factor.</p>
+                    
+                    <div class="analysis-box">
+                        <div class="analysis-header">
+                            <i class="fas fa-hourglass-half"></i>
+                            Temporal Resolution of Discrepancy
+                        </div>
+                        <p>Examining the derivation processes, both results appear correct. How should we interpret this inconsistency? We can understand it as follows: Equation (15) provides an "instantaneous approximation" of the Hessian at time <span class="complexity">$t$</span>, while equation (8) represents a "long-term average" result over time steps. The long-term averaging effect partially cancels out some intensity (though theoretically making the estimate more accurate), necessitating an additional square root.</p>
+                        
+                        <p>A similar effect appears in SDEs discussed in <a href="/archives/9209" target="_blank">"Generative Diffusion Models: A General Framework with SDEs"</a>, where the noise term intensity in SDEs needs to be half an order higher than the non-noise terms. This is also because noise terms cancel out under long-term averaging, requiring higher-order noise to manifest its effects in the final results.</p>
+                    </div>
+                </div>
+                
+                <h2 id="additional-connections">Additional Connections<a href="#additional-connections">#</a></h2>
+                
+                <div class="statistical-box">
+                    <div class="statistical-header">
+                        <i class="fas fa-link"></i>
+                        Extensions and Generalizations
+                    </div>
+                    <p>In the previous derivation, we assumed <span class="complexity">$\boldsymbol{\theta}^*$</span> to be the theoretical optimum, implying <span class="complexity">$\boldsymbol{g} _{\boldsymbol{\theta}^*} = \boldsymbol{0}$</span>. What if <span class="complexity">$\boldsymbol{\theta}^*$</span> is any arbitrary point? Then equation (8) becomes:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(16)</span>
+                            \[
+                            \mathbb{E}[(\boldsymbol{g}_{\boldsymbol{\theta}}-\boldsymbol{g} _{\boldsymbol{\theta}^*})(\boldsymbol{g}_{\boldsymbol{\theta}}-\boldsymbol{g} _{\boldsymbol{\theta}^*})^{\top}] \approx \sigma^2\boldsymbol{\mathcal{H}}_{\boldsymbol{\theta}^*}\boldsymbol{\mathcal{H}}_{\boldsymbol{\theta}^*}^{\top}
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>In other words, as long as we take the moving average of the covariance rather than the second moment, we obtain a Hessian approximation within a local range. This precisely corresponds to the approach of the <a href="https://papers.cool/arxiv/2010.07468" target="_blank">AdaBelief optimizer</a>, whose <span class="complexity">$\boldsymbol{v}$</span> computes the moving average of the squared difference between <span class="complexity">$\boldsymbol{g}$</span> and <span class="complexity">$\boldsymbol{m}$</span>:</p>
+                    
+                    <div class="algorithm-box">
+                        <div class="algorithm-header">
+                            <i class="fas fa-adjust"></i>
+                            AdaBelief Optimizer Algorithm
+                        </div>
+                        <div class="equation-container">
+                            <div class="equation">
+                                <span class="equation-number">(17)</span>
+                                \[
+                                \text{AdaBelief}:=\left\{\begin{aligned}
+                                &\boldsymbol{m}_t = \beta_1 \boldsymbol{m}_{t-1} + \left(1 - \beta_1\right) \boldsymbol{g}_t\\
+                                &\boldsymbol{v}_t = \beta_2 \boldsymbol{v}_{t-1} + \left(1 - \beta_2\right) (\boldsymbol{g}_t - \boldsymbol{m}_t)\odot(\boldsymbol{g}_t - \boldsymbol{m}_t)\\
+                                &\hat{\boldsymbol{m}}_t = \boldsymbol{m}_t\left/\left(1 - \beta_1^t\right)\right.\\
+                                &\hat{\boldsymbol{v}}_t = \boldsymbol{v}_t\left/\left(1 - \beta_2^t\right)\right.\\
+                                &\boldsymbol{\theta}_t = \boldsymbol{\theta}_{t-1} - \eta_t \hat{\boldsymbol{m}}_t\left/\left(\sqrt{\hat{\boldsymbol{v}}_t} + \epsilon\right)\right.
+                                \end{aligned}\right.
+                                \]
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h2 id="conclusion">Conclusion<a href="#conclusion">#</a></h2>
+                
+                <div class="insight-box">
+                    <div class="insight-header">
+                        <i class="fas fa-check-circle"></i>
+                        Summary and Implications
+                    </div>
+                    <p>This article has introduced a perspective for understanding adaptive learning rate optimizers like Adam through Newton's method and Hessian approximation, discussing related results in Hessian approximation theory.</p>
+                    
+                    <div class="key-finding">
+                        The key insight is that Adam's gradient square moving average approximates the square root of the Hessian matrix, providing a bridge between first-order adaptive methods and second-order optimization.
+                    </div>
+                    
+                    <p>The main contributions of this analysis include:</p>
+                    
+                    <ol>
+                        <li><strong>Unified Framework</strong>: Presenting Adam and related optimizers as approximations to Newton's method with diagonal Hessian assumptions.</li>
+                        
+                        <li><strong>Theoretical Derivation</strong>: Demonstrating how gradient statistics relate to Hessian matrix approximations through statistical assumptions about parameter distributions.</li>
+                        
+                        <li><strong>Hyperparameter Interpretation</strong>: Explaining why Adam's <span class="complexity">$\beta_2$</span> is typically larger than <span class="complexity">$\beta_1$</span> based on the different roles of gradient and Hessian estimation.</li>
+                        
+                        <li><strong>Historical Context</strong>: Contrasting the proposed Hessian approximation with classical Jacobian outer product approximations and resolving apparent discrepancies through temporal averaging considerations.</li>
+                        
+                        <li><strong>Algorithmic Connections</strong>: Extending the analysis to other optimizers like AdaBelief, which uses gradient covariance rather than raw second moments.</li>
+                    </ol>
+                    
+                    <p>This perspective offers several practical implications:</p>
+                    
+                    <ul>
+                        <li><strong>Algorithm Design</strong>: Provides guidance for designing new adaptive optimizers based on improved Hessian approximations.</li>
+                        
+                        <li><strong>Hyperparameter Tuning</strong>: Offers theoretical justification for common hyperparameter choices in adaptive optimizers.</li>
+                        
+                        <li><strong>Convergence Analysis</strong>: Suggests new approaches for analyzing the convergence properties of adaptive methods through their connections to second-order methods.</li>
+                        
+                        <li><strong>Numerical Stability</strong>: Explains the role of the <span class="complexity">$\epsilon$</span> parameter in preventing division by small values in Hessian approximation.</li>
+                    </ul>
+                    
+                    <p>Future research directions could explore more accurate Hessian approximations within adaptive optimizers, investigate the effects of different statistical assumptions on optimization performance, and develop theoretical guarantees for convergence rates based on these Hessian approximation perspectives.</p>
+                    
+                    <p>This analysis bridges the gap between practical adaptive optimization methods and classical optimization theory, providing a unified framework for understanding and improving modern deep learning optimizers.</p>
+                </div>
+
+                <div class="citation-section">
+                    <div class="citation-header">
+                        <i class="fas fa-quote-right"></i>
+                        Citation Information
+                    </div>
+                    <p><strong>Original Article:</strong> Su Jianlin. Understanding Adaptive Learning Rate Optimizers from Hessian Approximation. <em>Scientific Spaces</em>.</p>
+                    
+                    <p><strong>How to cite this translation:</strong></p>
+                    <div class="citation-box">
+                        Su, J. Understanding Adaptive Learning Rate Optimizers from Hessian Approximation [Translated by Academic Translation Team]. 
+                        <em>Scientific Spaces</em>.
+                    </div>
+                    <p style="margin-top: 0.8rem;"><strong>BibTeX:</strong></p>
+                    <div class="citation-box">
+                        @article{su2025hessian_adaptive_optimizers,
+                            title   = {Understanding Adaptive Learning Rate Optimizers from Hessian Approximation},
+                            author  = {Su, Jianlin},
+                            journal = {Scientific Spaces},
+                            year    = {2025},
+                            url     = {https://kexue.fm/archives/xxxx},
+                            note    = {Translated by Academic Translation Team}
+                          }
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="translation-credit">
+                <i class="fas fa-user-graduate"></i>
+                Academic Translation by Academic Translation Team
+            </div>
+            <div class="copyright">
+                © 2009-2025 Scientific Spaces. All rights reserved.<br>
+                Original content licensed under Creative Commons BY-NC-ND 2.5 China
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript for Interactive Features -->
+    <script>
+        // Scroll Progress Bar
+        window.addEventListener('scroll', function() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            scrollProgress.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Table of Contents Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            const sections = document.querySelectorAll('h2[id]');
+            
+            // Set active section based on scroll position
+            function setActiveSection() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 50)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', setActiveSection);
+            setActiveSection(); // Initial call
+            
+            // Smooth scroll for TOC links
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 50,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+
+        // MathJax Configuration
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                tags: 'ams'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    
+    <!-- MathJax CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</body>
+</html>

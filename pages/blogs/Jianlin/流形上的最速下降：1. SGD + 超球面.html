@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manifold Gradient Descent: 1. SGD on Hyperspheres | Scientific Spaces</title>
+    <meta name="description" content="A rigorous mathematical analysis of steepest descent directions on constrained manifolds, beginning with SGD on hyperspheres and examining the geometric foundations of optimization under constraints.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a6bca;
+            --primary-dark: #1357a8;
+            --primary-light: #e8f1fc;
+            --secondary: #2c3e50;
+            --accent: #3498db;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f5f7fa;
+            --gray-200: #e4e7eb;
+            --gray-300: #cbd2d9;
+            --gray-600: #7b8794;
+            --gray-700: #52606d;
+            --gray-900: #323f4b;
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 6px 24px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: #f0f5fc;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.5rem 1.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -8%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+        }
+
+        .meta-item i {
+            font-size: 0.85rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Translation Notice */
+        .translation-notice {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1.2rem;
+            margin: 0;
+        }
+
+        .translation-notice-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .translation-text h3 {
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .translation-text p {
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        .translator-badge {
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(26, 107, 202, 0.2);
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+        }
+
+        @media (max-width: 850px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            padding-left: 1rem;
+        }
+
+        .toc {
+            position: sticky;
+            top: 1rem;
+        }
+
+        .toc-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .toc-header i {
+            font-size: 0.9rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.4rem;
+            position: relative;
+        }
+
+        .toc-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            transition: var(--transition);
+            border-left: 2px solid transparent;
+            padding-left: 8px;
+        }
+
+        .toc-link:hover {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            transform: translateX(2px);
+        }
+
+        .toc-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .toc-number {
+            font-weight: 500;
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            min-width: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-right: 1.2rem;
+            padding-left: 0;
+        }
+
+        @media (max-width: 850px) {
+            .sidebar {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 0 1rem;
+            }
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 1.5rem 0 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: relative;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 35px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        h2 a {
+            color: var(--accent);
+            font-size: 0.7rem;
+            margin-left: 6px;
+            text-decoration: none;
+        }
+
+        h2 a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            color: var(--gray-900);
+            line-height: 1.65;
+        }
+
+        /* Equation Styling */
+        .equation-container {
+            margin: 0.8rem 0;
+        }
+
+        .equation {
+            background: var(--primary-light);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1rem;
+            border-radius: 0 5px 5px 0;
+            font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', serif;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .equation-number {
+            color: var(--primary);
+            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin-right: 6px;
+            display: inline-block;
+            min-width: 18px;
+        }
+
+        /* Code Block Styling */
+        .code-container {
+            margin: 1rem 0;
+            background: #2d2d2d;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .code-header {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 0.6rem 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .code-content {
+            padding: 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #f8f8f2;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+        }
+
+        /* Reference Box */
+        .reference-box {
+            background: linear-gradient(to right, #f8fafc, var(--primary-light));
+            border: 1px solid var(--gray-200);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .reference-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .reference-header i {
+            font-size: 0.9rem;
+        }
+
+        .reference-list {
+            list-style: none;
+        }
+
+        .reference-item {
+            padding: 0.3rem 0 0.3rem 0.8rem;
+            position: relative;
+            margin-bottom: 0.4rem;
+            color: var(--gray-700);
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .reference-item::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 0.65rem;
+        }
+
+        /* Citation Section */
+        .citation-section {
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .citation-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .citation-box {
+            background: var(--white);
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid var(--gray-300);
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-top: 0.6rem;
+            overflow-x: auto;
+            color: var(--gray-900);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--secondary);
+            color: white;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .translation-credit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 6px 16px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(26, 107, 202, 0.2);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            margin-top: 0.6rem;
+        }
+
+        /* Utility Classes */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-light), #e8f2ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .math {
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.1s ease;
+            z-index: 1000;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 1rem 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 0.6rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem 0;
+            }
+            
+            .main-content {
+                padding-right: 0.8rem;
+            }
+            
+            .sidebar {
+                padding-left: 0.8rem;
+            }
+            
+            .meta-info {
+                gap: 0.6rem;
+            }
+            
+            .meta-item {
+                font-size: 0.75rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .translation-notice-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .translator-badge {
+                align-self: flex-start;
+            }
+        }
+
+        /* Links styling */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Optimize long formula display */
+        .equation {
+            word-break: break-word;
+        }
+        
+        /* Optimize list display */
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.3rem;
+            line-height: 1.5;
+        }
+        
+        /* Optimize math formula spacing */
+        .MathJax_Display {
+            margin: 0.6em 0 !important;
+        }
+        
+        /* Image container styling */
+        .pic-container {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+        
+        .pic-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .typecho-caption {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        
+        /* Quote block styling */
+        blockquote.cite {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+        }
+        
+        blockquote.cite div {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        blockquote.cite a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        /* Blockquote styling */
+        blockquote {
+            background: linear-gradient(to right, var(--gray-100), var(--primary-light));
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+            position: relative;
+        }
+
+        blockquote p {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+
+        blockquote p:before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Underline styling */
+        u {
+            text-decoration: none;
+            border-bottom: 1px dotted var(--primary);
+        }
+
+        /* List styling inside main content */
+        .main-content ol, .main-content ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .main-content li {
+            margin-bottom: 0.4rem;
+            line-height: 1.6;
+        }
+
+        /* Highlight box for important notes */
+        .note-box {
+            background: linear-gradient(to right, #fff8e1, #fff3cd);
+            border-left: 3px solid #ffc107;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .note-box strong {
+            color: #856404;
+        }
+
+        /* Definition list styling */
+        .definition {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 3px solid #4caf50;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .definition-header {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Mathematical proof styling */
+        .proof {
+            background: linear-gradient(to right, #f3e5f5, #f8f4ff);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .proof-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Insight box styling */
+        .insight-box {
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+            border-left: 3px solid #1976d2;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .insight-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Analysis box styling */
+        .analysis-box {
+            background: linear-gradient(to right, #fff3e0, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .analysis-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Technical box styling */
+        .technical-box {
+            background: linear-gradient(to right, #fce4ec, #f8bbd9);
+            border-left: 3px solid #e91e63;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .technical-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Geometry box */
+        .geometry-box {
+            background: linear-gradient(to right, #e0f2f1, #b2dfdb);
+            border-left: 3px solid #009688;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .geometry-header {
+            color: #00796b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Constraint box */
+        .constraint-box {
+            background: linear-gradient(to right, #fff3e0, #ffcc80);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .constraint-header {
+            color: #e65100;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Optimization principle box */
+        .principle-box {
+            background: linear-gradient(to right, #e8eaf6, #c5cae9);
+            border-left: 3px solid #3f51b5;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .principle-header {
+            color: #303f9f;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>Manifold Gradient Descent: 1. SGD on Hyperspheres</h1>
+                <div class="subtitle">A rigorous analysis of steepest descent directions under equality constraints, beginning with hyperspherical manifolds and examining the geometric foundations of constrained optimization.</div>
+                
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>Su Jianlin</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-eye"></i>
+                        <span>Scientific Spaces</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <div class="tag">Constrained Optimization</div>
+                        <div class="tag">Manifold Gradient</div>
+                        <div class="tag">Hyperspheres</div>
+                        <div class="tag">Steepest Descent</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Translation Notice -->
+        <div class="translation-notice">
+            <div class="translation-notice-content">
+                <div class="translation-text">
+                    <h3><i class="fas fa-language"></i> Academic Translation</h3>
+                    <p>This is an academic English translation maintaining technical accuracy while adapting to English academic conventions.</p>
+                </div>
+                <div class="translator-badge">
+                    <i class="fas fa-user-graduate"></i>
+                    Translated by Juanxi Tian (ScalingOpt Team)
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Sidebar Table of Contents -->
+            <aside class="sidebar">
+                <nav class="toc">
+                    <div class="toc-header">
+                        <i class="fas fa-list"></i>
+                        Contents
+                    </div>
+                    <ul class="toc-list">
+                        <li class="toc-item">
+                            <a href="#optimization-principle" class="toc-link">
+                                <span class="toc-number">1</span>
+                                <span>Optimization Principle</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#problem-transformation" class="toc-link">
+                                <span class="toc-number">2</span>
+                                <span>Problem Transformation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#gradient-descent" class="toc-link">
+                                <span class="toc-number">3</span>
+                                <span>Gradient Descent</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#hypersphere-constraint" class="toc-link">
+                                <span class="toc-number">4</span>
+                                <span>Hypersphere Constraint</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#geometric-interpretation" class="toc-link">
+                                <span class="toc-number">5</span>
+                                <span>Geometric Interpretation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#general-results" class="toc-link">
+                                <span class="toc-number">6</span>
+                                <span>General Results</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#summary" class="toc-link">
+                                <span class="toc-number">7</span>
+                                <span>Summary</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Article Content -->
+            <main class="main-content">
+                <p>The assertion that "the opposite direction of the gradient is the direction of steepest descent" is frequently used to explain the principle of gradient descent (SGD). However, this statement is conditional: for instance, mathematically, a "direction" is a unit vector that depends on the definition of the "norm (magnitude)," and different norms yield different conclusions. In fact, <a href="/archives/10592" target="_blank">Muon</a> effectively changes the spectral norm for matrix parameters, thereby obtaining a new descent direction. Similarly, when we transition from unconstrained to constrained optimization, the direction of steepest descent may not necessarily be opposite to the gradient.</p>
+                
+                <p>To address this, in this article, we inaugurate a new series that takes "constraints" as its central theme, re-examining the proposition of "steepest descent" and investigating what constitutes the "direction of fastest descent" under varying conditions.</p>
+                
+                <h2 id="optimization-principle">Optimization Principle<a href="#optimization-principle">#</a></h2>
+                
+                <p>As the first installment, we commence with SGD to comprehend the mathematical meaning behind the statement "the opposite direction of the gradient is the direction of steepest descent," then apply this understanding to optimization on hyperspheres. Before proceeding, however, the author wishes to revisit the "<strong><font color=orange>Least Action Principle</font></strong>" for optimizers introduced in <a href="/archives/10739" target="_blank">"Muon Sequel: Why Did We Choose to Experiment with Muon?"</a><!--more--></p>
+                
+                <div class="principle-box">
+                    <div class="principle-header">
+                        <i class="fas fa-bullseye"></i>
+                        Least Action Principle for Optimizers
+                    </div>
+                    <p>This principle attempts to answer "what constitutes a good optimizer." Primarily, we desire models to converge as rapidly as possible; however, due to the inherent complexity of neural networks, overly large steps can destabilize training. Therefore, an effective optimizer should be both <strong><font color=red>stable</font></strong> and <strong><font color=red>fast</font></strong>, ideally significantly reducing loss without extensive model modifications. Mathematically, this is expressed as:</p>
+                    <div class="equation">
+                        \begin{equation}
+                        \min_{\Delta \boldsymbol{w}} \mathcal{L}(\boldsymbol{w} +\Delta\boldsymbol{w}) \qquad \text{subject to}\qquad \rho(\Delta\boldsymbol{w})\leq \eta
+                        \end{equation}
+                    </div>
+                    <p>Here, $\mathcal{L}$ is the loss function, $\boldsymbol{w}\in\mathbb{R}^n$ is the parameter vector, $\Delta \boldsymbol{w}$ is the update vector, and $\rho(\Delta\boldsymbol{w})$ is some measure of the magnitude of $\Delta\boldsymbol{w}$. The objective is intuitive: within the constraint that the "step size" does not exceed $\eta$ (ensuring <strong><font color=red>stability</font></strong>), we seek the update that maximizes the reduction in the loss function (ensuring <strong><font color=red>speed</font></strong>). This constitutes the mathematical meaning of both the "Least Action Principle" and "steepest descent."</p>
+                </div>
+                
+                <h2 id="problem-transformation">Problem Transformation<a href="#problem-transformation">#</a></h2>
+                
+                <p>Assuming $\eta$ is sufficiently small, $\Delta\boldsymbol{w}$ is also sufficiently small such that first-order approximations remain accurate. We can then replace $\mathcal{L}(\boldsymbol{w} +\Delta\boldsymbol{w})$ with $\mathcal{L}(\boldsymbol{w}) + \langle\boldsymbol{g},\Delta\boldsymbol{w}\rangle$, where $\boldsymbol{g} = \nabla_{\boldsymbol{w}}\mathcal{L}(\boldsymbol{w})$, yielding the equivalent objective:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(2)</span>
+                        \[
+                        \min_{\Delta \boldsymbol{w}} \langle\boldsymbol{g},\Delta\boldsymbol{w}\rangle \qquad \text{subject to}\qquad \rho(\Delta\boldsymbol{w})\leq \eta
+                        \]
+                    </div>
+                </div>
+                
+                <p>This simplification reduces the optimization objective to a linear function of $\Delta \boldsymbol{w}$, lowering the difficulty of solution. Further, we set $\Delta \boldsymbol{w} = -\kappa \boldsymbol{\varphi}$, where $\rho(\boldsymbol{\varphi})=1$, making the objective equivalent to:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(3)</span>
+                        \[
+                        \max_{\kappa,\boldsymbol{\varphi}} \kappa\langle\boldsymbol{g},\boldsymbol{\varphi}\rangle \qquad \text{subject to}\qquad \rho(\boldsymbol{\varphi}) = 1, \,\,\kappa\in[0, \eta]
+                        \]
+                    </div>
+                </div>
+                
+                <p>Assuming we can find at least one feasible $\boldsymbol{\varphi}$ such that $\langle\boldsymbol{g},\boldsymbol{\varphi}\rangle\geq 0$, then $\max\limits_{\kappa\in[0,\eta]} \kappa\langle\boldsymbol{g},\boldsymbol{\varphi}\rangle = \eta\langle\boldsymbol{g},\boldsymbol{\varphi}\rangle$, meaning the optimization over $\kappa$ can be solved in advance, yielding $\kappa=\eta$. This ultimately reduces to optimization over $\boldsymbol{\varphi}$ alone:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(4)</span>
+                        \[
+                        \max_{\boldsymbol{\varphi}} \langle\boldsymbol{g},\boldsymbol{\varphi}\rangle \qquad \text{subject to}\qquad \rho(\boldsymbol{\varphi}) = 1\label{eq:core}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Here, $\boldsymbol{\varphi}$ satisfies the condition that some "magnitude" $\rho(\boldsymbol{\varphi})$ equals 1, so it represents a definition of a "direction vector." Maximizing its inner product with the gradient $\boldsymbol{g}$ corresponds to finding the direction that yields the fastest reduction in loss (i.e., the direction opposite to $\boldsymbol{\varphi}$).</p>
+                
+                <h2 id="gradient-descent">Gradient Descent<a href="#gradient-descent">#</a></h2>
+                
+                <p>From Equation $\eqref{eq:core}$, we observe that for the "direction of steepest descent," the sole uncertainty lies in the metric $\rho$. This is a fundamental prior (Inductive Bias) within optimizers; different metrics will yield different steepest descent directions. The simplest case is the L2 norm, or Euclidean norm $\rho(\boldsymbol{\varphi})=\Vert \boldsymbol{\varphi} \Vert_2$, which corresponds to our conventional notion of magnitude. Here, we apply the Cauchy-Schwarz inequality:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(5)</span>
+                        \[
+                        \langle\boldsymbol{g},\boldsymbol{\varphi}\rangle \leq \Vert\boldsymbol{g}\Vert_2 \Vert\boldsymbol{\varphi}\Vert_2 = \Vert\boldsymbol{g}\Vert_2
+                        \]
+                    </div>
+                </div>
+                
+                <p>Equality holds when $\boldsymbol{\varphi} \propto\boldsymbol{g}$. Combined with the unit magnitude condition, we obtain $\boldsymbol{\varphi}=\boldsymbol{g}/\Vert\boldsymbol{g}\Vert_2$, which is precisely the gradient direction. Thus, the statement "the opposite direction of the gradient is the direction of steepest descent" presupposes that the chosen metric is the Euclidean norm. More generally, consider the $p$-norm:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(6)</span>
+                        \[
+                        \rho(\boldsymbol{\varphi}) = \Vert\boldsymbol{\varphi}\Vert_p = \sqrt[\uproot{10}p]{\sum_{i=1}^n |\varphi_i|^p}
+                        \]
+                    </div>
+                </div>
+                
+                <p>The Cauchy-Schwarz inequality generalizes to <a href="https://en.wikipedia.org/wiki/H%C3%B6lder%27s_inequality" target="_blank">Hölder's inequality</a>:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(7)</span>
+                        \[
+                        \langle\boldsymbol{g},\boldsymbol{\varphi}\rangle \leq \Vert\boldsymbol{g}\Vert_q \Vert\boldsymbol{\varphi}\Vert_p = \Vert\boldsymbol{g}\Vert_q,\qquad \text{where } 1/p + 1/q=1
+                        \]
+                    </div>
+                </div>
+                
+                <p>Equality holds when $\boldsymbol{\varphi}^{[p]} \propto\boldsymbol{g}^{[q]}$, leading to the solution:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(8)</span>
+                        \[
+                        \newcommand{sign}{\mathop{\text{sign}}}\boldsymbol{\varphi} = \frac{\boldsymbol{g}^{[q/p]}}{\Vert\boldsymbol{g}^{[q/p]}\Vert_p},\qquad \boldsymbol{g}^{[\alpha]} \triangleq \big[\sign(g_1) |g_1|^{\alpha},\sign(g_2) |g_2|^{\alpha},\cdots,\sign(g_n) |g_n|^{\alpha}\big]
+                        \]
+                    </div>
+                </div>
+                
+                <p>The optimizer using this as its direction vector is called pbSGD, introduced in <a href="https://www.ijcai.org/proceedings/2020/451" target="_blank">"pbSGD: Powered Stochastic Gradient Descent Methods for Accelerated Non-Convex Optimization"</a>. It has two special cases: when $p=q=2$, it reduces to SGD; and when $p\to\infty$, $q\to 1$, where $|g_i|^{q/p}\to 1$, the update direction becomes the sign function of the gradient, i.e., SignSGD.</p>
+                
+                <h2 id="hypersphere-constraint">Hypersphere Constraint<a href="#hypersphere-constraint">#</a></h2>
+                
+                <p>In the preceding discussion, we only imposed constraints on the parameter increment $\Delta\boldsymbol{w}$. Next, we aim to apply constraints to the parameters $\boldsymbol{w}$ themselves. Specifically, we assume the parameters $\boldsymbol{w}$ lie on a unit sphere, and we require that the updated parameters $\boldsymbol{w}+\Delta\boldsymbol{w}$ also remain on the unit sphere (refer to <a href="https://docs.modula.systems/algorithms/manifold/hypersphere/" target="_blank">"Hypersphere"</a>). Starting from objective $\eqref{eq:core}$, we can formulate the new objective as:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(9)</span>
+                        \[
+                        \max_{\boldsymbol{\varphi}} \langle\boldsymbol{g},\boldsymbol{\varphi}\rangle \qquad \text{subject to}\qquad \Vert\boldsymbol{\varphi}\Vert_2 = 1,\,\,\Vert\boldsymbol{w}-\eta\boldsymbol{\varphi}\Vert_2 = 1,\,\,\Vert\boldsymbol{w}\Vert_2=1
+                        \]
+                    </div>
+                </div>
+                
+                <div class="constraint-box">
+                    <div class="constraint-header">
+                        <i class="fas fa-compress-alt"></i>
+                        First-Order Approximation
+                    </div>
+                    <p>We continue to adhere to the principle that "$\eta$ is sufficiently small for first-order approximations to be adequate." This yields:</p>
+                    <div class="equation">
+                        \[
+                        1 = \Vert\boldsymbol{w}-\eta\boldsymbol{\varphi}\Vert_2^2 = \Vert\boldsymbol{w}\Vert_2^2 - 2\eta\langle \boldsymbol{w}, \boldsymbol{\varphi}\rangle + \eta^2 \Vert\boldsymbol{\varphi}\Vert_2^2\approx 1 - 2\eta\langle \boldsymbol{w}, \boldsymbol{\varphi}\rangle
+                        \]
+                    </div>
+                    <p>Thus, the constraint is approximated by the linear form $\langle \boldsymbol{w}, \boldsymbol{\varphi}\rangle=0$. To solve this constrained optimization, we introduce a Lagrange multiplier $\lambda$:</p>
+                </div>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(10)</span>
+                        \[
+                        \begin{aligned}
+                        \langle\boldsymbol{g},\boldsymbol{\varphi}\rangle &= \langle\boldsymbol{g},\boldsymbol{\varphi}\rangle + \lambda\langle\boldsymbol{w},\boldsymbol{\varphi}\rangle \\
+                        &= \langle \boldsymbol{g} + \lambda\boldsymbol{w},\boldsymbol{\varphi}\rangle \\
+                        &\leq \Vert\boldsymbol{g} + \lambda\boldsymbol{w}\Vert_2 \Vert\boldsymbol{\varphi}\Vert_2 = \Vert\boldsymbol{g} + \lambda\boldsymbol{w}\Vert_2
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Equality holds when $\boldsymbol{\varphi}\propto \boldsymbol{g} + \lambda\boldsymbol{w}$. Combined with the constraints $\Vert\boldsymbol{\varphi}\Vert_2=1$, $\langle \boldsymbol{w}, \boldsymbol{\varphi}\rangle=0$, and $\Vert\boldsymbol{w}\Vert_2=1$, we solve for:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(11)</span>
+                        \[
+                        \boldsymbol{\varphi} = \frac{\boldsymbol{g} - \langle \boldsymbol{g}, \boldsymbol{w}\rangle\boldsymbol{w}}{\Vert\boldsymbol{g} - \langle \boldsymbol{g}, \boldsymbol{w}\rangle\boldsymbol{w}\Vert_2}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Note that now $\Vert\boldsymbol{w}\Vert_2=1$, $\Vert\boldsymbol{\varphi}\Vert_2=1$, and $\boldsymbol{w}$ and $\boldsymbol{\varphi}$ are orthogonal. Consequently, the magnitude of $\boldsymbol{w} - \eta\boldsymbol{\varphi}$ is not precisely 1, but rather $\sqrt{1 + \eta^2}=1 + \eta^2/2 + \cdots$, accurate to $\mathcal{O}(\eta^2)$. This aligns with our earlier assumption that "first-order terms in $\eta$ suffice." If we require the updated parameter magnitude to be strictly 1, we can add a renormalization step to the update rule:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(12)</span>
+                        \[
+                        \boldsymbol{w}\quad\leftarrow\quad \frac{\boldsymbol{w} - \eta\boldsymbol{\varphi}}{\sqrt{1 + \eta^2}}
+                        \]
+                    </div>
+                </div>
+                
+                <h2 id="geometric-interpretation">Geometric Interpretation<a href="#geometric-interpretation">#</a></h2>
+                
+                <p>Earlier, through the "first-order approximation suffices" principle, we simplified the nonlinear constraint $\Vert\boldsymbol{w}-\eta\boldsymbol{\varphi}\Vert_2 = 1$ to the linear constraint $\langle \boldsymbol{w}, \boldsymbol{\varphi}\rangle=0$. The latter has a geometric meaning: "orthogonal to $\boldsymbol{w}$." There is a more technical term for this: the "tangent space" of the manifold defined by $\Vert\boldsymbol{w}\Vert_2=1$. The operation $\boldsymbol{g} - \langle \boldsymbol{g}, \boldsymbol{w}\rangle\boldsymbol{w}$ corresponds precisely to projecting the gradient $\boldsymbol{g}$ onto this tangent space.</p>
+                
+                <div class="geometry-box">
+                    <div class="geometry-header">
+                        <i class="fas fa-draw-polygon"></i>
+                        Tangent Space Projection
+                    </div>
+                    <p>Thus, we are fortunate: SGD on spheres possesses a very clear geometric interpretation, as illustrated below:</p>
+                    <div class="pic-container">
+                        <div class="typecho-caption" style="max-width: 400px; margin: 0 auto">
+                            <div style="margin: 5px">
+                                <a href="https://kexue.fm/usr/uploads/2025/07/1221229703.png" title="Click to view original image" target="_blank">
+                                    <img src="https://kexue.fm/usr/uploads/2025/07/1221229703.png" style="max-width: 100%" alt="Geometric interpretation of steepest descent on a sphere" />
+                                </a>
+                            </div>
+                            <p class="typecho-caption-text">Geometric interpretation of steepest descent on a sphere</p>
+                        </div>
+                    </div>
+                    <p>Many readers likely appreciate this geometric perspective—it is indeed aesthetically pleasing. However, it is essential to emphasize: <strong>one should prioritize a thorough understanding of the algebraic solution process</strong>. Clear geometric interpretations are often a luxury, serendipitous rather than guaranteed; in most cases, the intricate algebraic procedure embodies the underlying essence.</p>
+                </div>
+                
+                <h2 id="general-results">General Results<a href="#general-results">#</a></h2>
+                
+                <p>Are readers now inclined to generalize this to arbitrary $p$-norms? Let us attempt this together and examine the difficulties encountered. The problem becomes:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(13)</span>
+                        \[
+                        \max_{\boldsymbol{\varphi}} \langle\boldsymbol{g},\boldsymbol{\varphi}\rangle \qquad \text{subject to}\qquad \Vert\boldsymbol{\varphi}\Vert_p = 1,\,\,\Vert\boldsymbol{w}-\eta\boldsymbol{\varphi}\Vert_p = 1,\,\,\Vert\boldsymbol{w}\Vert_p=1
+                        \]
+                    </div>
+                </div>
+                
+                <p>The first-order approximation transforms $\Vert\boldsymbol{w}-\eta\boldsymbol{\varphi}\Vert_p = 1$ into $\langle\boldsymbol{w}^{[p-1]},\boldsymbol{\varphi}\rangle = 0$. Introducing a Lagrange multiplier $\lambda$:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(14)</span>
+                        \[
+                        \begin{aligned}
+                        \langle\boldsymbol{g},\boldsymbol{\varphi}\rangle &= \langle\boldsymbol{g},\boldsymbol{\varphi}\rangle + \lambda\langle\boldsymbol{w}^{[p-1]},\boldsymbol{\varphi}\rangle \\
+                        &= \langle \boldsymbol{g} + \lambda\boldsymbol{w}^{[p-1]},\boldsymbol{\varphi}\rangle \\
+                        &\leq \Vert\boldsymbol{g} + \lambda\boldsymbol{w}^{[p-1]}\Vert_q \Vert\boldsymbol{\varphi}\Vert_p = \Vert\boldsymbol{g} + \lambda\boldsymbol{w}^{[p-1]}\Vert_q
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>The condition for equality is:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(15)</span>
+                        \[
+                        \boldsymbol{\varphi} = \frac{(\boldsymbol{g} + \lambda\boldsymbol{w}^{[p-1]})^{[q/p]}}{\Vert(\boldsymbol{g} + \lambda\boldsymbol{w}^{[p-1]})^{[q/p]}\Vert_p}
+                        \]
+                    </div>
+                </div>
+                
+                <div class="technical-box">
+                    <div class="technical-header">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Analytical Difficulties for General $p$
+                    </div>
+                    <p>Up to this point, no substantive difficulties have arisen. However, we next need to determine $\lambda$ such that $\langle\boldsymbol{w}^{[p-1]},\boldsymbol{\varphi}\rangle = 0$. When $p \neq 2$, this constitutes a complex nonlinear equation with no straightforward analytical solution (although, if solved, we are guaranteed an optimal solution by Hölder's inequality). Therefore, for general $p$, we must halt our analytical pursuit here. When encountering practical instances with $p\neq 2$, we will need to explore numerical solution methods.</p>
+                    <p>Nevertheless, besides $p=2$, we can attempt to solve the limit $p\to\infty$. In this case, $\boldsymbol{\varphi}=\sign(\boldsymbol{g} + \lambda\boldsymbol{w}^{[p-1]})$. The condition $\Vert\boldsymbol{w}\Vert_p=1$ implies that the maximum among $|w_1|,|w_2|,\cdots,|w_n|$ equals 1. If we further assume a unique maximum, then $\boldsymbol{w}^{[p-1]}$ is a one-hot vector: $\pm 1$ at the position of maximum absolute value, and zero elsewhere. Under this assumption, we can solve for $\lambda$, resulting in clipping the gradient at the maximum position to zero.</p>
+                </div>
+                
+                <h2 id="summary">Summary<a href="#summary">#</a></h2>
+                
+                <p>This article inaugurates a new series focusing on optimization problems under "equality constraints," aiming to identify the "direction of steepest descent" for common constraint types. As the first installment, it examines a variant of SGD under the "hypersphere" constraint, establishing foundational results for constrained optimization on manifolds.</p>
+
+                <div class="citation-section">
+                    <div class="citation-header">
+                        <i class="fas fa-quote-right"></i>
+                        Citation Information
+                    </div>
+                    <p><strong>Original Article:</strong> Su Jianlin. Manifold Gradient Descent: 1. SGD on Hyperspheres. <em>Scientific Spaces</em>.</p>
+                    
+                    <p><strong>How to cite this translation:</strong></p>
+                    <div class="citation-box">
+                        Su, J. Manifold Gradient Descent: 1. SGD on Hyperspheres [Translated by Juanxi Tian]. 
+                        <em>Scientific Spaces</em>.
+                    </div>
+                    <p style="margin-top: 0.8rem;"><strong>BibTeX:</strong></p>
+                    <div class="citation-box">
+                        @article{su2025manifold_gradient_hypersphere,
+                            title   = {Manifold Gradient Descent: 1. SGD on Hyperspheres},
+                            author  = {Su, Jianlin},
+                            journal = {Scientific Spaces},
+                            year    = {2025},
+                            url     = {https://kexue.fm/archives/10592},
+                            note    = {Translated by Juanxi Tian (ScalingOpt Team)}
+                          }
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="translation-credit">
+                <i class="fas fa-user-graduate"></i>
+                Academic Translation by Juanxi Tian (ScalingOpt Team)
+            </div>
+            <div class="copyright">
+                © 2009-2025 Scientific Spaces. All rights reserved.<br>
+                Original content licensed under Creative Commons BY-NC-ND 2.5 China
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript for Interactive Features -->
+    <script>
+        // Scroll Progress Bar
+        window.addEventListener('scroll', function() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            scrollProgress.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Table of Contents Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            const sections = document.querySelectorAll('h2[id]');
+            
+            // Set active section based on scroll position
+            function setActiveSection() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 50)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', setActiveSection);
+            setActiveSection(); // Initial call
+            
+            // Smooth scroll for TOC links
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 50,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+
+        // MathJax Configuration
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                tags: 'ams'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    
+    <!-- MathJax CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</body>
+</html>
