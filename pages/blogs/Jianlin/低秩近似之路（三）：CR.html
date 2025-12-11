@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Path to Low-Rank Approximation (Part 3): CR Approximation | Scientific Spaces</title>
+    <meta name="description" content="Exploring Column-Row (CR) approximation as a structured low-rank approximation technique for matrix multiplication acceleration, with connections to sampling methods and practical algorithms.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a6bca;
+            --primary-dark: #1357a8;
+            --primary-light: #e8f1fc;
+            --secondary: #2c3e50;
+            --accent: #3498db;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f5f7fa;
+            --gray-200: #e4e7eb;
+            --gray-300: #cbd2d9;
+            --gray-600: #7b8794;
+            --gray-700: #52606d;
+            --gray-900: #323f4b;
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 6px 24px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: #f0f5fc;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.5rem 1.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -8%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+        }
+
+        .meta-item i {
+            font-size: 0.85rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Translation Notice */
+        .translation-notice {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1.2rem;
+            margin: 0;
+        }
+
+        .translation-notice-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .translation-text h3 {
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .translation-text p {
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        .translator-badge {
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(26, 107, 202, 0.2);
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+        }
+
+        @media (max-width: 850px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            padding-left: 1rem;
+        }
+
+        .toc {
+            position: sticky;
+            top: 1rem;
+        }
+
+        .toc-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .toc-header i {
+            font-size: 0.9rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.4rem;
+            position: relative;
+        }
+
+        .toc-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            transition: var(--transition);
+            border-left: 2px solid transparent;
+            padding-left: 8px;
+        }
+
+        .toc-link:hover {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            transform: translateX(2px);
+        }
+
+        .toc-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .toc-number {
+            font-weight: 500;
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            min-width: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-right: 1.2rem;
+            padding-left: 0;
+        }
+
+        @media (max-width: 850px) {
+            .sidebar {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 0 1rem;
+            }
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 1.5rem 0 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: relative;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 35px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        h2 a {
+            color: var(--accent);
+            font-size: 0.7rem;
+            margin-left: 6px;
+            text-decoration: none;
+        }
+
+        h2 a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            color: var(--gray-900);
+            line-height: 1.65;
+        }
+
+        /* Equation Styling */
+        .equation-container {
+            margin: 0.8rem 0;
+        }
+
+        .equation {
+            background: var(--primary-light);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1rem;
+            border-radius: 0 5px 5px 0;
+            font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', serif;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .equation-number {
+            color: var(--primary);
+            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin-right: 6px;
+            display: inline-block;
+            min-width: 18px;
+        }
+
+        /* Code Block Styling */
+        .code-container {
+            margin: 1rem 0;
+            background: #2d2d2d;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .code-header {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 0.6rem 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .code-content {
+            padding: 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #f8f8f2;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+        }
+
+        /* Reference Box */
+        .reference-box {
+            background: linear-gradient(to right, #f8fafc, var(--primary-light));
+            border: 1px solid var(--gray-200);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .reference-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .reference-header i {
+            font-size: 0.9rem;
+        }
+
+        .reference-list {
+            list-style: none;
+        }
+
+        .reference-item {
+            padding: 0.3rem 0 0.3rem 0.8rem;
+            position: relative;
+            margin-bottom: 0.4rem;
+            color: var(--gray-700);
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .reference-item::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 0.65rem;
+        }
+
+        /* Citation Section */
+        .citation-section {
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .citation-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .citation-box {
+            background: var(--white);
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid var(--gray-300);
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-top: 0.6rem;
+            overflow-x: auto;
+            color: var(--gray-900);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--secondary);
+            color: white;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .translation-credit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 6px 16px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(26, 107, 202, 0.2);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            margin-top: 0.6rem;
+        }
+
+        /* Utility Classes */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-light), #e8f2ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .math {
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.1s ease;
+            z-index: 1000;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 1rem 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 0.6rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem 0;
+            }
+            
+            .main-content {
+                padding-right: 0.8rem;
+            }
+            
+            .sidebar {
+                padding-left: 0.8rem;
+            }
+            
+            .meta-info {
+                gap: 0.6rem;
+            }
+            
+            .meta-item {
+                font-size: 0.75rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .translation-notice-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .translator-badge {
+                align-self: flex-start;
+            }
+        }
+
+        /* Links styling */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Optimize long formula display */
+        .equation {
+            word-break: break-word;
+        }
+        
+        /* Optimize list display */
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.3rem;
+            line-height: 1.5;
+        }
+        
+        /* Optimize math formula spacing */
+        .MathJax_Display {
+            margin: 0.6em 0 !important;
+        }
+        
+        /* Image container styling */
+        .pic-container {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+        
+        .pic-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .typecho-caption {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        
+        /* Quote block styling */
+        blockquote.cite {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+        }
+        
+        blockquote.cite div {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        blockquote.cite a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        /* Blockquote styling */
+        blockquote {
+            background: linear-gradient(to right, var(--gray-100), var(--primary-light));
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+            position: relative;
+        }
+
+        blockquote p {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+
+        blockquote p:before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Underline styling */
+        u {
+            text-decoration: none;
+            border-bottom: 1px dotted var(--primary);
+        }
+
+        /* List styling inside main content */
+        .main-content ol, .main-content ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .main-content li {
+            margin-bottom: 0.4rem;
+            line-height: 1.6;
+        }
+
+        /* Highlight box for important notes */
+        .note-box {
+            background: linear-gradient(to right, #fff8e1, #fff3cd);
+            border-left: 3px solid #ffc107;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .note-box strong {
+            color: #856404;
+        }
+
+        /* Definition list styling */
+        .definition {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 3px solid #4caf50;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .definition-header {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Mathematical proof styling */
+        .proof {
+            background: linear-gradient(to right, #f3e5f5, #f8f4ff);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .proof-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Insight box styling */
+        .insight-box {
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+            border-left: 3px solid #1976d2;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .insight-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Analysis box styling */
+        .analysis-box {
+            background: linear-gradient(to right, #fff3e0, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .analysis-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Technical box styling */
+        .technical-box {
+            background: linear-gradient(to right, #fce4ec, #f8bbd9);
+            border-left: 3px solid #e91e63;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .technical-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Series introduction box */
+        .series-box {
+            background: linear-gradient(135deg, #f3e5f5 0%, #e8eaf6 100%);
+            border-left: 3px solid #7b1fa2;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .series-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* SVD properties box */
+        .svd-box {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 3px solid #4caf50;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .svd-header {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Matrix norm box */
+        .norm-box {
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+            border-left: 3px solid #1976d2;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .norm-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Theorem box */
+        .theorem-box {
+            background: linear-gradient(to right, #fff3e0, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .theorem-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Proof box */
+        .proof-box {
+            background: linear-gradient(to right, #fce4ec, #f8bbd9);
+            border-left: 3px solid #e91e63;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .proof-box-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Geometric interpretation box */
+        .geometry-box {
+            background: linear-gradient(135deg, #f5f5f5 0%, #eceff1 100%);
+            border-left: 3px solid #607d8b;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .geometry-header {
+            color: #455a64;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Eckart-Young theorem box */
+        .eym-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            border-left: 3px solid #2e7d32;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .eym-header {
+            color: #1b5e20;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* CR Approximation box */
+        .cr-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            border-left: 3px solid #2e7d32;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .cr-header {
+            color: #1b5e20;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Sampling box */
+        .sampling-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-left: 3px solid #1976d2;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .sampling-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* NP-Hard note box */
+        .np-hard-box {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffecb3 100%);
+            border-left: 3px solid #ff9800;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .np-hard-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Algorithm box */
+        .algorithm-box {
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
+            border-left: 3px solid #e91e63;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .algorithm-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Complexity box */
+        .complexity-box {
+            background: linear-gradient(135deg, #f5f5f5 0%, #eceff1 100%);
+            border-left: 3px solid #607d8b;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .complexity-header {
+            color: #455a64;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>The Path to Low-Rank Approximation (Part 3): CR Approximation</h1>
+                <div class="subtitle">Exploring Column-Row (CR) approximation as a structured low-rank approximation technique with specific column and row selection, providing interpretable approximations and practical algorithms for matrix multiplication acceleration</div>
+                
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>Su Jianlin</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-eye"></i>
+                        <span>Scientific Spaces</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <div class="tag">Low-Rank Approximation</div>
+                        <div class="tag">CR Decomposition</div>
+                        <div class="tag">Matrix Sampling</div>
+                        <div class="tag">Numerical Linear Algebra</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Translation Notice -->
+        <div class="translation-notice">
+            <div class="translation-notice-content">
+                <div class="translation-text">
+                    <h3><i class="fas fa-language"></i> Academic Translation</h3>
+                    <p>This is an academic English translation maintaining technical accuracy while adapting to English academic conventions.</p>
+                </div>
+                <div class="translator-badge">
+                    <i class="fas fa-user-graduate"></i>
+                    Translated by ScalingOpt Team
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Sidebar Table of Contents -->
+            <aside class="sidebar">
+                <nav class="toc">
+                    <div class="toc-header">
+                        <i class="fas fa-list"></i>
+                        Contents
+                    </div>
+                    <ul class="toc-list">
+                        <li class="toc-item">
+                            <a href="#introduction" class="toc-link">
+                                <span class="toc-number">1</span>
+                                <span>Introduction</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#problem-background" class="toc-link">
+                                <span class="toc-number">2</span>
+                                <span>Problem Background</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#preliminary-approximation" class="toc-link">
+                                <span class="toc-number">3</span>
+                                <span>Preliminary Approximation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#sampling-perspective" class="toc-link">
+                                <span class="toc-number">4</span>
+                                <span>Sampling Perspective</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#extended-discussions" class="toc-link">
+                                <span class="toc-number">5</span>
+                                <span>Extended Discussions</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#article-summary" class="toc-link">
+                                <span class="toc-number">6</span>
+                                <span>Article Summary</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Article Content -->
+            <main class="main-content">
+                <div class="series-box">
+                    <div class="series-header">
+                        <i class="fas fa-book-open"></i>
+                        Series Continuation
+                    </div>
+                    <p>In the previous article <a href="/archives/10407" target="_blank">"The Path to Low-Rank Approximation (Part 2): SVD"</a>, we demonstrated that SVD provides the optimal low-rank approximation for any matrix. However, that optimal approximation is unconstrained—it only minimizes the error without considering specific matrix structures. In many practical applications, due to requirements for interpretability or nonlinear processing, we often seek approximation decompositions with particular structural characteristics.</p>
+                    
+                    <p>Therefore, starting with this article, we will explore several low-rank approximations with specific structural constraints. This article focuses on <strong>Column-Row (CR) Approximation</strong>, which offers a simple scheme for accelerating matrix multiplication operations.</p>
+                </div>
+                
+                <h2 id="problem-background">Problem Background<a href="#problem-background">#</a></h2>
+                
+                <p>The general formulation for optimal rank-$r$ approximation of a matrix is:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(1)</span>
+                        \[
+                        \mathop{\text{argmin}}_{\text{rank}(\tilde{\boldsymbol{M}})\leq r}\Vert \tilde{\boldsymbol{M}} - \boldsymbol{M}\Vert_F^2
+                        \]
+                    </div>
+                </div>
+                
+                <p>where $\boldsymbol{M},\tilde{\boldsymbol{M}}\in\mathbb{R}^{n\times m},r < \min(n,m)$. In the first two articles of this series, we have discussed two scenarios:</p>
+                
+                <blockquote>
+                    <p>1. If $\tilde{\boldsymbol{M}}$ has no additional constraints, then the optimal solution for $\tilde{\boldsymbol{M}}$ is $\boldsymbol{U}_{[:,:r]}\boldsymbol{\Sigma}_{[:r,:r]}\boldsymbol{V}_{[:,:r]}^{\top}$, where $\boldsymbol{M}=\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}$ is the Singular Value Decomposition (SVD) of $\boldsymbol{M}$;</p>
+                    <p>2. If we require $\tilde{\boldsymbol{M}}=\boldsymbol{A}\boldsymbol{B}$ (with $\boldsymbol{A}\in\mathbb{R}^{n\times r},\boldsymbol{B}\in\mathbb{R}^{r\times m}$) and $\boldsymbol{A}$ (or $\boldsymbol{B}$) is already given, then the optimal solution for $\tilde{\boldsymbol{M}}$ is $\boldsymbol{A} \boldsymbol{A}^{\dagger} \boldsymbol{M}$ (or $\boldsymbol{M} \boldsymbol{B}^{\dagger} \boldsymbol{B}$), where ${}^\dagger$ denotes the <a href="/archives/10366" target="_blank">"pseudo-inverse"</a>.</p>
+                </blockquote>
+                
+                <p>Both results have extensive applications, but neither explicitly introduces structural relationships between $\tilde{\boldsymbol{M}}$ and $\boldsymbol{M}$. This makes it difficult to intuitively understand the connection between $\tilde{\boldsymbol{M}}$ and $\boldsymbol{M}$—in other words, $\tilde{\boldsymbol{M}}$ lacks strong interpretability.</p>
+                
+                <div class="cr-box">
+                    <div class="cr-header">
+                        <i class="fas fa-clone"></i>
+                        Structured Approximation Motivation
+                    </div>
+                    <p>Furthermore, when objectives involve nonlinear operations such as $\phi(\boldsymbol{X}\boldsymbol{W})$, we typically cannot use arbitrary real projection matrices for dimensionality reduction. Instead, we often require the use of "selection matrices." For instance, $\phi(\boldsymbol{X}\boldsymbol{W})\boldsymbol{S} = \phi(\boldsymbol{X}\boldsymbol{W}\boldsymbol{S})$ does not hold for arbitrary matrices $\boldsymbol{S}$, but it does hold for selection matrices $\boldsymbol{S}$.</p>
+                    <p>Therefore, we now focus on low-rank approximation under selection matrix constraints. Specifically, we have $\boldsymbol{X}\in\mathbb{R}^{n\times l},\boldsymbol{Y}\in\mathbb{R}^{l\times m}$, with $\boldsymbol{M}=\boldsymbol{X}\boldsymbol{Y}$. Our task is to select $r$ columns from $\boldsymbol{X}$ and the corresponding $r$ rows from $\boldsymbol{Y}$ to construct $\tilde{\boldsymbol{M}}$:</p>
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(2)</span>
+                            \[
+                            \mathop{\text{argmin}}_S\Vert \underbrace{\boldsymbol{X}_{[:,S]}}_{\boldsymbol{C}}\underbrace{\boldsymbol{Y}_{[S,:]}}_{\boldsymbol{R}} - \boldsymbol{X}\boldsymbol{Y}\Vert_F^2\quad\text{s.t.}\quad S\subset \{0,1,\cdots,l-1\}, |S|=r
+                            \]
+                        </div>
+                    </div>
+                </div>
+                
+                <p>Here $S$ can be understood as a slice (following Python slicing conventions). We refer to $\boldsymbol{X}_{[:,S]}\boldsymbol{Y}_{[S,:]}$ as the "CR approximation" of $\boldsymbol{X}\boldsymbol{Y}$. Note that this slicing operation can also be equivalently described using selection matrices. Suppose the first $1,2,\cdots,r$ columns of $\boldsymbol{X}_{[:,S]}$ correspond to columns $s_1,s_2,\cdots,s_r$ of $\boldsymbol{X}$, respectively. We can then define a selection matrix $\boldsymbol{S}\in\{0,1\}^{l\times r}$:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(3)</span>
+                        \[
+                        S_{i,j}=\left\{\begin{aligned}&1, &i = s_j \\ &0, &i\neq s_j\end{aligned}\right.
+                        \]
+                    </div>
+                </div>
+                
+                <p>That is, the $s_j$-th element of the $j$-th column of $\boldsymbol{S}$ equals 1, while all others equal 0. This yields $\boldsymbol{X}_{[:,S]}=\boldsymbol{X}\boldsymbol{S}$ and $\boldsymbol{Y}_{[S,:]}=\boldsymbol{S}^{\top} \boldsymbol{Y}$.</p>
+                
+                <h2 id="preliminary-approximation">Preliminary Approximation<a href="#preliminary-approximation">#</a></h2>
+                
+                <p>If we express $\boldsymbol{X},\boldsymbol{Y}$ respectively as:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(4)</span>
+                        \[
+                        \boldsymbol{X} = (\boldsymbol{x}_1,\boldsymbol{x}_2,\cdots,\boldsymbol{x}_l),\quad \boldsymbol{Y}=\begin{pmatrix}\boldsymbol{y}_1^{\top} \\ \boldsymbol{y}_2^{\top} \\ \vdots \\ \boldsymbol{y}_l^{\top}\end{pmatrix}
+                        \]
+                    </div>
+                </div>
+                
+                <p>where $\boldsymbol{x}_i\in\mathbb{R}^{n\times 1},\boldsymbol{y}_i\in\mathbb{R}^{m\times 1}$ are column vectors, then $\boldsymbol{X}\boldsymbol{Y}$ can be written as:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(5)</span>
+                        \[
+                        \boldsymbol{X}\boldsymbol{Y} = \sum_{i=1}^l \boldsymbol{x}_i\boldsymbol{y}_i^{\top}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Finding the optimal CR approximation of $\boldsymbol{X}\boldsymbol{Y}$ can be equivalently expressed as:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(6)</span>
+                        \[
+                        \mathop{\text{argmin}}_{\lambda_1,\lambda_2,\cdots,\lambda_l\in\{0,1\}}\left\Vert\sum_{i=1}^l \lambda_i \boldsymbol{x}_i\boldsymbol{y}_i^{\top} - \sum_{i=1}^l\boldsymbol{x}_i\boldsymbol{y}_i^{\top}\right\Vert_F^2\quad\text{s.t.}\quad \sum_{i=1}^l \lambda_i = r
+                        \]
+                    </div>
+                </div>
+                
+                <div class="np-hard-box">
+                    <div class="np-hard-header">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Computational Complexity Analysis
+                    </div>
+                    <p>We know that the Frobenius norm of a matrix essentially treats the matrix as a flattened vector and computes its length. Therefore, this optimization problem is fundamentally equivalent to: given $l$ vectors $\boldsymbol{v}_1,\boldsymbol{v}_2,\cdots,\boldsymbol{v}_l\in\mathbb{R}^d$, solve:</p>
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(7)</span>
+                            \[
+                            \mathop{\text{argmin}}_{\lambda_1,\lambda_2,\cdots,\lambda_l\in\{0,1\}}\left\Vert\sum_{i=1}^l \lambda_i \boldsymbol{v}_i - \sum_{i=1}^l\boldsymbol{v}_i\right\Vert^2\quad\text{s.t.}\quad \sum_{i=1}^l \lambda_i = r
+                            \]
+                        </div>
+                    </div>
+                    <p>where $\boldsymbol{v}_i = \text{vec}(\boldsymbol{x}_i \boldsymbol{y}_i^{\top})$ and $d=nm$. Defining $\gamma_i = 1 - \lambda_i$, we can further simplify to:</p>
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(8)</span>
+                            \[
+                            \mathop{\text{argmin}}_{\gamma_1,\gamma_2,\cdots,\gamma_l\in\{0,1\}}\left\Vert\sum_{i=1}^l \gamma_i \boldsymbol{v}_i\right\Vert^2\quad\text{s.t.}\quad \sum_{i=1}^l \gamma_i = l-r
+                            \]
+                        </div>
+                    </div>
+                    <p>If I understand correctly, exact solution of this optimization problem is <strong>NP-Hard</strong>. Therefore, in general, we can only seek approximate algorithms.</p>
+                </div>
+                
+                <p>A simple case that admits an exact solution occurs when $\boldsymbol{v}_1,\boldsymbol{v}_2,\cdots,\boldsymbol{v}_l$ are mutually orthogonal. In this scenario:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(9)</span>
+                        \[
+                        \left\Vert\sum_{i=1}^l \gamma_i \boldsymbol{v}_i\right\Vert^2 = \sum_{i=1}^l \gamma_i^2 \Vert\boldsymbol{v}_i\Vert^2
+                        \]
+                    </div>
+                </div>
+                
+                <p>Therefore, its minimum value is the sum of the smallest $l-r$ values of $\Vert\boldsymbol{v}_i\Vert^2$. That is, set $\gamma_i = 1$ for the $l-r$ vectors $\boldsymbol{v}_i$ with the smallest norms, and $\gamma_i = 0$ for the remaining ones. When the mutual orthogonality condition is not strictly satisfied, we can still use "selecting the $l-r$ vectors $\boldsymbol{v}_i$ with the smallest norms" as an approximate solution.</p>
+                
+                <p>Returning to the original CR approximation problem, we have $\Vert\boldsymbol{x}_i\boldsymbol{y}_i^{\top}\Vert_F = \Vert\boldsymbol{x}_i\Vert \Vert \boldsymbol{y}_i\Vert$. Thus, a baseline approach for the optimal CR approximation of $\boldsymbol{X}\boldsymbol{Y}$ is to retain the $r$ column/row pairs with the largest products of column vector norms from $\boldsymbol{X}$ and the corresponding row vector norms from $\boldsymbol{Y}$.</p>
+                
+                <h2 id="sampling-perspective">Sampling Perspective<a href="#sampling-perspective">#</a></h2>
+                
+                <p>In some scenarios, we can relax Equation $\eqref{eq:xy-l-k}$ to:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(10)</span>
+                        \[
+                        \mathop{\text{argmin}}_{\lambda_1,\lambda_2,\cdots,\lambda_l\in\mathbb{R}}\left\Vert\sum_{i=1}^l \lambda_i \boldsymbol{x}_i\boldsymbol{y}_i^{\top} - \sum_{i=1}^l\boldsymbol{x}_i\boldsymbol{y}_i^{\top}\right\Vert_F^2\quad\text{s.t.}\quad \sum_{i=1}^l \#[\lambda_i\neq 0] = r
+                        \]
+                    </div>
+                </div>
+                
+                <p>where $\#[\lambda_i\neq 0]$ outputs 1 if $\lambda_i\neq 0$, and 0 otherwise. This relaxed version essentially extends the CR approximation form from $\boldsymbol{C}\boldsymbol{R}$ to $\boldsymbol{C}\boldsymbol{\Lambda}\boldsymbol{R}$, where $\boldsymbol{\Lambda}\in\mathbb{R}^{r\times r}$ is a diagonal matrix. That is, it allows us to adjust the diagonal matrix $\boldsymbol{\Lambda}$ to achieve higher accuracy. Correspondingly, Equation $\eqref{eq:v-l-k}$ becomes:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(11)</span>
+                        \[
+                        \mathop{\text{argmin}}_{\lambda_1,\lambda_2,\cdots,\lambda_l\in\mathbb{R}}\left\Vert\sum_{i=1}^l \lambda_i \boldsymbol{v}_i - \sum_{i=1}^l\boldsymbol{v}_i\right\Vert^2\quad\text{s.t.}\quad \sum_{i=1}^l \#[\lambda_i\neq 0] = r
+                        \]
+                    </div>
+                </div>
+                
+                <div class="sampling-box">
+                    <div class="sampling-header">
+                        <i class="fas fa-chart-bar"></i>
+                        Probabilistic Sampling Approach
+                    </div>
+                    <p>With this relaxation, we can approach the problem from a <strong>sampling perspective</strong>. First, we introduce an arbitrary $l$-element probability distribution $\boldsymbol{p}=(p_1,p_2,\cdots,p_l)$. We can then write:</p>
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(12)</span>
+                            \[
+                            \sum_{i=1}^l\boldsymbol{v}_i = \sum_{i=1}^l p_i\times\frac{\boldsymbol{v}_i}{p_i} = \mathbb{E}_{i\sim \boldsymbol{p}} \left[\frac{\boldsymbol{v}_i}{p_i}\right]
+                            \]
+                        </div>
+                    </div>
+                    <p>That is, the mathematical expectation of $\boldsymbol{v}_i/p_i$ precisely equals the target we aim to approximate. Therefore, we can construct an approximation through <u><strong>independent and identically distributed (i.i.d.) sampling</strong></u> from distribution $\boldsymbol{p}$:</p>
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(13)</span>
+                            \[
+                            \sum_{i=1}^l\boldsymbol{v}_i = \mathbb{E}_{i\sim \boldsymbol{p}} \left[\frac{\boldsymbol{v}_i}{p_i}\right] \approx \frac{1}{r}\sum_{j=1}^r \frac{\boldsymbol{v}_{s_j}}{p_{s_j}},\quad s_1,s_2,\cdots,s_r\sim \boldsymbol{p}
+                            \]
+                        </div>
+                    </div>
+                    <p>This implies that when $i$ is one of $s_1,s_2,\cdots,s_r$, we set $\lambda_i = (r p_i)^{-1}$; otherwise $\lambda_i=0$. Some readers might question why we use i.i.d. sampling instead of sampling without replacement, which might seem more appropriate for approximation purposes. The reason is simply that i.i.d. sampling makes subsequent analysis more straightforward.</p>
+                </div>
+                
+                <p>Up to this point, our theoretical results are independent of the choice of distribution $\boldsymbol{p}$—meaning they hold for any $\boldsymbol{p}$. This provides us with the possibility to select an optimal $\boldsymbol{p}$. How do we measure the quality of $\boldsymbol{p}$? Clearly, we want the error of each sampling estimate to be as small as possible. Therefore, we can use the expected squared error of the sampling estimate:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(14)</span>
+                        \[
+                        \mathbb{E}_{i\sim \boldsymbol{p}} \left[\left\Vert\frac{\boldsymbol{v}_i}{p_i} - \sum_{i=1}^l\boldsymbol{v}_i\right\Vert^2\right] = \left(\sum_{i=1}^l \frac{\Vert\boldsymbol{v}_i\Vert^2}{p_i}\right) - \left\Vert\sum_{i=1}^l\boldsymbol{v}_i\right\Vert^2
+                        \]
+                    </div>
+                </div>
+                
+                <p>to compare the effectiveness of different $\boldsymbol{p}$ distributions. Using the inequality of arithmetic and geometric means (AM-GM inequality), we have:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(15)</span>
+                        \[
+                        \sum_{i=1}^l \frac{\Vert\boldsymbol{v}_i\Vert^2}{p_i} = \left(\sum_{i=1}^l \frac{\Vert\boldsymbol{v}_i\Vert^2}{p_i} + p_i Z^2\right) - Z^2\geq \left(\sum_{i=1}^l 2\Vert\boldsymbol{v}_i\Vert Z\right) - Z^2
+                        \]
+                    </div>
+                </div>
+                
+                <p>Equality is achieved when $\Vert\boldsymbol{v}_i\Vert^2 / p_i = p_i Z^2$, yielding the optimal $\boldsymbol{p}$:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(16)</span>
+                        \[
+                        p_i^* = \frac{\Vert\boldsymbol{v}_i\Vert}{Z},\quad Z = \sum\limits_{i=1}^l \Vert\boldsymbol{v}_i\Vert
+                        \]
+                    </div>
+                </div>
+                
+                <p>The corresponding error becomes:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(17)</span>
+                        \[
+                        \mathbb{E}_{i\sim \boldsymbol{p}} \left[\left\Vert\frac{\boldsymbol{v}_i}{p_i} - \sum_{i=1}^l\boldsymbol{v}_i\right\Vert^2\right] = \left(\sum_{i=1}^l \Vert\boldsymbol{v}_i\Vert\right)^2 - \left\Vert\sum_{i=1}^l\boldsymbol{v}_i\right\Vert^2
+                        \]
+                    </div>
+                </div>
+                
+                <div class="reference-box">
+                    <div class="reference-header">
+                        <i class="fas fa-book"></i>
+                        Historical Reference
+                    </div>
+                    <p>The optimal $p_i$ is exactly proportional to $\Vert\boldsymbol{v}_i\Vert$. Therefore, the $r$ vectors $\boldsymbol{v}_i$ with the highest probabilities are precisely those with the largest norms, connecting this result with the approximation from the previous section. This result originates from the 2006 paper <a href="https://www.stat.berkeley.edu/~mmahoney/pubs/matrix1_SICOMP.pdf" target="_blank">"Fast Monte Carlo Algorithms for Matrices I: Approximating Matrix Multiplication"</a>. Originally intended for accelerating matrix multiplication, it demonstrates that by sampling columns/rows of $\boldsymbol{X},\boldsymbol{Y}$ according to probabilities $p_i\propto \Vert \boldsymbol{x}_i\boldsymbol{y}_i^{\top}\Vert_F = \Vert \boldsymbol{x}_i\Vert \Vert\boldsymbol{y}_i\Vert$ and scaling by $(r p_i)^{-1/2}$, we can obtain a CR approximation of $\boldsymbol{X}\boldsymbol{Y}$, thereby reducing multiplication complexity from $\mathcal{O}(lmn)$ to $\mathcal{O}(rmn)$.</p>
+                </div>
+                
+                <h2 id="extended-discussions">Extended Discussions<a href="#extended-discussions">#</a></h2>
+                
+                <p>Whether sorting by norm or random sampling according to $p_i\propto \Vert\boldsymbol{v}_i\Vert$, both methods allow us to construct a CR approximation with linear complexity [i.e., $\mathcal{O}(l)$]. This is certainly ideal for real-time computation. However, since both sorting and sampling depend solely on $\Vert\boldsymbol{v}_i\Vert$, the accuracy can only be considered moderate. If we can accept higher complexity, how can we improve the accuracy of CR approximation?</p>
+                
+                <div class="algorithm-box">
+                    <div class="algorithm-header">
+                        <i class="fas fa-code"></i>
+                        Greedy Algorithm for Improved Approximation
+                    </div>
+                    <p>We can attempt to change the sorting unit to $k$-tuples. For simplicity, assume $k \leq l-r$ and $k$ divides $l-r$. The number of combinations of choosing $k$ vectors from $l$ vectors $\boldsymbol{v}_1,\boldsymbol{v}_2,\cdots,\boldsymbol{v}_l$ is $C_l^k$. For each combination $\{s_1,s_2,\cdots,s_k\}$, we can compute the norm of the vector sum $\Vert \boldsymbol{v}_{s_1} + \boldsymbol{v}_{s_2} + \cdots + \boldsymbol{v}_{s_k}\Vert$. With these data, we can greedily construct an approximate solution to $\eqref{eq:v-l-k-0}$:</p>
+                    <blockquote>
+                        <p><strong>Initialize:</strong> $\Omega = \{1,2,\cdots,l\},\Theta=\{\}$</p>
+                        <p><strong>For</strong> $t=1,2,\cdots,(l-r)/k$, <strong>execute:</strong></p>
+                        <p>&emsp;&emsp;$\Theta = \Theta\,\cup\,\mathop{\text{argmin}}\limits_{\{s_1,s_2,\cdots,s_k\}\subset \Omega}\Vert \boldsymbol{v}_{s_1} + \boldsymbol{v}_{s_2} + \cdots + \boldsymbol{v}_{s_k}\Vert$;</p>
+                        <p>&emsp;&emsp;$\Omega = \Omega\,\backslash\,\Theta$;</p>
+                        <p><strong>Return</strong> $\Theta$.</p>
+                    </blockquote>
+                    <p>Essentially, this algorithm repeatedly selects the $k$ vectors with the smallest combined norm from the remaining vectors, performing this selection $(l-r)/k$ times to obtain $l-r$ vectors. This is a natural generalization of sorting by individual vector norms.</p>
+                </div>
+                
+                <div class="complexity-box">
+                    <div class="complexity-header">
+                        <i class="fas fa-calculator"></i>
+                        Complexity Analysis
+                    </div>
+                    <p>The complexity of this approach is $\mathcal{O}(C_l^k)$. When $k > 1$ and $l$ is relatively large, this may become computationally prohibitive, which indirectly reflects the complexity of exact solution for the original problem.</p>
+                </div>
+                
+                <p>Another question worth considering is: if we allow the CR approximation to be relaxed to $\boldsymbol{C}\boldsymbol{\Lambda}\boldsymbol{R}$, what is the optimal solution for $\boldsymbol{\Lambda}$? If no structure is imposed on $\boldsymbol{\Lambda}$, the answer can be given by the pseudo-inverse:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(18)</span>
+                        \[
+                        \boldsymbol{\Lambda}^* = \mathop{\text{argmin}}_{\boldsymbol{\Lambda}}\Vert \boldsymbol{C}\boldsymbol{\Lambda}\boldsymbol{R} - \boldsymbol{X}\boldsymbol{Y}\Vert_F^2 = \boldsymbol{C}^{\dagger}\boldsymbol{X}\boldsymbol{Y}\boldsymbol{R}^{\dagger}
+                        \]
+                    </div>
+                </div>
+                
+                <p>What if $\boldsymbol{\Lambda}$ must be a diagonal matrix? Then we can first reformulate the problem as: given $\{\boldsymbol{u}_1,\boldsymbol{u}_2,\cdots,\boldsymbol{u}_r\}\subset\{\boldsymbol{v}_1,\boldsymbol{v}_2,\cdots,\boldsymbol{v}_l\}$, find:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(19)</span>
+                        \[
+                        \mathop{\text{argmin}}_{\lambda_1,\lambda_2,\cdots,\lambda_r}\left\Vert\sum_{i=1}^r \lambda_i \boldsymbol{u}_i - \sum_{i=1}^l\boldsymbol{v}_i\right\Vert^2
+                        \]
+                    </div>
+                </div>
+                
+                <p>Denote $\boldsymbol{U} = (\boldsymbol{u}_1,\boldsymbol{u}_2,\cdots,\boldsymbol{u}_r), \boldsymbol{V} = (\boldsymbol{v}_1,\boldsymbol{v}_2,\cdots,\boldsymbol{v}_l), \boldsymbol{\lambda}=(\lambda_1,\lambda_2,\cdots,\lambda_r)^{\top}$. The optimization objective can then be written as:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(20)</span>
+                        \[
+                        \mathop{\text{argmin}}_{\boldsymbol{\lambda}}\left\Vert\boldsymbol{U}\boldsymbol{\lambda} - \boldsymbol{V}\boldsymbol{1}_{l\times 1}\right\Vert^2
+                        \]
+                    </div>
+                </div>
+                
+                <p>This can also be expressed using the pseudo-inverse to obtain the optimal solution:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(21)</span>
+                        \[
+                        \boldsymbol{\lambda}^* =  \boldsymbol{U}^{\dagger}\boldsymbol{V}\boldsymbol{1}_{l\times 1} = (\boldsymbol{U}^{\top}\boldsymbol{U})^{-1}\boldsymbol{U}^{\top}\boldsymbol{V}\boldsymbol{1}_{l\times 1}
+                        \]
+                    </div>
+                </div>
+                
+                <p>The last equality assumes $\boldsymbol{U}^{\top}\boldsymbol{U}$ is invertible, which is typically satisfied. If not, replace $(\boldsymbol{U}^{\top}\boldsymbol{U})^{-1}$ with $(\boldsymbol{U}^{\top}\boldsymbol{U})^{\dagger}$.</p>
+                
+                <p>The current issue is that directly applying this formula results in excessive computational cost for the original problem, because $\boldsymbol{v}_i = \text{vec}(\boldsymbol{x}_i \boldsymbol{y}_i^{\top})$—meaning $\boldsymbol{v}_i$ is an $mn$-dimensional vector. Consequently, $\boldsymbol{V}$ has size $mn\times l$ and $\boldsymbol{U}$ has size $mn\times r$, which becomes problematic when $m,n$ are large.</p>
+                
+                <p>Utilizing the relationship $\boldsymbol{v}_i = \text{vec}(\boldsymbol{x}_i \boldsymbol{y}_i^{\top})$ helps us further simplify the above expression. Let $\boldsymbol{u}_i = \text{vec}(\boldsymbol{c}_i \boldsymbol{r}_i^{\top})$. Then:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(22)</span>
+                        \[
+                        \begin{aligned}
+                        (\boldsymbol{U}^{\top}\boldsymbol{V})_{i,j} 
+                        &= \langle \boldsymbol{c}_i \boldsymbol{r}_i^{\top}, \boldsymbol{x}_j \boldsymbol{y}_j^{\top}\rangle_F \\
+                        &= \text{Tr}(\boldsymbol{r}_i \boldsymbol{c}_i^{\top}\boldsymbol{x}_j \boldsymbol{y}_j^{\top}) \\
+                        &= (\boldsymbol{c}_i^{\top}\boldsymbol{x}_j)(\boldsymbol{r}_i^{\top} \boldsymbol{y}_j) \\[5pt]
+                        &= [(\boldsymbol{C}^{\top}\boldsymbol{X})\odot (\boldsymbol{R}\boldsymbol{Y}^{\top})]_{i,j}
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>That is, $\boldsymbol{U}^{\top}\boldsymbol{V}=(\boldsymbol{C}^{\top}\boldsymbol{X})\odot (\boldsymbol{R}\boldsymbol{Y}^{\top})$ and $\boldsymbol{U}^{\top}\boldsymbol{U}=(\boldsymbol{C}^{\top}\boldsymbol{C})\odot (\boldsymbol{R}\boldsymbol{R}^{\top})$, where $\odot$ denotes the <a href="https://en.wikipedia.org/wiki/Hadamard_product_(matrices)" target="_blank">Hadamard product</a>. Through these identity transformations, the computational cost of $\boldsymbol{U}^{\top}\boldsymbol{V}$ and $\boldsymbol{U}^{\top}\boldsymbol{U}$ is significantly reduced.</p>
+                
+                <h2 id="article-summary">Article Summary<a href="#article-summary">#</a></h2>
+                
+                <div class="summary-box">
+                    <p>This article introduced <strong>Column-Row (CR) approximation</strong> for matrix multiplication, a structured low-rank approximation technique with specific column and row selection. Compared to the optimal low-rank approximation provided by SVD, CR approximation offers more intuitive physical interpretation and better explainability.</p>
+                    
+                    <p>We explored:</p>
+                    <ol>
+                        <li>The fundamental formulation of CR approximation as a selection matrix constrained optimization problem</li>
+                        <li>NP-Hard nature of the exact solution and baseline approximation strategies based on norm sorting</li>
+                        <li>A probabilistic sampling perspective that connects to efficient matrix multiplication algorithms</li>
+                        <li>Extended discussions on greedy algorithms and computational optimizations for diagonal scaling matrices</li>
+                    </ol>
+                    
+                    <p>CR approximation provides a practical trade-off between computational efficiency and structural interpretability, making it particularly valuable in scenarios where preserving specific matrix structure or enabling nonlinear operations is essential.</p>
+                </div>
+
+                <div class="citation-section">
+                    <div class="citation-header">
+                        <i class="fas fa-quote-right"></i>
+                        Citation Information
+                    </div>
+                    <p><strong>Original Article:</strong> Su Jianlin. The Path to Low-Rank Approximation (Part 3): CR Approximation. <em>Scientific Spaces</em>.</p>
+                    
+                    <p><strong>How to cite this translation:</strong></p>
+                    <div class="citation-box">
+                        Su, J. The Path to Low-Rank Approximation (Part 3): CR Approximation [Translated by ScalingOpt Team]. 
+                        <em>Scientific Spaces</em>.
+                    </div>
+                    <p style="margin-top: 0.8rem;"><strong>BibTeX:</strong></p>
+                    <div class="citation-box">
+                        @article{su2025lowrank_cr,
+                            title   = {The Path to Low-Rank Approximation (Part 3): CR Approximation},
+                            author  = {Su, Jianlin},
+                            journal = {Scientific Spaces},
+                            year    = {2025},
+                            url     = {https://kexue.fm/archives/10567},
+                            note    = {Translated by ScalingOpt Team}
+                          }
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="translation-credit">
+                <i class="fas fa-user-graduate"></i>
+                Academic Translation by ScalingOpt Team
+            </div>
+            <div class="copyright">
+                © 2009-2025 Scientific Spaces. All rights reserved.<br>
+                Original content licensed under Creative Commons BY-NC-ND 2.5 China
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript for Interactive Features -->
+    <script>
+        // Scroll Progress Bar
+        window.addEventListener('scroll', function() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            scrollProgress.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Table of Contents Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            const sections = document.querySelectorAll('h2[id], h3[id]');
+            
+            // Set active section based on scroll position
+            function setActiveSection() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 50)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', setActiveSection);
+            setActiveSection(); // Initial call
+            
+            // Smooth scroll for TOC links
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 50,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+
+        // MathJax Configuration
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                tags: 'ams'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    
+    <!-- MathJax CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</body>
+</html>

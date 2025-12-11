@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Path to Low-Rank Approximation (Part 2): SVD | Scientific Spaces</title>
+    <meta name="description" content="A comprehensive exploration of Singular Value Decomposition (SVD) from a low-rank approximation perspective, covering theoretical foundations, applications to matrix optimization, and the Eckart-Young-Mirsky theorem.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a6bca;
+            --primary-dark: #1357a8;
+            --primary-light: #e8f1fc;
+            --secondary: #2c3e50;
+            --accent: #3498db;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f5f7fa;
+            --gray-200: #e4e7eb;
+            --gray-300: #cbd2d9;
+            --gray-600: #7b8794;
+            --gray-700: #52606d;
+            --gray-900: #323f4b;
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 6px 24px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: #f0f5fc;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.5rem 1.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -8%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+        }
+
+        .meta-item i {
+            font-size: 0.85rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Translation Notice */
+        .translation-notice {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1.2rem;
+            margin: 0;
+        }
+
+        .translation-notice-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .translation-text h3 {
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .translation-text p {
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        .translator-badge {
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(26, 107, 202, 0.2);
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+        }
+
+        @media (max-width: 850px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            padding-left: 1rem;
+        }
+
+        .toc {
+            position: sticky;
+            top: 1rem;
+        }
+
+        .toc-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .toc-header i {
+            font-size: 0.9rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.4rem;
+            position: relative;
+        }
+
+        .toc-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            transition: var(--transition);
+            border-left: 2px solid transparent;
+            padding-left: 8px;
+        }
+
+        .toc-link:hover {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            transform: translateX(2px);
+        }
+
+        .toc-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .toc-number {
+            font-weight: 500;
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            min-width: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-right: 1.2rem;
+            padding-left: 0;
+        }
+
+        @media (max-width: 850px) {
+            .sidebar {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 0 1rem;
+            }
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 1.5rem 0 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: relative;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 35px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        h2 a {
+            color: var(--accent);
+            font-size: 0.7rem;
+            margin-left: 6px;
+            text-decoration: none;
+        }
+
+        h2 a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            color: var(--gray-900);
+            line-height: 1.65;
+        }
+
+        /* Equation Styling */
+        .equation-container {
+            margin: 0.8rem 0;
+        }
+
+        .equation {
+            background: var(--primary-light);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1rem;
+            border-radius: 0 5px 5px 0;
+            font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', serif;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .equation-number {
+            color: var(--primary);
+            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin-right: 6px;
+            display: inline-block;
+            min-width: 18px;
+        }
+
+        /* Code Block Styling */
+        .code-container {
+            margin: 1rem 0;
+            background: #2d2d2d;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .code-header {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 0.6rem 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .code-content {
+            padding: 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #f8f8f2;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+        }
+
+        /* Reference Box */
+        .reference-box {
+            background: linear-gradient(to right, #f8fafc, var(--primary-light));
+            border: 1px solid var(--gray-200);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .reference-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .reference-header i {
+            font-size: 0.9rem;
+        }
+
+        .reference-list {
+            list-style: none;
+        }
+
+        .reference-item {
+            padding: 0.3rem 0 0.3rem 0.8rem;
+            position: relative;
+            margin-bottom: 0.4rem;
+            color: var(--gray-700);
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .reference-item::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 0.65rem;
+        }
+
+        /* Citation Section */
+        .citation-section {
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .citation-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .citation-box {
+            background: var(--white);
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid var(--gray-300);
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-top: 0.6rem;
+            overflow-x: auto;
+            color: var(--gray-900);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--secondary);
+            color: white;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .translation-credit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 6px 16px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(26, 107, 202, 0.2);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            margin-top: 0.6rem;
+        }
+
+        /* Utility Classes */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-light), #e8f2ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .math {
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.1s ease;
+            z-index: 1000;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 1rem 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 0.6rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem 0;
+            }
+            
+            .main-content {
+                padding-right: 0.8rem;
+            }
+            
+            .sidebar {
+                padding-left: 0.8rem;
+            }
+            
+            .meta-info {
+                gap: 0.6rem;
+            }
+            
+            .meta-item {
+                font-size: 0.75rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .translation-notice-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .translator-badge {
+                align-self: flex-start;
+            }
+        }
+
+        /* Links styling */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Optimize long formula display */
+        .equation {
+            word-break: break-word;
+        }
+        
+        /* Optimize list display */
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.3rem;
+            line-height: 1.5;
+        }
+        
+        /* Optimize math formula spacing */
+        .MathJax_Display {
+            margin: 0.6em 0 !important;
+        }
+        
+        /* Image container styling */
+        .pic-container {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+        
+        .pic-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .typecho-caption {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        
+        /* Quote block styling */
+        blockquote.cite {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+        }
+        
+        blockquote.cite div {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        blockquote.cite a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        /* Blockquote styling */
+        blockquote {
+            background: linear-gradient(to right, var(--gray-100), var(--primary-light));
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+            position: relative;
+        }
+
+        blockquote p {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+
+        blockquote p:before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Underline styling */
+        u {
+            text-decoration: none;
+            border-bottom: 1px dotted var(--primary);
+        }
+
+        /* List styling inside main content */
+        .main-content ol, .main-content ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .main-content li {
+            margin-bottom: 0.4rem;
+            line-height: 1.6;
+        }
+
+        /* Highlight box for important notes */
+        .note-box {
+            background: linear-gradient(to right, #fff8e1, #fff3cd);
+            border-left: 3px solid #ffc107;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .note-box strong {
+            color: #856404;
+        }
+
+        /* Definition list styling */
+        .definition {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 3px solid #4caf50;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .definition-header {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Mathematical proof styling */
+        .proof {
+            background: linear-gradient(to right, #f3e5f5, #f8f4ff);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .proof-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Insight box styling */
+        .insight-box {
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+            border-left: 3px solid #1976d2;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .insight-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Analysis box styling */
+        .analysis-box {
+            background: linear-gradient(to right, #fff3e0, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .analysis-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Technical box styling */
+        .technical-box {
+            background: linear-gradient(to right, #fce4ec, #f8bbd9);
+            border-left: 3px solid #e91e63;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .technical-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Series introduction box */
+        .series-box {
+            background: linear-gradient(135deg, #f3e5f5 0%, #e8eaf6 100%);
+            border-left: 3px solid #7b1fa2;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .series-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* SVD properties box */
+        .svd-box {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 3px solid #4caf50;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .svd-header {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Matrix norm box */
+        .norm-box {
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+            border-left: 3px solid #1976d2;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .norm-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Theorem box */
+        .theorem-box {
+            background: linear-gradient(to right, #fff3e0, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .theorem-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Proof box */
+        .proof-box {
+            background: linear-gradient(to right, #fce4ec, #f8bbd9);
+            border-left: 3px solid #e91e63;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .proof-box-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Geometric interpretation box */
+        .geometry-box {
+            background: linear-gradient(135deg, #f5f5f5 0%, #eceff1 100%);
+            border-left: 3px solid #607d8b;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .geometry-header {
+            color: #455a64;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Eckart-Young theorem box */
+        .eym-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            border-left: 3px solid #2e7d32;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .eym-header {
+            color: #1b5e20;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>The Path to Low-Rank Approximation (Part 2): SVD</h1>
+                <div class="subtitle">A comprehensive examination of Singular Value Decomposition (SVD) as the fundamental solution to optimal low-rank matrix approximation, exploring its geometric interpretation, computational aspects, and connection to the Eckart-Young-Mirsky theorem</div>
+                
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>Su Jianlin</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-eye"></i>
+                        <span>Scientific Spaces</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <div class="tag">Low-Rank Approximation</div>
+                        <div class="tag">SVD</div>
+                        <div class="tag">Matrix Factorization</div>
+                        <div class="tag">Numerical Linear Algebra</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Translation Notice -->
+        <div class="translation-notice">
+            <div class="translation-notice-content">
+                <div class="translation-text">
+                    <h3><i class="fas fa-language"></i> Academic Translation</h3>
+                    <p>This is an academic English translation maintaining technical accuracy while adapting to English academic conventions.</p>
+                </div>
+                <div class="translator-badge">
+                    <i class="fas fa-user-graduate"></i>
+                    Translated by ScalingOpt Team
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Sidebar Table of Contents -->
+            <aside class="sidebar">
+                <nav class="toc">
+                    <div class="toc-header">
+                        <i class="fas fa-list"></i>
+                        Contents
+                    </div>
+                    <ul class="toc-list">
+                        <li class="toc-item">
+                            <a href="#initial-exploration" class="toc-link">
+                                <span class="toc-number">1</span>
+                                <span>Initial Exploration</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#some-applications" class="toc-link">
+                                <span class="toc-number">2</span>
+                                <span>Some Applications</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#pseudo-inverse-general-solution" class="toc-link">
+                                <span class="toc-number">2.1</span>
+                                <span>Pseudo-Inverse General Solution</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#matrix-norms" class="toc-link">
+                                <span class="toc-number">2.2</span>
+                                <span>Matrix Norms</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#low-rank-approximation" class="toc-link">
+                                <span class="toc-number">2.3</span>
+                                <span>Low-Rank Approximation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#theoretical-foundations" class="toc-link">
+                                <span class="toc-number">3</span>
+                                <span>Theoretical Foundations</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#spectral-theorem" class="toc-link">
+                                <span class="toc-number">3.1</span>
+                                <span>Spectral Theorem</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#mathematical-induction" class="toc-link">
+                                <span class="toc-number">3.2</span>
+                                <span>Mathematical Induction</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#singular-decomposition" class="toc-link">
+                                <span class="toc-number">3.3</span>
+                                <span>Singular Decomposition</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#approximation-theorem" class="toc-link">
+                                <span class="toc-number">4</span>
+                                <span>Approximation Theorem</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#article-summary" class="toc-link">
+                                <span class="toc-number">5</span>
+                                <span>Article Summary</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Article Content -->
+            <main class="main-content">
+                <div class="series-box">
+                    <div class="series-header">
+                        <i class="fas fa-book-open"></i>
+                        Series Continuation
+                    </div>
+                    <p>In the previous article, we introduced the "<a href="/archives/10366" target="_blank">Pseudo-Inverse</a>", which relates to the optimal solution of the optimization objective $\Vert \boldsymbol{A}\boldsymbol{B} - \boldsymbol{M}\Vert_F^2$ when given matrices $\boldsymbol{M}$ and $\boldsymbol{A}$ (or $\boldsymbol{B}$). In this article, we focus on the optimal solution when neither $\boldsymbol{A}$ nor $\boldsymbol{B}$ is given:</p>
+                    
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(1)</span>
+                            \[
+                            \mathop{\text{argmin}}_{\boldsymbol{A},\boldsymbol{B}}\Vert \boldsymbol{A}\boldsymbol{B} - \boldsymbol{M}\Vert_F^2
+                            \]
+                        </div>
+                    </div>
+                    
+                    <p>where $\boldsymbol{A}\in\mathbb{R}^{n\times r}, \boldsymbol{B}\in\mathbb{R}^{r\times m}, \boldsymbol{M}\in\mathbb{R}^{n\times m}, r < \min(n,m)$. Essentially, this seeks the "optimal rank-$r$ approximation of matrix $\boldsymbol{M}$" (the best approximation with rank at most $r$). To solve this problem, we must invoke the celebrated "SVD (Singular Value Decomposition)." Although this series began with the pseudo-inverse, its "fame" pales in comparison to SVD. Many have heard of or even used SVD without encountering the pseudo-inverse, including the author, who learned SVD first before encountering the pseudo-inverse.</p>
+                    <p>Next, we will introduce SVD centered around the theme of optimal low-rank approximation of matrices.</p>
+                </div>
+                
+                <h2 id="initial-exploration">Initial Exploration<a href="#initial-exploration">#</a></h2>
+                
+                <p>For any matrix $\boldsymbol{M}\in\mathbb{R}^{n\times m}$, we can find a Singular Value Decomposition (SVD) of the following form:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(2)</span>
+                        \[
+                        \boldsymbol{M} = \boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}
+                        \]
+                    </div>
+                </div>
+                
+                <p><!--more--> where $\boldsymbol{U}\in\mathbb{R}^{n\times n}, \boldsymbol{V}\in\mathbb{R}^{m\times m}$ are orthogonal matrices, and $\boldsymbol{\Sigma}\in\mathbb{R}^{n\times m}$ is a non-negative diagonal matrix:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(3)</span>
+                        \[
+                        \boldsymbol{\Sigma}_{i,j} = \left\{\begin{aligned}&\sigma_i, &i = j \\ &0,&i \neq j\end{aligned}\right.
+                        \]
+                    </div>
+                </div>
+                
+                <p>The diagonal elements are typically sorted in descending order, i.e., $\sigma_1\geq \sigma_2\geq\sigma_3\geq\cdots\geq 0$. These diagonal elements are called singular values. From a numerical computation perspective, we can retain only the non-zero elements of $\boldsymbol{\Sigma}$, reducing the sizes of $\boldsymbol{U},\boldsymbol{\Sigma},\boldsymbol{V}$ to $n\times r, r\times r, m\times r$ respectively (where $r$ is the rank of $\boldsymbol{M}$). Maintaining full orthogonal matrices is more convenient for theoretical analysis.</p>
+                
+                <div class="svd-box">
+                    <div class="svd-header">
+                        <i class="fas fa-info-circle"></i>
+                        SVD Scope and Properties
+                    </div>
+                    <p>SVD also holds for complex matrices, but requires replacing orthogonal matrices with unitary matrices and transpose with conjugate transpose. Here we primarily focus on real matrix results, which are more directly relevant to machine learning. The foundational theory of SVD includes existence, computational methods, and its connection to optimal low-rank approximation—all of which the author will address with personal insights.</p>
+                </div>
+                
+                <div class="geometry-box">
+                    <div class="geometry-header">
+                        <i class="fas fa-shapes"></i>
+                        Geometric Interpretation in 2D
+                    </div>
+                    <p>In two dimensions, SVD has an intuitive geometric interpretation. Two-dimensional orthogonal matrices primarily represent rotations (and possibly reflections, but we can be less rigorous for geometric intuition). Thus, $\boldsymbol{M}\boldsymbol{x}=\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}\boldsymbol{x}$ means any linear transformation of a (column) vector $x$ can be decomposed into three steps: <strong>rotation</strong>, <strong>stretching</strong>, and <strong>rotation</strong>, as illustrated below:</p>
+                    <div class="pic-container">
+                        <div class="typecho-caption aligncenter" style="max-width: 300px">
+                            <div style="margin: 5px">
+                                <img src="https://kexue.fm/usr/uploads/2024/09/1489641175.png" style="max-width: 100%" alt="Geometric Meaning of SVD" />
+                            </div>
+                            <p class="typecho-caption-text">Geometric Meaning of SVD</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <h2 id="some-applications">Some Applications<a href="#some-applications">#</a></h2>
+                
+                <p>Both in theoretical analysis and numerical computation, SVD finds extremely wide application. One underlying principle is that common matrix/vector norms are invariant under orthogonal transformations. Consequently, SVD's structure—with two orthogonal matrices sandwiching a diagonal matrix—often allows conversion of many matrix-related optimization objectives into equivalent special cases involving non-negative diagonal matrices, thereby simplifying problems.</p>
+                
+                <h3 id="pseudo-inverse-general-solution">Pseudo-Inverse General Solution<a href="#pseudo-inverse-general-solution">#</a></h3>
+                
+                <p>Taking the pseudo-inverse as an example, when $\boldsymbol{A}\in\mathbb{R}^{n\times r}$ has rank $r$, we have:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(4)</span>
+                        \[
+                        \boldsymbol{A}^{\dagger} = \mathop{\text{argmin}}_{\boldsymbol{B}\in\mathbb{R}^{r\times n}}\Vert \boldsymbol{A}\boldsymbol{B} - \boldsymbol{I}_n\Vert_F^2
+                        \]
+                    </div>
+                </div>
+                
+                <p>In the previous article, we derived an expression for $\boldsymbol{A}^{\dagger}$ via differentiation, then extended it with some effort to cases where $\boldsymbol{A}$ has rank less than $r$. However, with SVD, the problem simplifies considerably. We can decompose $\boldsymbol{A}$ as $\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}$, then express $\boldsymbol{B}$ as $\boldsymbol{V} \boldsymbol{Z} \boldsymbol{U}^{\top}$. Note we haven't stipulated that $\boldsymbol{Z}$ is diagonal, so $\boldsymbol{B}=\boldsymbol{V} \boldsymbol{Z} \boldsymbol{U}^{\top}$ can always be achieved. Thus:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(5)</span>
+                        \[
+                        \begin{aligned}
+                        \min_\boldsymbol{B}\Vert \boldsymbol{A}\boldsymbol{B} - \boldsymbol{I}_n\Vert_F^2 
+                        &= \min_\boldsymbol{Z}\Vert \boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}\boldsymbol{V} \boldsymbol{Z} \boldsymbol{U}^{\top} - \boldsymbol{I}_n\Vert_F^2 \\
+                        &= \min_\boldsymbol{Z}\Vert \boldsymbol{U}(\boldsymbol{\Sigma} \boldsymbol{Z} - \boldsymbol{I}_n) \boldsymbol{U}^{\top}\Vert_F^2 \\
+                        &= \min_\boldsymbol{Z}\Vert \boldsymbol{\Sigma} \boldsymbol{Z} - \boldsymbol{I}_n\Vert_F^2
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>The last equality uses the result proved in the previous article: "orthogonal transformations preserve the Frobenius norm." Thus, we have simplified the problem to finding the pseudo-inverse of the diagonal matrix $\boldsymbol{\Sigma}$. Next, we can express $\boldsymbol{\Sigma} \boldsymbol{Z} - \boldsymbol{I}_n$ in block matrix form:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(6)</span>
+                        \[
+                        \begin{aligned}
+                        \boldsymbol{\Sigma} \boldsymbol{Z} - \boldsymbol{I}_n 
+                        &= \begin{pmatrix}\boldsymbol{\Sigma}_{[:r,:r]} \\ \boldsymbol{0}_{(n-r)\times r}\end{pmatrix} \begin{pmatrix}\boldsymbol{Z}_{[:r,:r]} & \boldsymbol{Z}_{[:r,r:]}\end{pmatrix}  - \begin{pmatrix}\boldsymbol{I}_r & \boldsymbol{0}_{r\times(n-r)} \\ \boldsymbol{0}_{(n-r)\times r} & \boldsymbol{I}_{n-r}\end{pmatrix} \\
+                        &= \begin{pmatrix}\boldsymbol{\Sigma}_{[:r,:r]}\boldsymbol{Z}_{[:r,:r]} - \boldsymbol{I}_r & \boldsymbol{\Sigma}_{[:r,:r]}\boldsymbol{Z}_{[:r,r:]}\\ \boldsymbol{0}_{(n-r)\times r} & -\boldsymbol{I}_{n-r}\end{pmatrix}
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Here, slicing follows Python array conventions. From the final form, to minimize the Frobenius norm of $\boldsymbol{\Sigma} \boldsymbol{Z} - \boldsymbol{I}_n$, the unique solution is $\boldsymbol{Z}_{[:r,:r]}=\boldsymbol{\Sigma}_{[:r,:r]}^{-1}$, $\boldsymbol{Z}_{[:r,r:]}=\boldsymbol{0}_{r\times(n-r)}$. Essentially, $\boldsymbol{Z}$ takes the reciprocal of all non-zero elements of $\boldsymbol{\Sigma}^{\top}$ and then transposes. We denote this as $\boldsymbol{\Sigma}^{\dagger}$. Thus, under SVD we have:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(7)</span>
+                        \[
+                        \boldsymbol{A}=\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}\quad\Rightarrow\quad \boldsymbol{A}^{\dagger} = \boldsymbol{V}\boldsymbol{\Sigma}^{\dagger}\boldsymbol{U}^{\top}
+                        \]
+                    </div>
+                </div>
+                
+                <p>It can be further shown that this result also applies to $\boldsymbol{A}$ with rank less than $r$, making it a general form. Some tutorials directly adopt this as the definition of the pseudo-inverse. Additionally, we observe that this form does not distinguish between left and right pseudo-inverses, indicating that for a given matrix, its left and right pseudo-inverses are equal. Therefore, when discussing pseudo-inverses, we need not specify left or right.</p>
+                
+                <h3 id="matrix-norms">Matrix Norms<a href="#matrix-norms">#</a></h3>
+                
+                <div class="norm-box">
+                    <div class="norm-header">
+                        <i class="fas fa-ruler-combined"></i>
+                        Matrix Norm Computation via SVD
+                    </div>
+                    <p>Utilizing the result that orthogonal transformations preserve the Frobenius norm, we also obtain:</p>
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(8)</span>
+                            \[
+                            \Vert \boldsymbol{M}\Vert_F^2 = \Vert \boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}\Vert_F^2 = \Vert \boldsymbol{\Sigma} \Vert_F^2 = \sum_{i=1}^{\min(n,m)}\sigma_i^2
+                            \]
+                        </div>
+                    </div>
+                    <p>That is, the sum of squares of singular values equals the square of the Frobenius norm. Besides the Frobenius norm, SVD can also compute the "spectral norm." In the previous article, we mentioned that the Frobenius norm is just one type of matrix norm; another common matrix norm is the spectral norm induced by vector norms, defined as:</p>
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(9)</span>
+                            \[
+                            \Vert \boldsymbol{M}\Vert_2 = \max_{\Vert \boldsymbol{x}\Vert = 1} \Vert \boldsymbol{M}\boldsymbol{x}\Vert
+                            \]
+                        </div>
+                    </div>
+                    <p>Note that the norms on the right-hand side are vector norms (length, $2$-norm), so this definition is well-defined. Since it is induced by the vector $2$-norm, it is also called the matrix $2$-norm. Numerically, the spectral norm of a matrix equals its largest singular value: $\Vert \boldsymbol{M}\Vert_2 = \sigma_1$.</p>
+                </div>
+                
+                <p>To prove this, simply perform SVD on $\boldsymbol{M}$ as $\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}$, then substitute into the spectral norm definition:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(10)</span>
+                        \[
+                        \max_{\Vert \boldsymbol{x}\Vert = 1} \Vert \boldsymbol{M}\boldsymbol{x}\Vert = \max_{\Vert \boldsymbol{x}\Vert = 1} \Vert \boldsymbol{U}\boldsymbol{\Sigma} (\boldsymbol{V}^{\top}\boldsymbol{x})\Vert = \max_{\Vert \boldsymbol{y}\Vert = 1} \Vert \boldsymbol{\Sigma} \boldsymbol{y}\Vert
+                        \]
+                    </div>
+                </div>
+                
+                <p>The second equality exploits the property that orthogonal matrices preserve vector norms. Now we have reduced the problem to finding the spectral norm of the diagonal matrix $\boldsymbol{\Sigma}$, which is simpler. Let $\boldsymbol{y} = (y_1,y_2,\cdots,y_m)$, then:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(11)</span>
+                        \[
+                        \Vert \boldsymbol{\Sigma} \boldsymbol{y}\Vert^2 = \sum_{i=1}^m \sigma_i^2 y_i^2 \leq \sum_{i=1}^m \sigma_1^2 y_i^2 = \sigma_1^2\sum_{i=1}^m y_i^2 = \sigma_1^2
+                        \]
+                    </div>
+                </div>
+                
+                <p>Thus $\Vert \boldsymbol{\Sigma} \boldsymbol{y}\Vert$ does not exceed $\sigma_1$, and equality is achieved when $\boldsymbol{y}=(1,0,\cdots,0)$. Therefore $\Vert \boldsymbol{M}\Vert_2=\sigma_1$. Comparing with the Frobenius norm result, we also find that $\Vert \boldsymbol{M}\Vert_2\leq \Vert \boldsymbol{M}\Vert_F$ always holds.</p>
+                
+                <h3 id="low-rank-approximation">Low-Rank Approximation<a href="#low-rank-approximation">#</a></h3>
+                
+                <p>Finally, we return to the main topic of this article: optimal low-rank approximation, i.e., objective $\eqref{eq:loss-ab}$. Decomposing $\boldsymbol{M}$ as $\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}$, we can write:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(12)</span>
+                        \[
+                        \begin{aligned}
+                        \Vert \boldsymbol{A}\boldsymbol{B} - \boldsymbol{M}\Vert_F^2 
+                        &= \Vert \boldsymbol{U}\boldsymbol{U}^{\top}\boldsymbol{A}\boldsymbol{B}\boldsymbol{V}\boldsymbol{V}^{\top} - \boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}\Vert_F^2 \\
+                        &= \Vert \boldsymbol{U}(\boldsymbol{U}^{\top}\boldsymbol{A}\boldsymbol{B}\boldsymbol{V} - \boldsymbol{\Sigma}) \boldsymbol{V}^{\top}\Vert_F^2 \\
+                        &= \Vert \boldsymbol{U}^{\top}\boldsymbol{A}\boldsymbol{B}\boldsymbol{V} - \boldsymbol{\Sigma}\Vert_F^2
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Note that $\boldsymbol{U}^{\top}\boldsymbol{A}\boldsymbol{B}\boldsymbol{V}$ can still represent any matrix with rank at most $r$. Thus, via SVD we have simplified the optimal rank-$r$ approximation of matrix $\boldsymbol{M}$ to the optimal rank-$r$ approximation of the non-negative diagonal matrix $\boldsymbol{\Sigma}$.</p>
+                
+                <p>In <a href="/archives/10226" target="_blank">"Towards Full-Parameter Fine-Tuning! The Most Exciting LoRA Improvement I've Seen (Part 1)"</a>, we used the same approach to solve a similar optimization problem:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(13)</span>
+                        \[
+                        \mathop{\text{argmin}}_{\boldsymbol{A},\boldsymbol{B}} \Vert \boldsymbol{A}\boldsymbol{A}^{\top}\boldsymbol{M} + \boldsymbol{M}\boldsymbol{B}^{\top}\boldsymbol{B} - \boldsymbol{M}\Vert_F^2
+                        \]
+                    </div>
+                </div>
+                
+                <p>Using SVD and the invariance of the Frobenius norm under orthogonal transformations, we obtain:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(14)</span>
+                        \[
+                        \begin{aligned}
+                        &\Vert \boldsymbol{A}\boldsymbol{A}^{\top}\boldsymbol{M} + \boldsymbol{M}\boldsymbol{B}^{\top}\boldsymbol{B} - \boldsymbol{M}\Vert_F^2 \\
+                        =&\, \Vert \boldsymbol{A}\boldsymbol{A}^{\top}\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top} + \boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}\boldsymbol{B}^{\top}\boldsymbol{B} - \boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}\Vert_F^2 \\
+                        =&\, \Vert \boldsymbol{U}\boldsymbol{U}^{\top}\boldsymbol{A}\boldsymbol{A}^{\top}\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top} + \boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}\boldsymbol{B}^{\top}\boldsymbol{B}\boldsymbol{V}\boldsymbol{V}^{\top} - \boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}\Vert_F^2 \\
+                        =&\, \Vert \boldsymbol{U}[(\boldsymbol{U}^{\top}\boldsymbol{A})(\boldsymbol{U}^{\top}\boldsymbol{A})^{\top}\boldsymbol{\Sigma}  + \boldsymbol{\Sigma} (\boldsymbol{B}\boldsymbol{V})^{\top} (\boldsymbol{B}\boldsymbol{V}) - \boldsymbol{\Sigma}] \boldsymbol{V}^{\top}\Vert_F^2 \\
+                        =&\, \Vert (\boldsymbol{U}^{\top}\boldsymbol{A})(\boldsymbol{U}^{\top}\boldsymbol{A})^{\top}\boldsymbol{\Sigma}  + \boldsymbol{\Sigma} (\boldsymbol{B}\boldsymbol{V})^{\top} (\boldsymbol{B}\boldsymbol{V}) - \boldsymbol{\Sigma}\Vert_F^2 \\
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>This transforms the original optimization problem for general matrix $\boldsymbol{M}$ into a special case where $\boldsymbol{M}$ is a non-negative diagonal matrix, reducing analysis difficulty. Note that if $\boldsymbol{A},\boldsymbol{B}$ have rank at most $r$, then $\boldsymbol{A}\boldsymbol{A}^{\top}\boldsymbol{M} + \boldsymbol{M}\boldsymbol{B}^{\top}\boldsymbol{B}$ has rank at most $2r$ (assuming $2r < \min(n,m)$). So the original problem also seeks an optimal rank-$2r$ approximation of $\boldsymbol{M}$, which after transformation to a non-negative diagonal matrix becomes the optimal rank-$2r$ approximation of a non-negative diagonal matrix—essentially the same as the previous problem.</p>
+                
+                <h2 id="theoretical-foundations">Theoretical Foundations<a href="#theoretical-foundations">#</a></h2>
+                
+                <p>Having affirmed the utility of SVD, we must supplement some theoretical proofs. First, we need to ensure the existence of SVD. Second, we must identify at least one computational scheme, making SVD's various applications practically feasible. Next, we will address both problems simultaneously through a unified process.</p>
+                
+                <h3 id="spectral-theorem">Spectral Theorem<a href="#spectral-theorem">#</a></h3>
+                
+                <div class="theorem-box">
+                    <div class="theorem-header">
+                        <i class="fas fa-cogs"></i>
+                        Spectral Theorem Foundation
+                    </div>
+                    <p>Before proceeding, we need to introduce the "Spectral Theorem," which can be viewed either as a special case of SVD or as its foundation:</p>
+                    <blockquote class="cite">
+                        <div><strong>Spectral Theorem</strong> For any real symmetric matrix $\boldsymbol{M}\in\mathbb{R}^{n\times n}$, there exists a spectral decomposition (also called eigenvalue decomposition):
+                        \[
+                        \boldsymbol{M} = \boldsymbol{U}\boldsymbol{\Lambda} \boldsymbol{U}^{\top}
+                        \]
+                        where $\boldsymbol{U},\boldsymbol{\Lambda}\in\mathbb{R}^{n\times n}$, $\boldsymbol{U}$ is an orthogonal matrix, and $\boldsymbol{\Lambda}=\text{diag}(\lambda_1,\cdots,\lambda_n)$ is a diagonal matrix.</div>
+                    </blockquote>
+                    <p>Essentially, the Spectral Theorem asserts that any real symmetric matrix can be diagonalized by an orthogonal matrix. This is based on the following two properties:</p>
+                    <blockquote>
+                        <p>1. Eigenvalues and eigenvectors of real symmetric matrices are real;</p>
+                        <p>2. Eigenvectors corresponding to distinct eigenvalues of a real symmetric matrix are orthogonal.</p>
+                    </blockquote>
+                </div>
+                
+                <p>These two properties are actually simple to prove, so we won't elaborate here. Based on these, we can immediately conclude that if a real symmetric matrix $\boldsymbol{M}$ has $n$ distinct eigenvalues, then the Spectral Theorem holds:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(15)</span>
+                        \[
+                        \begin{aligned} 
+                        \boldsymbol{M}\boldsymbol{u}_1 &= \lambda_1 \boldsymbol{u}_1 \\
+                        \boldsymbol{M}\boldsymbol{u}_2 &= \lambda_2 \boldsymbol{u}_2\\
+                        &\vdots \\
+                        \boldsymbol{M}\boldsymbol{u}_n &= \lambda_n \boldsymbol{u}_n
+                        \end{aligned} 
+                        \quad\Rightarrow\quad 
+                        \boldsymbol{M}\underbrace{(\boldsymbol{u}_1, \boldsymbol{u}_2, \cdots, \boldsymbol{u}_n)}_\boldsymbol{U} = \underbrace{(\boldsymbol{u}_1, \boldsymbol{u}_2, \cdots, \boldsymbol{u}_n)}_\boldsymbol{U}\underbrace{\begin{pmatrix}\lambda_1 & 0 & \cdots & 0 \\
+                        0 & \lambda_2 & \cdots & 0 \\
+                        \vdots & \vdots & \ddots & \vdots \\
+                        0 & 0 & \cdots & \lambda_n \\
+                        \end{pmatrix}}_{\boldsymbol{\Lambda}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Here $\lambda_1,\lambda_2,\cdots,\lambda_n$ are eigenvalues, and $\boldsymbol{u}_1,\boldsymbol{u}_2,\cdots,\boldsymbol{u}_n$ are corresponding unit eigen-(column)vectors. Writing in matrix multiplication form gives $\boldsymbol{M}\boldsymbol{U}=\boldsymbol{U}\boldsymbol{\Lambda}$, so $\boldsymbol{M} = \boldsymbol{U}\boldsymbol{\Lambda} \boldsymbol{U}^{\top}$. The difficulty in the proof lies in extending to cases with repeated eigenvalues. However, before considering a complete proof, we can gain an intuitive, albeit non-rigorous, sense that this result for distinct eigenvalues must generalize to the general case.</p>
+                
+                <p>Why? From a numerical perspective, the probability of two real numbers being absolutely equal is almost zero, so we hardly need to consider equal eigenvalues. In more mathematical terms, real matrices with distinct eigenvalues are dense in the set of all real matrices. Therefore, we can always find a family of matrices $\boldsymbol{M}_{\epsilon}$ such that when $\epsilon > 0$, its eigenvalues are pairwise distinct, and when $\epsilon \to 0$, it equals $\boldsymbol{M}$. Consequently, each $\boldsymbol{M}_{\epsilon}$ can be decomposed as $\boldsymbol{U}_{\epsilon}\boldsymbol{\Lambda} _{\epsilon}\boldsymbol{U}_{\epsilon}^{\top}$. Taking $\epsilon\to 0$ yields the spectral decomposition of $\boldsymbol{M}$.</p>
+                
+                <h3 id="mathematical-induction">Mathematical Induction<a href="#mathematical-induction">#</a></h3>
+                
+                <div class="proof-box">
+                    <div class="proof-box-header">
+                        <i class="fas fa-indent"></i>
+                        Inductive Proof Approach
+                    </div>
+                    <p>Unfortunately, the above reasoning can only serve as an intuitive but non-rigorous understanding, as transforming it into a rigorous proof remains difficult. In fact, perhaps the simplest method for rigorously proving the Spectral Theorem is mathematical induction: under the assumption that any $(n-1)$-order real symmetric matrix can be spectrally decomposed, we prove that $\boldsymbol{M}$ can also be spectrally decomposed.</p>
+                    <p>The key idea in the proof is to decompose $\boldsymbol{M}$ into some eigenvector and its $(n-1)$-dimensional orthogonal subspace, allowing application of the inductive hypothesis. Specifically, let $\lambda_1$ be a non-zero eigenvalue of $\boldsymbol{M}$, and $\boldsymbol{u}_1$ the corresponding unit eigenvector, so $\boldsymbol{M}\boldsymbol{u}_1 = \lambda_1 \boldsymbol{u}_1$. We can supplement $n-1$ unit vectors $\boldsymbol{Q}=(\boldsymbol{q}_2,\cdots,\boldsymbol{q}_n)$ orthogonal to $\boldsymbol{u}_1$, such that $(\boldsymbol{u}_1,\boldsymbol{q}_2,\cdots,\boldsymbol{q}_n)=(\boldsymbol{u}_1,\boldsymbol{Q})$ forms an orthogonal matrix. Now consider:</p>
+                </div>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(16)</span>
+                        \[
+                        (\boldsymbol{u}_1,\boldsymbol{Q})^{\top} \boldsymbol{M} (\boldsymbol{u}_1, \boldsymbol{Q}) = \begin{pmatrix}\boldsymbol{u}_1^{\top} \boldsymbol{M} \boldsymbol{u}_1 & \boldsymbol{u}_1^{\top} \boldsymbol{M} \boldsymbol{Q} \\ \boldsymbol{Q}^{\top} \boldsymbol{M} \boldsymbol{u}_1 & \boldsymbol{Q}^{\top} \boldsymbol{M} \boldsymbol{Q}\end{pmatrix} = \begin{pmatrix}\lambda_1 & \boldsymbol{0}_{1\times (n-1)} \\ \boldsymbol{0}_{(n-1)\times 1} & \boldsymbol{Q}^{\top} \boldsymbol{M} \boldsymbol{Q}\end{pmatrix}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Note that $\boldsymbol{Q}^{\top} \boldsymbol{M} \boldsymbol{Q}$ is an $(n-1)$-order square matrix and is clearly a real symmetric matrix. By the induction hypothesis, it can be spectrally decomposed as $\boldsymbol{V} \boldsymbol{\Lambda}_2 \boldsymbol{V}^{\top}$, where $\boldsymbol{V}$ is an $(n-1)$-order orthogonal matrix and $\boldsymbol{\Lambda}_2$ is an $(n-1)$-order diagonal matrix. Then we have $(\boldsymbol{Q}\boldsymbol{V})^{\top} \boldsymbol{M} \boldsymbol{Q}\boldsymbol{V}= \boldsymbol{\Lambda}_2$. Based on this result, consider $\boldsymbol{U} = (\boldsymbol{u}_1, \boldsymbol{Q}\boldsymbol{V})$. It can be verified that $\boldsymbol{U}$ is also an orthogonal matrix, and:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(17)</span>
+                        \[
+                        \boldsymbol{U}^{\top}\boldsymbol{M} \boldsymbol{U} = (\boldsymbol{u}_1,\boldsymbol{Q}\boldsymbol{V})^{\top} \boldsymbol{M} (\boldsymbol{u}_1, \boldsymbol{Q}\boldsymbol{V}) = \begin{pmatrix}\lambda_1 & \boldsymbol{0}_{1\times (n-1)} \\ \boldsymbol{0}_{(n-1)\times 1} & \boldsymbol{\Lambda}_2\end{pmatrix}
+                        \]
+                    </div>
+                </div>
+                
+                <p>That is, $\boldsymbol{U}$ is precisely the orthogonal matrix that diagonalizes $\boldsymbol{M}$, so $\boldsymbol{M}$ can undergo spectral decomposition. This completes the crucial step of mathematical induction.</p>
+                
+                <h3 id="singular-decomposition">Singular Decomposition<a href="#singular-decomposition">#</a></h3>
+                
+                <p>At this point, all preparations are complete, and we can formally prove the existence of SVD and provide a practical computational scheme.</p>
+                
+                <p>In the previous section, we introduced spectral decomposition. It's not difficult to notice its similarity to SVD, but there are two obvious differences: 1. Spectral decomposition applies only to real symmetric matrices, while SVD applies to any real matrix; 2. SVD's diagonal matrix $\boldsymbol{\Sigma}$ is non-negative, but spectral decomposition's $\boldsymbol{\Lambda}$ may not be. So what exactly is their connection? It's easy to verify that if $\boldsymbol{M}$ has SVD $\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}$, then:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(18)</span>
+                        \[
+                        \begin{aligned}
+                        \boldsymbol{M}\boldsymbol{M}^{\top} &= \boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}\boldsymbol{V}\boldsymbol{\Sigma}^{\top} \boldsymbol{U}^{\top} = \boldsymbol{U}\boldsymbol{\Sigma}\boldsymbol{\Sigma}^{\top} \boldsymbol{U}^{\top}\\
+                        \boldsymbol{M}^{\top}\boldsymbol{M} &= \boldsymbol{V}\boldsymbol{\Sigma}^{\top} \boldsymbol{U}^{\top}\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top} = \boldsymbol{V}\boldsymbol{\Sigma}^{\top}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Note that both $\boldsymbol{\Sigma}\boldsymbol{\Sigma}^{\top}$ and $\boldsymbol{\Sigma}^{\top}\boldsymbol{\Sigma}$ are diagonal matrices. This implies that the spectral decompositions of $\boldsymbol{M}\boldsymbol{M}^{\top}$ and $\boldsymbol{M}^{\top}\boldsymbol{M}$ are $\boldsymbol{U}\boldsymbol{\Sigma}^2 \boldsymbol{U}^{\top}$ and $\boldsymbol{V}\boldsymbol{\Sigma}^2 \boldsymbol{V}^{\top}$, respectively. This suggests that performing spectral decomposition on $\boldsymbol{M}\boldsymbol{M}^{\top}$ and $\boldsymbol{M}^{\top}\boldsymbol{M}$ separately might yield the SVD of $\boldsymbol{M}$? Indeed, this can serve as a computational approach for SVD, but we cannot directly prove that the resulting $\boldsymbol{U},\boldsymbol{\Sigma},\boldsymbol{V}$ satisfy $\boldsymbol{M}=\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}$.</p>
+                
+                <p>The key to solving this is to perform spectral decomposition on only one of $\boldsymbol{M}\boldsymbol{M}^{\top}$ or $\boldsymbol{M}^{\top}\boldsymbol{M}$, then construct the orthogonal matrix on the other side via another method. Without loss of generality, assume $\boldsymbol{M}$ has rank $r \leq m$. Consider performing spectral decomposition on $\boldsymbol{M}^{\top}\boldsymbol{M}$ as $\boldsymbol{V}\boldsymbol{\Lambda} \boldsymbol{V}^{\top}$. Note that $\boldsymbol{M}^{\top}\boldsymbol{M}$ is positive semidefinite, so $\boldsymbol{\Lambda}$ is non-negative. Assume diagonal elements are already sorted in descending order; rank $r$ implies only the first $r$ $\lambda_i$ are greater than 0. Define:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(19)</span>
+                        \[
+                        \boldsymbol{\Sigma}_{[:r,:r]} = (\boldsymbol{\Lambda}_{[:r,:r]})^{1/2},\quad \boldsymbol{U}_{[:n,:r]} = \boldsymbol{M}\boldsymbol{V}_{[:m,:r]}\boldsymbol{\Sigma}_{[:r,:r]}^{-1}
+                        \]
+                    </div>
+                </div>
+                
+                <p>We can verify:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(20)</span>
+                        \[
+                        \begin{aligned}
+                        \boldsymbol{U}_{[:n,:r]}^{\top}\boldsymbol{U}_{[:n,:r]} 
+                        &= \boldsymbol{\Sigma}_{[:r,:r]}^{-1}\boldsymbol{V}_{[:m,:r]}^{\top} \boldsymbol{M}^{\top}\boldsymbol{M}\boldsymbol{V}_{[:m,:r]}\boldsymbol{\Sigma}_{[:r,:r]}^{-1} \\
+                        &= \boldsymbol{\Sigma}_{[:r,:r]}^{-1}\boldsymbol{V}_{[:m,:r]}^{\top} \boldsymbol{V}\boldsymbol{\Lambda} \boldsymbol{V}^{\top}\boldsymbol{V}_{[:m,:r]}\boldsymbol{\Sigma}_{[:r,:r]}^{-1} \\
+                        &= \boldsymbol{\Sigma}_{[:r,:r]}^{-1}\boldsymbol{I}_{[:r,:m]}\boldsymbol{\Lambda} \boldsymbol{I}_{[:m,:r]}\boldsymbol{\Sigma}_{[:r,:r]}^{-1} \\
+                        &= \boldsymbol{\Sigma}_{[:r,:r]}^{-1}\boldsymbol{\Lambda}_{[:r,:r]}\boldsymbol{\Sigma}_{[:r,:r]}^{-1} \\
+                        &= \boldsymbol{I}_r \\
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Here we adopt the convention that slicing has priority over transpose, inverse, and other matrix operations, i.e., $\boldsymbol{U}_{[:n,:r]}^{\top}=(\boldsymbol{U}_{[:n,:r]})^{\top}$, $\boldsymbol{\Sigma}_{[:r,:r]}^{-1}=(\boldsymbol{\Sigma}_{[:r,:r]})^{-1}$, etc. The above result shows that $\boldsymbol{U}_{[:n,:r]}$ is part of an orthogonal matrix. Next, we have:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(21)</span>
+                        \[
+                        \boldsymbol{U}_{[:n,:r]}\boldsymbol{\Sigma}_{[:r,:r]}\boldsymbol{V}_{[:m,:r]}^{\top} = \boldsymbol{M}\boldsymbol{V}_{[:m,:r]}\boldsymbol{\Sigma}_{[:r,:r]}^{-1}\boldsymbol{\Sigma}_{[:r,:r]}\boldsymbol{V}_{[:m,:r]}^{\top} = \boldsymbol{M}\boldsymbol{V}_{[:m,:r]}\boldsymbol{V}_{[:m,:r]}^{\top}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Note that $\boldsymbol{M}\boldsymbol{V}\boldsymbol{V}^{\top} = \boldsymbol{M}$ always holds. $\boldsymbol{V}_{[:m,:r]}$ comprises the first $r$ columns of $\boldsymbol{V}$. From $\boldsymbol{M}^{\top}\boldsymbol{M}=\boldsymbol{V}\boldsymbol{\Lambda} \boldsymbol{V}^{\top}$, we can write $(\boldsymbol{M}\boldsymbol{V})^{\top}\boldsymbol{M}\boldsymbol{V} = \boldsymbol{\Lambda}$. Denote $\boldsymbol{V}=(\boldsymbol{v}_1,\boldsymbol{v}_2,\cdots,\boldsymbol{v}_m)$. Then $\Vert \boldsymbol{M}\boldsymbol{v}_i\Vert^2=\lambda_i$. Given the rank $r$ setting, when $i > r$, $\lambda_i=0$, meaning $\boldsymbol{M}\boldsymbol{v}_i$ is actually a zero vector. Thus:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(22)</span>
+                        \[
+                        \begin{aligned}
+                        \boldsymbol{M} = \boldsymbol{M}\boldsymbol{V}\boldsymbol{V}^{\top} 
+                        &= (\boldsymbol{M}\boldsymbol{V}_{[:m,:r]}, \boldsymbol{M}\boldsymbol{V}_{[:m,r:]})\begin{pmatrix}\boldsymbol{V}_{[:m,:r]}^{\top} \\ \boldsymbol{V}_{[:m,r:]}^{\top}\end{pmatrix} \\[8pt]
+                        &= (\boldsymbol{M}\boldsymbol{V}_{[:m,:r]}, \boldsymbol{0}_{m\times(m-r)} )\begin{pmatrix}\boldsymbol{V}_{[:m,:r]}^{\top} \\ \boldsymbol{V}_{[:m,r:]}^{\top}\end{pmatrix}\\[8pt]
+                        &= \boldsymbol{M}\boldsymbol{V}_{[:m,:r]}\boldsymbol{V}_{[:m,:r]}^{\top}
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>This shows $\boldsymbol{U}_{[:n,:r]}\boldsymbol{\Sigma}_{[:r,:r]}\boldsymbol{V}_{[:m,:r]}^{\top}=\boldsymbol{M}$. Combined with the fact that $\boldsymbol{U}_{[:n,:r]}$ is part of an orthogonal matrix, we have obtained the crucial components of $\boldsymbol{M}$'s SVD. We only need to pad $\boldsymbol{\Sigma}_{[:r,:r]}$ with zeros to form an $n\times m$ matrix $\boldsymbol{\Sigma}$, and complete $\boldsymbol{U}_{[:n,:r]}$ to an $n\times n$ orthogonal matrix $\boldsymbol{U}$. Then we obtain the complete SVD form $\boldsymbol{M}=\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}$.</p>
+                
+                <h2 id="approximation-theorem">Approximation Theorem<a href="#approximation-theorem">#</a></h2>
+                
+                <div class="eym-box">
+                    <div class="eym-header">
+                        <i class="fas fa-award"></i>
+                        Eckart-Young-Mirsky Theorem
+                    </div>
+                    <p>Finally, let's not forget our ultimate goal: the optimization problem $\eqref{eq:loss-ab}$. With SVD, we can now present the answer:</p>
+                    <blockquote class="cite">
+                        <div>If $\boldsymbol{M}\in\mathbb{R}^{n\times m}$ has SVD $\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}$, then the optimal rank-$r$ approximation of $\boldsymbol{M}$ is $\boldsymbol{U}_{[:n,:r]}\boldsymbol{\Sigma}_{[:r,:r]} \boldsymbol{V}_{[:m,:r]}^{\top}$.</div>
+                    </blockquote>
+                    <p>This is known as the <strong>Eckart-Young-Mirsky Theorem</strong>. In the "Low-Rank Approximation" section discussing SVD applications, we showed that via SVD, the optimal rank-$r$ approximation problem for a general matrix can be reduced to the rank-$r$ approximation of a non-negative diagonal matrix. Thus, the Eckart-Young-Mirsky Theorem essentially states that the optimal rank-$r$ approximation of a non-negative diagonal matrix is simply the matrix retaining only the $r$ largest diagonal elements.</p>
+                </div>
+                
+                <p>Some readers might think: "Isn't this obviously true?" But the fact is, although the conclusion aligns with intuition, it is not obviously true. Let's focus on solving:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(23)</span>
+                        \[
+                        \min_{\boldsymbol{A},\boldsymbol{B}}\Vert \boldsymbol{A}\boldsymbol{B} - \boldsymbol{\Sigma}\Vert_F^2
+                        \]
+                    </div>
+                </div>
+                
+                <p>where $\boldsymbol{A}\in\mathbb{R}^{n\times r}, \boldsymbol{B}\in\mathbb{R}^{r\times m}, \boldsymbol{\Sigma}\in\mathbb{R}^{n\times m}, r < \min(n,m)$. If $\boldsymbol{A}$ is given, the optimal solution for $\boldsymbol{B}$ was derived in the previous article as $\boldsymbol{A}^{\dagger} \boldsymbol{\Sigma}$. Thus we have:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(24)</span>
+                        \[
+                        \min_{\boldsymbol{A},\boldsymbol{B}}\Vert \boldsymbol{A}\boldsymbol{B} - \boldsymbol{\Sigma}\Vert_F^2 = \min_\boldsymbol{A}\Vert (\boldsymbol{A}\boldsymbol{A}^{\dagger} - \boldsymbol{I}_n)\boldsymbol{\Sigma}\Vert_F^2
+                        \]
+                    </div>
+                </div>
+                
+                <p>Let the SVD of matrix $\boldsymbol{A}$ be $\boldsymbol{U}_\boldsymbol{A}\boldsymbol{\Sigma}_\boldsymbol{A} \boldsymbol{V}_\boldsymbol{A}^{\top}$. Then $\boldsymbol{A}^{\dagger}=\boldsymbol{V}_\boldsymbol{A} \boldsymbol{\Sigma}_\boldsymbol{A}^{\dagger} \boldsymbol{U}_\boldsymbol{A}^{\top}$, and:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(25)</span>
+                        \[
+                        \begin{aligned}
+                        \Vert (\boldsymbol{A}\boldsymbol{A}^{\dagger} - \boldsymbol{I}_n)\boldsymbol{\Sigma}\Vert_F^2 
+                        &= \Vert (\boldsymbol{U}_\boldsymbol{A}\boldsymbol{\Sigma}_\boldsymbol{A} \boldsymbol{V}_\boldsymbol{A}^{\top}\boldsymbol{V}_\boldsymbol{A} \boldsymbol{\Sigma}_\boldsymbol{A}^{\dagger} \boldsymbol{U}_\boldsymbol{A}^{\top} - \boldsymbol{I}_n)\boldsymbol{\Sigma}\Vert_F^2 \\
+                        &= \Vert (\boldsymbol{U}_\boldsymbol{A}\boldsymbol{\Sigma}_\boldsymbol{A} \boldsymbol{\Sigma}_\boldsymbol{A}^{\dagger} \boldsymbol{U}_\boldsymbol{A}^{\top} - \boldsymbol{I}_n)\boldsymbol{\Sigma}\Vert_F^2 \\
+                        &= \Vert \boldsymbol{U}_\boldsymbol{A} (\boldsymbol{\Sigma}_\boldsymbol{A} \boldsymbol{\Sigma}_\boldsymbol{A}^{\dagger} - \boldsymbol{I}_n)\boldsymbol{U}_\boldsymbol{A}^{\top}\boldsymbol{\Sigma}\Vert_F^2 \\
+                        &= \Vert (\boldsymbol{\Sigma}_\boldsymbol{A} \boldsymbol{\Sigma}_\boldsymbol{A}^{\dagger} - \boldsymbol{I}_n)\boldsymbol{U}_\boldsymbol{A}^{\top}\boldsymbol{\Sigma}\Vert_F^2 \\
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>From the pseudo-inverse computation formula, $\boldsymbol{\Sigma}_\boldsymbol{A} \boldsymbol{\Sigma}_\boldsymbol{A}^{\dagger}$ is a diagonal matrix whose first $r_\boldsymbol{A}$ diagonal elements are 1 ($r_\boldsymbol{A}\leq r$ is the rank of $\boldsymbol{A}$) and the rest are 0. Thus $(\boldsymbol{\Sigma}_\boldsymbol{A} \boldsymbol{\Sigma}_\boldsymbol{A}^{\dagger} - \boldsymbol{I}_n)\boldsymbol{U}_\boldsymbol{A}^{\top}$ essentially retains only the last $k=n-r_\boldsymbol{A}$ rows of the orthogonal matrix $\boldsymbol{U}_\boldsymbol{A}^{\top}$. So finally we can simplify to:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(26)</span>
+                        \[
+                        \min_\boldsymbol{A}\Vert (\boldsymbol{A}\boldsymbol{A}^{\dagger} - \boldsymbol{I}_n)\boldsymbol{\Sigma}\Vert_F^2 = \min_{k,\boldsymbol{U}}\Vert \boldsymbol{U}\boldsymbol{\Sigma}\Vert_F^2\quad\text{s.t.}\quad k\geq n-r, \boldsymbol{U}\in\mathbb{R}^{k\times n}, \boldsymbol{U}\boldsymbol{U}^{\top} = \boldsymbol{I}_k
+                        \]
+                    </div>
+                </div>
+                
+                <p>Now using the Frobenius norm definition:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(27)</span>
+                        \[
+                        \Vert \boldsymbol{U}\boldsymbol{\Sigma}\Vert_F^2=\sum_{i=1}^k \sum_{j=1}^n u_{i,j}^2 \sigma_j^2 =\sum_{j=1}^n \sigma_j^2 \underbrace{\sum_{i=1}^k u_{i,j}^2}_{w_j}=\sum_{j=1}^n \sigma_j^2 w_j
+                        \]
+                    </div>
+                </div>
+                
+                <p>Note that $0 \leq w_j \leq 1$, and $w_1+w_2+\cdots+w_n = k$. Under these constraints, the minimum of the rightmost expression can only be the sum of the smallest $k$ $\sigma_j^2$ values. Since $\sigma_j$ are already sorted in descending order:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(28)</span>
+                        \[
+                        \min_{k,\boldsymbol{U}}\Vert \boldsymbol{U}\boldsymbol{\Sigma}\Vert_F^2=\min_k \sum_{j=n-k+1}^n \sigma_j^2 = \sum_{j=r+1}^n \sigma_j^2
+                        \]
+                    </div>
+                </div>
+                
+                <p>That is, the error (squared Frobenius norm) between $\boldsymbol{\Sigma}$ and its optimal rank-$r$ approximation is $\sum\limits_{j=r+1}^n \sigma_j^2$, which exactly matches the error incurred by retaining only the $r$ largest diagonal elements. Thus we have proved that "the optimal rank-$r$ approximation of a non-negative diagonal matrix is the matrix retaining only the $r$ largest diagonal elements." Of course, this is just one solution; we haven't ruled out the possibility of multiple solutions.</p>
+                
+                <p>It's worth noting that the Eckart-Young-Mirsky Theorem holds not only for the Frobenius norm but also for the spectral norm. The proof for the spectral norm is actually simpler; we won't elaborate here. Interested readers may refer to the Wikipedia entry on "<a href="https://en.wikipedia.org/wiki/Low-rank_approximation" target="_blank">Low-rank approximation</a>".</p>
+                
+                <h2 id="article-summary">Article Summary<a href="#article-summary">#</a></h2>
+                
+                <p>The protagonist of this article is the illustrious SVD (Singular Value Decomposition), which many readers likely already know to some extent. In this article, we primarily focused on content related to SVD and low-rank approximation, providing as straightforward proofs as possible for theoretical aspects including the existence of SVD, computation, and its connection to low-rank approximation.</p>
+
+                <div class="citation-section">
+                    <div class="citation-header">
+                        <i class="fas fa-quote-right"></i>
+                        Citation Information
+                    </div>
+                    <p><strong>Original Article:</strong> Su Jianlin. The Path to Low-Rank Approximation (Part 2): SVD. <em>Scientific Spaces</em>.</p>
+                    
+                    <p><strong>How to cite this translation:</strong></p>
+                    <div class="citation-box">
+                        Su, J. The Path to Low-Rank Approximation (Part 2): SVD [Translated by ScalingOpt Team]. 
+                        <em>Scientific Spaces</em>.
+                    </div>
+                    <p style="margin-top: 0.8rem;"><strong>BibTeX:</strong></p>
+                    <div class="citation-box">
+                        @article{su2025lowrank_svd,
+                            title   = {The Path to Low-Rank Approximation (Part 2): SVD},
+                            author  = {Su, Jianlin},
+                            journal = {Scientific Spaces},
+                            year    = {2025},
+                            url     = {https://kexue.fm/archives/10566},
+                            note    = {Translated by ScalingOpt Team}
+                          }
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="translation-credit">
+                <i class="fas fa-user-graduate"></i>
+                Academic Translation by ScalingOpt Team
+            </div>
+            <div class="copyright">
+                © 2009-2025 Scientific Spaces. All rights reserved.<br>
+                Original content licensed under Creative Commons BY-NC-ND 2.5 China
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript for Interactive Features -->
+    <script>
+        // Scroll Progress Bar
+        window.addEventListener('scroll', function() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            scrollProgress.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Table of Contents Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            const sections = document.querySelectorAll('h2[id], h3[id]');
+            
+            // Set active section based on scroll position
+            function setActiveSection() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 50)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', setActiveSection);
+            setActiveSection(); // Initial call
+            
+            // Smooth scroll for TOC links
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 50,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+
+        // MathJax Configuration
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                tags: 'ams'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    
+    <!-- MathJax CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</body>
+</html>

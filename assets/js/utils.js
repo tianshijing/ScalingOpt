@@ -112,6 +112,24 @@ function initBackToTop() {
     });
 }
 
+// Initialize common libraries
+function initCommon() {
+    // Initialize AOS
+    if (typeof AOS !== 'undefined') {
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100,
+            easing: 'ease-out-cubic'
+        });
+    }
+
+    // Initialize Lucide icons
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+}
+
 // Export functions if using modules (optional, but good for future)
 if (typeof module !== "undefined" && module.exports) {
     module.exports = {

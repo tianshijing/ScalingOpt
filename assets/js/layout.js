@@ -278,6 +278,11 @@ function injectLayout() {
     if (typeof initBackToTop === 'function') {
         initBackToTop();
     }
+
+    // Initialize Common Libraries (AOS, Lucide)
+    if (typeof initCommon === 'function') {
+        initCommon();
+    }
 }
 
 function highlightActiveLink() {

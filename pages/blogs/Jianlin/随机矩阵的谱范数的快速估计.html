@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fast Estimation of Spectral Norms for Random Matrices | Scientific Spaces</title>
+    <meta name="description" content="A heuristic derivation of the √n+√m approximation for spectral norms of Gaussian random matrices, providing intuitive understanding and practical estimation methods with extensions to minimal singular values.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a6bca;
+            --primary-dark: #1357a8;
+            --primary-light: #e8f1fc;
+            --secondary: #2c3e50;
+            --accent: #3498db;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f5f7fa;
+            --gray-200: #e4e7eb;
+            --gray-300: #cbd2d9;
+            --gray-600: #7b8794;
+            --gray-700: #52606d;
+            --gray-900: #323f4b;
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 6px 24px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: #f0f5fc;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.5rem 1.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -8%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+        }
+
+        .meta-item i {
+            font-size: 0.85rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Translation Notice */
+        .translation-notice {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1.2rem;
+            margin: 0;
+        }
+
+        .translation-notice-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .translation-text h3 {
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .translation-text p {
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        .translator-badge {
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(26, 107, 202, 0.2);
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+        }
+
+        @media (max-width: 850px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            padding-left: 1rem;
+        }
+
+        .toc {
+            position: sticky;
+            top: 1rem;
+        }
+
+        .toc-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .toc-header i {
+            font-size: 0.9rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.4rem;
+            position: relative;
+        }
+
+        .toc-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            transition: var(--transition);
+            border-left: 2px solid transparent;
+            padding-left: 8px;
+        }
+
+        .toc-link:hover {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            transform: translateX(2px);
+        }
+
+        .toc-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .toc-number {
+            font-weight: 500;
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            min-width: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-right: 1.2rem;
+            padding-left: 0;
+        }
+
+        @media (max-width: 850px) {
+            .sidebar {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 0 1rem;
+            }
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 1.5rem 0 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: relative;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 35px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        h2 a {
+            color: var(--accent);
+            font-size: 0.7rem;
+            margin-left: 6px;
+            text-decoration: none;
+        }
+
+        h2 a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            color: var(--gray-900);
+            line-height: 1.65;
+        }
+
+        /* Equation Styling */
+        .equation-container {
+            margin: 0.8rem 0;
+        }
+
+        .equation {
+            background: var(--primary-light);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1rem;
+            border-radius: 0 5px 5px 0;
+            font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', serif;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .equation-number {
+            color: var(--primary);
+            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin-right: 6px;
+            display: inline-block;
+            min-width: 18px;
+        }
+
+        /* Code Block Styling */
+        .code-container {
+            margin: 1rem 0;
+            background: #2d2d2d;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .code-header {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 0.6rem 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .code-content {
+            padding: 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #f8f8f2;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+        }
+
+        /* Reference Box */
+        .reference-box {
+            background: linear-gradient(to right, #f8fafc, var(--primary-light));
+            border: 1px solid var(--gray-200);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .reference-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .reference-header i {
+            font-size: 0.9rem;
+        }
+
+        .reference-list {
+            list-style: none;
+        }
+
+        .reference-item {
+            padding: 0.3rem 0 0.3rem 0.8rem;
+            position: relative;
+            margin-bottom: 0.4rem;
+            color: var(--gray-700);
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .reference-item::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 0.65rem;
+        }
+
+        /* Citation Section */
+        .citation-section {
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .citation-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .citation-box {
+            background: var(--white);
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid var(--gray-300);
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-top: 0.6rem;
+            overflow-x: auto;
+            color: var(--gray-900);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--secondary);
+            color: white;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .translation-credit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 6px 16px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(26, 107, 202, 0.2);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            margin-top: 0.6rem;
+        }
+
+        /* Utility Classes */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-light), #e8f2ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .math {
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.1s ease;
+            z-index: 1000;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 1rem 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 0.6rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem 0;
+            }
+            
+            .main-content {
+                padding-right: 0.8rem;
+            }
+            
+            .sidebar {
+                padding-left: 0.8rem;
+            }
+            
+            .meta-info {
+                gap: 0.6rem;
+            }
+            
+            .meta-item {
+                font-size: 0.75rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .translation-notice-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .translator-badge {
+                align-self: flex-start;
+            }
+        }
+
+        /* Links styling */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Optimize long formula display */
+        .equation {
+            word-break: break-word;
+        }
+        
+        /* Optimize list display */
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.3rem;
+            line-height: 1.5;
+        }
+        
+        /* Optimize math formula spacing */
+        .MathJax_Display {
+            margin: 0.6em 0 !important;
+        }
+        
+        /* Image container styling */
+        .pic-container {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+        
+        .pic-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .typecho-caption {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        
+        /* Quote block styling */
+        blockquote.cite {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+        }
+        
+        blockquote.cite div {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        blockquote.cite a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        /* Blockquote styling */
+        blockquote {
+            background: linear-gradient(to right, var(--gray-100), var(--primary-light));
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+            position: relative;
+        }
+
+        blockquote p {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+
+        blockquote p:before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Underline styling */
+        u {
+            text-decoration: none;
+            border-bottom: 1px dotted var(--primary);
+        }
+
+        /* List styling inside main content */
+        .main-content ol, .main-content ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .main-content li {
+            margin-bottom: 0.4rem;
+            line-height: 1.6;
+        }
+
+        /* Highlight box for important notes */
+        .note-box {
+            background: linear-gradient(to right, #fff8e1, #fff3cd);
+            border-left: 3px solid #ffc107;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .note-box strong {
+            color: #856404;
+        }
+
+        /* Definition list styling */
+        .definition {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 3px solid #4caf50;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .definition-header {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Mathematical proof styling */
+        .proof {
+            background: linear-gradient(to right, #f3e5f5, #f8f4ff);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .proof-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Insight box styling */
+        .insight-box {
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+            border-left: 3px solid #1976d2;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .insight-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Analysis box styling */
+        .analysis-box {
+            background: linear-gradient(to right, #fff3e0, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .analysis-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Technical box styling */
+        .technical-box {
+            background: linear-gradient(to right, #fce4ec, #f8bbd9);
+            border-left: 3px solid #e91e63;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .technical-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Series introduction box */
+        .series-box {
+            background: linear-gradient(135deg, #f3e5f5 0%, #e8eaf6 100%);
+            border-left: 3px solid #7b1fa2;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .series-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Random matrix introduction box */
+        .random-matrix-intro {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            border-left: 3px solid #2e7d32;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .random-matrix-intro-header {
+            color: #1b5e20;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Spectral norm estimation box */
+        .spectral-norm-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-left: 3px solid #1976d2;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .spectral-norm-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Expectation calculation box */
+        .expectation-box {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffecb3 100%);
+            border-left: 3px solid #ff9800;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .expectation-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Minimal singular value box */
+        .min-singular-box {
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
+            border-left: 3px solid #e91e63;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .min-singular-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Accuracy discussion box */
+        .accuracy-box {
+            background: linear-gradient(135deg, #f5f5f5 0%, #eceff1 100%);
+            border-left: 3px solid #607d8b;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .accuracy-header {
+            color: #455a64;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Conclusion box */
+        .conclusion-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            border-left: 3px solid #2e7d32;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .conclusion-header {
+            color: #1b5e20;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Heuristic explanation box */
+        .heuristic-box {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffecb3 100%);
+            border-left: 3px solid #ff9800;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .heuristic-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>Fast Estimation of Spectral Norms for Random Matrices</h1>
+                <div class="subtitle">A heuristic derivation of the √n+√m approximation for Gaussian random matrices, providing intuitive understanding and practical estimation methods with extensions to minimal singular values.</div>
+                
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>Su Jianlin</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-eye"></i>
+                        <span>Scientific Spaces</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <div class="tag">Random Matrix Theory</div>
+                        <div class="tag">Spectral Norm</div>
+                        <div class="tag">Singular Values</div>
+                        <div class="tag">Heuristic Estimation</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Translation Notice -->
+        <div class="translation-notice">
+            <div class="translation-notice-content">
+                <div class="translation-text">
+                    <h3><i class="fas fa-language"></i> Academic Translation</h3>
+                    <p>This is an academic English translation maintaining technical accuracy while adapting to English academic conventions.</p>
+                </div>
+                <div class="translator-badge">
+                    <i class="fas fa-user-graduate"></i>
+                    Translated by ScalingOpt Team
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Sidebar Table of Contents -->
+            <aside class="sidebar">
+                <nav class="toc">
+                    <div class="toc-header">
+                        <i class="fas fa-list"></i>
+                        Contents
+                    </div>
+                    <ul class="toc-list">
+                        <li class="toc-item">
+                            <a href="#introduction" class="toc-link">
+                                <span class="toc-number">1</span>
+                                <span>Introduction</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#random-matrix-theory" class="toc-link">
+                                <span class="toc-number">2</span>
+                                <span>Random Matrix Theory</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#spectral-norm-estimation" class="toc-link">
+                                <span class="toc-number">3</span>
+                                <span>Spectral Norm Estimation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#expectation-calculation" class="toc-link">
+                                <span class="toc-number">4</span>
+                                <span>Expectation Calculation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#minimal-singular-value" class="toc-link">
+                                <span class="toc-number">5</span>
+                                <span>Minimal Singular Value</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#concluding-remarks" class="toc-link">
+                                <span class="toc-number">6</span>
+                                <span>Concluding Remarks</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Article Content -->
+            <main class="main-content">
+                <div class="series-box">
+                    <div class="series-header">
+                        <i class="fas fa-book-open"></i>
+                        Context and Motivation
+                    </div>
+                    <p>In the "Approximate Estimation" section of <a href="/archives/10795" target="_blank">"Higher-order MuP: More Concise Yet More Sophisticated Spectral Condition Scaling"</a>, we "prepaid" a conclusion: "For an $n\times m$ random matrix following a standard normal distribution, its spectral norm is approximately $\sqrt{n}+\sqrt{m}$."</p>
+                    
+                    <div class="random-matrix-intro">
+                        <div class="random-matrix-intro-header">
+                            <i class="fas fa-calculator"></i>
+                            Article Objective
+                        </div>
+                        <p>This article supplements the discussion of this conclusion, providing a fast estimation method for the spectral norms of random matrices.</p>
+                    </div>
+                </div>
+                
+                <h2 id="random-matrix-theory">Random Matrix Theory<a href="#random-matrix-theory">#</a></h2>
+                
+                <div class="definition">
+                    <div class="definition-header">
+                        <i class="fas fa-dice"></i>
+                        Problem Formulation
+                    </div>
+                    <p>Consider a random matrix $\boldsymbol{W}\in\mathbb{R}^{n\times m}$, where each element is independently and identically sampled from the standard normal distribution $\mathcal{N}(0,1)$. We aim to estimate the spectral norm of $\boldsymbol{W}$, i.e., the largest singular value, with $\mathbb{E}[\Vert\boldsymbol{W}\Vert_2]$ as the final estimation result.</p>
+                </div>
+                
+                <div class="technical-box">
+                    <div class="technical-header">
+                        <i class="fas fa-graduation-cap"></i>
+                        Theoretical Background
+                    </div>
+                    <p>First, it should be noted that the analysis of random matrix behavior has formed a specialized branch. For estimating the spectral norms of normal matrices, relevant keywords include the "<a href="https://en.wikipedia.org/wiki/Marchenko%E2%80%93Pastur_distribution" target="_blank">Marchenko–Pastur distribution</a>", "Bai-Yin law", "Gordon's theorem", etc., which contain detailed estimation results regarding singular value distributions. However, we do not intend to introduce these contents here. Instead, we introduce a method to quickly obtain $\sqrt{n}+\sqrt{m}$.</p>
+                    
+                    <p>This method is simplified by the author based on "Section 5.3.1" of <a href="https://papers.cool/arxiv/1011.3027" target="_blank">"Introduction to the non-asymptotic analysis of random matrices"</a>. It should actually be considered merely a "popular science" explanation, allowing readers to quickly understand the origin of $\sqrt{n}+\sqrt{m}$. Rigorous proof requires supplementing many tedious and monotonous details, which we will not expand upon here.</p>
+                </div>
+                
+                <h2 id="spectral-norm-estimation">Spectral Norm Estimation<a href="#spectral-norm-estimation">#</a></h2>
+                
+                <div class="spectral-norm-box">
+                    <div class="spectral-norm-header">
+                        <i class="fas fa-search"></i>
+                        Estimation Methodology
+                    </div>
+                    <p>Our starting point is the identity:</p>
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(1)</span>
+                            \[
+                            \Vert\boldsymbol{W}\Vert_2 = \max_{\Vert \boldsymbol{u}\Vert=1, \Vert \boldsymbol{v}\Vert=1} \boldsymbol{u}^{\top}\boldsymbol{W} \boldsymbol{v}
+                            \]
+                        </div>
+                    </div>
+                    <p>where $\boldsymbol{u}\in\mathbb{R}^n,\boldsymbol{v}\in\mathbb{R}^m$. Direct computation of $\Vert\boldsymbol{W}\Vert_2$ is usually not easy, so it is natural to think of finding some approximation. We consider the following two "half-done" expressions:</p>
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(2)</span>
+                            \[
+                            \max_{\Vert \boldsymbol{u}\Vert=1} \boldsymbol{u}^{\top}\boldsymbol{W} \boldsymbol{v}\qquad\qquad \max_{\Vert \boldsymbol{v}\Vert=1} \boldsymbol{u}^{\top}\boldsymbol{W} \boldsymbol{v}
+                            \]
+                        </div>
+                    </div>
+                    <p>Intuitively, compared to Equation (1), both expressions above have only completed half the work. We make a bold assumption: their results are also half of the complete result. Thus, by adding them together, we consider it a good approximation of the final result:</p>
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(3)</span>
+                            \[
+                            \Vert\boldsymbol{W}\Vert_2 = \max_{\Vert \boldsymbol{u}\Vert=1, \Vert \boldsymbol{v}\Vert=1} \boldsymbol{u}^{\top}\boldsymbol{W} \boldsymbol{v} \approx \max_{\Vert \boldsymbol{u}\Vert=1} \boldsymbol{u}^{\top}\boldsymbol{W} \boldsymbol{v} + \max_{\Vert \boldsymbol{v}\Vert=1} \boldsymbol{u}^{\top}\boldsymbol{W} \boldsymbol{v} = \Vert \boldsymbol{W}\boldsymbol{v}\Vert + \Vert \boldsymbol{u}^{\top}\boldsymbol{W}\Vert
+                            \]
+                        </div>
+                    </div>
+                    <p>In other words, we sample $\boldsymbol{u},\boldsymbol{v}$ from the unit hyperspheres of $\mathbb{R}^n,\mathbb{R}^m$ respectively, and then use the above equation to obtain an approximation of $\boldsymbol{W}$'s spectral norm.</p>
+                </div>
+                
+                <div class="heuristic-box">
+                    <div class="heuristic-header">
+                        <i class="fas fa-lightbulb"></i>
+                        Heuristic Justification
+                    </div>
+                    <p>This approximation can be understood intuitively: When optimizing over both $\boldsymbol{u}$ and $\boldsymbol{v}$ simultaneously, the interaction between them is complex. By separating the optimization into two independent steps and summing their results, we capture the contributions from both dimensions. The assumption that each half contributes approximately equally is reasonable for isotropic random matrices where row and column spaces have similar statistical properties.</p>
+                </div>
+                
+                <h2 id="expectation-calculation">Expectation Calculation<a href="#expectation-calculation">#</a></h2>
+                
+                <div class="expectation-box">
+                    <div class="expectation-header">
+                        <i class="fas fa-chart-bar"></i>
+                        Statistical Analysis
+                    </div>
+                    <p>With this approximation, we can compute:</p>
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(4)</span>
+                            \[
+                            \mathbb{E}[\Vert\boldsymbol{W}\Vert_2]\approx\mathbb{E}[\Vert \boldsymbol{W}\boldsymbol{v}\Vert] + \mathbb{E}[\Vert \boldsymbol{u}^{\top}\boldsymbol{W}\Vert] \approx \sqrt{\mathbb{E}[\Vert \boldsymbol{W}\boldsymbol{v}\Vert^2]} + \sqrt{\mathbb{E}[\Vert \boldsymbol{u}^{\top}\boldsymbol{W}\Vert^2]}
+                            \]
+                        </div>
+                    </div>
+                    <p>where:</p>
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(5)</span>
+                            \[
+                            \mathbb{E}[\Vert \boldsymbol{W}\boldsymbol{v}\Vert^2] = \mathbb{E}[ \boldsymbol{v}^{\top}\boldsymbol{W}^{\top}\boldsymbol{W}\boldsymbol{v}] = \boldsymbol{v}^{\top}\mathbb{E}[\boldsymbol{W}^{\top}\boldsymbol{W}]\boldsymbol{v} = \boldsymbol{v}^{\top}(n\boldsymbol{I}_m)\boldsymbol{v} = n
+                            \]
+                        </div>
+                    </div>
+                    <p>Similarly, $\mathbb{E}[\Vert \boldsymbol{u}^{\top}\boldsymbol{W}\Vert^2]=m$, so:</p>
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(6)</span>
+                            \[
+                            \mathbb{E}[\Vert\boldsymbol{W}\Vert_2]\approx\sqrt{n} + \sqrt{m}
+                            \]
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accuracy-box">
+                    <div class="accuracy-header">
+                        <i class="fas fa-check-circle"></i>
+                        Accuracy Discussion
+                    </div>
+                    <p>This result is actually quite accurate (which can be verified through simulation experiments). Specifically, if $n=ka,m=kb$, where $a,b$ are constants, then:</p>
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(7)</span>
+                            \[
+                            \lim_{k\to\infty} \frac{\Vert\boldsymbol{W}\Vert_2}{\sqrt{n} + \sqrt{m}} = 1,\qquad \boldsymbol{W}\sim\mathcal{N}(0,1)
+                            \]
+                        </div>
+                    </div>
+                    <p>The reason for this accuracy is that we "cheated"—the crucial Equation (3) essentially was deduced backward from the known correct answer. Besides Equation (3), the only conditions we used were $\mathbb{E}[\boldsymbol{W}^{\top}\boldsymbol{W}]=n\boldsymbol{I}_m$ and $\mathbb{E}[\boldsymbol{W}\boldsymbol{W}^{\top}]=m\boldsymbol{I}_n$. Therefore, it can be considered that the above approximation holds for any zero-mean, unit-variance distribution.</p>
+                </div>
+                
+                <h2 id="minimal-singular-value">Minimal Singular Value<a href="#minimal-singular-value">#</a></h2>
+                
+                <div class="min-singular-box">
+                    <div class="min-singular-header">
+                        <i class="fas fa-arrow-down"></i>
+                        Extension to Minimal Singular Values
+                    </div>
+                    <p>The spectral norm is the largest singular value. In fact, we can use the same idea to estimate the minimal singular value. Of course, "minimal" here needs to be defined more strictly. Assuming $n\geq m$, the minimal singular value here refers to the $m$-th singular value of $\boldsymbol{W}$ in descending order, which equals:</p>
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(8)</span>
+                            \[
+                            \sigma_{\min}(\boldsymbol{W}) = \min_{\Vert \boldsymbol{v}\Vert=1}\max_{\Vert \boldsymbol{u}\Vert=1} \boldsymbol{u}^{\top}\boldsymbol{W} \boldsymbol{v}
+                            \]
+                        </div>
+                    </div>
+                    <p>Note that the positions and objects of $\min$ and $\max$ here cannot be exchanged. Similarly, we consider the sum of the two "half-done" expressions from separate $\min$ and $\max$ operations as its approximation:</p>
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(9)</span>
+                            \[
+                            \sigma_{\min}(\boldsymbol{W}) = \min_{\Vert \boldsymbol{v}\Vert=1}\max_{\Vert \boldsymbol{u}\Vert=1} \boldsymbol{u}^{\top}\boldsymbol{W} \boldsymbol{v}\approx \min_{\Vert \boldsymbol{v}\Vert=1}\boldsymbol{u}^{\top}\boldsymbol{W} \boldsymbol{v} + \max_{\Vert \boldsymbol{u}\Vert=1} \boldsymbol{u}^{\top}\boldsymbol{W} \boldsymbol{v} = -\Vert \boldsymbol{u}^{\top}\boldsymbol{W}\Vert + \Vert \boldsymbol{W}\boldsymbol{v}\Vert
+                            \]
+                        </div>
+                    </div>
+                    <p>The subsequent steps are the same as before, resulting in $\mathbb{E}[\sigma_{\min}(\boldsymbol{W})]\approx\sqrt{n}-\sqrt{m}$.</p>
+                </div>
+                
+                <div class="insight-box">
+                    <div class="insight-header">
+                        <i class="fas fa-chart-area"></i>
+                        Interpretative Insights
+                    </div>
+                    <p>The $\sqrt{n}-\sqrt{m}$ approximation for the minimal singular value reveals interesting dimensional effects in random matrices. For tall matrices ($n \gg m$), the minimal singular value grows approximately as $\sqrt{n}$, indicating better conditioning. For square matrices ($n \approx m$), the minimal singular value becomes small, reflecting the well-known fact that random square matrices become increasingly ill-conditioned as dimensions grow.</p>
+                </div>
+                
+                <h2 id="concluding-remarks">Concluding Remarks<a href="#concluding-remarks">#</a></h2>
+                
+                <div class="conclusion-box">
+                    <div class="conclusion-header">
+                        <i class="fas fa-flag-checkered"></i>
+                        Summary and Limitations
+                    </div>
+                    <p>This article provides a fast approach for estimating the spectral norms of random matrices, or more strictly speaking, a popular science-style, heuristic explanation rather than a rigorous, accurate derivation. There is potential for rigorization, but it requires supplementing many theoretical details, all of which have been skipped here.</p>
+                </div>
+
+                <div class="summary-box">
+                    <p><strong>Key contributions:</strong></p>
+                    <ol>
+                        <li><strong>Heuristic Derivation:</strong> Presented an intuitive, accessible derivation of the $\sqrt{n}+\sqrt{m}$ approximation for Gaussian random matrix spectral norms.</li>
+                        <li><strong>Estimation Framework:</strong> Developed a decomposition approach that separates the optimization over row and column spaces, providing conceptual clarity.</li>
+                        <li><strong>Extension to Minimal Singular Values:</strong> Showed how the same heuristic approach yields the $\sqrt{n}-\sqrt{m}$ approximation for minimal singular values.</li>
+                        <li><strong>Practical Relevance:</strong> The approximations are remarkably accurate in practice and apply to any zero-mean, unit-variance distribution, not just Gaussian.</li>
+                        <li><strong>Pedagogical Value:</strong> Provides an accessible entry point to random matrix theory concepts without requiring advanced mathematical machinery.</li>
+                    </ol>
+                    
+                    <p>While not a substitute for rigorous random matrix theory, this heuristic approach offers valuable intuition and practical estimation tools for researchers and practitioners working with random matrices in machine learning, statistics, and numerical analysis.</p>
+                </div>
+
+                <div class="citation-section">
+                    <div class="citation-header">
+                        <i class="fas fa-quote-right"></i>
+                        Citation Information
+                    </div>
+                    <p><strong>Original Article:</strong> Su Jianlin. Fast Estimation of Spectral Norms for Random Matrices. <em>Scientific Spaces</em>.</p>
+                    
+                    <p><strong>How to cite this translation:</strong></p>
+                    <div class="citation-box">
+                        Su, J. Fast Estimation of Spectral Norms for Random Matrices [Translated by ScalingOpt Team]. 
+                        <em>Scientific Spaces</em>.
+                    </div>
+                    <p style="margin-top: 0.8rem;"><strong>BibTeX:</strong></p>
+                    <div class="citation-box">
+                        @article{su2025fast_spectral_estimation,
+                            title   = {Fast Estimation of Spectral Norms for Random Matrices},
+                            author  = {Su, Jianlin},
+                            journal = {Scientific Spaces},
+                            year    = {2025},
+                            url     = {https://kexue.fm/archives/10572},
+                            note    = {Translated by ScalingOpt Team}
+                          }
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="translation-credit">
+                <i class="fas fa-user-graduate"></i>
+                Academic Translation by ScalingOpt Team
+            </div>
+            <div class="copyright">
+                © 2009-2025 Scientific Spaces. All rights reserved.<br>
+                Original content licensed under Creative Commons BY-NC-ND 2.5 China
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript for Interactive Features -->
+    <script src="../../../assets/js/article.js"></script>
+    
+    <!-- MathJax CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</body>
+</html>

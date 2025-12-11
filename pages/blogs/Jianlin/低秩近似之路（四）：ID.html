@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Path to Low-Rank Approximation (Part 4): Interpolative Decomposition | Scientific Spaces</title>
+    <meta name="description" content="Comprehensive exploration of Interpolative Decomposition (ID) as a structured low-rank factorization technique, covering deterministic QR-based algorithms, randomized methods, and theoretical foundations of column subset selection.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a6bca;
+            --primary-dark: #1357a8;
+            --primary-light: #e8f1fc;
+            --secondary: #2c3e50;
+            --accent: #3498db;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f5f7fa;
+            --gray-200: #e4e7eb;
+            --gray-300: #cbd2d9;
+            --gray-600: #7b8794;
+            --gray-700: #52606d;
+            --gray-900: #323f4b;
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 6px 24px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: #f0f5fc;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.5rem 1.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -8%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+        }
+
+        .meta-item i {
+            font-size: 0.85rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Translation Notice */
+        .translation-notice {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1.2rem;
+            margin: 0;
+        }
+
+        .translation-notice-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .translation-text h3 {
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .translation-text p {
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        .translator-badge {
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(26, 107, 202, 0.2);
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+        }
+
+        @media (max-width: 850px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            padding-left: 1rem;
+        }
+
+        .toc {
+            position: sticky;
+            top: 1rem;
+        }
+
+        .toc-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .toc-header i {
+            font-size: 0.9rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.4rem;
+            position: relative;
+        }
+
+        .toc-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            transition: var(--transition);
+            border-left: 2px solid transparent;
+            padding-left: 8px;
+        }
+
+        .toc-link:hover {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            transform: translateX(2px);
+        }
+
+        .toc-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .toc-number {
+            font-weight: 500;
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            min-width: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-right: 1.2rem;
+            padding-left: 0;
+        }
+
+        @media (max-width: 850px) {
+            .sidebar {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 0 1rem;
+            }
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 1.5rem 0 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: relative;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 35px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        h2 a {
+            color: var(--accent);
+            font-size: 0.7rem;
+            margin-left: 6px;
+            text-decoration: none;
+        }
+
+        h2 a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            color: var(--gray-900);
+            line-height: 1.65;
+        }
+
+        /* Equation Styling */
+        .equation-container {
+            margin: 0.8rem 0;
+        }
+
+        .equation {
+            background: var(--primary-light);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1rem;
+            border-radius: 0 5px 5px 0;
+            font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', serif;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .equation-number {
+            color: var(--primary);
+            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin-right: 6px;
+            display: inline-block;
+            min-width: 18px;
+        }
+
+        /* Code Block Styling */
+        .code-container {
+            margin: 1rem 0;
+            background: #2d2d2d;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .code-header {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 0.6rem 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .code-content {
+            padding: 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #f8f8f2;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+        }
+
+        /* Reference Box */
+        .reference-box {
+            background: linear-gradient(to right, #f8fafc, var(--primary-light));
+            border: 1px solid var(--gray-200);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .reference-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .reference-header i {
+            font-size: 0.9rem;
+        }
+
+        .reference-list {
+            list-style: none;
+        }
+
+        .reference-item {
+            padding: 0.3rem 0 0.3rem 0.8rem;
+            position: relative;
+            margin-bottom: 0.4rem;
+            color: var(--gray-700);
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .reference-item::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 0.65rem;
+        }
+
+        /* Citation Section */
+        .citation-section {
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .citation-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .citation-box {
+            background: var(--white);
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid var(--gray-300);
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-top: 0.6rem;
+            overflow-x: auto;
+            color: var(--gray-900);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--secondary);
+            color: white;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .translation-credit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 6px 16px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(26, 107, 202, 0.2);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            margin-top: 0.6rem;
+        }
+
+        /* Utility Classes */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-light), #e8f2ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .math {
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.1s ease;
+            z-index: 1000;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 1rem 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 0.6rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem 0;
+            }
+            
+            .main-content {
+                padding-right: 0.8rem;
+            }
+            
+            .sidebar {
+                padding-left: 0.8rem;
+            }
+            
+            .meta-info {
+                gap: 0.6rem;
+            }
+            
+            .meta-item {
+                font-size: 0.75rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .translation-notice-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .translator-badge {
+                align-self: flex-start;
+            }
+        }
+
+        /* Links styling */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Optimize long formula display */
+        .equation {
+            word-break: break-word;
+        }
+        
+        /* Optimize list display */
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.3rem;
+            line-height: 1.5;
+        }
+        
+        /* Optimize math formula spacing */
+        .MathJax_Display {
+            margin: 0.6em 0 !important;
+        }
+        
+        /* Image container styling */
+        .pic-container {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+        
+        .pic-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .typecho-caption {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        
+        /* Quote block styling */
+        blockquote.cite {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+        }
+        
+        blockquote.cite div {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        blockquote.cite a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        /* Blockquote styling */
+        blockquote {
+            background: linear-gradient(to right, var(--gray-100), var(--primary-light));
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+            position: relative;
+        }
+
+        blockquote p {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+
+        blockquote p:before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Underline styling */
+        u {
+            text-decoration: none;
+            border-bottom: 1px dotted var(--primary);
+        }
+
+        /* List styling inside main content */
+        .main-content ol, .main-content ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .main-content li {
+            margin-bottom: 0.4rem;
+            line-height: 1.6;
+        }
+
+        /* Highlight box for important notes */
+        .note-box {
+            background: linear-gradient(to right, #fff8e1, #fff3cd);
+            border-left: 3px solid #ffc107;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .note-box strong {
+            color: #856404;
+        }
+
+        /* Definition list styling */
+        .definition {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 3px solid #4caf50;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .definition-header {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Mathematical proof styling */
+        .proof {
+            background: linear-gradient(to right, #f3e5f5, #f8f4ff);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .proof-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Insight box styling */
+        .insight-box {
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+            border-left: 3px solid #1976d2;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .insight-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Analysis box styling */
+        .analysis-box {
+            background: linear-gradient(to right, #fff3e0, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .analysis-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Technical box styling */
+        .technical-box {
+            background: linear-gradient(to right, #fce4ec, #f8bbd9);
+            border-left: 3px solid #e91e63;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .technical-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Series introduction box */
+        .series-box {
+            background: linear-gradient(135deg, #f3e5f5 0%, #e8eaf6 100%);
+            border-left: 3px solid #7b1fa2;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .series-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* SVD properties box */
+        .svd-box {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 3px solid #4caf50;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .svd-header {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Matrix norm box */
+        .norm-box {
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+            border-left: 3px solid #1976d2;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .norm-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Theorem box */
+        .theorem-box {
+            background: linear-gradient(to right, #fff3e0, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .theorem-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Proof box */
+        .proof-box {
+            background: linear-gradient(to right, #fce4ec, #f8bbd9);
+            border-left: 3px solid #e91e63;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .proof-box-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Geometric interpretation box */
+        .geometry-box {
+            background: linear-gradient(135deg, #f5f5f5 0%, #eceff1 100%);
+            border-left: 3px solid #607d8b;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .geometry-header {
+            color: #455a64;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Eckart-Young theorem box */
+        .eym-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            border-left: 3px solid #2e7d32;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .eym-header {
+            color: #1b5e20;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ID Introduction box */
+        .id-box {
+            background: linear-gradient(135deg, #f3e5f5 0%, #e8eaf6 100%);
+            border-left: 3px solid #7b1fa2;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .id-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ID Definition box */
+        .id-definition-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            border-left: 3px solid #2e7d32;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .id-definition-header {
+            color: #1b5e20;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* QR Decomposition box */
+        .qr-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-left: 3px solid #1976d2;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .qr-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Column-Pivoting QR box */
+        .cpqr-box {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffecb3 100%);
+            border-left: 3px solid #ff9800;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .cpqr-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Randomized Algorithm box */
+        .randomized-box {
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
+            border-left: 3px solid #e91e63;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .randomized-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Complexity and NP-Hard box */
+        .complexity-box {
+            background: linear-gradient(135deg, #f5f5f5 0%, #eceff1 100%);
+            border-left: 3px solid #607d8b;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .complexity-header {
+            color: #455a64;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Accuracy Improvement box */
+        .accuracy-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            border-left: 3px solid #2e7d32;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .accuracy-header {
+            color: #1b5e20;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Algorithm Comparison box */
+        .comparison-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-left: 3px solid #1976d2;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .comparison-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* SciPy Implementation box */
+        .scipy-box {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffecb3 100%);
+            border-left: 3px solid #ff9800;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .scipy-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>The Path to Low-Rank Approximation (Part 4): Interpolative Decomposition (ID)</h1>
+                <div class="subtitle">Comprehensive examination of Interpolative Decomposition as a structured low-rank factorization technique, covering deterministic QR-based algorithms, randomized methods, and theoretical foundations of column subset selection for matrix approximation</div>
+                
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>Su Jianlin</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-eye"></i>
+                        <span>Scientific Spaces</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <div class="tag">Low-Rank Approximation</div>
+                        <div class="tag">Interpolative Decomposition</div>
+                        <div class="tag">Column Subset Selection</div>
+                        <div class="tag">Randomized Linear Algebra</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Translation Notice -->
+        <div class="translation-notice">
+            <div class="translation-notice-content">
+                <div class="translation-text">
+                    <h3><i class="fas fa-language"></i> Academic Translation</h3>
+                    <p>This is an academic English translation maintaining technical accuracy while adapting to English academic conventions.</p>
+                </div>
+                <div class="translator-badge">
+                    <i class="fas fa-user-graduate"></i>
+                    Translated by ScalingOpt Team
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Sidebar Table of Contents -->
+            <aside class="sidebar">
+                <nav class="toc">
+                    <div class="toc-header">
+                        <i class="fas fa-list"></i>
+                        Contents
+                    </div>
+                    <ul class="toc-list">
+                        <li class="toc-item">
+                            <a href="#introduction" class="toc-link">
+                                <span class="toc-number">1</span>
+                                <span>Introduction</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#basic-definition" class="toc-link">
+                                <span class="toc-number">2</span>
+                                <span>Basic Definition</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#geometric-interpretation" class="toc-link">
+                                <span class="toc-number">3</span>
+                                <span>Geometric Interpretation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#qr-decomposition" class="toc-link">
+                                <span class="toc-number">4</span>
+                                <span>QR Decomposition</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#column-pivoting-qr" class="toc-link">
+                                <span class="toc-number">5</span>
+                                <span>Column-Pivoting QR</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#randomized-algorithms" class="toc-link">
+                                <span class="toc-number">6</span>
+                                <span>Randomized Algorithms</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#improving-accuracy" class="toc-link">
+                                <span class="toc-number">7</span>
+                                <span>Improving Accuracy</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#article-summary" class="toc-link">
+                                <span class="toc-number">8</span>
+                                <span>Article Summary</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Article Content -->
+            <main class="main-content">
+                <div class="series-box">
+                    <div class="series-header">
+                        <i class="fas fa-book-open"></i>
+                        Series Continuation
+                    </div>
+                    <p>This article focuses on <strong>Interpolative Decomposition (ID)</strong>. It can also be understood as a structured low-rank factorization where one side consists of several columns from the original matrix (or rows, if one prefers rows). In other words, ID attempts to identify several key columns as a "skeleton" (often also called a "sketch") to approximate the original matrix.</p>
+                    
+                    <div class="scipy-box">
+                        <div class="scipy-header">
+                            <i class="fas fa-code"></i>
+                            Practical Implementation
+                        </div>
+                        <p>Many readers may not have heard of ID, and even Wikipedia provides only vague descriptions (<a href="https://en.wikipedia.org/wiki/Interpolative_decomposition" target="_blank">link</a>). However, ID—like SVD—has long been built into SciPy (see <a href="https://docs.scipy.org/doc/scipy/reference/linalg.interpolative.html" target="_blank">scipy.linalg.interpolative</a>), which testifies to its practical value.</p>
+                    </div>
+                </div>
+                
+                <h2 id="basic-definition">Basic Definition<a href="#basic-definition">#</a></h2>
+                
+                <p>The first three articles introduced the <a href="/archives/10366" target="_blank">pseudo-inverse</a>, <a href="/archives/10407" target="_blank">SVD</a>, and <a href="/archives/10427" target="_blank">CR approximation</a>, respectively. All can be viewed as seeking low-rank approximations with specific structures:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(1)</span>
+                        \[
+                        \mathop{\text{argmin}}_{\text{rank}(\tilde{\boldsymbol{M}})\leq r}\Vert \tilde{\boldsymbol{M}} - \boldsymbol{M}\Vert_F^2
+                        \]
+                    </div>
+                </div>
+                
+                <p>where $\boldsymbol{M}\in\mathbb{R}^{n\times m}$. When no additional constraints are imposed, the optimal solution is given by SVD. When specifying $\tilde{\boldsymbol{M}}=\boldsymbol{A}\boldsymbol{B}$ and seeking the optimal solution for the other factor given one of $\boldsymbol{A},\boldsymbol{B}$, the optimal solution can be obtained via the pseudo-inverse. If we require $\boldsymbol{M}=\boldsymbol{X}\boldsymbol{Y}$ and $\tilde{\boldsymbol{M}}=\boldsymbol{X}_{[:, S]}\boldsymbol{Y}_{[S,:]}$, that becomes the problem addressed by CR approximation.</p>
+                
+                <div class="id-definition-box">
+                    <div class="id-definition-header">
+                        <i class="fas fa-cogs"></i>
+                        Interpolative Decomposition Formulation
+                    </div>
+                    <p>CR approximation constructs a low-rank approximation by selecting rows/columns from the original matrix. This makes the approximation results more interpretable and also suitable for some nonlinear scenarios. However, CR approximation presupposes that matrix $\boldsymbol{M}$ originates from the product of two matrices, with its original purpose being to reduce matrix computation cost. For scenarios where matrix $\boldsymbol{M}$ is given directly, a similar low-rank approximation is provided by <strong>Interpolative Decomposition (ID)</strong>.</p>
+                    <p>Specifically, in ID we have $\tilde{\boldsymbol{M}}=\boldsymbol{C}\boldsymbol{Z}$, where $\boldsymbol{C}=\boldsymbol{M}_{[:,S]}$ consists of several columns of $\boldsymbol{M}$, and $\boldsymbol{Z}$ is arbitrary. That is, we use several columns of $\boldsymbol{M}$ as a skeleton to approximate itself:</p>
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(2)</span>
+                            \[
+                            \mathop{\text{argmin}}_{S,\boldsymbol{Z}}\Vert \underbrace{\boldsymbol{M}_{[:,S]}}_{\boldsymbol{C}}\boldsymbol{Z} - \boldsymbol{M}\Vert_F^2\quad\text{s.t.}\quad S\subset\{0,1,\cdots,m-1\},|S|=r,\boldsymbol{Z}\in\mathbb{R}^{r\times m}
+                            \]
+                        </div>
+                    </div>
+                </div>
+                
+                <p>According to the results from <a href="/archives/10366" target="_blank">"The Path to Low-Rank Approximation (Part 1): Pseudo-Inverse"</a>, if $\boldsymbol{C}$ is already determined, then the optimal solution for $\boldsymbol{Z}$ is $\boldsymbol{C}^{\dagger} \boldsymbol{M}$. Therefore, the actual difficulty of ID lies only in optimizing $S$, i.e., column selection. This is a combinatorial optimization problem, and exact solution is <strong>NP-Hard</strong>. Consequently, the primary focus is on finding approximation algorithms with appropriate efficiency and accuracy.</p>
+                
+                <h2 id="geometric-interpretation">Geometric Interpretation<a href="#geometric-interpretation">#</a></h2>
+                
+                <p>Before attempting to solve ID, let's further understand its geometric interpretation, which will help us better grasp its application scenarios and solution approaches. First, represent $\boldsymbol{C}$ in column vector form: $\boldsymbol{C}=(\boldsymbol{c}_1,\boldsymbol{c}_2,\cdots,\boldsymbol{c}_r)$. Then for any column vector $\boldsymbol{z}=(z_1,z_2,\cdots,z_r)^{\top}$, we have:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(3)</span>
+                        \[
+                        \boldsymbol{C}\boldsymbol{z} = \begin{pmatrix}\boldsymbol{c}_1 & \boldsymbol{c}_2 & \cdots & \boldsymbol{c}_r\end{pmatrix}\begin{pmatrix}z_1 \\ z_2 \\ \vdots \\ z_r\end{pmatrix} = \sum_{i=1}^r z_i \boldsymbol{c}_i
+                        \]
+                    </div>
+                </div>
+                
+                <p>Thus the geometric meaning of $\boldsymbol{C}\boldsymbol{z}$ is a linear combination of the column vectors of $\boldsymbol{C}$. Note that $\boldsymbol{c}_1,\boldsymbol{c}_2,\cdots,\boldsymbol{c}_r$ are selected from $\boldsymbol{M}=(\boldsymbol{m}_1,\boldsymbol{m}_2,\cdots,\boldsymbol{m}_m)$. Therefore, ID essentially states that we select several columns as (approximate) basis vectors and represent all remaining columns as linear combinations of these bases. This is the meaning of "I (Interpolative, interpolation)" in ID.</p>
+                
+                <div class="insight-box">
+                    <div class="insight-header">
+                        <i class="fas fa-shapes"></i>
+                        Interpolative Constraint
+                    </div>
+                    <p>We know that "Interpolative" more accurately means "interpolation." To better highlight this "interpolative" characteristic, some literature adds the condition $|z_{i,j}| \leq 1$ (where $z_{i,j}$ is any element of matrix $\boldsymbol{Z}$). Of course, this condition is actually quite restrictive. Ensuring it strictly holds is likely also NP-Hard, so many works relax it to $|z_{i,j}| \leq 2$. The practical performance of most approximation algorithms can satisfy this bound. If there are no other requirements and we only consider minimizing approximation error, this restriction can also be removed.</p>
+                </div>
+                
+                <h2 id="qr-decomposition">QR Decomposition<a href="#qr-decomposition">#</a></h2>
+                
+                <div class="complexity-box">
+                    <div class="complexity-header">
+                        <i class="fas fa-sitemap"></i>
+                        Algorithm Classification
+                    </div>
+                    <p>ID solution algorithms are divided into two main categories: <strong>deterministic algorithms</strong> and <strong>randomized algorithms</strong>. Deterministic algorithms typically involve higher computational cost but often yield better approximation quality, whereas randomized algorithms offer higher computational efficiency but slightly lower accuracy. Note that both are merely approximation algorithms with acceptable practical performance, and neither excludes the possibility of extreme cases where they completely fail.</p>
+                </div>
+                
+                <p>The first algorithm considered standard is based on QR decomposition—more precisely, <strong>Column-Pivoting QR decomposition</strong>, often translated as "列主元QR分解" in Chinese (though I personally feel a more intuitive translation would be "列驱QR分解"). It is a deterministic algorithm. Why is ID associated with QR decomposition? We can understand this by examining the approach to finding $\boldsymbol{Z}$.</p>
+                
+                <div class="qr-box">
+                    <div class="qr-header">
+                        <i class="fas fa-project-diagram"></i>
+                        Geometric Perspective via QR
+                    </div>
+                    <p>As mentioned earlier, if $\boldsymbol{C}$ is already given, the optimal solution for $\boldsymbol{Z}$ is $\boldsymbol{C}^{\dagger}\boldsymbol{M}$. This answer is correct but not very intuitive. Without loss of generality, assume $\boldsymbol{c}_1,\boldsymbol{c}_2,\cdots,\boldsymbol{c}_r$ are linearly independent. From a geometric perspective, finding the optimal approximation in the form $\boldsymbol{C}\boldsymbol{Z}$ essentially involves projecting each column vector of $\boldsymbol{M}$ onto the $r$-dimensional subspace spanned by $\boldsymbol{c}_1,\boldsymbol{c}_2,\cdots,\boldsymbol{c}_r$. To compute this projection result, we can first perform <strong>Gram-Schmidt orthogonalization</strong> on $\boldsymbol{c}_1,\boldsymbol{c}_2,\cdots,\boldsymbol{c}_r$ to transform them into an orthonormal basis. Projection onto an orthonormal basis becomes much simpler, and the orthogonalization process naturally corresponds to QR decomposition.</p>
+                </div>
+                
+                <p>Gram-Schmidt orthogonalization recursively executes the following steps:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(4)</span>
+                        \[
+                        \boldsymbol{q}_1 = \frac{\boldsymbol{c}_1}{\Vert\boldsymbol{c}_1\Vert},\quad \boldsymbol{q}_k = \frac{\hat{\boldsymbol{q}}_k}{\Vert\hat{\boldsymbol{q}}_k\Vert},\quad\hat{\boldsymbol{q}}_k = \boldsymbol{c}_k - \sum_{i=1}^{k-1} (\boldsymbol{c}_k^{\top} \boldsymbol{q}_i)\boldsymbol{q}_i,\quad k = 2,3,\cdots,r
+                        \]
+                    </div>
+                </div>
+                
+                <p>The result expresses $\boldsymbol{C}$ as:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(5)</span>
+                        \[
+                        \boldsymbol{C} = \underbrace{\begin{pmatrix}\boldsymbol{q}_1 & \boldsymbol{q}_2 & \cdots & \boldsymbol{q}_r\end{pmatrix}}_{\boldsymbol{Q}}\underbrace{\begin{pmatrix}R_{1,1} & R_{1,2} & \cdots & R_{1,r} \\
+                        0 & R_{2,2} & \cdots & R_{2,r} \\
+                        \vdots & \vdots & \ddots & \vdots \\
+                        0 & 0 & \cdots & R_{r,r} \\
+                        \end{pmatrix}}_{\boldsymbol{R}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>With $\boldsymbol{q}_1,\boldsymbol{q}_2,\cdots,\boldsymbol{q}_r$, the optimal approximation of the $k$-th column $\boldsymbol{m}_k$ of matrix $\boldsymbol{M}$ onto $\boldsymbol{C}$ and its error are respectively:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(6)</span>
+                        \[
+                        \sum_{i=1}^r (\boldsymbol{m}_k^{\top} \boldsymbol{q}_i)\boldsymbol{q}_i\qquad\text{and}\qquad \left\Vert\boldsymbol{m}_k - \sum_{i=1}^r (\boldsymbol{m}_k^{\top} \boldsymbol{q}_i)\boldsymbol{q}_i\right\Vert^2
+                        \]
+                    </div>
+                </div>
+                
+                <h2 id="column-pivoting-qr">Column-Pivoting QR<a href="#column-pivoting-qr">#</a></h2>
+                
+                <p>Of course, the above results are obtained under the premise that $\boldsymbol{C}$ is known. How do we select a relatively good set of $r$ columns from $\boldsymbol{M}$ to form $\boldsymbol{C}$? Column-pivoting QR decomposition provides one reference answer.</p>
+                
+                <div class="cpqr-box">
+                    <div class="cpqr-header">
+                        <i class="fas fa-sort-amount-down"></i>
+                        Column-Pivoting QR Algorithm
+                    </div>
+                    <p>Generally, if we perform Gram-Schmidt orthogonalization on $\boldsymbol{m}_1,\boldsymbol{m}_2,\cdots,\boldsymbol{m}_m$, we proceed in order: starting from $\boldsymbol{m}_1$, then $\boldsymbol{m}_2,\boldsymbol{m}_3,\cdots$. Column-pivoting QR decomposition modifies the orthogonalization order based on norm magnitude. Written in formulas:</p>
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(7)</span>
+                            \[
+                            \begin{gathered}
+                            \boldsymbol{q}_1 = \frac{\boldsymbol{m}_{\rho_1}}{\Vert\boldsymbol{m}_{\rho_1}\Vert},\quad
+                            \boldsymbol{q}_k = \frac{\hat{\boldsymbol{q}}_k}{\Vert\hat{\boldsymbol{q}}_k\Vert},\quad\hat{\boldsymbol{q}}_k = \boldsymbol{m}_{\rho_k} - \sum_{i=1}^{k-1} (\boldsymbol{m}_{\rho_k}^{\top} \boldsymbol{q}_i)\boldsymbol{q}_i \\
+                            \rho_1 = \mathop{\text{argmax}}_{i\in\{1,2,\cdots,m\}} \Vert \boldsymbol{m}_i\Vert,\quad \rho_k = \mathop{\text{argmax}}_{i\in\{1,2,\cdots,m\}\backslash\{\rho_1,\rho_2,\cdots,\rho_{k-1}\}} \left\Vert \boldsymbol{m}_i - \sum_{j=1}^{k-1} (\boldsymbol{m}_i^{\top} \boldsymbol{q}_j)\boldsymbol{q}_j\right\Vert
+                            \end{gathered}
+                            \]
+                        </div>
+                    </div>
+                    <p>In essence, column-pivoting QR decomposition selects the column with the largest remaining error at each step to perform orthogonal normalization. Apart from the changed execution order, column-pivoting QR decomposition shares no other computational differences with standard QR decomposition. Therefore, the final form of column-pivoting QR decomposition can be expressed as:</p>
+                </div>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(8)</span>
+                        \[
+                        \boldsymbol{M}\boldsymbol{\Pi} = \underbrace{\begin{pmatrix}\boldsymbol{q}_1 & \boldsymbol{q}_2 & \cdots & \boldsymbol{q}_m\end{pmatrix}}_{\boldsymbol{Q}}\underbrace{\begin{pmatrix}R_{1,1} & R_{1,2} & \cdots & R_{1,m} \\
+                        0 & R_{2,2} & \cdots & R_{2,m} \\
+                        \vdots & \vdots & \ddots & \vdots \\
+                        0 & 0 & \cdots & R_{m,m} \\
+                        \end{pmatrix}}_{\boldsymbol{R}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>where $\boldsymbol{\Pi}$ is a column permutation matrix. Based on the operation of selecting the column with maximum error (norm) at each step, we obtain that for any $k$, the first column of submatrix $\boldsymbol{R}_{[k-1:,k-1:]}$ has the largest norm, which is no less than the norm of any remaining column:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(9)</span>
+                        \[
+                        R_{k,k}^2 \geq \sum_{i=k}^j R_{i,j}^2,\quad \forall j = k,k+1,\cdots,m
+                        \]
+                    </div>
+                </div>
+                
+                <p>From this we can also deduce $|R_{1,1}|\geq |R_{2,2}| \geq \cdots\geq |R_{m,m}|$. These properties lead us to believe that if we want an $r$-rank approximation of $\boldsymbol{M}\boldsymbol{\Pi}$, retaining only the first $r$ rows of $\boldsymbol{R}$ should be a good choice:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(10)</span>
+                        \[
+                        \boldsymbol{M}\boldsymbol{\Pi} = \boldsymbol{Q}\boldsymbol{R} \approx \boldsymbol{Q}_{[:,:r]}\boldsymbol{R}_{[:r,:]}=\boldsymbol{Q}_{[:,:r]}\big[\boldsymbol{R}_{[:r,:r]},\boldsymbol{R}_{[:r,r:]}\big]=\boldsymbol{Q}_{[:,:r]}\boldsymbol{R}_{[:r,:r]}\big[\boldsymbol{I}_r,\boldsymbol{R}_{[:r,:r]}^{-1}\boldsymbol{R}_{[:r,r:]}\big]
+                        \]
+                    </div>
+                </div>
+                
+                <p>Recall our earlier convention that slicing has priority over inversion, so here $\boldsymbol{R}_{[:r,:r]}^{-1}$ means $(\boldsymbol{R}_{[:r,:r]})^{-1}$. It is not difficult to see that $\boldsymbol{Q}_{[:,:r]}\boldsymbol{R}_{[:r,:r]}$ actually represents $r$ columns of matrix $\boldsymbol{M}$. Thus the above expression actually provides an ID approximation:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(11)</span>
+                        \[
+                        \boldsymbol{M} \approx \boldsymbol{C}\boldsymbol{Z},\quad \boldsymbol{C}=\boldsymbol{Q}_{[:,:r]}\boldsymbol{R}_{[:r,:r]},\quad \boldsymbol{Z}=\big[\boldsymbol{I}_r,\boldsymbol{R}_{[:r,:r]}^{-1}\boldsymbol{R}_{[:r,r:]}\big]\boldsymbol{\Pi}^{\top}
+                        \]
+                    </div>
+                </div>
+                
+                <div class="scipy-box">
+                    <div class="scipy-header">
+                        <i class="fas fa-cogs"></i>
+                        SciPy Implementation
+                    </div>
+                    <p>The above describes the ID solution algorithm based on column-pivoting QR decomposition, which is also the built-in solving algorithm in SciPy (with <code>rand=False</code>). Note that this algorithm cannot guarantee $|z_{i,j}| \leq 1$ or $|z_{i,j}| \leq 2$. However, according to feedback from many publications, in practice it almost never yields $|z_{i,j}| > 2$, making it a relatively robust solving algorithm. Additionally, SciPy also includes column-pivoting QR decomposition; it can be activated by setting <code>pivoting=True</code> in <code>scipy.linalg.qr</code>.</p>
+                </div>
+                
+                <h2 id="randomized-algorithms">Randomized Algorithms<a href="#randomized-algorithms">#</a></h2>
+                
+                <div class="randomized-box">
+                    <div class="randomized-header">
+                        <i class="fas fa-dice"></i>
+                        Randomized Linear Algebra Approaches
+                    </div>
+                    <p>Each orthogonalization step in column-pivoting QR decomposition requires traversing all remaining vectors to select the one with maximum error, which becomes infeasible when $m$ is large. Additionally, if $n$ is large, the computational cost of norm and inner product calculations becomes high. Consequently, randomized algorithms emerged, aiming to reduce the values of $n$ or $m$ to lower computational complexity.</p>
+                </div>
+                
+                <p>First, consider the approach to reduce $n$, i.e., reduce the dimension of each column vector of $\boldsymbol{M}$. A common method is <strong>random projection</strong>, similar to the "JL Lemma" introduced in <a href="/archives/8679" target="_blank">"The Amazing Johnson-Lindenstrauss Lemma: Theory"</a>. Specifically, assume $\boldsymbol{\Omega}\in\mathbb{R}^{d\times n}$ is some random projection matrix (where $d\ll n$) whose elements are independently and identically sampled from some distribution such as $\mathcal{N}(0,1/n)$. We then perform column-pivoting QR decomposition on the smaller matrix $\boldsymbol{\Omega}\boldsymbol{M}\in\mathbb{R}^{d\times m}$ to determine the positions of the selected $r$ columns. More detailed discussion can be found in <a href="https://users.oden.utexas.edu/~pgm/Talks/2021_ENLA.pdf" target="_blank">"Randomized algorithms for pivoting and for computing interpolatory and CUR factorizations"</a>.</p>
+                
+                <div class="insight-box">
+                    <div class="insight-header">
+                        <i class="fas fa-bolt"></i>
+                        Structured Random Projections
+                    </div>
+                    <p>Based on my limited research, SciPy's randomized algorithm for solving ID also uses a similar idea, but replaces the random sampling matrix with the more structured "Subsampled Randomized Fourier Transform (SRFT)", reducing the computational cost of the step $\boldsymbol{\Omega}\boldsymbol{M}$ from $\mathcal{O}(mnd)$ to $\mathcal{O}(mn\log d)$. However, I am not familiar with the details of SRFT and SciPy's implementation. Interested readers may refer to <a href="https://amath.colorado.edu/faculty/martinss/Talks/2010_banff.pdf" target="_blank">"Enabling very large-scale matrix computations via randomization"</a>, <a href="https://anthony-nouy.github.io/tutorials/morss/morss_2019_rla.pdf" target="_blank">"A brief introduction to Randomized Linear Algebra"</a>, and other materials for further investigation.</p>
+                </div>
+                
+                <p>Another reason for not delving deeply into complex random projection methods like SRFT is that the paper <a href="https://papers.cool/arxiv/2105.07076" target="_blank">"Efficient Algorithms for Constructing an Interpolative Decomposition"</a> found that simpler <strong>column sampling</strong> often yields better results and is particularly easy to understand: randomly sample $k > r$ columns from $\boldsymbol{M}$, then use column-pivoting QR decomposition to select $r$ columns from these $k$ columns as $\boldsymbol{C}$, and finally solve for $\boldsymbol{Z}$ based on $\boldsymbol{C}$. This reduces the matrix size for column-pivoting QR decomposition from $n\times m$ to $n\times k$.</p>
+                
+                <div class="comparison-box">
+                    <div class="comparison-header">
+                        <i class="fas fa-chart-bar"></i>
+                        Experimental Comparisons
+                    </div>
+                    <p>Experiments show that this simple approach at most slightly increases the risk of $|z_{i,j}| > 2$ in individual tasks but offers clear advantages in error:</p>
+                    <div class="pic-container">
+                        <div class="typecho-caption aligncenter" style="max-width: 520px">
+                            <div style="margin: 5px">
+                                <a href="/usr/uploads/2024/10/1049666095.png" title="Click to view original image" target="_blank">
+                                    <img src="/usr/uploads/2024/10/1049666095.png" style="max-width: 100%" alt="Comparison of maximum absolute values of Z matrix between column sampling (Optim-RID) and SciPy built-in algorithm (SciPy-RID)" />
+                                </a>
+                            </div>
+                            <p class="typecho-caption-text">Comparison of maximum absolute values of Z matrix between column sampling (Optim-RID) and SciPy built-in algorithm (SciPy-RID)</p>
+                        </div>
+                        <div class="typecho-caption aligncenter" style="max-width: 520px">
+                            <div style="margin: 5px">
+                                <a href="/usr/uploads/2024/10/675200536.png" title="Click to view original image" target="_blank">
+                                    <img src="/usr/uploads/2024/10/675200536.png" style="max-width: 100%" alt="Error comparison between column sampling (Optim-RID) and SciPy built-in algorithm (SciPy-RID)" />
+                                </a>
+                            </div>
+                            <p class="typecho-caption-text">Error comparison between column sampling (Optim-RID) and SciPy built-in algorithm (SciPy-RID)</p>
+                        </div>
+                        <div class="typecho-caption aligncenter" style="max-width: 520px">
+                            <div style="margin: 5px">
+                                <a href="/usr/uploads/2024/10/546505264.png" title="Click to view original image" target="_blank">
+                                    <img src="/usr/uploads/2024/10/546505264.png" style="max-width: 100%" alt="Efficiency comparison between column sampling (Optim-RID) and SciPy built-in algorithm (SciPy-RID)" />
+                                </a>
+                            </div>
+                            <p class="typecho-caption-text">Efficiency comparison between column sampling (Optim-RID) and SciPy built-in algorithm (SciPy-RID)</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <h2 id="improving-accuracy">Improving Accuracy<a href="#improving-accuracy">#</a></h2>
+                
+                <div class="accuracy-box">
+                    <div class="accuracy-header">
+                        <i class="fas fa-chart-line"></i>
+                        Beyond Greedy Algorithms
+                    </div>
+                    <p>From the above tables, one might notice a potentially surprising result: the randomized column sampling method (Optim-RID) not only outperforms the similarly randomized SciPy-RID in terms of error, but in some tasks even outperforms deterministic algorithms SciPy-ID and Optim-ID (which are mathematically equivalent, both based on complete column-pivoting QR decomposition, differing only in implementation efficiency).</p>
+                    <p>This seemingly counterintuitive phenomenon actually illustrates a fact: although column-pivoting QR decomposition can serve as a good baseline for ID, its ability to select basis vectors may not be significantly better than random selection. The main role of column-pivoting QR decomposition is to guarantee with high probability that $|z_{i,j}| < 2$. This is not difficult to understand. Take $r=1$ as an example: column-pivoting QR decomposition simply returns the column with the largest norm. But is the column with the largest norm necessarily a good basis (one that minimizes reconstruction error)? Clearly not. A good basis should represent the direction shared by most vectors, and maximum norm does not reflect this.</p>
+                </div>
+                
+                <p>For ID, column-pivoting QR decomposition is essentially a <strong>greedy algorithm</strong> that transforms the problem of selecting $r$ columns into multiple recursive selections of 1 column. When $r=1$, in scenarios where $m$ is not too large or high precision is required, the complexity of exact solution via enumeration is acceptable:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(12)</span>
+                        \[
+                        \mathop{\text{argmin}}_i \sum_{j=1}^m \left\Vert\boldsymbol{m}_j - \frac{(\boldsymbol{m}_j^{\top} \boldsymbol{m}_i)\boldsymbol{m}_i}{\Vert\boldsymbol{m}_i\Vert^2}\right\Vert^2
+                        \]
+                    </div>
+                </div>
+                
+                <p>That is, traverse all $\boldsymbol{m}_i$, project all remaining columns onto $\boldsymbol{m}_i$ to compute the total error, and select the $\boldsymbol{m}_i$ with minimum total error. Its complexity is proportional to $m^2$. If we replace the operation of selecting the column with maximum norm at each step of column-pivoting QR decomposition with selecting the $\boldsymbol{m}_i$ that minimizes the total error in the above expression, we can identify better bases, thereby achieving lower reconstruction error (at the cost, naturally, of higher complexity and even less guarantee that $|z_{i,j}| < 2$).</p>
+                
+                <div class="reference-box">
+                    <div class="reference-header">
+                        <i class="fas fa-search"></i>
+                        Further Research Directions
+                    </div>
+                    <p>In summary, due to the NP-Hard nature of exact solution, ID has numerous solution approaches. The ones listed above are only a very limited selection. Interested readers can explore further using keywords such as <strong>Randomized Linear Algebra</strong> and <strong>Column Subset Selection</strong>. It is particularly worth noting that Randomized Linear Algebra, which aims to accelerate various matrix operations through randomized methods, has itself become a rich discipline. The randomized ID discussed in this article and the sampling-based CR approximation from the previous article are both classic examples within this field.</p>
+                </div>
+                
+                <h2 id="article-summary">Article Summary<a href="#article-summary">#</a></h2>
+                
+                <div class="summary-box">
+                    <p>This article introduced <strong>Interpolative Decomposition (ID)</strong>, which approximates the original matrix by selecting several columns as a "skeleton." It is a structured low-rank factorization with relatively intuitive geometric interpretation. The core difficulty lies in column selection, which is fundamentally an NP-Hard discrete optimization problem.</p>
+                    
+                    <p>Key points covered include:</p>
+                    <ol>
+                        <li><strong>Formal Definition:</strong> ID seeks $\boldsymbol{M} \approx \boldsymbol{C}\boldsymbol{Z}$ where $\boldsymbol{C}$ consists of selected columns from $\boldsymbol{M}$</li>
+                        <li><strong>Geometric Interpretation:</strong> ID represents remaining columns as linear combinations of selected basis columns</li>
+                        <li><strong>Deterministic Algorithm:</strong> Column-pivoting QR decomposition as the standard approach</li>
+                        <li><strong>Randomized Methods:</strong> Random projection and column sampling techniques for scalability</li>
+                        <li><strong>Accuracy Trade-offs:</strong> Exploration of greedy vs. exhaustive search approaches</li>
+                        <li><strong>Practical Implementation:</strong> SciPy integration and experimental comparisons</li>
+                    </ol>
+                    
+                    <p>ID provides a valuable alternative to SVD and CR approximation when interpretability and preservation of original matrix structure are important considerations in low-rank approximation tasks.</p>
+                </div>
+
+                <div class="citation-section">
+                    <div class="citation-header">
+                        <i class="fas fa-quote-right"></i>
+                        Citation Information
+                    </div>
+                    <p><strong>Original Article:</strong> Su Jianlin. The Path to Low-Rank Approximation (Part 4): Interpolative Decomposition. <em>Scientific Spaces</em>.</p>
+                    
+                    <p><strong>How to cite this translation:</strong></p>
+                    <div class="citation-box">
+                        Su, J. The Path to Low-Rank Approximation (Part 4): Interpolative Decomposition [Translated by ScalingOpt Team]. 
+                        <em>Scientific Spaces</em>.
+                    </div>
+                    <p style="margin-top: 0.8rem;"><strong>BibTeX:</strong></p>
+                    <div class="citation-box">
+                        @article{su2025lowrank_id,
+                            title   = {The Path to Low-Rank Approximation (Part 4): Interpolative Decomposition},
+                            author  = {Su, Jianlin},
+                            journal = {Scientific Spaces},
+                            year    = {2025},
+                            url     = {https://kexue.fm/archives/10568},
+                            note    = {Translated by ScalingOpt Team}
+                          }
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="translation-credit">
+                <i class="fas fa-user-graduate"></i>
+                Academic Translation by ScalingOpt Team
+            </div>
+            <div class="copyright">
+                © 2009-2025 Scientific Spaces. All rights reserved.<br>
+                Original content licensed under Creative Commons BY-NC-ND 2.5 China
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript for Interactive Features -->
+    <script>
+        // Scroll Progress Bar
+        window.addEventListener('scroll', function() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            scrollProgress.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Table of Contents Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            const sections = document.querySelectorAll('h2[id], h3[id]');
+            
+            // Set active section based on scroll position
+            function setActiveSection() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 50)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', setActiveSection);
+            setActiveSection(); // Initial call
+            
+            // Smooth scroll for TOC links
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 50,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+
+        // MathJax Configuration
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                tags: 'ams'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    
+    <!-- MathJax CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</body>
+</html>

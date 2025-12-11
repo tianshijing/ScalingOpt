@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Path to Low-Rank Approximation (Part 1): Pseudo-Inverse | Scientific Spaces</title>
+    <meta name="description" content="An in-depth exploration of pseudo-inverses from a low-rank approximation perspective, covering mathematical foundations, optimization formulations, and computational methods for matrix generalized inverses.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a6bca;
+            --primary-dark: #1357a8;
+            --primary-light: #e8f1fc;
+            --secondary: #2c3e50;
+            --accent: #3498db;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f5f7fa;
+            --gray-200: #e4e7eb;
+            --gray-300: #cbd2d9;
+            --gray-600: #7b8794;
+            --gray-700: #52606d;
+            --gray-900: #323f4b;
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 6px 24px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: #f0f5fc;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.5rem 1.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -8%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+        }
+
+        .meta-item i {
+            font-size: 0.85rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Translation Notice */
+        .translation-notice {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1.2rem;
+            margin: 0;
+        }
+
+        .translation-notice-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .translation-text h3 {
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .translation-text p {
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        .translator-badge {
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(26, 107, 202, 0.2);
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+        }
+
+        @media (max-width: 850px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            padding-left: 1rem;
+        }
+
+        .toc {
+            position: sticky;
+            top: 1rem;
+        }
+
+        .toc-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .toc-header i {
+            font-size: 0.9rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.4rem;
+            position: relative;
+        }
+
+        .toc-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            transition: var(--transition);
+            border-left: 2px solid transparent;
+            padding-left: 8px;
+        }
+
+        .toc-link:hover {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            transform: translateX(2px);
+        }
+
+        .toc-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .toc-number {
+            font-weight: 500;
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            min-width: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-right: 1.2rem;
+            padding-left: 0;
+        }
+
+        @media (max-width: 850px) {
+            .sidebar {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 0 1rem;
+            }
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 1.5rem 0 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: relative;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 35px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        h2 a {
+            color: var(--accent);
+            font-size: 0.7rem;
+            margin-left: 6px;
+            text-decoration: none;
+        }
+
+        h2 a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            color: var(--gray-900);
+            line-height: 1.65;
+        }
+
+        /* Equation Styling */
+        .equation-container {
+            margin: 0.8rem 0;
+        }
+
+        .equation {
+            background: var(--primary-light);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1rem;
+            border-radius: 0 5px 5px 0;
+            font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', serif;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .equation-number {
+            color: var(--primary);
+            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin-right: 6px;
+            display: inline-block;
+            min-width: 18px;
+        }
+
+        /* Code Block Styling */
+        .code-container {
+            margin: 1rem 0;
+            background: #2d2d2d;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .code-header {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 0.6rem 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .code-content {
+            padding: 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #f8f8f2;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+        }
+
+        /* Reference Box */
+        .reference-box {
+            background: linear-gradient(to right, #f8fafc, var(--primary-light));
+            border: 1px solid var(--gray-200);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .reference-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .reference-header i {
+            font-size: 0.9rem;
+        }
+
+        .reference-list {
+            list-style: none;
+        }
+
+        .reference-item {
+            padding: 0.3rem 0 0.3rem 0.8rem;
+            position: relative;
+            margin-bottom: 0.4rem;
+            color: var(--gray-700);
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .reference-item::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 0.65rem;
+        }
+
+        /* Citation Section */
+        .citation-section {
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .citation-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .citation-box {
+            background: var(--white);
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid var(--gray-300);
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-top: 0.6rem;
+            overflow-x: auto;
+            color: var(--gray-900);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--secondary);
+            color: white;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .translation-credit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 6px 16px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(26, 107, 202, 0.2);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            margin-top: 0.6rem;
+        }
+
+        /* Utility Classes */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-light), #e8f2ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .math {
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.1s ease;
+            z-index: 1000;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 1rem 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 0.6rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem 0;
+            }
+            
+            .main-content {
+                padding-right: 0.8rem;
+            }
+            
+            .sidebar {
+                padding-left: 0.8rem;
+            }
+            
+            .meta-info {
+                gap: 0.6rem;
+            }
+            
+            .meta-item {
+                font-size: 0.75rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .translation-notice-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .translator-badge {
+                align-self: flex-start;
+            }
+        }
+
+        /* Links styling */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Optimize long formula display */
+        .equation {
+            word-break: break-word;
+        }
+        
+        /* Optimize list display */
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.3rem;
+            line-height: 1.5;
+        }
+        
+        /* Optimize math formula spacing */
+        .MathJax_Display {
+            margin: 0.6em 0 !important;
+        }
+        
+        /* Image container styling */
+        .pic-container {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+        
+        .pic-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .typecho-caption {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        
+        /* Quote block styling */
+        blockquote.cite {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+        }
+        
+        blockquote.cite div {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        blockquote.cite a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        /* Blockquote styling */
+        blockquote {
+            background: linear-gradient(to right, var(--gray-100), var(--primary-light));
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+            position: relative;
+        }
+
+        blockquote p {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+
+        blockquote p:before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Underline styling */
+        u {
+            text-decoration: none;
+            border-bottom: 1px dotted var(--primary);
+        }
+
+        /* List styling inside main content */
+        .main-content ol, .main-content ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .main-content li {
+            margin-bottom: 0.4rem;
+            line-height: 1.6;
+        }
+
+        /* Highlight box for important notes */
+        .note-box {
+            background: linear-gradient(to right, #fff8e1, #fff3cd);
+            border-left: 3px solid #ffc107;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .note-box strong {
+            color: #856404;
+        }
+
+        /* Definition list styling */
+        .definition {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 3px solid #4caf50;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .definition-header {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Mathematical proof styling */
+        .proof {
+            background: linear-gradient(to right, #f3e5f5, #f8f4ff);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .proof-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Insight box styling */
+        .insight-box {
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+            border-left: 3px solid #1976d2;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .insight-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Analysis box styling */
+        .analysis-box {
+            background: linear-gradient(to right, #fff3e0, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .analysis-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Technical box styling */
+        .technical-box {
+            background: linear-gradient(to right, #fce4ec, #f8bbd9);
+            border-left: 3px solid #e91e63;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .technical-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Series introduction box */
+        .series-box {
+            background: linear-gradient(135deg, #f3e5f5 0%, #e8eaf6 100%);
+            border-left: 3px solid #7b1fa2;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .series-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Optimization perspective box */
+        .optimization-box {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 3px solid #4caf50;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .optimization-header {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Numerical computation box */
+        .numerical-box {
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+            border-left: 3px solid #1976d2;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .numerical-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Low-rank context box */
+        .lowrank-box {
+            background: linear-gradient(to right, #fff3e0, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .lowrank-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Matrix derivative box */
+        .derivative-box {
+            background: linear-gradient(to right, #fce4ec, #f8bbd9);
+            border-left: 3px solid #e91e63;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .derivative-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Pseudo-inverse properties box */
+        .properties-box {
+            background: linear-gradient(135deg, #f5f5f5 0%, #eceff1 100%);
+            border-left: 3px solid #607d8b;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .properties-header {
+            color: #455a64;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>The Path to Low-Rank Approximation (Part 1): Pseudo-Inverse</h1>
+                <div class="subtitle">An introductory exploration of matrix pseudo-inverses from an optimization perspective, establishing foundations for understanding low-rank approximation techniques in machine learning and numerical linear algebra</div>
+                
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>Su Jianlin</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-eye"></i>
+                        <span>Scientific Spaces</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <div class="tag">Low-Rank Approximation</div>
+                        <div class="tag">Pseudo-Inverse</div>
+                        <div class="tag">Matrix Optimization</div>
+                        <div class="tag">Numerical Linear Algebra</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Translation Notice -->
+        <div class="translation-notice">
+            <div class="translation-notice-content">
+                <div class="translation-text">
+                    <h3><i class="fas fa-language"></i> Academic Translation</h3>
+                    <p>This is an academic English translation maintaining technical accuracy while adapting to English academic conventions.</p>
+                </div>
+                <div class="translator-badge">
+                    <i class="fas fa-user-graduate"></i>
+                    Translated by ScalingOpt Team
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Sidebar Table of Contents -->
+            <aside class="sidebar">
+                <nav class="toc">
+                    <div class="toc-header">
+                        <i class="fas fa-list"></i>
+                        Contents
+                    </div>
+                    <ul class="toc-list">
+                        <li class="toc-item">
+                            <a href="#optimization-perspective" class="toc-link">
+                                <span class="toc-number">1</span>
+                                <span>Optimization Perspective</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#norm-related" class="toc-link">
+                                <span class="toc-number">2</span>
+                                <span>Norm-Related Concepts</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#matrix-derivatives" class="toc-link">
+                                <span class="toc-number">3</span>
+                                <span>Matrix Derivatives</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#basic-results" class="toc-link">
+                                <span class="toc-number">4</span>
+                                <span>Basic Results</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#general-form" class="toc-link">
+                                <span class="toc-number">5</span>
+                                <span>General Form</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#numerical-computation" class="toc-link">
+                                <span class="toc-number">6</span>
+                                <span>Numerical Computation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#article-summary" class="toc-link">
+                                <span class="toc-number">7</span>
+                                <span>Article Summary</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Article Content -->
+            <main class="main-content">
+                <div class="series-box">
+                    <div class="series-header">
+                        <i class="fas fa-book-open"></i>
+                        Series Introduction
+                    </div>
+                    <p>Many readers, like the author, may experience a sense of familiarity mixed with unfamiliarity regarding low-rank matrix approximation. Familiarity arises because the concept and significance of low-rank approximation are not difficult to grasp, and techniques such as LoRA (Low-Rank Adaptation) based on low-rank approximation have proliferated, embedding the concept deeply in our collective consciousness through constant exposure. However, low-rank approximation encompasses a vast territory, and research papers in this area frequently introduce novel techniques that are both unfamiliar and awe-inspiring, leading to a sense of partial understanding or ambiguity.</p>
+                    <p>Therefore, in this series of articles, I will attempt to systematically organize the theoretical content related to low-rank matrix approximation to complete our understanding of this important topic. In this first article, we focus on a relatively simple concept within the low-rank approximation series—the pseudo-inverse.</p>
+                </div>
+                
+                <h2 id="optimization-perspective">Optimization Perspective<a href="#optimization-perspective">#</a></h2>
+                
+                <p>The pseudo-inverse (also known as the "generalized inverse"), as the name suggests, represents a "generalized matrix inverse." It effectively extends the concept of the inverse matrix to non-invertible matrices.<!--more--></p>
+                
+                <p>Consider the matrix equation $\boldsymbol{A}\boldsymbol{B}=\boldsymbol{M}$. If $\boldsymbol{A}$ is a square matrix and invertible, we directly obtain $\boldsymbol{B}=\boldsymbol{A}^{-1}\boldsymbol{M}$. But what if $\boldsymbol{A}$ is non-invertible or not even square? In such cases, we may be unable to find $\boldsymbol{B}$ satisfying $\boldsymbol{A}\boldsymbol{B}=\boldsymbol{M}$. If we wish to proceed, we typically reformulate the problem as an optimization:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(1)</span>
+                        \[
+                        \mathop{\text{argmin}}_\boldsymbol{B} \Vert \boldsymbol{A}\boldsymbol{B} - \boldsymbol{M}\Vert_F^2
+                        \]
+                    </div>
+                </div>
+                
+                <p>where $\boldsymbol{A}\in\mathbb{R}^{n\times r}, \boldsymbol{B}\in\mathbb{R}^{r\times m}, \boldsymbol{M}\in\mathbb{R}^{n\times m}$. Note that the field is $\mathbb{R}$, indicating that this series focuses on real matrices. Here, $\Vert\cdot\Vert_F$ denotes the Frobenius norm of a matrix, measuring the distance between $\boldsymbol{A}\boldsymbol{B} - \boldsymbol{M}$ and the zero matrix, defined as:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(2)</span>
+                        \[
+                        \Vert \boldsymbol{M}\Vert_F = \sqrt{\sum_{i=1}^n\sum_{j=1}^m M_{i,j}^2}
+                        \]
+                    </div>
+                </div>
+                
+                <div class="lowrank-box">
+                    <div class="lowrank-header">
+                        <i class="fas fa-filter"></i>
+                        Low-Rank Approximation Context
+                    </div>
+                    <p>In essence, we transition from seeking an exact inverse to minimizing the squared error between $\boldsymbol{A}\boldsymbol{B}$ and $\boldsymbol{M}$. The theme of this series is low-rank approximation, so we assume $r \ll \min(n,m)$. In machine learning terms, this corresponds to reconstructing the complete $\boldsymbol{M}$ matrix through low-dimensional, lossy input matrix $\boldsymbol{A}$ and linear transformation $\boldsymbol{B}$.</p>
+                </div>
+                
+                <p>When $m=n$ and $\boldsymbol{M}$ is taken as the identity matrix $\boldsymbol{I}_n$, we obtain a result dependent solely on $\boldsymbol{A}$, denoted as:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(3)</span>
+                        \[
+                        \boldsymbol{A}^{\dagger} = \mathop{\text{argmin}}_\boldsymbol{B} \Vert \boldsymbol{A}\boldsymbol{B} - \boldsymbol{I}_n\Vert_F^2
+                        \]
+                    </div>
+                </div>
+                
+                <p>This behaves similarly to an inverse of $\boldsymbol{A}$, hence it is called the "(right) pseudo-inverse" of $\boldsymbol{A}$. Similarly, if $\boldsymbol{B}$ is given, we can switch the optimization variable to $\boldsymbol{A}$, obtaining the "(left) pseudo-inverse" of $\boldsymbol{B}$:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(4)</span>
+                        \[
+                        \boldsymbol{B}^{\dagger} = \mathop{\text{argmin}}_\boldsymbol{A} \Vert \boldsymbol{A}\boldsymbol{B} - \boldsymbol{I}_n\Vert_F^2
+                        \]
+                    </div>
+                </div>
+                
+                <h2 id="norm-related">Norm-Related Concepts<a href="#norm-related">#</a></h2>
+                
+                <p>Before proceeding further, let us supplement some background on the Frobenius norm. Vector norms are presumably familiar to most readers, with the classic "$p$-norm": for $\boldsymbol{x}=(x_1,x_2,\cdots,x_m)$, its $p$-norm is defined as:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(5)</span>
+                        \[
+                        \Vert \boldsymbol{x}\Vert_p = \sqrt[\uproot{10}p]{\sum_{i=1}^m |x_i|^p}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Among $p$-norms, the most common is $p=2$, which is the frequently mentioned vector length, also known as the "Euclidean norm." If the norm subscript is omitted and written simply as $\Vert \boldsymbol{x}\Vert$, it almost always defaults to $p=2$.</p>
+                
+                <p>Matrix norms are slightly more complex, with at least two different yet commonly used norms. One is the Frobenius norm already mentioned in the previous section, which is computed by flattening the matrix into a vector:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(6)</span>
+                        \[
+                        \Vert \boldsymbol{M}\Vert_F =  \Vert \text{vec}(\boldsymbol{M})\Vert_2 = \sqrt{\sum_{i=1}^n\sum_{j=1}^m M_{i,j}^2}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Other matrix norms will be introduced when encountered. Due to the diversity of matrix norms, the subscript ${}_F$ in $\Vert \boldsymbol{M}\Vert_F$ generally cannot be omitted to avoid confusion. The Frobenius norm is derived by treating a matrix as a vector and applying the vector norm definition. This inspires us to try extending more vector operations to matrices, such as the inner product:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(7)</span>
+                        \[
+                        \langle \boldsymbol{P}, \boldsymbol{Q} \rangle_F =  \langle \text{vec}(\boldsymbol{P}), \text{vec}(\boldsymbol{Q}) \rangle = \sum_{i=1}^n\sum_{j=1}^m P_{i,j} Q_{i,j}
+                        \]
+                    </div>
+                </div>
+                
+                <p>This is called the Frobenius inner product of matrices $\boldsymbol{P},\boldsymbol{Q}$, where $\boldsymbol{P},\boldsymbol{Q}\in\mathbb{R}^{n\times m}$. It can be expressed using the matrix trace operation:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(8)</span>
+                        \[
+                        \langle \boldsymbol{P}, \boldsymbol{Q} \rangle_F =  \text{Tr}(\boldsymbol{P}^{\top} \boldsymbol{Q})
+                        \]
+                    </div>
+                </div>
+                
+                <p>This can be directly proved using the definitions of matrix multiplication and trace (the reader may attempt this proof). When $\boldsymbol{P},\boldsymbol{Q}$ arise from products of multiple matrices, converting to equivalent trace operations often aids simplification. For example, using it we can prove that orthogonal transformations preserve the Frobenius norm: assuming $\boldsymbol{U}$ is an orthogonal matrix, using $\Vert \boldsymbol{M}\Vert_F^2 = \langle \boldsymbol{M}, \boldsymbol{M} \rangle_F$ and the relationship between Frobenius inner product and trace, we obtain:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(9)</span>
+                        \[
+                        \Vert \boldsymbol{U}\boldsymbol{M}\Vert_F^2 = \text{Tr}((\boldsymbol{U}\boldsymbol{M})^{\top} \boldsymbol{U}\boldsymbol{M})=  \text{Tr}(\boldsymbol{M}^{\top} \boldsymbol{U}^{\top}\boldsymbol{U}\boldsymbol{M})=\text{Tr}(\boldsymbol{M}^{\top} \boldsymbol{M}) = \Vert \boldsymbol{M}\Vert_F^2
+                        \]
+                    </div>
+                </div>
+                
+                <h2 id="matrix-derivatives">Matrix Derivatives<a href="#matrix-derivatives">#</a></h2>
+                
+                <div class="derivative-box">
+                    <div class="derivative-header">
+                        <i class="fas fa-calculator"></i>
+                        Matrix Calculus Approach
+                    </div>
+                    <p>Returning to our main topic, for an optimization objective, the ideal outcome naturally is obtaining an analytical solution through differentiation—and equation (1) achieves precisely that! This conclusion can be roughly "eyeballed": $\boldsymbol{A}\boldsymbol{B}-\boldsymbol{M}$ is a linear function of $\boldsymbol{B}$, so $\Vert \boldsymbol{A}\boldsymbol{B}-\boldsymbol{M}\Vert_F^2$ is a quadratic function of $\boldsymbol{A}$ or $\boldsymbol{B}$, and quadratic functions have analytical minima.</p>
+                </div>
+                
+                <p>To find the derivative of $\mathcal{L}=\Vert \boldsymbol{A}\boldsymbol{B}-\boldsymbol{M}\Vert_F^2$ with respect to $\boldsymbol{B}$, we first need the derivative of $\mathcal{L}$ with respect to $\boldsymbol{E}=\boldsymbol{A}\boldsymbol{B}-\boldsymbol{M}$, then the derivative of $\boldsymbol{E}$ with respect to $\boldsymbol{B}$, and finally combine them via the chain rule:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(10)</span>
+                        \[
+                        \frac{\partial \mathcal{L}}{\partial B_{i,j}} = \sum_{k,l}\frac{\partial \mathcal{L}}{\partial E_{k,l}}\frac{\partial E_{k,l}}{\partial B_{i,j}}
+                        \]
+                    </div>
+                </div>
+                
+                <p>By definition $\mathcal{L}=\Vert \boldsymbol{E}\Vert_F^2 = \sum_{i,j} E_{i,j}^2$, clearly among the many squared terms in the summation, only when $(i,j)=(k,l)$ is the derivative with respect to $E_{k,l}$ non-zero. Therefore, $\mathcal{L}$'s derivative with respect to $E_{k,l}$ is simply the derivative of $E_{k,l}^2$ with respect to $E_{k,l}$, i.e., $\frac{\partial \mathcal{L}}{\partial E_{k,l}}=2E_{k,l}$. Next, from the definition of matrix multiplication:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(11)</span>
+                        \[
+                        E_{k,l} = \left(\sum_{\alpha} A_{k,\alpha}B_{\alpha,l}\right) - M_{k,l}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Similarly, only when $(\alpha,l)=(i,j)$ does the above derivative with respect to $B_{i,j}$ produce a non-zero result $A_{k,i}$. Thus we can write $\frac{\partial E_{k,l}}{\partial B_{i,j}}=A_{k,i}\delta_{l,j}$, where $\delta_{l,j}$ is the Kronecker delta, indicating the condition $l=j$. Combining results, we obtain:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(12)</span>
+                        \[
+                        \frac{\partial \mathcal{L}}{\partial B_{i,j}} = 2\sum_{k,l}E_{k,l}A_{k,i}\delta_{l,j} = 2\sum_k E_{k,j}A_{k,i}
+                        \]
+                    </div>
+                </div>
+                
+                <p>If we adopt the convention that the gradient of a scalar with respect to a matrix has the same shape as the matrix itself, we can write:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(13)</span>
+                        \[
+                        \frac{\partial \mathcal{L}}{\partial \boldsymbol{B}} = 2\boldsymbol{A}^{\top}(\boldsymbol{A}\boldsymbol{B}-\boldsymbol{M})
+                        \]
+                    </div>
+                </div>
+                
+                <p>Although the derivation process requires careful steps, the result is quite intuitive: intuitively $\frac{\partial \mathcal{L}}{\partial \boldsymbol{B}}$ should be the product of $2(\boldsymbol{A}\boldsymbol{B}-\boldsymbol{M})$ and $\boldsymbol{A}$ (analogous to scalar differentiation). Since we've established that $\frac{\partial \mathcal{L}}{\partial \boldsymbol{B}}$ has the same shape as $\boldsymbol{B}$ (i.e., $r\times m$), we need to combine $2(\boldsymbol{A}\boldsymbol{B}-\boldsymbol{M})\in\mathbb{R}^{n\times m}$ and $\boldsymbol{A}\in\mathbb{R}^{n\times r}$ to yield an $r\times m$ result—and the right-hand side of the above equation is the only way. By the same principle, we can quickly write:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(14)</span>
+                        \[
+                        \frac{\partial \mathcal{L}}{\partial \boldsymbol{A}} = 2(\boldsymbol{A}\boldsymbol{B}-\boldsymbol{M})\boldsymbol{B}^{\top}
+                        \]
+                    </div>
+                </div>
+                
+                <h2 id="basic-results">Basic Results<a href="#basic-results">#</a></h2>
+                
+                <p>Now that we have obtained $\frac{\partial \mathcal{L}}{\partial \boldsymbol{B}}$ and $\frac{\partial \mathcal{L}}{\partial \boldsymbol{A}}$, setting them to zero yields the respective optimal solutions:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(15)</span>
+                        \[
+                        \begin{aligned}
+                        2\boldsymbol{A}^{\top}(\boldsymbol{A}\boldsymbol{B}-\boldsymbol{M})&=0 \quad\Rightarrow\quad (\boldsymbol{A}^{\top} \boldsymbol{A})^{-1}\boldsymbol{A}^{\top}\boldsymbol{M} = \mathop{\text{argmin}}_\boldsymbol{B} \Vert \boldsymbol{A}\boldsymbol{B} - \boldsymbol{M}\Vert_F^2 \\
+                        2(\boldsymbol{A}\boldsymbol{B}-\boldsymbol{M})\boldsymbol{B}^{\top}&=0 \quad\Rightarrow\quad \boldsymbol{M}\boldsymbol{B}^{\top}(\boldsymbol{B} \boldsymbol{B}^{\top})^{-1} = \mathop{\text{argmin}}_\boldsymbol{A} \Vert \boldsymbol{A}\boldsymbol{B} - \boldsymbol{M}\Vert_F^2
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Substituting $\boldsymbol{M}=\boldsymbol{I}_n$, we obtain:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(16)</span>
+                        \[
+                        \begin{aligned}
+                        \boldsymbol{A}^{\dagger} &= (\boldsymbol{A}^{\top} \boldsymbol{A})^{-1}\boldsymbol{A}^{\top} \\
+                        \boldsymbol{B}^{\dagger} &= \boldsymbol{B}^{\top}(\boldsymbol{B} \boldsymbol{B}^{\top})^{-1}
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>If $\boldsymbol{A}$ or $\boldsymbol{B}$ is an invertible square matrix, it is straightforward to prove that the pseudo-inverse equals the ordinary inverse, i.e., $\boldsymbol{A}^{\dagger}=\boldsymbol{A}^{-1},\boldsymbol{B}^{\dagger}=\boldsymbol{B}^{-1}$. Additionally, from the above equations we can verify:</p>
+                
+                <div class="properties-box">
+                    <div class="properties-header">
+                        <i class="fas fa-check-circle"></i>
+                        Key Properties of Pseudo-Inverses
+                    </div>
+                    <blockquote>
+                        <p>1. $(\boldsymbol{A}^{\dagger})^{\dagger}=\boldsymbol{A},(\boldsymbol{B}^{\dagger})^{\dagger}=\boldsymbol{B}$, meaning the <u>pseudo-inverse of a pseudo-inverse</u> equals the original matrix. This indicates that while serving as an approximate inverse, the pseudo-inverse preserves the original matrix's information.</p>
+                        <p>2. $\boldsymbol{A}\boldsymbol{A}^{\dagger}\boldsymbol{A}=\boldsymbol{A},\boldsymbol{B}^{\dagger}\boldsymbol{B}\boldsymbol{B}^{\dagger}=\boldsymbol{B}^{\dagger}$, meaning $\boldsymbol{A}\boldsymbol{A}^{\dagger},\boldsymbol{B}^{\dagger}\boldsymbol{B}$, although not identity matrices $\boldsymbol{I}$, act as identity operators on $\boldsymbol{A},\boldsymbol{B}^{\dagger}$ respectively.</p>
+                    </blockquote>
+                </div>
+                
+                <p>Incidentally, the concept of matrix pseudo-inverse is actually quite broad, encompassing many different forms. What we have introduced here is the most common "<a href="https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_inverse" target="_blank">Moore–Penrose inverse</a>." Besides this, there exist "Drazin inverse," "Bott–Duffin inverse," etc., but as the author is not familiar with these, we will not elaborate further. Readers may refer to the Wikipedia entry on "<a href="https://en.wikipedia.org/wiki/Generalized_inverse" target="_blank">Generalized Inverse</a>".</p>
+                
+                <h2 id="general-form">General Form<a href="#general-form">#</a></h2>
+                
+                <p>However, the story is not yet complete. Equations (16) hold under the crucial premise that the corresponding $\boldsymbol{A}^{\top} \boldsymbol{A}$ or $\boldsymbol{B} \boldsymbol{B}^{\top}$ is invertible. What if they are non-invertible?</p>
+                
+                <p>Let's take $\boldsymbol{A}^{\dagger}$ as an example. Suppose $\boldsymbol{A}^{\top} \boldsymbol{A}$ is non-invertible. This implies that $\boldsymbol{A}$ has rank less than $r$. We can only find $s < r$ column vectors forming a maximal linearly independent set, constituting matrix $\boldsymbol{A}_s\in\mathbb{R}^{n\times s}$. Then $\boldsymbol{A}$ can be expressed as $\boldsymbol{A}_s \boldsymbol{P}$, where $\boldsymbol{P}\in\mathbb{R}^{s\times r}$ is the matrix mapping $\boldsymbol{A}_s$ to $\boldsymbol{A}$. At this point:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(17)</span>
+                        \[
+                        \mathop{\text{argmin}}_\boldsymbol{B} \Vert \boldsymbol{A}\boldsymbol{B} - \boldsymbol{I}_n\Vert_F^2 = \mathop{\text{argmin}}_\boldsymbol{B} \Vert \boldsymbol{A}_s \boldsymbol{P}\boldsymbol{B} - \boldsymbol{I}_n\Vert_F^2
+                        \]
+                    </div>
+                </div>
+                
+                <p>If the optimal solution for $\boldsymbol{B}$ is still denoted as $\boldsymbol{A}^{\dagger}$, we can only determine:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(18)</span>
+                        \[
+                        \boldsymbol{P}\boldsymbol{A}^{\dagger} = \boldsymbol{A}_s^{\dagger} = (\boldsymbol{A}_s^{\top} \boldsymbol{A}_s)^{-1}\boldsymbol{A}_s^{\top}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Since we assumed $\boldsymbol{A}_s$ is a maximal linearly independent set, $\boldsymbol{A}_s^{\top} \boldsymbol{A}_s$ is necessarily invertible, so the above is well-defined. However, going from $\boldsymbol{A}^{\dagger}$ to $\boldsymbol{P}\boldsymbol{A}^{\dagger}$ is a dimension-reduction process, meaning multiple $\boldsymbol{A}^{\dagger}$ satisfy $\boldsymbol{P}\boldsymbol{A}^{\dagger} = \boldsymbol{A}_s^{\dagger}$. That is, the optimal solution of objective (3) is not unique when $\boldsymbol{A}^{\top} \boldsymbol{A}$ is non-invertible; we cannot determine a unique pseudo-inverse $\boldsymbol{A}^{\dagger}$ solely from objective (3).</p>
+                
+                <div class="optimization-box">
+                    <div class="optimization-header">
+                        <i class="fas fa-magic"></i>
+                        Regularization Approach
+                    </div>
+                    <p>One possible approach is to supplement conditions like $(\boldsymbol{A}^{\dagger})^{\dagger}=\boldsymbol{A}$ or $\boldsymbol{A}^{\dagger}\boldsymbol{A}\boldsymbol{A}^{\dagger}=\boldsymbol{A}^{\dagger}$, which combined with $\boldsymbol{P}\boldsymbol{A}^{\dagger} = \boldsymbol{A}_s^{\dagger}$ would uniquely determine $\boldsymbol{A}^{\dagger}$. However, this feels too much like patching. In practice, we can handle this problem more elegantly and uniformly using a clever technique. The issue arises because when $\boldsymbol{A}^{\top} \boldsymbol{A}$ is non-invertible, the objective function (3) has multiple optimal solutions. We can add a regularization term to make it unique, then take the limit as the regularization weight approaches zero:</p>
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(19)</span>
+                            \[
+                            \boldsymbol{A}^{\dagger} = \lim_{\epsilon\to 0}\,\mathop{\text{argmin}}_\boldsymbol{B} \Vert \boldsymbol{A}\boldsymbol{B} - \boldsymbol{I}_n\Vert_F^2 + \epsilon\Vert \boldsymbol{B}\Vert_F^2
+                            \]
+                        </div>
+                    </div>
+                    <p>Here $\epsilon > 0$, and $\epsilon\to 0$ means approaching zero from the positive side. From this we can solve:</p>
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(20)</span>
+                            \[
+                            \boldsymbol{A}^{\dagger} = \lim_{\epsilon\to 0}\,(\boldsymbol{A}^{\top} \boldsymbol{A} + \epsilon \boldsymbol{I}_r)^{-1}\boldsymbol{A}^{\top}
+                            \]
+                        </div>
+                    </div>
+                </div>
+                
+                <p>When $\epsilon > 0$, $\boldsymbol{A}^{\top} \boldsymbol{A} + \epsilon \boldsymbol{I}_r$ is necessarily invertible (the reader may prove this). Therefore the above expression is well-defined. Since as $\epsilon\to 0$ the regularization term becomes negligible, this limit must exist. Note that we refer to the existence of the overall limit: when $\boldsymbol{A}^{\top} \boldsymbol{A}$ is non-invertible, the limit $\lim\limits_{\epsilon\to 0}\,(\boldsymbol{A}^{\top} \boldsymbol{A} + \epsilon \boldsymbol{I}_r)^{-1}$ does not exist (the result would involve infinities). Only after multiplying by $\boldsymbol{A}^{\top}$ and then taking the overall limit do we obtain a well-behaved result.</p>
+                
+                <p>What advantages does Equation (20) offer as a general extension of the pseudo-inverse? First, we already have expression (16) for $\boldsymbol{A}^{\dagger}$ when $\boldsymbol{A}^{\top} \boldsymbol{A}$ is invertible. Equation (20), as its generalization, possesses theoretical elegance with intuitive and consistent form. Second, formal consistency ensures that properties of $\boldsymbol{A}^{\dagger}$ when $\boldsymbol{A}^{\top} \boldsymbol{A}$ is invertible, such as $(\boldsymbol{A}^{\dagger})^{\dagger}$, are preserved, allowing us to discuss $\boldsymbol{A}^{\dagger}$ almost without considering the invertibility of $\boldsymbol{A}^{\top} \boldsymbol{A}$.</p>
+                
+                <h2 id="numerical-computation">Numerical Computation<a href="#numerical-computation">#</a></h2>
+                
+                <div class="numerical-box">
+                    <div class="numerical-header">
+                        <i class="fas fa-laptop-code"></i>
+                        Practical Computation Methods
+                    </div>
+                    <p>Of course, Equation (20) is currently merely a formal definition. If we directly use it for numerical computation, we would need to choose a sufficiently small $\epsilon$ and compute $(\boldsymbol{A}^{\top} \boldsymbol{A} + \epsilon \boldsymbol{I}_r)^{-1}$, inevitably facing severe numerical instability. To obtain a stable computation method, we utilize the fact that real symmetric matrices can always be orthogonally diagonalized (the <a href="https://en.wikipedia.org/wiki/Spectral_theorem" target="_blank">Spectral Theorem</a>), decomposing $\boldsymbol{A}^{\top} \boldsymbol{A}$ as:</p>
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(21)</span>
+                            \[
+                            \boldsymbol{A}^{\top} \boldsymbol{A} = \boldsymbol{U}\boldsymbol{\Lambda} \boldsymbol{U}^{\top}
+                            \]
+                        </div>
+                    </div>
+                    <p>where $\boldsymbol{U}$ is an orthogonal matrix, $\boldsymbol{\Lambda}=\text{diag}(\lambda_1,\lambda_2,\cdots,\lambda_r)$ is a diagonal matrix of eigenvalues. Due to the positive semidefiniteness of $\boldsymbol{A}^{\top} \boldsymbol{A}$, its eigenvalues are always non-negative. Using this decomposition, we have:</p>
+                </div>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(22)</span>
+                        \[
+                        \begin{aligned}
+                        (\boldsymbol{A}^{\top} \boldsymbol{A} + \epsilon \boldsymbol{I}_r)^{-1}\boldsymbol{A}^{\top} 
+                        &= (\boldsymbol{U}\boldsymbol{\Lambda} \boldsymbol{U}^{\top} + \epsilon \boldsymbol{I}_r)^{-1} \boldsymbol{A}^{\top} \\
+                        &= [\boldsymbol{U}(\boldsymbol{\Lambda} + \epsilon \boldsymbol{I}_r) \boldsymbol{U}^{\top}]^{-1}\boldsymbol{A}^{\top} \\
+                        &= \boldsymbol{U}(\boldsymbol{\Lambda} + \epsilon \boldsymbol{I}_r)^{-1} \boldsymbol{U}^{\top}\boldsymbol{A}^{\top}
+                        \end{aligned}
+                        \]
+                    </div>
+                </div>
+                
+                <p>For $(\boldsymbol{\Lambda} + \epsilon \boldsymbol{I}_r)^{-1}$ we have:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(23)</span>
+                        \[
+                        (\boldsymbol{\Lambda} + \epsilon \boldsymbol{I}_r)^{-1} = \text{diag}\Big((\lambda_1 + \epsilon)^{-1},(\lambda_2 + \epsilon)^{-1},\cdots,(\lambda_r + \epsilon)^{-1}\Big)
+                        \]
+                    </div>
+                </div>
+                
+                <p>If $\lambda_i > 0$, then $\lim\limits_{\epsilon\to 0}\,(\lambda_i + \epsilon)^{-1}=\lambda_i^{-1}$, a finite result that doesn't hinder computation. The problem arises when $\lambda_i = 0$, where $\lim\limits_{\epsilon\to 0}\,(\lambda_i + \epsilon)^{-1}=\lim\limits_{\epsilon\to 0}\,\epsilon^{-1}\to\infty$. However, we know that as $\epsilon\to 0$ the regularization effect vanishes, so we conclude that limit (20) cannot produce infinite values. Therefore, if $\lambda_i=0$ exists, the multiplication by $\boldsymbol{U}^{\top}\boldsymbol{A}^{\top}$ on the right must somehow cancel the infinity brought by $\lim\limits_{\epsilon\to 0}\, \epsilon^{-1}$. The only way to cancel such infinity is "multiplication by 0," i.e., $\lim\limits_{\epsilon\to 0}\, \epsilon^{-1}\times 0 = 0$.</p>
+                
+                <p>In other words, if $\lambda_i=0$, then the factor multiplied by $(\lambda_i+\epsilon)^{-1}$ from $\boldsymbol{U}^{\top}\boldsymbol{A}^{\top}$ must be $0$. Since "0 times any number yields 0," the actual value of $(\lambda_i+\epsilon)^{-1}$ when $\lambda_i=0$ becomes unimportant; we can simply set it to 0. Thus, we obtain a straightforward general method for computing $\boldsymbol{A}^{\dagger}$:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(24)</span>
+                        \[
+                        \boldsymbol{A}^{\dagger} = \boldsymbol{U}\boldsymbol{\Lambda}^{\dagger}\boldsymbol{U}^{\top}\boldsymbol{A}^{\top}, \quad \boldsymbol{A}^{\top} \boldsymbol{A} = \boldsymbol{U}\boldsymbol{\Lambda} \boldsymbol{U}^{\top}
+                        \]
+                    </div>
+                </div>
+                
+                <p>where $\boldsymbol{\Lambda}^{\dagger}$ means: if a diagonal element is zero, leave it unchanged; if non-zero, take its reciprocal.</p>
+                
+                <p>Some readers might question: since "0 times any number yields 0," why keep zero $\lambda_i$ unchanged? Could we arbitrarily assign another value? Actually, choosing any other value wouldn't affect the result. However, since we use the notation $\boldsymbol{\Lambda}^{\dagger}$, we should maintain consistency with Equation (20), i.e., it should match the direct computation result when substituting diagonal matrix $\boldsymbol{\Lambda}$ into Equation (20):</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(25)</span>
+                        \[
+                        \boldsymbol{\Lambda}^{\dagger} = \lim_{\epsilon\to 0}\,(\boldsymbol{\Lambda}^{\top} \boldsymbol{\Lambda} + \epsilon \boldsymbol{I}_r)^{-1}\boldsymbol{\Lambda}^{\top} = \text{diag}(\kappa_1,\kappa_2,\cdots,\kappa_n),\quad \kappa_i = \left\{\begin{aligned}\lambda_i^{-1}, \,\,\lambda_i\neq 0 \\ 0, \,\,\lambda_i=0 \end{aligned} \right.
+                        \]
+                    </div>
+                </div>
+                
+                <h2 id="article-summary">Article Summary<a href="#article-summary">#</a></h2>
+                
+                <p>In this article, we introduced the pseudo-inverse from a low-rank approximation perspective. This concept extends the notion of matrix inverses to non-square or non-invertible matrices, enabling more effective analysis and solution of general matrix equations. The optimization-based derivation provides both theoretical insight and practical computational methods, establishing important foundations for subsequent discussions on low-rank approximation techniques.</p>
+
+                <div class="citation-section">
+                    <div class="citation-header">
+                        <i class="fas fa-quote-right"></i>
+                        Citation Information
+                    </div>
+                    <p><strong>Original Article:</strong> Su Jianlin. The Path to Low-Rank Approximation (Part 1): Pseudo-Inverse. <em>Scientific Spaces</em>.</p>
+                    
+                    <p><strong>How to cite this translation:</strong></p>
+                    <div class="citation-box">
+                        Su, J. The Path to Low-Rank Approximation (Part 1): Pseudo-Inverse [Translated by ScalingOpt Team]. 
+                        <em>Scientific Spaces</em>.
+                    </div>
+                    <p style="margin-top: 0.8rem;"><strong>BibTeX:</strong></p>
+                    <div class="citation-box">
+                        @article{su2025lowrank_pseudoinverse,
+                            title   = {The Path to Low-Rank Approximation (Part 1): Pseudo-Inverse},
+                            author  = {Su, Jianlin},
+                            journal = {Scientific Spaces},
+                            year    = {2025},
+                            url     = {https://kexue.fm/archives/10565},
+                            note    = {Translated by ScalingOpt Team}
+                          }
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="translation-credit">
+                <i class="fas fa-user-graduate"></i>
+                Academic Translation by ScalingOpt Team
+            </div>
+            <div class="copyright">
+                © 2009-2025 Scientific Spaces. All rights reserved.<br>
+                Original content licensed under Creative Commons BY-NC-ND 2.5 China
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript for Interactive Features -->
+    <script>
+        // Scroll Progress Bar
+        window.addEventListener('scroll', function() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            scrollProgress.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Table of Contents Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            const sections = document.querySelectorAll('h2[id]');
+            
+            // Set active section based on scroll position
+            function setActiveSection() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 50)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', setActiveSection);
+            setActiveSection(); // Initial call
+            
+            // Smooth scroll for TOC links
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 50,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+
+        // MathJax Configuration
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                tags: 'ams'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    
+    <!-- MathJax CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</body>
+</html>

@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Effective Rank of Matrices | Scientific Spaces</title>
+    <meta name="description" content="Comprehensive exploration of Effective Rank as an extension of matrix rank for numerical computation, covering threshold-based definitions, norm ratios, entropy approaches, and connections to sparsity measures.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a6bca;
+            --primary-dark: #1357a8;
+            --primary-light: #e8f1fc;
+            --secondary: #2c3e50;
+            --accent: #3498db;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f5f7fa;
+            --gray-200: #e4e7eb;
+            --gray-300: #cbd2d9;
+            --gray-600: #7b8794;
+            --gray-700: #52606d;
+            --gray-900: #323f4b;
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 6px 24px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: #f0f5fc;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.5rem 1.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -8%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+        }
+
+        .meta-item i {
+            font-size: 0.85rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Translation Notice */
+        .translation-notice {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1.2rem;
+            margin: 0;
+        }
+
+        .translation-notice-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .translation-text h3 {
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .translation-text p {
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        .translator-badge {
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(26, 107, 202, 0.2);
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+        }
+
+        @media (max-width: 850px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            padding-left: 1rem;
+        }
+
+        .toc {
+            position: sticky;
+            top: 1rem;
+        }
+
+        .toc-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .toc-header i {
+            font-size: 0.9rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.4rem;
+            position: relative;
+        }
+
+        .toc-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            transition: var(--transition);
+            border-left: 2px solid transparent;
+            padding-left: 8px;
+        }
+
+        .toc-link:hover {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            transform: translateX(2px);
+        }
+
+        .toc-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .toc-number {
+            font-weight: 500;
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            min-width: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-right: 1.2rem;
+            padding-left: 0;
+        }
+
+        @media (max-width: 850px) {
+            .sidebar {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 0 1rem;
+            }
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 1.5rem 0 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: relative;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 35px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        h2 a {
+            color: var(--accent);
+            font-size: 0.7rem;
+            margin-left: 6px;
+            text-decoration: none;
+        }
+
+        h2 a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            color: var(--gray-900);
+            line-height: 1.65;
+        }
+
+        /* Equation Styling */
+        .equation-container {
+            margin: 0.8rem 0;
+        }
+
+        .equation {
+            background: var(--primary-light);
+            border-left: 3px solid var(--primary);
+            padding: 0.8rem 1rem;
+            border-radius: 0 5px 5px 0;
+            font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', serif;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .equation-number {
+            color: var(--primary);
+            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin-right: 6px;
+            display: inline-block;
+            min-width: 18px;
+        }
+
+        /* Code Block Styling */
+        .code-container {
+            margin: 1rem 0;
+            background: #2d2d2d;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .code-header {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 0.6rem 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .code-content {
+            padding: 0.8rem;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #f8f8f2;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+        }
+
+        /* Reference Box */
+        .reference-box {
+            background: linear-gradient(to right, #f8fafc, var(--primary-light));
+            border: 1px solid var(--gray-200);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .reference-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .reference-header i {
+            font-size: 0.9rem;
+        }
+
+        .reference-list {
+            list-style: none;
+        }
+
+        .reference-item {
+            padding: 0.3rem 0 0.3rem 0.8rem;
+            position: relative;
+            margin-bottom: 0.4rem;
+            color: var(--gray-700);
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .reference-item::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 0.65rem;
+        }
+
+        /* Citation Section */
+        .citation-section {
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .citation-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .citation-box {
+            background: var(--white);
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid var(--gray-300);
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-top: 0.6rem;
+            overflow-x: auto;
+            color: var(--gray-900);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--secondary);
+            color: white;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .translation-credit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 6px 16px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(26, 107, 202, 0.2);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            margin-top: 0.6rem;
+        }
+
+        /* Utility Classes */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-light), #e8f2ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .math {
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.1s ease;
+            z-index: 1000;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 1rem 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 0.6rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem 0;
+            }
+            
+            .main-content {
+                padding-right: 0.8rem;
+            }
+            
+            .sidebar {
+                padding-left: 0.8rem;
+            }
+            
+            .meta-info {
+                gap: 0.6rem;
+            }
+            
+            .meta-item {
+                font-size: 0.75rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .translation-notice-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .translator-badge {
+                align-self: flex-start;
+            }
+        }
+
+        /* Links styling */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Optimize long formula display */
+        .equation {
+            word-break: break-word;
+        }
+        
+        /* Optimize list display */
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.3rem;
+            line-height: 1.5;
+        }
+        
+        /* Optimize math formula spacing */
+        .MathJax_Display {
+            margin: 0.6em 0 !important;
+        }
+        
+        /* Image container styling */
+        .pic-container {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+        
+        .pic-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .typecho-caption {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        
+        /* Quote block styling */
+        blockquote.cite {
+            background: linear-gradient(to right, var(--primary-light), #f0f7ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+        }
+        
+        blockquote.cite div {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        blockquote.cite a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        /* Blockquote styling */
+        blockquote {
+            background: linear-gradient(to right, var(--gray-100), var(--primary-light));
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+            position: relative;
+        }
+
+        blockquote p {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+
+        blockquote p:before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Underline styling */
+        u {
+            text-decoration: none;
+            border-bottom: 1px dotted var(--primary);
+        }
+
+        /* List styling inside main content */
+        .main-content ol, .main-content ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .main-content li {
+            margin-bottom: 0.4rem;
+            line-height: 1.6;
+        }
+
+        /* Highlight box for important notes */
+        .note-box {
+            background: linear-gradient(to right, #fff8e1, #fff3cd);
+            border-left: 3px solid #ffc107;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+
+        .note-box strong {
+            color: #856404;
+        }
+
+        /* Definition list styling */
+        .definition {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 3px solid #4caf50;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .definition-header {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Mathematical proof styling */
+        .proof {
+            background: linear-gradient(to right, #f3e5f5, #f8f4ff);
+            border-left: 3px solid #9c27b0;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .proof-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Insight box styling */
+        .insight-box {
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+            border-left: 3px solid #1976d2;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .insight-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Analysis box styling */
+        .analysis-box {
+            background: linear-gradient(to right, #fff3e0, #ffecb3);
+            border-left: 3px solid #ff9800;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .analysis-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Technical box styling */
+        .technical-box {
+            background: linear-gradient(to right, #fce4ec, #f8bbd9);
+            border-left: 3px solid #e91e63;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .technical-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Series introduction box */
+        .series-box {
+            background: linear-gradient(135deg, #f3e5f5 0%, #e8eaf6 100%);
+            border-left: 3px solid #7b1fa2;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .series-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Effective Rank Introduction box */
+        .erank-intro-box {
+            background: linear-gradient(135deg, #f3e5f5 0%, #e8eaf6 100%);
+            border-left: 3px solid #7b1fa2;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .erank-intro-header {
+            color: #7b1fa2;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Threshold-based ERank box */
+        .threshold-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            border-left: 3px solid #2e7d32;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .threshold-header {
+            color: #1b5e20;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Norm Ratio box */
+        .norm-ratio-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-left: 3px solid #1976d2;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .norm-ratio-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Entropy-based box */
+        .entropy-box {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffecb3 100%);
+            border-left: 3px solid #ff9800;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .entropy-header {
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Sparsity Connection box */
+        .sparsity-box {
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
+            border-left: 3px solid #e91e63;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .sparsity-header {
+            color: #c2185b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Computational Complexity box */
+        .complexity-box {
+            background: linear-gradient(135deg, #f5f5f5 0%, #eceff1 100%);
+            border-left: 3px solid #607d8b;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .complexity-header {
+            color: #455a64;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Theoretical Properties box */
+        .properties-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            border-left: 3px solid #2e7d32;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .properties-header {
+            color: #1b5e20;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Numerical Computation box */
+        .numerical-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-left: 3px solid #1976d2;
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .numerical-header {
+            color: #1565c0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>Effective Rank of Matrices</h1>
+                <div class="subtitle">Exploring extensions of matrix rank for numerical computation through threshold-based definitions, norm ratios, entropy measures, and connections to sparsity quantification in linear algebra</div>
+                
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>Su Jianlin</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-eye"></i>
+                        <span>Scientific Spaces</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <div class="tag">Effective Rank</div>
+                        <div class="tag">Matrix Rank</div>
+                        <div class="tag">Sparsity Measures</div>
+                        <div class="tag">Numerical Linear Algebra</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Translation Notice -->
+        <div class="translation-notice">
+            <div class="translation-notice-content">
+                <div class="translation-text">
+                    <h3><i class="fas fa-language"></i> Academic Translation</h3>
+                    <p>This is an academic English translation maintaining technical accuracy while adapting to English academic conventions.</p>
+                </div>
+                <div class="translator-badge">
+                    <i class="fas fa-user-graduate"></i>
+                    Translated by ScalingOpt Team
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Sidebar Table of Contents -->
+            <aside class="sidebar">
+                <nav class="toc">
+                    <div class="toc-header">
+                        <i class="fas fa-list"></i>
+                        Contents
+                    </div>
+                    <ul class="toc-list">
+                        <li class="toc-item">
+                            <a href="#introduction" class="toc-link">
+                                <span class="toc-number">1</span>
+                                <span>Introduction</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#error-truncation" class="toc-link">
+                                <span class="toc-number">2</span>
+                                <span>Error Truncation</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#norm-ratios" class="toc-link">
+                                <span class="toc-number">3</span>
+                                <span>Norm Ratios</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#distribution-and-entropy" class="toc-link">
+                                <span class="toc-number">4</span>
+                                <span>Distribution and Entropy</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#sparsity-indices" class="toc-link">
+                                <span class="toc-number">5</span>
+                                <span>Sparsity Indices</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#article-summary" class="toc-link">
+                                <span class="toc-number">6</span>
+                                <span>Article Summary</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Article Content -->
+            <main class="main-content">
+                <div class="erank-intro-box">
+                    <div class="erank-intro-header">
+                        <i class="fas fa-cogs"></i>
+                        Motivation for Effective Rank
+                    </div>
+                    <p><strong>Rank</strong> is a fundamental concept in linear algebra, representing the intrinsic dimensionality of a matrix. However, the strict mathematical definition of rank often does not fully align with numerical computation scenarios. Mathematically, rank equals the number of nonzero singular values, but the understanding of "equal to zero" differs between mathematics and numerical computation. In mathematics, "equal to zero" is absolute and strict—even $10^{-100}$ is not zero. In numerical computation, however, $10^{-10}$ is often treated as zero.</p>
+                    <p>Therefore, we seek to extend the concept of rank to a form more suitable for numerical computation characteristics. This gives rise to the concept of <strong>Effective Rank</strong>.</p>
+                </div>
+                
+                <h2 id="error-truncation">Error Truncation<a href="#error-truncation">#</a></h2>
+                
+                <div class="numerical-box">
+                    <div class="numerical-header">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        No Unified Definition
+                    </div>
+                    <p>It should be noted that there is currently no unified definition of effective rank in academia. What follows are several approaches to defining effective rank from different perspectives. For practical problems, readers can choose the definition most suitable for their application.</p>
+                </div>
+                
+                <p>We primarily consider rank from the perspective of singular values. For matrix $\boldsymbol{M}\in\mathbb{R}^{n\times m}$, without loss of generality, assume $n\leq m$. Its standard rank is:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(1)</span>
+                        \[
+                        \mathop{\text{rank}}(\boldsymbol{M}) \triangleq \max\{i\,|\,\sigma_i > 0\}\leq n
+                        \]
+                    </div>
+                </div>
+                
+                <p>where $\sigma_1\geq \sigma_2\geq \cdots\geq\sigma_n \geq 0$ are the singular values of $\boldsymbol{M}$. Intuitively, the concept of effective rank aims to treat singular values close to zero as zero. Therefore, a basic property of effective rank is that it does not exceed the standard rank and can degenerate to the standard rank in special cases. A simple definition satisfying this property is:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(2)</span>
+                        \[
+                        \mathop{\text{erank}}(\boldsymbol{M},\epsilon) \triangleq \max\{i\,|\,\sigma_i > \epsilon\}
+                        \]
+                    </div>
+                </div>
+                
+                <div class="threshold-box">
+                    <div class="threshold-header">
+                        <i class="fas fa-balance-scale"></i>
+                        Relative vs Absolute Thresholds
+                    </div>
+                    <p>However, the concepts of "large" and "small" should be relative. 1 is large relative to 0.01 but small relative to 100. Thus, normalizing by $\sigma_1$ appears more scientific:</p>
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(3)</span>
+                            \[
+                            \mathop{\text{erank}}(\boldsymbol{M},\epsilon) \triangleq \max\big\{i\,\big|\,\sigma_i/\sigma_1 > \epsilon\big\}
+                            \]
+                        </div>
+                    </div>
+                </div>
+                
+                <p>Beyond directly truncating singular values close to zero, we can also consider this problem from the perspective of low-rank approximation. In <a href="/archives/10407" target="_blank">"The Path to Low-Rank Approximation (Part 2): SVD"</a>, we proved that the optimal rank-$r$ approximation of a matrix is the SVD result retaining only the largest $r$ singular values. Conversely, we can specify a relative error $\epsilon$ and define effective rank as the minimum rank achieving this relative error:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(4)</span>
+                        \[
+                        \mathop{\text{erank}}(\boldsymbol{M},\epsilon) \triangleq \min\left\{ i\,\,\left|\,\,\sqrt{\left(\sum_{i=1}^r \sigma_i^2\right)\left/\left(\sum_{i=1}^n \sigma_i^2\right.\right)} \geq 1-\epsilon\right.\right\}
+                        \]
+                    </div>
+                </div>
+                
+                <p>This definition has clearer numerical meaning, but it only considers overall error, making some examples less elegant. For instance, for an $n\times n$ identity matrix, we expect its effective rank to always be $n$, because each singular value is equally 1, and there should be no truncation behavior. However, using the above definition, when $n$ is sufficiently large ($1/n < \epsilon$), the effective rank becomes less than $n$.</p>
+                
+                <h2 id="norm-ratios">Norm Ratios<a href="#norm-ratios">#</a></h2>
+                
+                <p>Although the effective rank definitions in the previous section are intuitive, they all depend on a hyperparameter $\epsilon$, ultimately lacking simplicity. Our basic understanding now is that the concept of effective rank can only rely on relative magnitudes. Thus, the problem reduces to constructing effective rank from $1\geq \sigma_2/\sigma_1\geq\cdots\geq\sigma_n/\sigma_1\geq 0$. Given that all values lie in $[0,1]$, a clever idea is to directly sum them:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(5)</span>
+                        \[
+                        \mathop{\text{erank}}(\boldsymbol{M}) \triangleq \sum_{i=1}^n\frac{\sigma_i}{\sigma_1}
+                        \]
+                    </div>
+                </div>
+                
+                <div class="norm-ratio-box">
+                    <div class="norm-ratio-header">
+                        <i class="fas fa-ruler-combined"></i>
+                        Matrix Norm Interpretations
+                    </div>
+                    <p>From <a href="/archives/10407" target="_blank">"The Path to Low-Rank Approximation (Part 2): SVD"</a>, we know that the largest singular value $\sigma_1$ is the matrix's <a href="https://en.wikipedia.org/wiki/Matrix_norm#Spectral_norm_(p_=_2)" target="_blank">spectral norm</a>, denoted $\Vert\boldsymbol{M}\Vert_2$. The sum of all singular values is also a matrix norm called the "<a href="https://en.wikipedia.org/wiki/Matrix_norm#Schatten_norms" target="_blank">nuclear norm</a>," typically denoted $\Vert\boldsymbol{M}\Vert_*$. Thus, the above expression can be simplified as:</p>
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(6)</span>
+                            \[
+                            \mathop{\text{erank}}(\boldsymbol{M}) \triangleq \frac{\Vert\boldsymbol{M}\Vert_*}{\Vert\boldsymbol{M}\Vert_2}
+                            \]
+                        </div>
+                    </div>
+                    <p>This may originate from <a href="https://papers.cool/arxiv/1501.01571" target="_blank">"An Introduction to Matrix Concentration Inequalities"</a>, where it is called "Intrinsic Dimension." However, related properties were already explored in <a href="https://papers.cool/arxiv/0706.4138" target="_blank">"Guaranteed Minimum-Rank Solutions of Linear Matrix Equations via Nuclear Norm Minimization"</a>.</p>
+                </div>
+                
+                <p>Similarly, we can construct effective rank by summing squares:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(7)</span>
+                        \[
+                        \mathop{\text{erank}}(\boldsymbol{M}) \triangleq \sum_{i=1}^n\frac{\sigma_i^2}{\sigma_1^2} = \frac{\Vert\boldsymbol{M}\Vert_F^2}{\Vert\boldsymbol{M}\Vert_2^2}
+                        \]
+                    </div>
+                </div>
+                
+                <p>Here $\Vert\cdot\Vert_F$ is the Frobenius norm. This definition likely originates from <a href="https://arxiv.org/abs/math/0503442" target="_blank">"Sampling from large matrices: an approach through geometric functional analysis"</a>, where it was called "Numerical Rank" and is now more commonly referred to as "Stable Rank," one of the more popular effective rank concepts.</p>
+                
+                <div class="complexity-box">
+                    <div class="complexity-header">
+                        <i class="fas fa-calculator"></i>
+                        Computational Considerations
+                    </div>
+                    <p>From a computational complexity perspective, Equation $\eqref{eq:f-2}$ (the squared version) has lower complexity than Equation $\eqref{eq:n-2}$ (the unsquared version). Computing the nuclear norm requires all singular values, meaning full SVD is needed. However, $\Vert\boldsymbol{M}\Vert_F^2$ equals the sum of squares of all matrix elements, so the main computational cost for Equation $\eqref{eq:f-2}$ is the maximum singular value, which is cheaper than computing all singular values. If desired, we can generalize Equations $\eqref{eq:n-2}$ and $\eqref{eq:f-2}$ to $k$-th power sums; the results are essentially more general <a href="https://en.wikipedia.org/wiki/Schatten_norm" target="_blank">Schatten norm</a> to spectral norm ratios.</p>
+                </div>
+                
+                <h2 id="distribution-and-entropy">Distribution and Entropy<a href="#distribution-and-entropy">#</a></h2>
+                
+                <p>If readers search for "Effective Rank," they will likely find the paper <a href="https://www.eurasip.org/Proceedings/Eusipco/Eusipco2007/Papers/a5p-h05.pdf" target="_blank">"The Effective Rank: a Measure of Effective Dimensionality"</a>, which is also an early literature exploring effective rank and proposes defining effective rank based on entropy.</p>
+                
+                <div class="entropy-box">
+                    <div class="entropy-header">
+                        <i class="fas fa-chart-pie"></i>
+                        Probability Distribution from Singular Values
+                    </div>
+                    <p>First, since singular values are always non-negative, we can normalize them to obtain a probability distribution:</p>
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(8)</span>
+                            \[
+                            p_i = \frac{\sigma_i^{\gamma}}{\sum_{j=1}^n \sigma_j^{\gamma}}
+                            \]
+                        </div>
+                    </div>
+                    <p>where $\gamma > 0$. From the literature, $\gamma=1$ and $\gamma=2$ are both frequently used (we used $\gamma=2$ in <a href="/archives/10739" target="_blank">Moonlight</a>). Below, we take $\gamma=1$ as an example. With a probability distribution, we can compute the information entropy (Shannon entropy):</p>
+                    <div class="equation-container">
+                        <div class="equation">
+                            <span class="equation-number">(9)</span>
+                            \[
+                            H = -\sum_{i=1}^n p_i \log p_i
+                            \]
+                        </div>
+                    </div>
+                </div>
+                
+                <p>Recall that the range of entropy is $[0, \log n]$. After exponentiation, we have $e^H \in [1, n]$. When the distribution is one-hot (only one nonzero singular value), $e^H=1$; when the distribution is uniform (all singular values equal), $e^H=n$. These are precisely the two special cases of standard rank. This inspires us to define effective rank as:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(10)</span>
+                        \[
+                        \mathop{\text{erank}}(\boldsymbol{M}) \triangleq e^H = \exp\left(-\sum_{i=1}^n p_i \log p_i\right)
+                        \]
+                    </div>
+                </div>
+                
+                <p>Substituting the definition of $p_i$, we find it can be further transformed into:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(11)</span>
+                        \[
+                        \mathop{\text{erank}}(\boldsymbol{M}) = \exp\left(\log\sum_{i=1}^n \sigma_i -\frac{\sum_{i=1}^n \sigma_i\log\sigma_i}{\sum_{i=1}^n \sigma_i}\right)
+                        \]
+                    </div>
+                </div>
+                
+                <p>Clearly, the first term inside the parentheses after exponentiation is $\Vert\boldsymbol{M}\Vert_*$; the second term is the weighted average of $\log\sigma_i$ with weights $\sigma_i$. At this point, $\log\sigma_i$ will approximately equal the largest $\log\sigma_1$, and after exponentiation becomes $\sigma_1=\Vert\boldsymbol{M}\Vert_2$. Therefore, the overall result of the above expression will approximate Equation $\eqref{eq:n-2}$. This indicates that defining effective rank based on entropy appears to be a completely different path but actually shares remarkable similarities with the norm ratio approach from the previous section.</p>
+                
+                <div class="properties-box">
+                    <div class="properties-header">
+                        <i class="fas fa-shield-alt"></i>
+                        Mathematical Properties
+                    </div>
+                    <p>We know that standard rank satisfies the triangle inequality $\mathop{\text{rank}}(\boldsymbol{A}+\boldsymbol{B})\leq \mathop{\text{rank}}(\boldsymbol{A}) + \mathop{\text{rank}}(\boldsymbol{B})$. The original paper proved that for (semi)positive definite symmetric matrices $\boldsymbol{A},\boldsymbol{B}$, the effective rank defined by Equation $\eqref{eq:h-erank}$ satisfies $\mathop{\text{erank}}(\boldsymbol{A}+\boldsymbol{B})\leq \mathop{\text{erank}}(\boldsymbol{A}) + \mathop{\text{erank}}(\boldsymbol{B})$. It remains unclear whether this inequality can be extended to general matrices. Currently, proving whether effective rank can preserve some inequalities of standard rank appears to be a non-trivial task.</p>
+                </div>
+                
+                <h2 id="sparsity-indices">Sparsity Indices<a href="#sparsity-indices">#</a></h2>
+                
+                <div class="sparsity-box">
+                    <div class="sparsity-header">
+                        <i class="fas fa-project-diagram"></i>
+                        Connection to Sparsity Measures
+                    </div>
+                    <p>From the series of effective rank definitions above, especially the transition from singular values to distributions to entropy, readers may already vaguely realize that effective rank shares obvious commonalities with sparsity. In fact, effective rank can be understood as a sparsity measure for the singular value vector. The difference from general sparsity indicators is that we align the range to $1\leq \mathop{\text{erank}}(\boldsymbol{M}) \leq \mathop{\text{rank}}(\boldsymbol{M}) \leq n$, making it consistent with the concept of rank and thereby providing more intuitive perception of sparsity level.</p>
+                </div>
+                
+                <p>Regarding sparsity measures, we previously conducted a systematic discussion in <a href="/archives/9595" target="_blank">"How to Measure Data Sparsity?"</a>. Theoretically, the results from that article can all be used to construct effective rank. In fact, this is what we have done. In the "<a href="#norm-ratios">Norm Ratios</a>" section, constructing effective rank based on the ratio of Schatten norm to spectral norm essentially corresponds only to Equation $(1)$ in that article. We can also use other formulas such as Equation $(16)$, which is equivalent to defining effective rank as the square of the ratio of nuclear norm to Frobenius norm:</p>
+                
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(12)</span>
+                        \[
+                        \mathop{\text{erank}}(\boldsymbol{M}) \triangleq  \frac{\Vert\boldsymbol{M}\Vert_*^2}{\Vert\boldsymbol{M}\Vert_F^2} = \frac{(\sum_{i=1}^n\sigma_i)^2}{\sum_{i=1}^n\sigma_i^2}
+                        \]
+                    </div>
+                </div>
+                
+                <p>This also satisfies $1\leq \mathop{\text{erank}}(\boldsymbol{M}) \leq \mathop{\text{rank}}(\boldsymbol{M})$ and is a usable effective rank definition.</p>
+                
+                <div class="insight-box">
+                    <div class="insight-header">
+                        <i class="fas fa-lightbulb"></i>
+                        Epistemological Insight
+                    </div>
+                    <p>Remarkably, our understanding of effective rank and sparsity has, imperceptibly, formed a closed loop. This is undoubtedly a beautiful experience: when I began learning about sparsity measures, I knew nothing about effective rank. While learning about effective rank these past few days, I gradually realized its fundamental connection with sparsity. It seems as if some mysterious force has quietly connected the knowledge we accumulated in different fields and disciplines, ultimately converging in the same correct direction.</p>
+                </div>
+                
+                <h2 id="article-summary">Article Summary<a href="#article-summary">#</a></h2>
+                
+                <div class="summary-box">
+                    <p>This article explored the concept of <strong>Effective Rank</strong> for matrices, which extends the linear algebra concept of matrix rank for numerical computation, providing a more effective measure of a matrix's intrinsic dimensionality.</p>
+                    
+                    <p><strong>Key contributions and insights:</strong></p>
+                    <ol>
+                        <li><strong>Motivation:</strong> Standard mathematical rank definitions fail in numerical contexts where near-zero singular values should be treated as zero.</li>
+                        <li><strong>Threshold Approaches:</strong> Absolute and relative thresholding methods provide intuitive but hyperparameter-dependent definitions.</li>
+                        <li><strong>Norm Ratios:</strong> Stable rank (Frobenius-to-spectral norm ratio) and nuclear-to-spectral norm ratio offer parameter-free alternatives with computational advantages.</li>
+                        <li><strong>Entropy Methods:</strong> Information-theoretic approaches based on singular value distributions reveal connections to norm-based definitions.</li>
+                        <li><strong>Sparsity Connection:</strong> Effective rank emerges as a specialized sparsity measure for singular value vectors, linking disparate mathematical concepts.</li>
+                        <li><strong>Computational Trade-offs:</strong> Different definitions offer varying balances between mathematical elegance, computational cost, and practical utility.</li>
+                    </ol>
+                    
+                    <p>The article demonstrates that while no single definition of effective rank is universally accepted, the various approaches collectively enrich our understanding of matrix structure in numerical contexts and provide practical tools for analyzing matrix dimensionality in computational applications.</p>
+                </div>
+
+                <div class="citation-section">
+                    <div class="citation-header">
+                        <i class="fas fa-quote-right"></i>
+                        Citation Information
+                    </div>
+                    <p><strong>Original Article:</strong> Su Jianlin. Effective Rank of Matrices. <em>Scientific Spaces</em>.</p>
+                    
+                    <p><strong>How to cite this translation:</strong></p>
+                    <div class="citation-box">
+                        Su, J. Effective Rank of Matrices [Translated by ScalingOpt Team]. 
+                        <em>Scientific Spaces</em>.
+                    </div>
+                    <p style="margin-top: 0.8rem;"><strong>BibTeX:</strong></p>
+                    <div class="citation-box">
+                        @article{su2025effective_rank,
+                            title   = {Effective Rank of Matrices},
+                            author  = {Su, Jianlin},
+                            journal = {Scientific Spaces},
+                            year    = {2025},
+                            url     = {https://kexue.fm/archives/10569},
+                            note    = {Translated by ScalingOpt Team}
+                          }
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="translation-credit">
+                <i class="fas fa-user-graduate"></i>
+                Academic Translation by ScalingOpt Team
+            </div>
+            <div class="copyright">
+                © 2009-2025 Scientific Spaces. All rights reserved.<br>
+                Original content licensed under Creative Commons BY-NC-ND 2.5 China
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript for Interactive Features -->
+    <script>
+        // Scroll Progress Bar
+        window.addEventListener('scroll', function() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            scrollProgress.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Table of Contents Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            const sections = document.querySelectorAll('h2[id], h3[id]');
+            
+            // Set active section based on scroll position
+            function setActiveSection() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 50)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', setActiveSection);
+            setActiveSection(); // Initial call
+            
+            // Smooth scroll for TOC links
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 50,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+
+        // MathJax Configuration
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                tags: 'ams'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    
+    <!-- MathJax CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</body>
+</html>
