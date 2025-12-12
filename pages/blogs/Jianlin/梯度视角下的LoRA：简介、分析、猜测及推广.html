@@ -1576,7 +1576,7 @@
                         <i class="fas fa-cogs"></i>
                         Optimizer-Centric Implementation
                     </div>
-                    <p>Gradient $\eqref{eq:grad-1}$ also informs us how to implement LoRA from an optimizer perspective. The optimizer can directly access the full gradient $\frac{\partial \mathcal{L}}{\partial W}$. We then only need to project this gradient according to formula $\eqref{eq:grad-1}$ to obtain gradients for $A,B$, after which we can update $A,B$ following conventional optimizer implementations.</p>
+                    <p>Gradient also informs us how to implement LoRA from an optimizer perspective. The optimizer can directly access the full gradient $\frac{\partial \mathcal{L}}{\partial W}$. We then only need to project this gradient according to formula to obtain gradients for $A,B$, after which we can update $A,B$ following conventional optimizer implementations.</p>
                     <p>If the optimizer is SGD, then:</p>
                     <div class="equation">
                         \[

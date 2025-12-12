@@ -1041,7 +1041,7 @@
                         <i class="fas fa-book-open"></i>
                         Series Continuation
                     </div>
-                    <p>In the previous article, we introduced the "<a href="/archives/10366" target="_blank">Pseudo-Inverse</a>", which relates to the optimal solution of the optimization objective $\Vert \boldsymbol{A}\boldsymbol{B} - \boldsymbol{M}\Vert_F^2$ when given matrices $\boldsymbol{M}$ and $\boldsymbol{A}$ (or $\boldsymbol{B}$). In this article, we focus on the optimal solution when neither $\boldsymbol{A}$ nor $\boldsymbol{B}$ is given:</p>
+                    <p>In the previous article, we introduced the "<a href="/archives/10366" target="_blank">Pseudo-Inverse</a>", which relates to the optimal solution of the optimization objective \(\Vert \boldsymbol{A}\boldsymbol{B} - \boldsymbol{M}\Vert_F^2\) when given matrices \(\boldsymbol{M}\) and \(\boldsymbol{A}\) (or \(\boldsymbol{B}\)). In this article, we focus on the optimal solution when neither \(\boldsymbol{A}\) nor \(\boldsymbol{B}\) is given:</p>
                     
                     <div class="equation-container">
                         <div class="equation">
@@ -1052,13 +1052,13 @@
                         </div>
                     </div>
                     
-                    <p>where $\boldsymbol{A}\in\mathbb{R}^{n\times r}, \boldsymbol{B}\in\mathbb{R}^{r\times m}, \boldsymbol{M}\in\mathbb{R}^{n\times m}, r < \min(n,m)$. Essentially, this seeks the "optimal rank-$r$ approximation of matrix $\boldsymbol{M}$" (the best approximation with rank at most $r$). To solve this problem, we must invoke the celebrated "SVD (Singular Value Decomposition)." Although this series began with the pseudo-inverse, its "fame" pales in comparison to SVD. Many have heard of or even used SVD without encountering the pseudo-inverse, including the author, who learned SVD first before encountering the pseudo-inverse.</p>
+                    <p>where \(\boldsymbol{A}\in\mathbb{R}^{n\times r}, \boldsymbol{B}\in\mathbb{R}^{r\times m}, \boldsymbol{M}\in\mathbb{R}^{n\times m}, r < \min(n,m)\). Essentially, this seeks the "optimal rank-\(r\) approximation of matrix \(\boldsymbol{M}\)" (the best approximation with rank at most \(r\)). To solve this problem, we must invoke the celebrated "SVD (Singular Value Decomposition)." Although this series began with the pseudo-inverse, its "fame" pales in comparison to SVD. Many have heard of or even used SVD without encountering the pseudo-inverse, including the author, who learned SVD first before encountering the pseudo-inverse.</p>
                     <p>Next, we will introduce SVD centered around the theme of optimal low-rank approximation of matrices.</p>
                 </div>
                 
                 <h2 id="initial-exploration">Initial Exploration<a href="#initial-exploration">#</a></h2>
                 
-                <p>For any matrix $\boldsymbol{M}\in\mathbb{R}^{n\times m}$, we can find a Singular Value Decomposition (SVD) of the following form:</p>
+                <p>For any matrix \(\boldsymbol{M}\in\mathbb{R}^{n\times m}\), we can find a Singular Value Decomposition (SVD) of the following form:</p>
                 
                 <div class="equation-container">
                     <div class="equation">
@@ -1069,7 +1069,7 @@
                     </div>
                 </div>
                 
-                <p><!--more--> where $\boldsymbol{U}\in\mathbb{R}^{n\times n}, \boldsymbol{V}\in\mathbb{R}^{m\times m}$ are orthogonal matrices, and $\boldsymbol{\Sigma}\in\mathbb{R}^{n\times m}$ is a non-negative diagonal matrix:</p>
+                <p><!--more--> where \(\boldsymbol{U}\in\mathbb{R}^{n\times n}, \boldsymbol{V}\in\mathbb{R}^{m\times m}\) are orthogonal matrices, and \(\boldsymbol{\Sigma}\in\mathbb{R}^{n\times m}\) is a non-negative diagonal matrix:</p>
                 
                 <div class="equation-container">
                     <div class="equation">
@@ -1080,7 +1080,7 @@
                     </div>
                 </div>
                 
-                <p>The diagonal elements are typically sorted in descending order, i.e., $\sigma_1\geq \sigma_2\geq\sigma_3\geq\cdots\geq 0$. These diagonal elements are called singular values. From a numerical computation perspective, we can retain only the non-zero elements of $\boldsymbol{\Sigma}$, reducing the sizes of $\boldsymbol{U},\boldsymbol{\Sigma},\boldsymbol{V}$ to $n\times r, r\times r, m\times r$ respectively (where $r$ is the rank of $\boldsymbol{M}$). Maintaining full orthogonal matrices is more convenient for theoretical analysis.</p>
+                <p>The diagonal elements are typically sorted in descending order, i.e., \(\sigma_1\geq \sigma_2\geq\sigma_3\geq\cdots\geq 0\). These diagonal elements are called singular values. From a numerical computation perspective, we can retain only the non-zero elements of \(\boldsymbol{\Sigma}\), reducing the sizes of \(\boldsymbol{U},\boldsymbol{\Sigma},\boldsymbol{V}\) to \(n\times r, r\times r, m\times r\) respectively (where \(r\) is the rank of \(\boldsymbol{M}\)). Maintaining full orthogonal matrices is more convenient for theoretical analysis.</p>
                 
                 <div class="svd-box">
                     <div class="svd-header">
@@ -1095,7 +1095,7 @@
                         <i class="fas fa-shapes"></i>
                         Geometric Interpretation in 2D
                     </div>
-                    <p>In two dimensions, SVD has an intuitive geometric interpretation. Two-dimensional orthogonal matrices primarily represent rotations (and possibly reflections, but we can be less rigorous for geometric intuition). Thus, $\boldsymbol{M}\boldsymbol{x}=\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}\boldsymbol{x}$ means any linear transformation of a (column) vector $x$ can be decomposed into three steps: <strong>rotation</strong>, <strong>stretching</strong>, and <strong>rotation</strong>, as illustrated below:</p>
+                    <p>In two dimensions, SVD has an intuitive geometric interpretation. Two-dimensional orthogonal matrices primarily represent rotations (and possibly reflections, but we can be less rigorous for geometric intuition). Thus, \(\boldsymbol{M}\boldsymbol{x}=\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}\boldsymbol{x}\) means any linear transformation of a (column) vector \(x\) can be decomposed into three steps: <strong>rotation</strong>, <strong>stretching</strong>, and <strong>rotation</strong>, as illustrated below:</p>
                     <div class="pic-container">
                         <div class="typecho-caption aligncenter" style="max-width: 300px">
                             <div style="margin: 5px">
@@ -1112,7 +1112,7 @@
                 
                 <h3 id="pseudo-inverse-general-solution">Pseudo-Inverse General Solution<a href="#pseudo-inverse-general-solution">#</a></h3>
                 
-                <p>Taking the pseudo-inverse as an example, when $\boldsymbol{A}\in\mathbb{R}^{n\times r}$ has rank $r$, we have:</p>
+                <p>Taking the pseudo-inverse as an example, when \(\boldsymbol{A}\in\mathbb{R}^{n\times r}\) has rank \(r\), we have:</p>
                 
                 <div class="equation-container">
                     <div class="equation">
@@ -1123,7 +1123,7 @@
                     </div>
                 </div>
                 
-                <p>In the previous article, we derived an expression for $\boldsymbol{A}^{\dagger}$ via differentiation, then extended it with some effort to cases where $\boldsymbol{A}$ has rank less than $r$. However, with SVD, the problem simplifies considerably. We can decompose $\boldsymbol{A}$ as $\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}$, then express $\boldsymbol{B}$ as $\boldsymbol{V} \boldsymbol{Z} \boldsymbol{U}^{\top}$. Note we haven't stipulated that $\boldsymbol{Z}$ is diagonal, so $\boldsymbol{B}=\boldsymbol{V} \boldsymbol{Z} \boldsymbol{U}^{\top}$ can always be achieved. Thus:</p>
+                <p>In the previous article, we derived an expression for \(\boldsymbol{A}^{\dagger}\) via differentiation, then extended it with some effort to cases where \(\boldsymbol{A}\) has rank less than \(r\). However, with SVD, the problem simplifies considerably. We can decompose \(\boldsymbol{A}\) as \(\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}\), then express \(\boldsymbol{B}\) as \(\boldsymbol{V} \boldsymbol{Z} \boldsymbol{U}^{\top}\). Note we haven't stipulated that \(\boldsymbol{Z}\) is diagonal, so \(\boldsymbol{B}=\boldsymbol{V} \boldsymbol{Z} \boldsymbol{U}^{\top}\) can always be achieved. Thus:</p>
                 
                 <div class="equation-container">
                     <div class="equation">
@@ -1139,7 +1139,7 @@
                     </div>
                 </div>
                 
-                <p>The last equality uses the result proved in the previous article: "orthogonal transformations preserve the Frobenius norm." Thus, we have simplified the problem to finding the pseudo-inverse of the diagonal matrix $\boldsymbol{\Sigma}$. Next, we can express $\boldsymbol{\Sigma} \boldsymbol{Z} - \boldsymbol{I}_n$ in block matrix form:</p>
+                <p>The last equality uses the result proved in the previous article: "orthogonal transformations preserve the Frobenius norm." Thus, we have simplified the problem to finding the pseudo-inverse of the diagonal matrix \(\boldsymbol{\Sigma}\). Next, we can express \(\boldsymbol{\Sigma} \boldsymbol{Z} - \boldsymbol{I}_n\) in block matrix form:</p>
                 
                 <div class="equation-container">
                     <div class="equation">
@@ -1154,7 +1154,7 @@
                     </div>
                 </div>
                 
-                <p>Here, slicing follows Python array conventions. From the final form, to minimize the Frobenius norm of $\boldsymbol{\Sigma} \boldsymbol{Z} - \boldsymbol{I}_n$, the unique solution is $\boldsymbol{Z}_{[:r,:r]}=\boldsymbol{\Sigma}_{[:r,:r]}^{-1}$, $\boldsymbol{Z}_{[:r,r:]}=\boldsymbol{0}_{r\times(n-r)}$. Essentially, $\boldsymbol{Z}$ takes the reciprocal of all non-zero elements of $\boldsymbol{\Sigma}^{\top}$ and then transposes. We denote this as $\boldsymbol{\Sigma}^{\dagger}$. Thus, under SVD we have:</p>
+                <p>Here, slicing follows Python array conventions. From the final form, to minimize the Frobenius norm of \(\boldsymbol{\Sigma} \boldsymbol{Z} - \boldsymbol{I}_n\), the unique solution is \(\boldsymbol{Z}_{[:r,:r]}=\boldsymbol{\Sigma}_{[:r,:r]}^{-1}\), \(\boldsymbol{Z}_{[:r,r:]}=\boldsymbol{0}_{r\times(n-r)}\). Essentially, \(\boldsymbol{Z}\) takes the reciprocal of all non-zero elements of \(\boldsymbol{\Sigma}^{\top}\) and then transposes. We denote this as \(\boldsymbol{\Sigma}^{\dagger}\). Thus, under SVD we have:</p>
                 
                 <div class="equation-container">
                     <div class="equation">
@@ -1165,7 +1165,7 @@
                     </div>
                 </div>
                 
-                <p>It can be further shown that this result also applies to $\boldsymbol{A}$ with rank less than $r$, making it a general form. Some tutorials directly adopt this as the definition of the pseudo-inverse. Additionally, we observe that this form does not distinguish between left and right pseudo-inverses, indicating that for a given matrix, its left and right pseudo-inverses are equal. Therefore, when discussing pseudo-inverses, we need not specify left or right.</p>
+                <p>It can be further shown that this result also applies to \(\boldsymbol{A}\) with rank less than \(r\), making it a general form. Some tutorials directly adopt this as the definition of the pseudo-inverse. Additionally, we observe that this form does not distinguish between left and right pseudo-inverses, indicating that for a given matrix, its left and right pseudo-inverses are equal. Therefore, when discussing pseudo-inverses, we need not specify left or right.</p>
                 
                 <h3 id="matrix-norms">Matrix Norms<a href="#matrix-norms">#</a></h3>
                 
@@ -1192,10 +1192,10 @@
                             \]
                         </div>
                     </div>
-                    <p>Note that the norms on the right-hand side are vector norms (length, $2$-norm), so this definition is well-defined. Since it is induced by the vector $2$-norm, it is also called the matrix $2$-norm. Numerically, the spectral norm of a matrix equals its largest singular value: $\Vert \boldsymbol{M}\Vert_2 = \sigma_1$.</p>
+                    <p>Note that the norms on the right-hand side are vector norms (length, \(2\)-norm), so this definition is well-defined. Since it is induced by the vector \(2\)-norm, it is also called the matrix \(2\)-norm. Numerically, the spectral norm of a matrix equals its largest singular value: \(\Vert \boldsymbol{M}\Vert_2 = \sigma_1\).</p>
                 </div>
                 
-                <p>To prove this, simply perform SVD on $\boldsymbol{M}$ as $\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}$, then substitute into the spectral norm definition:</p>
+                <p>To prove this, simply perform SVD on \(\boldsymbol{M}\) as \(\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}\), then substitute into the spectral norm definition:</p>
                 
                 <div class="equation-container">
                     <div class="equation">
@@ -1206,7 +1206,7 @@
                     </div>
                 </div>
                 
-                <p>The second equality exploits the property that orthogonal matrices preserve vector norms. Now we have reduced the problem to finding the spectral norm of the diagonal matrix $\boldsymbol{\Sigma}$, which is simpler. Let $\boldsymbol{y} = (y_1,y_2,\cdots,y_m)$, then:</p>
+                <p>The second equality exploits the property that orthogonal matrices preserve vector norms. Now we have reduced the problem to finding the spectral norm of the diagonal matrix \(\boldsymbol{\Sigma}\), which is simpler. Let \(\boldsymbol{y} = (y_1,y_2,\cdots,y_m)\), then:</p>
                 
                 <div class="equation-container">
                     <div class="equation">
@@ -1217,11 +1217,11 @@
                     </div>
                 </div>
                 
-                <p>Thus $\Vert \boldsymbol{\Sigma} \boldsymbol{y}\Vert$ does not exceed $\sigma_1$, and equality is achieved when $\boldsymbol{y}=(1,0,\cdots,0)$. Therefore $\Vert \boldsymbol{M}\Vert_2=\sigma_1$. Comparing with the Frobenius norm result, we also find that $\Vert \boldsymbol{M}\Vert_2\leq \Vert \boldsymbol{M}\Vert_F$ always holds.</p>
+                <p>Thus \(\Vert \boldsymbol{\Sigma} \boldsymbol{y}\Vert\) does not exceed \(\sigma_1\), and equality is achieved when \(\boldsymbol{y}=(1,0,\cdots,0)\). Therefore \(\Vert \boldsymbol{M}\Vert_2=\sigma_1\). Comparing with the Frobenius norm result, we also find that \(\Vert \boldsymbol{M}\Vert_2\leq \Vert \boldsymbol{M}\Vert_F\) always holds.</p>
                 
                 <h3 id="low-rank-approximation">Low-Rank Approximation<a href="#low-rank-approximation">#</a></h3>
                 
-                <p>Finally, we return to the main topic of this article: optimal low-rank approximation, i.e., objective $\eqref{eq:loss-ab}$. Decomposing $\boldsymbol{M}$ as $\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}$, we can write:</p>
+                <p>Finally, we return to the main topic of this article: optimal low-rank approximation, i.e., objective (1). Decomposing \(\boldsymbol{M}\) as \(\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}\), we can write:</p>
                 
                 <div class="equation-container">
                     <div class="equation">
@@ -1237,7 +1237,7 @@
                     </div>
                 </div>
                 
-                <p>Note that $\boldsymbol{U}^{\top}\boldsymbol{A}\boldsymbol{B}\boldsymbol{V}$ can still represent any matrix with rank at most $r$. Thus, via SVD we have simplified the optimal rank-$r$ approximation of matrix $\boldsymbol{M}$ to the optimal rank-$r$ approximation of the non-negative diagonal matrix $\boldsymbol{\Sigma}$.</p>
+                <p>Note that \(\boldsymbol{U}^{\top}\boldsymbol{A}\boldsymbol{B}\boldsymbol{V}\) can still represent any matrix with rank at most \(r\). Thus, via SVD we have simplified the optimal rank-\(r\) approximation of matrix \(\boldsymbol{M}\) to the optimal rank-\(r\) approximation of the non-negative diagonal matrix \(\boldsymbol{\Sigma}\).</p>
                 
                 <p>In <a href="/archives/10226" target="_blank">"Towards Full-Parameter Fine-Tuning! The Most Exciting LoRA Improvement I've Seen (Part 1)"</a>, we used the same approach to solve a similar optimization problem:</p>
                 
@@ -1267,7 +1267,7 @@
                     </div>
                 </div>
                 
-                <p>This transforms the original optimization problem for general matrix $\boldsymbol{M}$ into a special case where $\boldsymbol{M}$ is a non-negative diagonal matrix, reducing analysis difficulty. Note that if $\boldsymbol{A},\boldsymbol{B}$ have rank at most $r$, then $\boldsymbol{A}\boldsymbol{A}^{\top}\boldsymbol{M} + \boldsymbol{M}\boldsymbol{B}^{\top}\boldsymbol{B}$ has rank at most $2r$ (assuming $2r < \min(n,m)$). So the original problem also seeks an optimal rank-$2r$ approximation of $\boldsymbol{M}$, which after transformation to a non-negative diagonal matrix becomes the optimal rank-$2r$ approximation of a non-negative diagonal matrix—essentially the same as the previous problem.</p>
+                <p>This transforms the original optimization problem for general matrix \(\boldsymbol{M}\) into a special case where \(\boldsymbol{M}\) is a non-negative diagonal matrix, reducing analysis difficulty. Note that if \(\boldsymbol{A},\boldsymbol{B}\) have rank at most \(r\), then \(\boldsymbol{A}\boldsymbol{A}^{\top}\boldsymbol{M} + \boldsymbol{M}\boldsymbol{B}^{\top}\boldsymbol{B}\) has rank at most \(2r\) (assuming \(2r < \min(n,m)\)). So the original problem also seeks an optimal rank-\(2r\) approximation of \(\boldsymbol{M}\), which after transformation to a non-negative diagonal matrix becomes the optimal rank-\(2r\) approximation of a non-negative diagonal matrix—essentially the same as the previous problem.</p>
                 
                 <h2 id="theoretical-foundations">Theoretical Foundations<a href="#theoretical-foundations">#</a></h2>
                 
@@ -1282,11 +1282,11 @@
                     </div>
                     <p>Before proceeding, we need to introduce the "Spectral Theorem," which can be viewed either as a special case of SVD or as its foundation:</p>
                     <blockquote class="cite">
-                        <div><strong>Spectral Theorem</strong> For any real symmetric matrix $\boldsymbol{M}\in\mathbb{R}^{n\times n}$, there exists a spectral decomposition (also called eigenvalue decomposition):
+                        <div><strong>Spectral Theorem</strong> For any real symmetric matrix \(\boldsymbol{M}\in\mathbb{R}^{n\times n}\), there exists a spectral decomposition (also called eigenvalue decomposition):
                         \[
                         \boldsymbol{M} = \boldsymbol{U}\boldsymbol{\Lambda} \boldsymbol{U}^{\top}
                         \]
-                        where $\boldsymbol{U},\boldsymbol{\Lambda}\in\mathbb{R}^{n\times n}$, $\boldsymbol{U}$ is an orthogonal matrix, and $\boldsymbol{\Lambda}=\text{diag}(\lambda_1,\cdots,\lambda_n)$ is a diagonal matrix.</div>
+                        where \(\boldsymbol{U},\boldsymbol{\Lambda}\in\mathbb{R}^{n\times n}\), \(\boldsymbol{U}\) is an orthogonal matrix, and \(\boldsymbol{\Lambda}=\text{diag}(\lambda_1,\cdots,\lambda_n)\) is a diagonal matrix.</div>
                     </blockquote>
                     <p>Essentially, the Spectral Theorem asserts that any real symmetric matrix can be diagonalized by an orthogonal matrix. This is based on the following two properties:</p>
                     <blockquote>
@@ -1295,7 +1295,7 @@
                     </blockquote>
                 </div>
                 
-                <p>These two properties are actually simple to prove, so we won't elaborate here. Based on these, we can immediately conclude that if a real symmetric matrix $\boldsymbol{M}$ has $n$ distinct eigenvalues, then the Spectral Theorem holds:</p>
+                <p>These two properties are actually simple to prove, so we won't elaborate here. Based on these, we can immediately conclude that if a real symmetric matrix \(\boldsymbol{M}\) has \(n\) distinct eigenvalues, then the Spectral Theorem holds:</p>
                 
                 <div class="equation-container">
                     <div class="equation">
@@ -1317,9 +1317,9 @@
                     </div>
                 </div>
                 
-                <p>Here $\lambda_1,\lambda_2,\cdots,\lambda_n$ are eigenvalues, and $\boldsymbol{u}_1,\boldsymbol{u}_2,\cdots,\boldsymbol{u}_n$ are corresponding unit eigen-(column)vectors. Writing in matrix multiplication form gives $\boldsymbol{M}\boldsymbol{U}=\boldsymbol{U}\boldsymbol{\Lambda}$, so $\boldsymbol{M} = \boldsymbol{U}\boldsymbol{\Lambda} \boldsymbol{U}^{\top}$. The difficulty in the proof lies in extending to cases with repeated eigenvalues. However, before considering a complete proof, we can gain an intuitive, albeit non-rigorous, sense that this result for distinct eigenvalues must generalize to the general case.</p>
+                <p>Here \(\lambda_1,\lambda_2,\cdots,\lambda_n\) are eigenvalues, and \(\boldsymbol{u}_1,\boldsymbol{u}_2,\cdots,\boldsymbol{u}_n\) are corresponding unit eigen-(column)vectors. Writing in matrix multiplication form gives \(\boldsymbol{M}\boldsymbol{U}=\boldsymbol{U}\boldsymbol{\Lambda}\), so \(\boldsymbol{M} = \boldsymbol{U}\boldsymbol{\Lambda} \boldsymbol{U}^{\top}\). The difficulty in the proof lies in extending to cases with repeated eigenvalues. However, before considering a complete proof, we can gain an intuitive, albeit non-rigorous, sense that this result for distinct eigenvalues must generalize to the general case.</p>
                 
-                <p>Why? From a numerical perspective, the probability of two real numbers being absolutely equal is almost zero, so we hardly need to consider equal eigenvalues. In more mathematical terms, real matrices with distinct eigenvalues are dense in the set of all real matrices. Therefore, we can always find a family of matrices $\boldsymbol{M}_{\epsilon}$ such that when $\epsilon > 0$, its eigenvalues are pairwise distinct, and when $\epsilon \to 0$, it equals $\boldsymbol{M}$. Consequently, each $\boldsymbol{M}_{\epsilon}$ can be decomposed as $\boldsymbol{U}_{\epsilon}\boldsymbol{\Lambda} _{\epsilon}\boldsymbol{U}_{\epsilon}^{\top}$. Taking $\epsilon\to 0$ yields the spectral decomposition of $\boldsymbol{M}$.</p>
+                <p>Why? From a numerical perspective, the probability of two real numbers being absolutely equal is almost zero, so we hardly need to consider equal eigenvalues. In more mathematical terms, real matrices with distinct eigenvalues are dense in the set of all real matrices. Therefore, we can always find a family of matrices \(\boldsymbol{M}_{\epsilon}\) such that when \(\epsilon > 0\), its eigenvalues are pairwise distinct, and when \(\epsilon \to 0\), it equals \(\boldsymbol{M}\). Consequently, each \(\boldsymbol{M}_{\epsilon}\) can be decomposed as \(\boldsymbol{U}_{\epsilon}\boldsymbol{\Lambda} _{\epsilon}\boldsymbol{U}_{\epsilon}^{\top}\). Taking \(\epsilon\to 0\) yields the spectral decomposition of \(\boldsymbol{M}\).</p>
                 
                 <h3 id="mathematical-induction">Mathematical Induction<a href="#mathematical-induction">#</a></h3>
                 
@@ -1328,8 +1328,8 @@
                         <i class="fas fa-indent"></i>
                         Inductive Proof Approach
                     </div>
-                    <p>Unfortunately, the above reasoning can only serve as an intuitive but non-rigorous understanding, as transforming it into a rigorous proof remains difficult. In fact, perhaps the simplest method for rigorously proving the Spectral Theorem is mathematical induction: under the assumption that any $(n-1)$-order real symmetric matrix can be spectrally decomposed, we prove that $\boldsymbol{M}$ can also be spectrally decomposed.</p>
-                    <p>The key idea in the proof is to decompose $\boldsymbol{M}$ into some eigenvector and its $(n-1)$-dimensional orthogonal subspace, allowing application of the inductive hypothesis. Specifically, let $\lambda_1$ be a non-zero eigenvalue of $\boldsymbol{M}$, and $\boldsymbol{u}_1$ the corresponding unit eigenvector, so $\boldsymbol{M}\boldsymbol{u}_1 = \lambda_1 \boldsymbol{u}_1$. We can supplement $n-1$ unit vectors $\boldsymbol{Q}=(\boldsymbol{q}_2,\cdots,\boldsymbol{q}_n)$ orthogonal to $\boldsymbol{u}_1$, such that $(\boldsymbol{u}_1,\boldsymbol{q}_2,\cdots,\boldsymbol{q}_n)=(\boldsymbol{u}_1,\boldsymbol{Q})$ forms an orthogonal matrix. Now consider:</p>
+                    <p>Unfortunately, the above reasoning can only serve as an intuitive but non-rigorous understanding, as transforming it into a rigorous proof remains difficult. In fact, perhaps the simplest method for rigorously proving the Spectral Theorem is mathematical induction: under the assumption that any \((n-1)\)-order real symmetric matrix can be spectrally decomposed, we prove that \(\boldsymbol{M}\) can also be spectrally decomposed.</p>
+                    <p>The key idea in the proof is to decompose \(\boldsymbol{M}\) into some eigenvector and its \((n-1)\)-dimensional orthogonal subspace, allowing application of the inductive hypothesis. Specifically, let \(\lambda_1\) be a non-zero eigenvalue of \(\boldsymbol{M}\), and \(\boldsymbol{u}_1\) the corresponding unit eigenvector, so \(\boldsymbol{M}\boldsymbol{u}_1 = \lambda_1 \boldsymbol{u}_1\). We can supplement \(n-1\) unit vectors \(\boldsymbol{Q}=(\boldsymbol{q}_2,\cdots,\boldsymbol{q}_n)\) orthogonal to \(\boldsymbol{u}_1\), such that \((\boldsymbol{u}_1,\boldsymbol{q}_2,\cdots,\boldsymbol{q}_n)=(\boldsymbol{u}_1,\boldsymbol{Q})\) forms an orthogonal matrix. Now consider:</p>
                 </div>
                 
                 <div class="equation-container">
@@ -1341,7 +1341,7 @@
                     </div>
                 </div>
                 
-                <p>Note that $\boldsymbol{Q}^{\top} \boldsymbol{M} \boldsymbol{Q}$ is an $(n-1)$-order square matrix and is clearly a real symmetric matrix. By the induction hypothesis, it can be spectrally decomposed as $\boldsymbol{V} \boldsymbol{\Lambda}_2 \boldsymbol{V}^{\top}$, where $\boldsymbol{V}$ is an $(n-1)$-order orthogonal matrix and $\boldsymbol{\Lambda}_2$ is an $(n-1)$-order diagonal matrix. Then we have $(\boldsymbol{Q}\boldsymbol{V})^{\top} \boldsymbol{M} \boldsymbol{Q}\boldsymbol{V}= \boldsymbol{\Lambda}_2$. Based on this result, consider $\boldsymbol{U} = (\boldsymbol{u}_1, \boldsymbol{Q}\boldsymbol{V})$. It can be verified that $\boldsymbol{U}$ is also an orthogonal matrix, and:</p>
+                <p>Note that \(\boldsymbol{Q}^{\top} \boldsymbol{M} \boldsymbol{Q}\) is an \((n-1)\)-order square matrix and is clearly a real symmetric matrix. By the induction hypothesis, it can be spectrally decomposed as \(\boldsymbol{V} \boldsymbol{\Lambda}_2 \boldsymbol{V}^{\top}\), where \(\boldsymbol{V}\) is an \((n-1)\)-order orthogonal matrix and \(\boldsymbol{\Lambda}_2\) is an \((n-1)\)-order diagonal matrix. Then we have \((\boldsymbol{Q}\boldsymbol{V})^{\top} \boldsymbol{M} \boldsymbol{Q}\boldsymbol{V}= \boldsymbol{\Lambda}_2\). Based on this result, consider \(\boldsymbol{U} = (\boldsymbol{u}_1, \boldsymbol{Q}\boldsymbol{V})\). It can be verified that \(\boldsymbol{U}\) is also an orthogonal matrix, and:</p>
                 
                 <div class="equation-container">
                     <div class="equation">
@@ -1352,13 +1352,13 @@
                     </div>
                 </div>
                 
-                <p>That is, $\boldsymbol{U}$ is precisely the orthogonal matrix that diagonalizes $\boldsymbol{M}$, so $\boldsymbol{M}$ can undergo spectral decomposition. This completes the crucial step of mathematical induction.</p>
+                <p>That is, \(\boldsymbol{U}\) is precisely the orthogonal matrix that diagonalizes \(\boldsymbol{M}\), so \(\boldsymbol{M}\) can undergo spectral decomposition. This completes the crucial step of mathematical induction.</p>
                 
                 <h3 id="singular-decomposition">Singular Decomposition<a href="#singular-decomposition">#</a></h3>
                 
                 <p>At this point, all preparations are complete, and we can formally prove the existence of SVD and provide a practical computational scheme.</p>
                 
-                <p>In the previous section, we introduced spectral decomposition. It's not difficult to notice its similarity to SVD, but there are two obvious differences: 1. Spectral decomposition applies only to real symmetric matrices, while SVD applies to any real matrix; 2. SVD's diagonal matrix $\boldsymbol{\Sigma}$ is non-negative, but spectral decomposition's $\boldsymbol{\Lambda}$ may not be. So what exactly is their connection? It's easy to verify that if $\boldsymbol{M}$ has SVD $\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}$, then:</p>
+                <p>In the previous section, we introduced spectral decomposition. It's not difficult to notice its similarity to SVD, but there are two obvious differences: 1. Spectral decomposition applies only to real symmetric matrices, while SVD applies to any real matrix; 2. SVD's diagonal matrix \(\boldsymbol{\Sigma}\) is non-negative, but spectral decomposition's \(\boldsymbol{\Lambda}\) may not be. So what exactly is their connection? It's easy to verify that if \(\boldsymbol{M}\) has SVD \(\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}\), then:</p>
                 
                 <div class="equation-container">
                     <div class="equation">
@@ -1372,9 +1372,9 @@
                     </div>
                 </div>
                 
-                <p>Note that both $\boldsymbol{\Sigma}\boldsymbol{\Sigma}^{\top}$ and $\boldsymbol{\Sigma}^{\top}\boldsymbol{\Sigma}$ are diagonal matrices. This implies that the spectral decompositions of $\boldsymbol{M}\boldsymbol{M}^{\top}$ and $\boldsymbol{M}^{\top}\boldsymbol{M}$ are $\boldsymbol{U}\boldsymbol{\Sigma}^2 \boldsymbol{U}^{\top}$ and $\boldsymbol{V}\boldsymbol{\Sigma}^2 \boldsymbol{V}^{\top}$, respectively. This suggests that performing spectral decomposition on $\boldsymbol{M}\boldsymbol{M}^{\top}$ and $\boldsymbol{M}^{\top}\boldsymbol{M}$ separately might yield the SVD of $\boldsymbol{M}$? Indeed, this can serve as a computational approach for SVD, but we cannot directly prove that the resulting $\boldsymbol{U},\boldsymbol{\Sigma},\boldsymbol{V}$ satisfy $\boldsymbol{M}=\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}$.</p>
+                <p>Note that both \(\boldsymbol{\Sigma}\boldsymbol{\Sigma}^{\top}\) and \(\boldsymbol{\Sigma}^{\top}\boldsymbol{\Sigma}\) are diagonal matrices. This implies that the spectral decompositions of \(\boldsymbol{M}\boldsymbol{M}^{\top}\) and \(\boldsymbol{M}^{\top}\boldsymbol{M}\) are \(\boldsymbol{U}\boldsymbol{\Sigma}^2 \boldsymbol{U}^{\top}\) and \(\boldsymbol{V}\boldsymbol{\Sigma}^2 \boldsymbol{V}^{\top}\), respectively. This suggests that performing spectral decomposition on \(\boldsymbol{M}\boldsymbol{M}^{\top}\) and \(\boldsymbol{M}^{\top}\boldsymbol{M}\) separately might yield the SVD of \(\boldsymbol{M}\)? Indeed, this can serve as a computational approach for SVD, but we cannot directly prove that the resulting \(\boldsymbol{U},\boldsymbol{\Sigma},\boldsymbol{V}\) satisfy \(\boldsymbol{M}=\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}\).</p>
                 
-                <p>The key to solving this is to perform spectral decomposition on only one of $\boldsymbol{M}\boldsymbol{M}^{\top}$ or $\boldsymbol{M}^{\top}\boldsymbol{M}$, then construct the orthogonal matrix on the other side via another method. Without loss of generality, assume $\boldsymbol{M}$ has rank $r \leq m$. Consider performing spectral decomposition on $\boldsymbol{M}^{\top}\boldsymbol{M}$ as $\boldsymbol{V}\boldsymbol{\Lambda} \boldsymbol{V}^{\top}$. Note that $\boldsymbol{M}^{\top}\boldsymbol{M}$ is positive semidefinite, so $\boldsymbol{\Lambda}$ is non-negative. Assume diagonal elements are already sorted in descending order; rank $r$ implies only the first $r$ $\lambda_i$ are greater than 0. Define:</p>
+                <p>The key to solving this is to perform spectral decomposition on only one of \(\boldsymbol{M}\boldsymbol{M}^{\top}\) or \(\boldsymbol{M}^{\top}\boldsymbol{M}\), then construct the orthogonal matrix on the other side via another method. Without loss of generality, assume \(\boldsymbol{M}\) has rank \(r \leq m\). Consider performing spectral decomposition on \(\boldsymbol{M}^{\top}\boldsymbol{M}\) as \(\boldsymbol{V}\boldsymbol{\Lambda} \boldsymbol{V}^{\top}\). Note that \(\boldsymbol{M}^{\top}\boldsymbol{M}\) is positive semidefinite, so \(\boldsymbol{\Lambda}\) is non-negative. Assume diagonal elements are already sorted in descending order; rank \(r\) implies only the first \(r\) \(\lambda_i\) are greater than 0. Define:</p>
                 
                 <div class="equation-container">
                     <div class="equation">
@@ -1403,7 +1403,7 @@
                     </div>
                 </div>
                 
-                <p>Here we adopt the convention that slicing has priority over transpose, inverse, and other matrix operations, i.e., $\boldsymbol{U}_{[:n,:r]}^{\top}=(\boldsymbol{U}_{[:n,:r]})^{\top}$, $\boldsymbol{\Sigma}_{[:r,:r]}^{-1}=(\boldsymbol{\Sigma}_{[:r,:r]})^{-1}$, etc. The above result shows that $\boldsymbol{U}_{[:n,:r]}$ is part of an orthogonal matrix. Next, we have:</p>
+                <p>Here we adopt the convention that slicing has priority over transpose, inverse, and other matrix operations, i.e., \(\boldsymbol{U}_{[:n,:r]}^{\top}=(\boldsymbol{U}_{[:n,:r]})^{\top}\), \(\boldsymbol{\Sigma}_{[:r,:r]}^{-1}=(\boldsymbol{\Sigma}_{[:r,:r]})^{-1}\), etc. The above result shows that \(\boldsymbol{U}_{[:n,:r]}\) is part of an orthogonal matrix. Next, we have:</p>
                 
                 <div class="equation-container">
                     <div class="equation">
@@ -1414,7 +1414,7 @@
                     </div>
                 </div>
                 
-                <p>Note that $\boldsymbol{M}\boldsymbol{V}\boldsymbol{V}^{\top} = \boldsymbol{M}$ always holds. $\boldsymbol{V}_{[:m,:r]}$ comprises the first $r$ columns of $\boldsymbol{V}$. From $\boldsymbol{M}^{\top}\boldsymbol{M}=\boldsymbol{V}\boldsymbol{\Lambda} \boldsymbol{V}^{\top}$, we can write $(\boldsymbol{M}\boldsymbol{V})^{\top}\boldsymbol{M}\boldsymbol{V} = \boldsymbol{\Lambda}$. Denote $\boldsymbol{V}=(\boldsymbol{v}_1,\boldsymbol{v}_2,\cdots,\boldsymbol{v}_m)$. Then $\Vert \boldsymbol{M}\boldsymbol{v}_i\Vert^2=\lambda_i$. Given the rank $r$ setting, when $i > r$, $\lambda_i=0$, meaning $\boldsymbol{M}\boldsymbol{v}_i$ is actually a zero vector. Thus:</p>
+                <p>Note that \(\boldsymbol{M}\boldsymbol{V}\boldsymbol{V}^{\top} = \boldsymbol{M}\) always holds. \(\boldsymbol{V}_{[:m,:r]}\) comprises the first \(r\) columns of \(\boldsymbol{V}\). From \(\boldsymbol{M}^{\top}\boldsymbol{M}=\boldsymbol{V}\boldsymbol{\Lambda} \boldsymbol{V}^{\top}\), we can write \((\boldsymbol{M}\boldsymbol{V})^{\top}\boldsymbol{M}\boldsymbol{V} = \boldsymbol{\Lambda}\). Denote \(\boldsymbol{V}=(\boldsymbol{v}_1,\boldsymbol{v}_2,\cdots,\boldsymbol{v}_m)\). Then \(\Vert \boldsymbol{M}\boldsymbol{v}_i\Vert^2=\lambda_i\). Given the rank \(r\) setting, when \(i > r\), \(\lambda_i=0\), meaning \(\boldsymbol{M}\boldsymbol{v}_i\) is actually a zero vector. Thus:</p>
                 
                 <div class="equation-container">
                     <div class="equation">
@@ -1430,7 +1430,7 @@
                     </div>
                 </div>
                 
-                <p>This shows $\boldsymbol{U}_{[:n,:r]}\boldsymbol{\Sigma}_{[:r,:r]}\boldsymbol{V}_{[:m,:r]}^{\top}=\boldsymbol{M}$. Combined with the fact that $\boldsymbol{U}_{[:n,:r]}$ is part of an orthogonal matrix, we have obtained the crucial components of $\boldsymbol{M}$'s SVD. We only need to pad $\boldsymbol{\Sigma}_{[:r,:r]}$ with zeros to form an $n\times m$ matrix $\boldsymbol{\Sigma}$, and complete $\boldsymbol{U}_{[:n,:r]}$ to an $n\times n$ orthogonal matrix $\boldsymbol{U}$. Then we obtain the complete SVD form $\boldsymbol{M}=\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}$.</p>
+                <p>This shows \(\boldsymbol{U}_{[:n,:r]}\boldsymbol{\Sigma}_{[:r,:r]}\boldsymbol{V}_{[:m,:r]}^{\top}=\boldsymbol{M}\). Combined with the fact that \(\boldsymbol{U}_{[:n,:r]}\) is part of an orthogonal matrix, we have obtained the crucial components of \(\boldsymbol{M}\)'s SVD. We only need to pad \(\boldsymbol{\Sigma}_{[:r,:r]}\) with zeros to form an \(n\times m\) matrix \(\boldsymbol{\Sigma}\), and complete \(\boldsymbol{U}_{[:n,:r]}\) to an \(n\times n\) orthogonal matrix \(\boldsymbol{U}\). Then we obtain the complete SVD form \(\boldsymbol{M}=\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}\).</p>
                 
                 <h2 id="approximation-theorem">Approximation Theorem<a href="#approximation-theorem">#</a></h2>
                 
@@ -1439,11 +1439,11 @@
                         <i class="fas fa-award"></i>
                         Eckart-Young-Mirsky Theorem
                     </div>
-                    <p>Finally, let's not forget our ultimate goal: the optimization problem $\eqref{eq:loss-ab}$. With SVD, we can now present the answer:</p>
+                    <p>Finally, let's not forget our ultimate goal: the optimization problem (1). With SVD, we can now present the answer:</p>
                     <blockquote class="cite">
-                        <div>If $\boldsymbol{M}\in\mathbb{R}^{n\times m}$ has SVD $\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}$, then the optimal rank-$r$ approximation of $\boldsymbol{M}$ is $\boldsymbol{U}_{[:n,:r]}\boldsymbol{\Sigma}_{[:r,:r]} \boldsymbol{V}_{[:m,:r]}^{\top}$.</div>
+                        <div>If \(\boldsymbol{M}\in\mathbb{R}^{n\times m}\) has SVD \(\boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^{\top}\), then the optimal rank-\(r\) approximation of \(\boldsymbol{M}\) is \(\boldsymbol{U}_{[:n,:r]}\boldsymbol{\Sigma}_{[:r,:r]} \boldsymbol{V}_{[:m,:r]}^{\top}\).</div>
                     </blockquote>
-                    <p>This is known as the <strong>Eckart-Young-Mirsky Theorem</strong>. In the "Low-Rank Approximation" section discussing SVD applications, we showed that via SVD, the optimal rank-$r$ approximation problem for a general matrix can be reduced to the rank-$r$ approximation of a non-negative diagonal matrix. Thus, the Eckart-Young-Mirsky Theorem essentially states that the optimal rank-$r$ approximation of a non-negative diagonal matrix is simply the matrix retaining only the $r$ largest diagonal elements.</p>
+                    <p>This is known as the <strong>Eckart-Young-Mirsky Theorem</strong>. In the "Low-Rank Approximation" section discussing SVD applications, we showed that via SVD, the optimal rank-\(r\) approximation problem for a general matrix can be reduced to the rank-\(r\) approximation of a non-negative diagonal matrix. Thus, the Eckart-Young-Mirsky Theorem essentially states that the optimal rank-\(r\) approximation of a non-negative diagonal matrix is simply the matrix retaining only the \(r\) largest diagonal elements.</p>
                 </div>
                 
                 <p>Some readers might think: "Isn't this obviously true?" But the fact is, although the conclusion aligns with intuition, it is not obviously true. Let's focus on solving:</p>
@@ -1457,7 +1457,7 @@
                     </div>
                 </div>
                 
-                <p>where $\boldsymbol{A}\in\mathbb{R}^{n\times r}, \boldsymbol{B}\in\mathbb{R}^{r\times m}, \boldsymbol{\Sigma}\in\mathbb{R}^{n\times m}, r < \min(n,m)$. If $\boldsymbol{A}$ is given, the optimal solution for $\boldsymbol{B}$ was derived in the previous article as $\boldsymbol{A}^{\dagger} \boldsymbol{\Sigma}$. Thus we have:</p>
+                <p>where \(\boldsymbol{A}\in\mathbb{R}^{n\times r}, \boldsymbol{B}\in\mathbb{R}^{r\times m}, \boldsymbol{\Sigma}\in\mathbb{R}^{n\times m}, r < \min(n,m)\). If \(\boldsymbol{A}\) is given, the optimal solution for \(\boldsymbol{B}\) was derived in the previous article as \(\boldsymbol{A}^{\dagger} \boldsymbol{\Sigma}\). Thus we have:</p>
                 
                 <div class="equation-container">
                     <div class="equation">
@@ -1468,7 +1468,7 @@
                     </div>
                 </div>
                 
-                <p>Let the SVD of matrix $\boldsymbol{A}$ be $\boldsymbol{U}_\boldsymbol{A}\boldsymbol{\Sigma}_\boldsymbol{A} \boldsymbol{V}_\boldsymbol{A}^{\top}$. Then $\boldsymbol{A}^{\dagger}=\boldsymbol{V}_\boldsymbol{A} \boldsymbol{\Sigma}_\boldsymbol{A}^{\dagger} \boldsymbol{U}_\boldsymbol{A}^{\top}$, and:</p>
+                <p>Let the SVD of matrix \(\boldsymbol{A}\) be \(\boldsymbol{U}_\boldsymbol{A}\boldsymbol{\Sigma}_\boldsymbol{A} \boldsymbol{V}_\boldsymbol{A}^{\top}\). Then \(\boldsymbol{A}^{\dagger}=\boldsymbol{V}_\boldsymbol{A} \boldsymbol{\Sigma}_\boldsymbol{A}^{\dagger} \boldsymbol{U}_\boldsymbol{A}^{\top}\), and:</p>
                 
                 <div class="equation-container">
                     <div class="equation">
@@ -1485,7 +1485,7 @@
                     </div>
                 </div>
                 
-                <p>From the pseudo-inverse computation formula, $\boldsymbol{\Sigma}_\boldsymbol{A} \boldsymbol{\Sigma}_\boldsymbol{A}^{\dagger}$ is a diagonal matrix whose first $r_\boldsymbol{A}$ diagonal elements are 1 ($r_\boldsymbol{A}\leq r$ is the rank of $\boldsymbol{A}$) and the rest are 0. Thus $(\boldsymbol{\Sigma}_\boldsymbol{A} \boldsymbol{\Sigma}_\boldsymbol{A}^{\dagger} - \boldsymbol{I}_n)\boldsymbol{U}_\boldsymbol{A}^{\top}$ essentially retains only the last $k=n-r_\boldsymbol{A}$ rows of the orthogonal matrix $\boldsymbol{U}_\boldsymbol{A}^{\top}$. So finally we can simplify to:</p>
+                <p>From the pseudo-inverse computation formula, \(\boldsymbol{\Sigma}_\boldsymbol{A} \boldsymbol{\Sigma}_\boldsymbol{A}^{\dagger}\) is a diagonal matrix whose first \(r_\boldsymbol{A}\) diagonal elements are 1 (\(r_\boldsymbol{A}\leq r\) is the rank of \(\boldsymbol{A}\)) and the rest are 0. Thus \((\boldsymbol{\Sigma}_\boldsymbol{A} \boldsymbol{\Sigma}_\boldsymbol{A}^{\dagger} - \boldsymbol{I}_n)\boldsymbol{U}_\boldsymbol{A}^{\top}\) essentially retains only the last \(k=n-r_\boldsymbol{A}\) rows of the orthogonal matrix \(\boldsymbol{U}_\boldsymbol{A}^{\top}\). So finally we can simplify to:</p>
                 
                 <div class="equation-container">
                     <div class="equation">
@@ -1507,7 +1507,7 @@
                     </div>
                 </div>
                 
-                <p>Note that $0 \leq w_j \leq 1$, and $w_1+w_2+\cdots+w_n = k$. Under these constraints, the minimum of the rightmost expression can only be the sum of the smallest $k$ $\sigma_j^2$ values. Since $\sigma_j$ are already sorted in descending order:</p>
+                <p>Note that \(0 \leq w_j \leq 1\), and \(w_1+w_2+\cdots+w_n = k\). Under these constraints, the minimum of the rightmost expression can only be the sum of the smallest \(k\) \(\sigma_j^2\) values. Since \(\sigma_j\) are already sorted in descending order:</p>
                 
                 <div class="equation-container">
                     <div class="equation">
@@ -1518,7 +1518,7 @@
                     </div>
                 </div>
                 
-                <p>That is, the error (squared Frobenius norm) between $\boldsymbol{\Sigma}$ and its optimal rank-$r$ approximation is $\sum\limits_{j=r+1}^n \sigma_j^2$, which exactly matches the error incurred by retaining only the $r$ largest diagonal elements. Thus we have proved that "the optimal rank-$r$ approximation of a non-negative diagonal matrix is the matrix retaining only the $r$ largest diagonal elements." Of course, this is just one solution; we haven't ruled out the possibility of multiple solutions.</p>
+                <p>That is, the error (squared Frobenius norm) between \(\boldsymbol{\Sigma}\) and its optimal rank-\(r\) approximation is \(\sum\limits_{j=r+1}^n \sigma_j^2\), which exactly matches the error incurred by retaining only the \(r\) largest diagonal elements. Thus we have proved that "the optimal rank-\(r\) approximation of a non-negative diagonal matrix is the matrix retaining only the \(r\) largest diagonal elements." Of course, this is just one solution; we haven't ruled out the possibility of multiple solutions.</p>
                 
                 <p>It's worth noting that the Eckart-Young-Mirsky Theorem holds not only for the Frobenius norm but also for the spectral norm. The proof for the spectral norm is actually simpler; we won't elaborate here. Interested readers may refer to the Wikipedia entry on "<a href="https://en.wikipedia.org/wiki/Low-rank_approximation" target="_blank">Low-rank approximation</a>".</p>
                 
@@ -1619,14 +1619,13 @@
             });
         });
 
-        // MathJax Configuration
+        // MathJax Configuration - 使用最简化的配置
         window.MathJax = {
             tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']],
-                displayMath: [['$$', '$$'], ['\\[', '\\]']],
-                processEscapes: true,
-                processEnvironments: true,
-                tags: 'ams'
+                inlineMath: [['\\(', '\\)']],    // 内联公式使用括号
+                displayMath: [['\\[', '\\]']],   // 显示公式使用方括号
+                processEscapes: false,           // 禁用转义处理
+                processEnvironments: true
             },
             options: {
                 skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
@@ -1641,7 +1640,7 @@
         };
     </script>
     
-    <!-- MathJax CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+    <!-- MathJax CDN - 使用基本版本 -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
 </body>
 </html>

@@ -1099,8 +1099,8 @@
                         <i class="fas fa-sync-alt"></i>
                         Fixed-Point Iteration Method
                     </div>
-                    <p>The author's approach is to start from an initial guess $\boldsymbol{X}$, substitute into Equation $\eqref{eq:r-q}$ to obtain $\boldsymbol{Q}$, then substitute $\boldsymbol{Q}$ into equation system $\eqref{eq:r-x}$ to solve for a new $\boldsymbol{X}$, iterating until convergence. Given $\msign$, Equation $\eqref{eq:r-q}$ can be computed explicitly, so the sole difficulty lies in solving equation system $\eqref{eq:r-x}$.</p>
-                    <p>We can rearrange Equation $\eqref{eq:r-x}$:</p>
+                    <p>The author's approach is to start from an initial guess $\boldsymbol{X}$, substitute into Equation (5) to obtain $\boldsymbol{Q}$, then substitute $\boldsymbol{Q}$ into equation system (4) to solve for a new $\boldsymbol{X}$, iterating until convergence. Given $\msign$, Equation (5) can be computed explicitly, so the sole difficulty lies in solving equation system (4).</p>
+                    <p>We can rearrange Equation (4):</p>
                     <div class="equation">
                         \[
                         \boldsymbol{Q}\boldsymbol{X} + \boldsymbol{X}\boldsymbol{Q} =  -2[\boldsymbol{Q}\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{sym}}\label{eq:r-xx}
@@ -1114,7 +1114,7 @@
                         <i class="fas fa-calculator"></i>
                         Lyapunov Equation and Initialization
                     </div>
-                    <p>Regarding initial value selection, we can consider the square matrix solution $-[\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{sym}}$, which constitutes a natural transition from square to non-square matrices. We can also examine the reasonableness of the initial value $-[\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{sym}}$ through another equivalent form of Equation $\eqref{eq:r-xx}$:</p>
+                    <p>Regarding initial value selection, we can consider the square matrix solution $-[\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{sym}}$, which constitutes a natural transition from square to non-square matrices. We can also examine the reasonableness of the initial value $-[\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{sym}}$ through another equivalent form of Equation (4):</p>
                     <div class="equation">
                         \[
                         \boldsymbol{Q}(\boldsymbol{X} + [\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{sym}}) + (\boldsymbol{X} + [\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{sym}})\boldsymbol{Q}  =[\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{skew}}\boldsymbol{Q} -\boldsymbol{Q}[\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{skew}}
@@ -1131,13 +1131,13 @@
                         Self-Implementation of Lyapunov Solver
                     </div>
                     <p>As mentioned, Scipy includes a built-in Lyapunov equation solver, allowing direct calls without concern for the solution process. However, this is limited to CPU-based Scipy. The author notes that neither Torch nor Jax have equivalent functions, so for GPU computation, one must "self-reliance."</p>
-                    <p>There are two approaches to programmatically solve Equation $\eqref{eq:r-xx}$. The first follows the approach in <a href="/archives/11056" target="_blank">"What Can the Matrix Sign Function mcsgn Compute?"</a>, using $\newcommand{mcsgn}{\mathop{\text{mcsgn}}}\mcsgn$ (not $\msign$) to solve:</p>
+                    <p>There are two approaches to programmatically solve Equation (4). The first follows the approach in <a href="/archives/11056" target="_blank">"What Can the Matrix Sign Function mcsgn Compute?"</a>, using $\newcommand{mcsgn}{\mathop{\text{mcsgn}}}\mcsgn$ (not $\msign$) to solve:</p>
                     <div class="equation">
                         \[
                         \boldsymbol{X} = \mcsgn\left(\begin{bmatrix}-\boldsymbol{Q} & -[\boldsymbol{Q}\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{sym}} \\ \boldsymbol{0} & \boldsymbol{Q}\end{bmatrix}\right)_{[:m,m:]}
                         \]
                     </div>
-                    <p>The second is based on SVD, a method we already used when computing $\msign$ gradients in <a href="/archives/11025" target="_blank">"Derivative of msign"</a>. Combining with Equation $\eqref{eq:r-xx}$, we reintroduce it here. From $\boldsymbol{Q}$'s definition, it is symmetric positive definite, thus can be eigendecomposed as $\boldsymbol{V}\boldsymbol{\Sigma}\boldsymbol{V}^{\top}$, where $\boldsymbol{V}$ is orthogonal and $\boldsymbol{\Sigma}=\mathop{\text{diag}}(\sigma_1,\cdots,\sigma_m)$ is diagonal. Substituting into Equation $\eqref{eq:r-xx}$ yields:</p>
+                    <p>The second is based on SVD, a method we already used when computing $\msign$ gradients in <a href="/archives/11025" target="_blank">"Derivative of msign"</a>. Combining with Equation (4), we reintroduce it here. From $\boldsymbol{Q}$'s definition, it is symmetric positive definite, thus can be eigendecomposed as $\boldsymbol{V}\boldsymbol{\Sigma}\boldsymbol{V}^{\top}$, where $\boldsymbol{V}$ is orthogonal and $\boldsymbol{\Sigma}=\mathop{\text{diag}}(\sigma_1,\cdots,\sigma_m)$ is diagonal. Substituting into Equation (4) yields:</p>
                     <div class="equation">
                         \[
                         \boldsymbol{\Sigma}(\boldsymbol{V}^{\top}\boldsymbol{X}\boldsymbol{V}) + (\boldsymbol{V}^{\top}\boldsymbol{X}\boldsymbol{V})\boldsymbol{\Sigma} =  -2\boldsymbol{V}^{\top}[\boldsymbol{Q}\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{sym}}\boldsymbol{V}
@@ -1149,7 +1149,7 @@
                         \boldsymbol{X} =  -2\boldsymbol{V}((\boldsymbol{V}^{\top}[\boldsymbol{Q}\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{sym}}\boldsymbol{V})\oslash \boldsymbol{S})\boldsymbol{V}^{\top}
                         \]
                     </div>
-                    <p>where $\oslash$ denotes the Hadamard quotient. An interesting aspect here is that performing eigendecomposition on $\boldsymbol{Q}$ is essentially equivalent to performing SVD on $\boldsymbol{G} + \boldsymbol{W}\boldsymbol{X}$, and performing SVD on $\boldsymbol{G} + \boldsymbol{W}\boldsymbol{X}$ can also be used to compute $\msign(\boldsymbol{G} + \boldsymbol{W}\boldsymbol{X})$. Thus, a single SVD can compute both $\msign$ and the solution to Equation $\eqref{eq:r-xx}$.</p>
+                    <p>where $\oslash$ denotes the Hadamard quotient. An interesting aspect here is that performing eigendecomposition on $\boldsymbol{Q}$ is essentially equivalent to performing SVD on $\boldsymbol{G} + \boldsymbol{W}\boldsymbol{X}$, and performing SVD on $\boldsymbol{G} + \boldsymbol{W}\boldsymbol{X}$ can also be used to compute $\msign(\boldsymbol{G} + \boldsymbol{W}\boldsymbol{X})$. Thus, a single SVD can compute both $\msign$ and the solution to Equation (4).</p>
                 </div>
                 
                 <div class="technical-box">
@@ -1168,7 +1168,7 @@
                         <i class="fas fa-lightbulb"></i>
                         Heuristic Solutions by @leloy
                     </div>
-                    <p>Prior to this article, <a href="https://x.com/leloykun" target="_blank">@leloy</a> proposed two heuristic solution methods for the original objective $\eqref{eq:ori-obj}$ in his blog post <a href="https://leloykun.github.io/ponder/steepest-descent-stiefel/" target="_blank">"Heuristic Solutions for Steepest Descent on the Stiefel Manifold"</a>. Here, "heuristic" means that in most cases, it yields a reasonably good solution but cannot guarantee optimality. Let's examine these as well.</p>
+                    <p>Prior to this article, <a href="https://x.com/leloykun" target="_blank">@leloy</a> proposed two heuristic solution methods for the original objective in his blog post <a href="https://leloykun.github.io/ponder/steepest-descent-stiefel/" target="_blank">"Heuristic Solutions for Steepest Descent on the Stiefel Manifold"</a>. Here, "heuristic" means that in most cases, it yields a reasonably good solution but cannot guarantee optimality. Let's examine these as well.</p>
                     <p>The first method can be described as purely geometric. First, we define a projection operator:</p>
                     <div class="equation">
                         \[
@@ -1334,8 +1334,8 @@ assert np.allclose(phi1, phi2)</code></pre>
                         <i class="fas fa-exclamation-circle"></i>
                         Computational Precision Considerations
                     </div>
-                    <p>The solution to the original problem $\eqref{eq:ori-obj}$ is now temporarily concluded. Next, we supplement discussion on several potentially confusing details.</p>
-                    <p>First, for descriptive convenience, the iterative solution process presented earlier carries an implicit assumption: $\boldsymbol{G} + \boldsymbol{W}\boldsymbol{X}$ remains full-rank (rank $m$) throughout; otherwise, matrix $\boldsymbol{S}$ would have zero components, and $\oslash\boldsymbol{S}$ becomes problematic. However, this difficulty is not fundamental because Equation $\eqref{eq:start}$ must have a solution. Thus, when encountering zero denominators, numerators must also be zero. Therefore, we simply need to replace zero components of $\boldsymbol{S}$ with a small positive number to obtain correct results.</p>
+                    <p>The solution to the original problem is now temporarily concluded. Next, we supplement discussion on several potentially confusing details.</p>
+                    <p>First, for descriptive convenience, the iterative solution process presented earlier carries an implicit assumption: $\boldsymbol{G} + \boldsymbol{W}\boldsymbol{X}$ remains full-rank (rank $m$) throughout; otherwise, matrix $\boldsymbol{S}$ would have zero components, and $\oslash\boldsymbol{S}$ becomes problematic. However, this difficulty is not fundamental because Equation (1) must have a solution. Thus, when encountering zero denominators, numerators must also be zero. Therefore, we simply need to replace zero components of $\boldsymbol{S}$ with a small positive number to obtain correct results.</p>
                     <p>From a numerical computation perspective, we rarely encounter singular values that are exactly zero, so this concern can be largely ignored, assuming $\boldsymbol{G} + \boldsymbol{W}\boldsymbol{X}$ is full-rank by default. Under this default assumption, the retraction operation becomes simple because:</p>
                     <div class="equation">
                         \[

@@ -1006,7 +1006,7 @@
                 
                 <h2 id="fundamental-result">Fundamental Result<a href="#fundamental-result">#</a></h2>
                 
-                <p>The solution process for objective $\eqref{eq:muon-obj}$ was already provided in the "Matrix Norms" section of <a href="/archives/10592" target="_blank">"Muon Optimizer Appreciation: The Essential Leap from Vectors to Matrices"</a>. However, for completeness, we restate it here. Let the SVD of $\boldsymbol{G}$ be $\boldsymbol{U}\boldsymbol{\Sigma}\boldsymbol{V}^{\top} = \sum\limits_{i=1}^r \sigma_i \boldsymbol{u}_i \boldsymbol{v}_i^{\top}$, where $r$ is the rank of $\boldsymbol{G}$. We have:</p>
+                <p>The solution process for objective (2) was already provided in the "Matrix Norms" section of <a href="/archives/10592" target="_blank">"Muon Optimizer Appreciation: The Essential Leap from Vectors to Matrices"</a>. However, for completeness, we restate it here. Let the SVD of $\boldsymbol{G}$ be $\boldsymbol{U}\boldsymbol{\Sigma}\boldsymbol{V}^{\top} = \sum\limits_{i=1}^r \sigma_i \boldsymbol{u}_i \boldsymbol{v}_i^{\top}$, where $r$ is the rank of $\boldsymbol{G}$. We have:</p>
                 
                 <div class="equation-container">
                     <div class="equation">
@@ -1076,7 +1076,7 @@
                 
                 <h2 id="solution-process">Solution Process<a href="#solution-process">#</a></h2>
                 
-                <p>To solve objective $\eqref{eq:muon-obj-orth}$, similar to the previous article, we introduce an undetermined coefficient matrix $\boldsymbol{\Lambda}\in\mathbb{R}^{m\times m}$, obtaining:</p>
+                <p>To solve objective, similar to the previous article, we introduce an undetermined coefficient matrix $\boldsymbol{\Lambda}\in\mathbb{R}^{m\times m}$, obtaining:</p>
                 
                 <div class="equation-container">
                     <div class="equation">
@@ -1182,7 +1182,7 @@
                         \boldsymbol{W} \quad \leftarrow\quad \msign(\boldsymbol{W} - \eta \boldsymbol{\Phi}) = \msign(\boldsymbol{W}(\boldsymbol{I} - \eta\boldsymbol{O})) = \boldsymbol{W}\msign(\boldsymbol{I} - \eta\boldsymbol{O})
                         \]
                     </div>
-                    <p>But this requires computing $\msign$ twice; let's attempt to simplify. By definition and Equation $\eqref{eq:orth-check}$:</p>
+                    <p>But this requires computing $\msign$ twice; let's attempt to simplify. By definition and Equation:</p>
                     <div class="equation">
                         \[
                         \msign(\boldsymbol{I} - \eta\boldsymbol{O}) = (\boldsymbol{I} - \eta\boldsymbol{O})(\boldsymbol{I} + \eta^2\boldsymbol{O}^{\top}\boldsymbol{O})^{-1/2}
