@@ -1,5 +1,53 @@
 const papers = [
   {
+    id: 'old-optimizer-new-norm-2024',
+    title: 'Old Optimizer, New Norm: An Anthology',
+    authors: ['Jeremy Bernstein', 'Laker Newhouse'],
+    year: 2024,
+    venue: 'arXiv preprint',
+    category: 'Analysis',
+    abstract: 'Deep learning optimizers are often motivated through a mix of convex and approximate second-order theory. We select three such methods -- Adam, Shampoo and Prodigy -- and argue that each method can instead be understood as a squarely first-order method without convexity assumptions. In fact, after switching off exponential moving averages, each method is equivalent to steepest descent under a particular norm. By generalizing this observation, we chart a new design space for training algorithms. Different operator norms should be assigned to different tensors based on the role that the tensor plays within the network. For example, while linear and embedding layers may have the same weight space of R^{m x n}, these layers play different roles and should be assigned different norms. We hope that this idea of carefully metrizing the neural architecture might lead to more stable, scalable and indeed faster training.',
+    arxivUrl: 'https://arxiv.org/abs/2409.20325',
+    tags: ['Optimizer', 'Norm', 'Steepest Descent', 'Adam', 'Shampoo', 'Prodigy'],
+    featured: true
+  },
+  {
+    id: 'scalable-optimization-modular-norm-2024',
+    title: 'Scalable Optimization in the Modular Norm',
+    authors: ['Tim Large', 'Yang Liu', 'Minyoung Huh', 'Hyojin Bahng', 'Phillip Isola', 'Jeremy Bernstein'],
+    year: 2024,
+    venue: 'arXiv preprint',
+    category: 'Analysis',
+    abstract: 'To improve performance in contemporary deep learning, one is interested in scaling up the neural network in terms of both the number and the size of the layers. When ramping up the width of a single layer, graceful scaling of training has been linked to the need to normalize the weights and their updates in the "natural norm" particular to that layer. In this paper, we significantly generalize this idea by defining the modular norm, which is the natural norm on the full weight space of any neural network architecture. The modular norm is defined recursively in tandem with the network architecture itself. We show that the modular norm has several promising applications. On the practical side, the modular norm can be used to normalize the updates of any base optimizer so that the learning rate becomes transferable across width and depth. On the theoretical side, we show that for any neural network built from "well-behaved" atomic modules, the gradient of the network is Lipschitz-continuous in the modular norm, with the Lipschitz constant admitting a simple recursive formula.',
+    arxivUrl: 'https://arxiv.org/abs/2405.14813',
+    tags: ['Modular Norm', 'Scalable Optimization', 'Neural Network Architecture', 'Lipschitz Continuity'],
+    featured: true
+  },
+  {
+    id: 'automatic-gradient-descent-2023',
+    title: 'Automatic Gradient Descent: Deep Learning without Hyperparameters',
+    authors: ['Jeremy Bernstein', 'Chris Mingard', 'Kevin Huang', 'Navid Azizan', 'Yisong Yue'],
+    year: 2023,
+    venue: 'arXiv preprint',
+    category: 'New Optimizer',
+    abstract: 'The architecture of a deep neural network is defined explicitly in terms of the number of layers, the width of each layer and the general network topology. Existing optimisation frameworks neglect this information in favour of implicit architectural information (e.g. second-order methods) or architecture-agnostic distance functions (e.g. mirror descent). Meanwhile, the most popular optimiser in practice, Adam, is based on heuristics. This paper builds a new framework for deriving optimisation algorithms that explicitly leverage neural architecture. The theory extends mirror descent to non-convex composite objective functions: the idea is to transform a Bregman divergence to account for the non-linear structure of neural architecture. Working through the details for deep fully-connected networks yields automatic gradient descent: a first-order optimiser without any hyperparameters. Automatic gradient descent trains both fully-connected and convolutional networks out-of-the-box and at ImageNet scale.',
+    arxivUrl: 'https://arxiv.org/abs/2304.05187',
+    tags: ['Automatic Gradient Descent', 'Hyperparameter-free', 'Neural Architecture', 'Mirror Descent'],
+    featured: true
+  },
+  {
+    id: 'optimisation-generalisation-networks-neurons-2022',
+    title: 'Optimisation & Generalisation in Networks of Neurons',
+    authors: ['Jeremy Bernstein'],
+    year: 2022,
+    venue: 'arXiv preprint',
+    category: 'Analysis',
+    abstract: 'This thesis aims to develop the theoretical foundations of optimization and generalization in artificial neural networks. On the optimization side, we propose a new theoretical framework for deriving architecture-dependent first-order optimization algorithms. On the generalization side, we propose a new correspondence between network ensembles and individual networks, arguing that as network width and normalized margin increase, the space of networks interpolating a specific training set concentrates on an aggregated Bayesian method called the "Bayesian Point Machine".',
+    arxivUrl: 'https://arxiv.org/abs/2210.10101',
+    tags: ['Optimization', 'Generalization', 'Neural Networks', 'Bayesian Point Machine'],
+    featured: true
+  },
+  {
     id: 'stabilizing-rl-llms-2025',
     title: 'Stabilizing Reinforcement Learning with LLMs: Formulation and Practices',
     authors: ['Chujie Zheng', 'Kai Dang', 'Bowen Yu', 'Mingze Li', 'Huiqiang Jiang', 'Junrong Lin', 'Yuqiong Liu', 'Hao Lin', 'Chencan Wu', 'Feng Hu', 'An Yang', 'Jingren Zhou', 'Junyang Lin'],

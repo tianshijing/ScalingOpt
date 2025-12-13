@@ -1,0 +1,1650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backbone-Optimizer Coupling Bias: The Hidden Co-Design Principle | ScalingOpt</title>
+    <meta name="description" content="A formal investigation into the intrinsic interdependence between neural network architectures and optimizers, introducing the Backbone-Optimizer Coupling Bias (BOCB) and principles for systematic co-design.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #7c3aed;
+            --primary-dark: #5b21b6;
+            --primary-light: #ede9fe;
+            --secondary: #4c1d95;
+            --accent: #8b5cf6;
+            --light: #faf5ff;
+            --white: #ffffff;
+            --gray-100: #f5f3ff;
+            --gray-200: #e0e7ff;
+            --gray-300: #c7d2fe;
+            --gray-600: #6d7280;
+            --gray-700: #4b5563;
+            --gray-900: #1f2937;
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 6px 24px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            border: 1px solid var(--gray-200);
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.8rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -10%;
+            width: 220px;
+            height: 220px;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            max-width: 900px;
+            line-height: 1.5;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+        }
+
+        .meta-item i {
+            font-size: 0.9rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 3px 10px;
+            border-radius: 14px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Abstract Section */
+        .abstract {
+            background: linear-gradient(to right, var(--primary-light), #f5f3ff);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            margin: 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+        }
+
+        .abstract-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .abstract-content p {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: var(--gray-900);
+            margin-bottom: 0.8rem;
+        }
+
+        .abstract-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            gap: 1.5rem;
+            padding: 1.5rem 0;
+        }
+
+        @media (max-width: 850px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            padding-left: 1.2rem;
+        }
+
+        .toc {
+            position: sticky;
+            top: 1.2rem;
+        }
+
+        .toc-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 1rem;
+            color: var(--primary-dark);
+            font-weight: 700;
+            font-size: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .toc-header i {
+            font-size: 1rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .toc-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.85rem;
+            padding: 4px 0 4px 8px;
+            transition: var(--transition);
+            border-left: 2px solid transparent;
+        }
+
+        .toc-link:hover {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            transform: translateX(3px);
+            background: var(--primary-light);
+            border-radius: 0 4px 4px 0;
+        }
+
+        .toc-link.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 600;
+            background: var(--primary-light);
+            border-radius: 0 4px 4px 0;
+        }
+
+        .toc-number {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.8rem;
+            min-width: 18px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-right: 1.5rem;
+            padding-left: 0;
+        }
+
+        @media (max-width: 850px) {
+            .sidebar {
+                padding: 0 1.2rem;
+            }
+            
+            .main-content {
+                padding: 0 1.2rem;
+            }
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--gray-200);
+            position: relative;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        h2 a {
+            color: var(--accent);
+            font-size: 0.8rem;
+            margin-left: 8px;
+            text-decoration: none;
+        }
+
+        h2 a:hover {
+            text-decoration: underline;
+        }
+
+        h3 {
+            color: var(--secondary);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.8rem;
+            padding-left: 0.5rem;
+            border-left: 3px solid var(--accent);
+        }
+
+        h4 {
+            color: var(--gray-700);
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 1.2rem 0 0.5rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            color: var(--gray-900);
+            line-height: 1.7;
+        }
+
+        /* Section Divider */
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary-light), transparent);
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .section-divider::after {
+            content: '⚡';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--white);
+            color: var(--primary);
+            padding: 0 10px;
+            font-size: 0.9rem;
+        }
+
+        /* Equation Styling */
+        .equation-container {
+            margin: 1rem 0;
+        }
+
+        .equation {
+            background: linear-gradient(to right, var(--primary-light), #f5f3ff);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', serif;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .equation-number {
+            color: var(--primary);
+            font-weight: 700;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin-right: 8px;
+            display: inline-block;
+            min-width: 20px;
+        }
+
+        /* Definition Box */
+        .definition-box {
+            background: linear-gradient(to right, #f0e9ff, #e9e4ff);
+            border-left: 3px solid var(--primary);
+            padding: 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.5rem 0;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .definition-box::before {
+            content: 'BOCB';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: rgba(124, 58, 237, 0.1);
+            letter-spacing: 2px;
+        }
+
+        .definition-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .definition-header i {
+            font-size: 1rem;
+        }
+
+        /* Principle Box */
+        .principle-box {
+            background: linear-gradient(to right, #f5f0ff, #f0ebff);
+            border: 1px solid var(--gray-200);
+            border-left: 4px solid var(--primary);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            box-shadow: var(--shadow-md);
+        }
+
+        .principle-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 0.8rem;
+            color: var(--primary-dark);
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .principle-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+
+        /* Insight Box */
+        .insight-box {
+            background: linear-gradient(to right, #eef2ff, #e0e7ff);
+            border-left: 3px solid var(--accent);
+            padding: 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.5rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .insight-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 0.8rem;
+            color: var(--secondary);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        /* Muon Highlight */
+        .muon-highlight {
+            background: linear-gradient(to right, #f0f9ff, #e0f2fe);
+            border-left: 3px solid #0ea5e9;
+            padding: 1rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .muon-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 0.5rem;
+            color: #0369a1;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* Reference Section */
+        .reference-section {
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .reference-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 1rem;
+            color: var(--primary-dark);
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .reference-link {
+            background: var(--white);
+            padding: 0.8rem 1rem;
+            border-radius: 5px;
+            border: 1px solid var(--gray-300);
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-top: 0.8rem;
+            overflow-wrap: break-word;
+            color: var(--gray-900);
+        }
+
+        /* Figure Container */
+        .figure-container {
+            background: linear-gradient(to right, var(--primary-light), #f5f3ff);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--gray-200);
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .figure-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        .figure-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--gray-200);
+            transition: var(--transition);
+            cursor: zoom-in;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .figure-container img:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .figure-caption {
+            background: var(--white);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-top: 1rem !important;
+            border-left: 3px solid var(--primary);
+            color: var(--gray-700);
+            font-size: 0.9rem;
+            font-style: italic;
+            line-height: 1.4;
+            text-align: left;
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .team-credit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 8px 20px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.8rem;
+            margin-top: 0.8rem;
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.1s ease;
+            z-index: 1000;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 1.2rem 1.5rem;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .subtitle {
+                font-size: 0.9rem;
+                margin-bottom: 0.8rem;
+            }
+            
+            .content-wrapper {
+                padding: 1.2rem 0;
+            }
+            
+            .abstract {
+                padding: 1rem;
+            }
+            
+            .meta-info {
+                gap: 0.8rem;
+            }
+            
+            .meta-item {
+                font-size: 0.8rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            p {
+                font-size: 0.9rem;
+            }
+            
+            .figure-container {
+                padding: 1rem;
+                margin: 1.5rem 0;
+            }
+            
+            .figure-caption {
+                font-size: 0.85rem;
+                padding: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .content-wrapper {
+                padding: 1rem 0;
+            }
+            
+            .header {
+                padding: 1rem;
+            }
+        }
+
+        /* Links styling */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        a:hover {
+            text-decoration: underline;
+            text-decoration-thickness: 2px;
+        }
+
+        /* Blockquote styling */
+        blockquote {
+            background: linear-gradient(to right, var(--gray-100), var(--primary-light));
+            border-left: 3px solid var(--primary);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-style: normal;
+            position: relative;
+        }
+
+        blockquote p {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+
+        blockquote p:before {
+            content: '⟡';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* List styling */
+        ul, ol {
+            padding-left: 1.8rem;
+            margin-bottom: 1.2rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+
+        /* Bold styling for emphasis */
+        strong {
+            color: var(--primary-dark);
+        }
+
+        /* Italic for technical terms */
+        em {
+            color: var(--gray-700);
+            font-style: normal;
+            font-weight: 500;
+        }
+
+        /* Underline for key concepts */
+        .key-term {
+            text-decoration: none;
+            border-bottom: 1px dotted var(--primary);
+            font-weight: 600;
+        }
+
+        /* Code snippet styling */
+        .code-snippet {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background: var(--gray-100);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.85rem;
+            color: var(--primary-dark);
+        }
+
+        /* Accessibility focus styles */
+        :focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>Backbone-Optimizer Coupling Bias: The Hidden Co-Design Principle</h1>
+                <div class="subtitle">An investigation into the intrinsic interdependence between neural network architectures and optimizers, formalizing the Backbone-Optimizer Coupling Bias (BOCB) and deriving systematic co-design principles for unified learning systems.</div>
+                
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-users"></i>
+                        <span>ScalingOpt Team</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>March 2024</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tags"></i>
+                        <div class="tag">Neural Architecture</div>
+                        <div class="tag">Optimization Theory</div>
+                        <div class="tag">Co-Design Principles</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Abstract Section -->
+        <div class="abstract">
+            <div class="abstract-header">
+                <i class="fas fa-file-alt"></i>
+                Abstract
+            </div>
+            <div class="abstract-content">
+                <p>Deep learning has evolved from a paradigm where model architecture and optimizer design were treated as largely independent, to one where their intricate interplay is increasingly recognized. The Nested Learning framework further refines this understanding by conceptualizing both architectures and optimizers as nested associative memory systems, revealing that their co-dependence is not incidental but fundamental. This perspective highlights that the inductive bias of an architecture and the dynamical bias of its optimizer are inherently coupled—each shaping and being shaped by the other throughout learning. We formalize this intrinsic duality as the <strong>Backbone-Optimizer Coupling Bias (BOCB)</strong>, a pervasive yet often overlooked design axis that governs learning trajectories, solution manifold geometry, and the ultimate representational character of trained models.Building on this unified view, this work investigates three central questions: (i) Is the conventional pairing of architectures (e.g., Transformers, ConvNets) with optimizers (e.g., Adam, SGD) truly arbitrary, or does it reflect an underlying structural and dynamical compatibility? (ii) How does this coupling bias influence key behaviors such as optimization stability, generalization, and robustness to catastrophic forgetting? (iii) Can we derive formal, actionable principles to co-design architectures and optimizers as a coupled dynamical system? By addressing these questions, we advocate for a paradigm shift from sequential, modular design toward an integrated co-design philosophy, where architectural inductive bias and optimizer dynamics are jointly optimized to unlock more capable, efficient, and adaptive neural learning systems.</p>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Sidebar Table of Contents -->
+            <aside class="sidebar">
+                <nav class="toc">
+                    <div class="toc-header">
+                        <i class="fas fa-list-ol"></i>
+                        Navigation
+                    </div>
+                    <ul class="toc-list">
+                        <li class="toc-item">
+                            <a href="#introduction" class="toc-link">
+                                <span class="toc-number">1</span>
+                                <span>Introduction</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#nested-learning" class="toc-link">
+                                <span class="toc-number">2</span>
+                                <span>The Nested Learning Framework</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#primal-dual" class="toc-link">
+                                <span class="toc-number">3</span>
+                                <span>Primal-Dual Geometry</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#bocb" class="toc-link">
+                                <span class="toc-number">4</span>
+                                <span>The BOCB Concept</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#principles" class="toc-link">
+                                <span class="toc-number">5</span>
+                                <span>Co-Design Principles</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#conclusion" class="toc-link">
+                                <span class="toc-number">6</span>
+                                <span>Conclusion</span>
+                            </a>
+                        </li>
+                        <li class="toc-item">
+                            <a href="#references" class="toc-link">
+                                <span class="toc-number"></span>
+                                <span>References</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Article Content -->
+            <main class="main-content">
+                <h2 id="introduction">Introduction<a href="#introduction">#</a></h2>
+                
+                <p>The evolution of design philosophy in deep learning reflects a significant intellectual shift—from viewing model architecture and optimization as modular, separable components to recognizing them as intrinsically coupled elements of a unified learning system. In the early paradigm, architectural design pursued representational efficacy through inductive biases—such as translational equivariance in convolutional networks (ConvNets)—while optimization research developed generic algorithms like Stochastic Gradient Descent (SGD) and its momentum-augmented variant (SGDM) to navigate parameter spaces independently of structural specifics. This decoupled perspective treats optimizer selection primarily as an overall posterior optimization problem following architecture design.</p>
+                
+                <p>Large-scale empirical evidence has systematically dismantled this modular perspective. A paradigmatic example is the now-standard coupling of the Transformer architecture with adaptive optimizers—predominantly Adam or AdamW—rather than with classical SGD(M). This pairing is not incidental but arises from a fundamental architectural–optimizer duality: the Transformer’s forward pass exhibits pronounced heterogeneity, with self‑attention creating dense, dynamic interactions across tokens, while feed‑forward and normalization layers operate at distinct parameter and gradient scales. This intrinsically heterogeneous gradient geometry is ill‑suited to the uniform, coordinate‑wise updates of SGD(M), often leading to instability or poor convergence. In contrast, AdamW’s per‑parameter adaptive learning rates and momentum dynamically compensate for this heterogeneity, enabling stable and efficient optimization. This observed synergy reflects what we formalize as the Backbone–Optimizer Coupling Bias (BOCB): the inductive bias embedded in the architecture actively shapes the dynamical landscape that the optimizer must navigate, while the optimizer’s update rule in turn reshapes the effective geometry of the architecture’s parameter manifold.</p>
+
+                <p>The Nested Learning (NL) framework elevates this empirical insight into a principled theoretical account. NL interprets both architectures and optimizers as instances of nested associative‑memory systems, each compressing a specific context flow—tokens for the forward pass, gradients for the update rule. Critically, these systems operate in a closed loop: the architecture generates the gradient statistics that form the input context for the optimizer’s associative memory, while the optimizer’s output reconfigures the architecture’s parameters, thereby shaping subsequent gradient flows. Hence, the coupling between a heterogeneous architecture like the Transformer and an adaptive optimizer like AdamW reflects a deeper computational necessity: the optimizer’s dynamics must be explicitly aligned with the statistical and geometric properties induced by the architectural backbone. Within the NL view, the conventional “architecture‑first, optimizer‑later” design paradigm is fundamentally incomplete; instead, the inductive bias of the architecture and the dynamical bias of the optimizer constitute two co‑designed facets of a single, nested learning mechanism. Recognizing this coupling not only explains prevalent empirical pairings but also opens a systematic pathway toward co‑designing more effective, robust, and efficient neural learning systems.</p>
+                
+                <div class="section-divider"></div>
+                
+                <h2 id="nested-learning">The Nested Learning Framework<a href="#nested-learning">#</a></h2>
+                
+                <p>The Nested Learning (NL) framework elevates this empirical insight into a principled theoretical account. NL interprets both architectures and optimizers as instances of <span class="key-term">nested associative‑memory systems</span>, each compressing a specific <em>context flow</em>—tokens for the forward pass, gradients for the update rule. Critically, these systems operate in a closed loop: the architecture generates the gradient statistics that form the input context for the optimizer's associative memory, while the optimizer's output reconfigures the architecture's parameters, thereby shaping subsequent gradient flows.</p>
+                
+                <!-- 添加的图片部分，已更新图片路径 -->
+                <div class="figure-container">
+                    <img 
+                        src="../../../assets/img/blogs/nl_1.png" 
+                        alt="Nested Learning Paradigm diagram showing machine learning models as nested optimization problems"
+                        loading="lazy"
+                    >
+                    <div class="figure-caption">
+                        <strong>Figure 1:</strong> Nested Learning Paradigm that represent a machine learning model and its training procedure as a set of nested optimization problems. (Left) An example of Hybrid architecture. While deep learning perspective, as the flattened image of NL, does not provide insight about the depth of computation in the blocks, NL transparently represent all the inner gradient flows. (Right) A Neural Learning Module: A computational model that learns how to compress its own context flow. For example, the first level corresponds to the model's most outer-loop training, often refer to as "pre-training".
+                    </div>
+                </div>
+                
+                <blockquote>
+                    <p>Within the Nested Learning (NL) framework, the conventional separation between architecture and optimizer is not merely relaxed but fundamentally dissolved. Both are recast as instances of nested, context-compressing associative memories operating at different temporal frequencies and on different data streams. This reconceptualization precisely defines the core architecture-optimizer problem: the need for <em>dynamical alignment</em> between the gradient distribution generated by an architectural inductive bias and the compression algorithm implemented by the optimizer's update rule. Failure to achieve this alignment results in inefficient credit assignment, unstable training dynamics, and suboptimal convergence, often misattributed solely to architecture depth or data quality.</p>
+                </blockquote>
+                
+                <p>Within the Nested Learning (NL) paradigm, neural learning modules are fundamentally inter-connected systems, where each component’s design profoundly influences the others. A key manifestation of this interdependence is that the architecture generates the dynamic context for optimizers—namely, the distribution and temporal structure of gradients—which the optimizer, itself a learning module or associative memory, must effectively compress and utilize. Consequently, different architectures induce distinct gradient patterns, implying that a single optimizer cannot optimally serve all model designs. This insight underscores the necessity of moving beyond generic optimization schemes toward architecture-specific optimizers, whose memory mechanisms, update rules, and preconditioning strategies are co-designed with the architectural backbone. Such harmonization ensures that the optimizer’s capacity to manage gradient information aligns with the architecture’s representational dynamics, enabling the entire neural learning module to operate as a cohesive, adaptive system—especially critical in continual learning scenarios where gradient landscapes evolve non-stationarily.</p>
+                
+                <p>Guided by this principle, NL inspires targeted improvements on both fronts.</p>
+                <p><strong>For architectures, the focus expands from static representational bias to <em>optimization-aware forward dynamics</em>. Key innovations include:</strong></p>
+                
+                <ul>
+                    <li><strong>Continuum Memory System (CMS):</strong> Replacing static MLP blocks with a cascade of feedforward networks updated at different frequencies. This creates an internal memory spectrum where high-frequency blocks adapt quickly to local context while low-frequency blocks retain persistent knowledge. This design directly mitigates catastrophic forgetting by allowing knowledge to be "recycled" across timescales through gradient flow, and it interfaces naturally with optimizers like M³.</li>
+                    <li><strong>Self-Referential Titans and the Hope Architecture:</strong> This represents the most profound integration. Here, not only the main memory but also the projection matrices (for keys, values) and even meta-parameters like the learning rate and retention gate are implemented as fast-weight associative memories that are updated in-context using rules like DGD. The model essentially <em>learns to modify its own architecture</em> on the fly. The resulting Hope module combines these self-modifying Titans with a CMS backend, creating a neural learning module where architectural adaptation and gradient-based optimization are seamlessly unified across nested loops.</li>
+                </ul>
+                
+                <p><strong>For optimizers, the goal shifts from generic efficiency to <em>architecture-aware compression</em>. This leads to novel designs such as:</strong></p>
+                
+                <ul>
+                    <li><strong>Delta Gradient Descent (DGD) and Delta Momentum:</strong> Moving beyond the dot-product objective of standard GD, these rules employ an L2-regression loss within the associative memory update. This incorporates a data-dependent weight decay, allowing the optimizer to better handle correlated token sequences and manage its own memory capacity, akin to how advanced recurrent models like DeltaNet operate on tokens.</li>
+                    <li><strong>Generalized and Deep Momentum:</strong> Replacing the simple moving average in momentum with a more expressive memory module, such as a shallow MLP, enhances its capacity to model complex long-term dependencies in the gradient history, which is crucial for continual learning.</li>
+                    <li><strong>Multi-scale Momentum Muon (M³):</strong> This optimizer explicitly instantiates the NL principle of multi-frequency memory. It employs a continuum memory system (CMS) for gradients, combining a fast-updating momentum term with a slow-updating one that aggregates gradients over longer chunks. Coupled with orthogonalization (via Newton-Schulz iterations), M³ is designed to capture both immediate and long-range gradient structures, improving performance in tasks requiring long-context credit assignment.</li>
+                </ul>
+                
+                <div class="section-divider"></div>
+                
+                <h2 id="primal-dual">The Primal-Dual Geometry of Neural Network Optimization<a href="#primal-dual">#</a></h2>
+
+                <p>The conventional view in deep learning treats model architecture and optimization as distinct concerns: the architecture defines a parametric function \( f(\theta; x) \), and the optimizer serves as an external algorithm that navigates the resulting loss landscape \( \mathcal{L}(\theta) \). This decoupled perspective, while pragmatically useful, obscures a deeper and more fundamental mathematical structure. We argue that the forward pass of an architecture inherently defines a <em>geometry</em> on weight space, and the optimizer's update rule is—whether explicitly or implicitly—a computational procedure operating within the <em>dual</em> of this geometry. Recognizing this intrinsic duality reframes the design of learning systems from an empirical art into a theory-guided discipline of <strong>primal-dual co-design</strong>.</p>
+
+                <h3>1. The Type Mismatch and the Imperative for a Duality Map</h3>
+
+                <p>The canonical gradient descent update, \( \theta_{t+1} = \theta_t - \eta \nabla_\theta \mathcal{L} \), commits a subtle but significant conceptual error. The parameter vector \( \theta \) resides in a primal vector space \( \Theta \). The gradient \( g = \nabla_\theta \mathcal{L} \), however, is inherently a <em>linear functional</em>: it maps a weight perturbation \( \Delta\theta \in \Theta \) to a scalar change in loss via the linear form \( g^\top \Delta\theta \). Thus, \( g \) properly belongs to the <em>dual space</em> \( \Theta^* \). Subtracting an object from the dual space directly from one in the primal space is a type mismatch—it is an ill-defined operation absent a structure that identifies the dual space with the primal one.</p>
+
+                <div class="equation-container">
+                    <div class="equation">
+                        <span class="equation-number">(1)</span>
+                        \[
+                        \theta_{t+1} = \theta_t - \eta \, \mathfrak{D}(g)
+                        \]
+                    </div>
+                </div>
+
+                <p>A geometrically consistent update must therefore take the form shown in Equation (1), where \( \mathfrak{D}: \Theta^* \rightarrow \Theta \) is a <strong>duality map</strong>. The choice of this map is not arbitrary; it must encode the anisotropic sensitivity of the network's output to parameter perturbations. In other words, \( \mathfrak{D} \) should be derived from the <strong>geometry induced by the architecture itself</strong>, transforming the raw gradient into a descent direction that respects the intrinsic curvature of the loss landscape defined by \( f_\theta \).</p>
+
+                <h3>2. The Architecture as a Generator of Primal Geometry</h3>
+
+                <p>An architecture \( f_\theta \) is more than a mere function; it is a compositional structure that imposes a specific, non-Euclidean geometry on its parameter space. This geometry is naturally characterized by a <em>norm</em> derived from the operational semantics of its constituent layers. The framework of modular duality provides a systematic recipe for constructing this norm.</p>
+
+                <!-- 模块对偶性表格 -->
+                <div class="table-container" style="background: linear-gradient(to right, #f5f3ff, #f0f9ff); border-radius: var(--border-radius); border: 1px solid var(--gray-200); margin: 1.5rem 0; overflow: hidden; box-shadow: var(--shadow-sm);">
+                    <div style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; padding: 0.8rem 1.2rem; font-weight: 700; font-size: 0.9rem;">
+                        <i class="fas fa-table"></i>
+                        Table 1: Module Duality Specification
+                    </div>
+                    
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                            <thead>
+                                <tr style="background: var(--primary-light);">
+                                    <th style="padding: 0.8rem; text-align: left; border-bottom: 2px solid var(--primary); color: var(--primary-dark); font-weight: 600;">Module</th>
+                                    <th style="padding: 0.8rem; text-align: left; border-bottom: 2px solid var(--primary); color: var(--primary-dark); font-weight: 600;">Weight Space \( W \)</th>
+                                    <th style="padding: 0.8rem; text-align: left; border-bottom: 2px solid var(--primary); color: var(--primary-dark); font-weight: 600;">\( \text{Module.norm} \)</th>
+                                    <th style="padding: 0.8rem; text-align: left; border-bottom: 2px solid var(--primary); color: var(--primary-dark); font-weight: 600;">\( \text{Module.dualize} \)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Linear 行 -->
+                                <tr style="border-bottom: 1px solid var(--gray-200); background: rgba(255, 255, 255, 0.7);">
+                                    <td style="padding: 0.8rem; font-weight: 600; color: var(--primary-dark);">
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <i class="fas fa-layer-group" style="color: var(--primary);"></i>
+                                            Linear
+                                        </div>
+                                    </td>
+                                    <td style="padding: 0.8rem; font-family: 'Cambria Math', 'Latin Modern Math', serif;">
+                                        \[ \mathbb{R}^{d_{\text{out}} \times d_{\text{in}}} \]
+                                    </td>
+                                    <td style="padding: 0.8rem; font-family: 'Cambria Math', 'Latin Modern Math', serif;">
+                                        \[ W \mapsto \|W\|_{\text{RMS} \rightarrow \text{RMS}} \]
+                                    </td>
+                                    <td style="padding: 0.8rem; font-family: 'Cambria Math', 'Latin Modern Math', serif;">
+                                        \[ G \mapsto \sqrt{\frac{d_{\text{out}}}{d_{\text{in}}}} \times UV^{\top} \]
+                                        <div style="font-size: 0.75rem; color: var(--gray-600); margin-top: 4px;">
+                                            where \( G = U\Sigma V^{\top} \) is SVD
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <!-- Embed 行 -->
+                                <tr style="border-bottom: 1px solid var(--gray-200); background: rgba(255, 255, 255, 0.8);">
+                                    <td style="padding: 0.8rem; font-weight: 600; color: var(--primary-dark);">
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <i class="fas fa-cube" style="color: var(--accent);"></i>
+                                            Embed
+                                        </div>
+                                    </td>
+                                    <td style="padding: 0.8rem; font-family: 'Cambria Math', 'Latin Modern Math', serif;">
+                                        \[ \mathbb{R}^{d_{\text{out}} \times d_{\text{in}}} \]
+                                    </td>
+                                    <td style="padding: 0.8rem; font-family: 'Cambria Math', 'Latin Modern Math', serif;">
+                                        \[ W \mapsto \|W\|_{\ell_1 \rightarrow \text{RMS}} \]
+                                    </td>
+                                    <td style="padding: 0.8rem; font-family: 'Cambria Math', 'Latin Modern Math', serif;">
+                                        \[ \text{col}_j(G) \mapsto \frac{\text{col}_j(G)}{\|\text{col}_j(G)\|_{\text{RMS}}} \]
+                                        <div style="font-size: 0.75rem; color: var(--gray-600); margin-top: 4px;">
+                                            per-column normalization
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <!-- Conv2D 行 -->
+                                <tr style="background: rgba(255, 255, 255, 0.7);">
+                                    <td style="padding: 0.8rem; font-weight: 600; color: var(--primary-dark);">
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <i class="fas fa-th" style="color: var(--secondary);"></i>
+                                            Conv2D
+                                        </div>
+                                    </td>
+                                    <td style="padding: 0.8rem; font-family: 'Cambria Math', 'Latin Modern Math', serif;">
+                                        \[ \mathbb{R}^{d_{\text{out}} \times d_{\text{in}} \times k \times k} \]
+                                    </td>
+                                    <td style="padding: 0.8rem; font-family: 'Cambria Math', 'Latin Modern Math', serif;">
+                                        \[ W \mapsto k^2 \max_{i,j=1}^{k} \|W_{\cdot \cdot i j}\|_{\text{RMS} \rightarrow \text{RMS}} \]
+                                    </td>
+                                    <td style="padding: 0.8rem; font-family: 'Cambria Math', 'Latin Modern Math', serif;">
+                                        \[ G_{\cdot \cdot i j} \mapsto \frac{1}{k^2} \sqrt{\frac{d_{\text{out}}}{d_{\text{in}}}} \times U_{ij} V_{ij}^{\top} \]
+                                        <div style="font-size: 0.75rem; color: var(--gray-600); margin-top: 4px;">
+                                            per-position spatial processing
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- 表格脚注 -->
+                    <div style="padding: 0.8rem 1.2rem; background: var(--primary-light); border-top: 1px solid var(--gray-200); font-size: 0.8rem; color: var(--gray-700);">
+                        <div style="display: flex; align-items: flex-start; gap: 8px;">
+                            <i class="fas fa-info-circle" style="color: var(--primary); flex-shrink: 0; margin-top: 2px;"></i>
+                            <div>
+                                <strong>Table 1:</strong> Duality maps for three atomic modules: Linear, Embed, and Conv2D. These atomic modules are sufficient to build convolutional neural networks and transformers. In <code>Linear.dualize</code>, we let \( U\Sigma V^{\top} \) denote the reduced SVD of the gradient matrix \( G \). In <code>Conv2D.dualize</code>, we let \( U_{ij} \Sigma_{ij} V_{ij}^{\top} \) denote the reduced SVD of the slice of the gradient tensor \( G_{\cdot \cdot i j} \) at kernel indices \( i \) and \( j \). Section 5 provides GPU-friendly algorithms for computing these duality maps based on a family of Newton-Schulz iterations.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="insight-box">
+                    <div class="insight-header">
+                        <i class="fas fa-shapes"></i>
+                        Architectural Geometry
+                    </div>
+                    <p>Each fundamental layer type is associated with a canonical <em>operator norm</em> determined by the spaces it connects. These layer-wise norms are not independent. Through formal <strong>composition</strong> (series connection) and <strong>concatenation</strong> (parallel connection) rules, they recursively define a global, heterogeneous norm \( \|\cdot\|_M \) on the entire parameter space \( \Theta \) of the compound network.</p>
+                </div>
+                <div class="insight-box">
+                    <div class="insight-header">
+                        <i class="fas fa-shapes"></i>
+                        Architectural Geometry
+                    </div>
+                    <p>Each fundamental layer type is associated with a canonical <em>operator norm</em> determined by the spaces it connects:</p>
+                    
+                    <ul>
+                        <li>A <strong>Linear</strong> layer \( y = Wx \), designed to map normalized (RMS-scale) vectors to normalized vectors, is naturally assigned the RMS→RMS operator norm: \( \|W\|_{\text{RMS→RMS}} = \sqrt{d_{\text{in}}/d_{\text{out}}} \cdot \|W\|_2 \). This norm measures the maximum amplification of a typical (unit RMS-norm) input.</li>
+                        <li>An <strong>Embedding</strong> layer, which maps a discrete symbol (represented as a one-hot vector in \( \ell_1 \)) to a continuous embedding (in RMS geometry), is assigned the \( \ell_1 \)-→RMS norm: \( \|W\|_{\ell_1→\text{RMS}} = \max_j \|\text{col}_j(W)\|_{\text{RMS}} \).</li>
+                        <li>A <strong>Conv2D</strong> layer's geometry is captured by a spatial maximum over its kernel positions: \( \| \mathcal{W} \| = k^2 \max_{i,j} \| \mathcal{W}_{:,:,i,j} \|_{\text{RMS→RMS}} \).</li>
+                    </ul>
+                    
+                    <p>Critically, these layer-wise norms are not independent. Through formal <strong>composition</strong> (series connection) and <strong>concatenation</strong> (parallel connection) rules—specifically, the weighted \( L_\infty \)-combination defined by the modular norm—they recursively define a global, heterogeneous norm \( \|\cdot\|_M \) on the entire parameter space \( \Theta \) of the compound network. This architecture-defined norm \( \|\cdot\|_M \) is the central object: it encapsulates the <em>primal geometry</em>. A perturbation \( \Delta\theta \) with small modular norm \( \|\Delta\theta\|_M \) guarantees a bounded change in the network's output, irrespective of its possibly large Euclidean magnitude. The architecture, therefore, implicitly defines a loss landscape whose local curvature is governed by this norm.</p>
+                </div>
+
+                <h3>3. The Optimizer as an Approximate Dual Map</h3>
+
+                <p>Given this geometry, the theoretically optimal steepest descent direction is not the raw gradient \( g \), but the result of applying the duality map \( \mathfrak{D}_M \) associated with the modular norm \( \|\cdot\|_M \) (Bernstein & Newhouse, 2024, Prop. 1). The core function of an optimizer is to approximate this ideal \( \mathfrak{D}_M \) operation with a computationally feasible procedure.</p>
+
+                <p>From this vantage point, common optimizers can be seen as implementing different fidelity approximations to the true duality map:</p>
+
+                <ul>
+                    <li><strong>SGD(M):</strong> Implements the duality map for the Euclidean norm (\( \mathfrak{D}_{\|\cdot\|_2}(g) = g / \|g\|_2 \)). This is geometrically correct <em>only</em> if the architecture's induced geometry \( \|\cdot\|_M \) is approximately isotropic and Euclidean—a condition that rarely holds for deep, heterogeneous networks.</li>
+                    <li><strong>Adam/AdamW:</strong> Introduces per-parameter adaptive scaling, \( \hat{\eta}_t \propto (\sqrt{\text{EMA}(g_t^2)} + \epsilon)^{-1} \). This constitutes a <strong>diagonal, online approximation</strong> to the inverse curvature metric implied by \( \|\cdot\|_M \). Its success with Transformers stems from its ability to compensate—albeit coarsely—for the layer- and parameter-specific scaling inherent in the architecture's non-uniform geometry.</li>
+                    <li><strong>Shampoo & K-FAC:</strong> Attempt higher-fidelity, block-diagonal approximations. For a matrix parameter \( W \), Shampoo's preconditioner \( (G G^\top + \epsilon I)^{-1/4} G (G^\top G + \epsilon I)^{-1/4} \) converges to the polar factor \( U V^\top \) of the gradient \( G = U\Sigma V^\top \). Strikingly, this is the core component of the exact duality map for an RMS→RMS-normed Linear layer: \( \mathfrak{D}_{\text{Linear}}(G) \propto \sqrt{d_{\text{out}}/d_{\text{in}}} \cdot U V^\top \). Thus, Shampoo can be interpreted as directly approximating the architecturally-prescribed dual map for matrix parameters.</li>
+                    <li><strong>μP and Spectral Scaling:</strong> The principles of maximal update parametrization (Yang & Hu, 2021) are not arbitrary heuristics but <strong>derived consequences</strong> of this geometric duality. The prescribed scaling rules for initialization and learning rates (e.g., \( \eta \propto 1/\sqrt{d_{\text{in}}} \) for a Linear layer) emerge directly from the scaling factor \( \sqrt{d_{\text{out}}/d_{\text{in}}} \) present in <code>Linear.dualize</code>. μP ensures that the optimization process remains aligned with the base geometry of the architecture across different width scales.</li>
+                </ul>
+
+                <h3>4. The Co-Design Imperative: Geometric Alignment as a First Principle</h3>
+
+                <p>This geometric perspective provides a unifying framework that explains empirical practices and charts a course for systematic innovation. The observed efficacy of specific pairings (e.g., Transformer-AdamW, CNN-SGD) is not mere folklore but a direct consequence of <strong>geometric alignment</strong>. A pairing succeeds when the optimizer's implicit duality map provides a sufficiently accurate approximation to the one induced by the architecture's modular norm.</p>
+
+                <p>Consequently, the design problem is inherently and inescapably dual, forming a co-design loop:</p>
+
+                <div class="definition-box">
+                    <div class="definition-header">
+                        <i class="fas fa-sync-alt"></i>
+                        The Co-Design Loop
+                    </div>
+                    
+                    <ol>
+                        <li><strong>Architecture → Optimizer (Geometry Informs Dynamics):</strong> Designing a novel architectural component—be it a dynamic sparse layer, a structured state-space model, or a continuum memory system—requires reasoning about the modular norm it instantiates and the resulting gradient geometry. The optimizer must then be selected or engineered to implement an efficient approximation of the corresponding duality map \( \mathfrak{D}_M \). Failure to do so leads to misaligned dynamics, manifesting as instability, slow convergence, or poor generalization.</li>
+                        
+                        <li><strong>Optimizer → Architecture (Dynamics Constrain Geometry):</strong> Conversely, the choice or development of an optimizer, which embodies a specific class of duality maps (e.g., diagonal adaptive, block-orthogonal), defines a "preferred" geometry. Architectures can be consciously designed to produce gradient flows that are well-structured for that optimizer's approximation capabilities, enhancing efficiency and stability. For instance, an optimizer like Shampoo, which approximates semi-orthogonal updates, pairs naturally with layers whose ideal geometry is close to RMS→RMS.</li>
+                    </ol>
+                    
+                    <p>The frontier of this research lies in moving from heuristic approximations to principled, efficient computation of the duality map. Advances such as the rectangular Newton-Schulz iteration for the polar factor (Bernstein & Newhouse, 2024) exemplify this direction, providing stable, GPU-friendly methods to compute key components of the exact dual step. The ultimate goal is a tight integration where the specification of an architecture automatically informs the computational graph of its geometrically-consistent optimizer.</p>
+                </div>
+                
+                <div class="section-divider"></div>
+                
+                <h2 id="bocb">Backbone-Optimizer Coupling Bias (BOCB)<a href="#bocb">#</a></h2>
+                <div class="definition-box" style="margin-top: 1.5rem;">
+                    <div class="definition-header">
+                        <i class="fas fa-link"></i>
+                        Definition: Backbone-Optimizer Coupling Bias (BOCB)
+                    </div>
+                    <p>The <strong>Backbone-Optimizer Coupling Bias (BOCB)</strong> is the intrinsic and irreducible interdependence between the primal geometry induced by an architectural backbone's compositional structure and the dual dynamics implemented by its optimizer's update rule. This interdependence is not merely a practical consideration but a foundational constraint arising from the very nature of gradient-based learning in structured parametric systems.</p>
+                    
+                    <div style="background: linear-gradient(to right, rgba(124, 58, 237, 0.05), rgba(139, 92, 246, 0.05)); padding: 0.8rem 1rem; border-radius: var(--border-radius); margin-top: 0.8rem; border-left: 2px solid var(--primary);">
+                        <div style="display: flex; align-items: flex-start; gap: 8px; color: var(--gray-700);">
+                            <i class="fas fa-bullseye" style="color: var(--primary); flex-shrink: 0; margin-top: 2px;"></i>
+                            <div style="font-size: 0.85rem; line-height: 1.5;">
+                                <strong>Core Implication:</strong> The effectiveness of an optimizer cannot be evaluated independently of the architecture it trains, and vice versa. The geometry-prescribed duality map \( \mathfrak{D}_M \) serves as the fundamental link between architectural design and optimization strategy.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <h3 style="color: var(--secondary); font-size: 1.2rem; font-weight: 600; margin: 1.5rem 0 1rem; padding-left: 0.5rem; border-left: 3px solid var(--accent);">
+                    Muon & M³: Architecturally-Coupled Optimizers for Hidden Layers — Monolithic vs. Multi-Scale Memory Biases
+                </h3>
+                <!-- 添加的并列伪代码部分 -->
+                <div class="algorithm-container" style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin: 2rem 0;">
+                    
+                    <!-- 左侧算法：Muon -->
+                    <div class="algorithm-box" style="flex: 1; min-width: 300px;">
+                        <div class="algorithm-header" style="background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%); color: white; padding: 0.8rem 1.2rem; border-radius: var(--border-radius) var(--border-radius) 0 0; display: flex; align-items: center; gap: 8px; font-weight: 700;">
+                            <i class="fas fa-cogs"></i>
+                            Algorithm 1: Muon Optimizer
+                        </div>
+                        <div class="algorithm-content" style="background: linear-gradient(to right, #f5f3ff, #ede9fe); border: 1px solid #e0e7ff; border-top: none; border-radius: 0 0 var(--border-radius) var(--border-radius); padding: 1.5rem; font-family: 'Consolas', 'Monaco', 'Courier New', monospace; font-size: 0.9rem; line-height: 1.6;">
+                            <div class="algorithm-description" style="margin-bottom: 1rem; color: #4b5563; font-style: italic; font-family: -apple-system, BlinkMacSystemFont, sans-serif;">
+                                Basic Muon algorithm using orthogonal gradient updates via Newton-Schulz iterations.
+                            </div>
+                            
+                            <div class="pseudocode" style="background: white; padding: 1.2rem; border-radius: 5px; border-left: 3px solid #7c3aed; box-shadow: var(--shadow-sm);">
+                                <div style="margin-bottom: 0.8rem; color: #1f2937; font-weight: 600;">Require: Learning rate \( \eta \), momentum \( \mu \)</div>
+                                
+                                <ol style="padding-left: 1.5rem; margin: 0; color: #1f2937;">
+                                    <li style="margin-bottom: 0.5rem;">Initialize \( B_0 \leftarrow 0 \)</li>
+                                    <li style="margin-bottom: 0.5rem;"><strong>for</strong> \( t = 1, \ldots \) <strong>do</strong>
+                                        <div style="padding-left: 1.5rem; margin-top: 0.3rem;">
+                                            Compute gradient \( G_t \leftarrow \nabla_\theta L_t(\theta_{t-1}) \)
+                                        </div>
+                                    </li>
+                                    <li style="margin-bottom: 0.5rem;">
+                                        <div style="padding-left: 1.5rem;">
+                                            \( B_t \leftarrow \mu B_{t-1} + G_t \)<br>
+                                            \( O_t \leftarrow \text{NewtonSchulz5}(B_t) \)
+                                        </div>
+                                    </li>
+                                    <li style="margin-bottom: 0.5rem;">
+                                        <div style="padding-left: 1.5rem;">
+                                            Update parameters \( \theta_t \leftarrow \theta_{t-1} - \eta O_t \)
+                                        </div>
+                                    </li>
+                                    <li style="margin-bottom: 0.5rem;"><strong>end for</strong></li>
+                                    <li style="margin-bottom: 0.5rem;"><strong>return</strong> \( \theta_t \)</li>
+                                </ol>
+                                
+                                <div style="margin-top: 1rem; padding-top: 0.8rem; border-top: 1px dashed #e0e7ff; color: #6d7280; font-size: 0.8rem; font-family: -apple-system, BlinkMacSystemFont, sans-serif;">
+                                    <strong>Key Insight:</strong> Applies Newton-Schulz orthogonalization to momentum-accumulated gradients, aligning updates with the architecture's induced geometry.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 右侧算法：Multi-scale Momentum Muon (M3) - 可展开版本 -->
+                    <div class="algorithm-box" style="flex: 1; min-width: 300px;">
+                        <div class="algorithm-header" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); color: white; padding: 0.8rem 1.2rem; border-radius: var(--border-radius) var(--border-radius) 0 0; display: flex; align-items: center; justify-content: space-between; font-weight: 700;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-wave-square"></i>
+                                Algorithm 2: Multi-scale Momentum Muon (M³)
+                            </div>
+                            <button class="expand-toggle" onclick="toggleAlgorithmExpand(this)" style="background: rgba(255, 255, 255, 0.2); border: none; color: white; border-radius: 4px; padding: 4px 10px; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: background 0.2s;">
+                                <span class="toggle-text">Expand</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </div>
+                        <div class="algorithm-content" style="background: linear-gradient(to right, #f0e9ff, #e9e4ff); border: 1px solid #e0e7ff; border-top: none; border-radius: 0 0 var(--border-radius) var(--border-radius); font-family: 'Consolas', 'Monaco', 'Courier New', monospace; font-size: 0.9rem; line-height: 1.6; overflow: hidden;">
+                            <div class="algorithm-collapsed" style="padding: 1.5rem; max-height: 380px; overflow: hidden; transition: max-height 0.3s ease;">
+                                <div class="algorithm-description" style="margin-bottom: 1rem; color: #4b5563; font-style: italic; font-family: -apple-system, BlinkMacSystemFont, sans-serif;">
+                                    Advanced multi-scale variant with fast/slow momentum buffers for hierarchical gradient structure.
+                                </div>
+                                
+                                <div class="pseudocode" style="background: white; padding: 1.2rem; border-radius: 5px; border-left: 3px solid #8b5cf6; box-shadow: var(--shadow-sm);">
+                                    <div style="margin-bottom: 0.8rem; color: #1f2937; font-weight: 600;">
+                                        <strong>Input:</strong> Initial weights \(\Theta_0\), objective \(\mathcal{L}(\cdot)\), learning rate  
+                                        \(\eta > 0\), Newton-Schulz steps \(T\), momentum factor  
+                                        \(1 > \beta_1, \beta_2, \beta_3, \alpha \geq 0, \epsilon > 0\), frequency \(f\)
+                                    </div>
+                                    
+                                    <!-- 收缩状态下显示的前几行 -->
+                                    <ol style="padding-left: 1.5rem; margin: 0; color: #1f2937;">
+                                        <li style="margin-bottom: 0.5rem;">Initialize momentums:  
+                                            \[ M^{(1)}_0, M^{(2)}_0 \leftarrow 0, V_0 \leftarrow 0; \]</li>
+                                        <li style="margin-bottom: 0.5rem;"><strong>for</strong> lower-frequency iteration \(k = 0, 1, 2, \ldots\) <strong>do</strong></li>
+                                        <li style="margin-bottom: 0.5rem;">
+                                            <div style="padding-left: 1.5rem;">
+                                                Slow Memory:  
+                                                \[ M^{(2)}_t = M^{(2)}_{t-1} + \beta_3 \sum_{i=(k-1)}^{k}f \, g_i; \]
+                                            </div>
+                                        </li>
+                                        <li style="margin-bottom: 0.5rem;">
+                                            <div style="padding-left: 1.5rem;">
+                                                \[ O^{(2)}_t \leftarrow \text{Newton-Schulz}_T \left( M^{(2)}_t \right); \]
+                                            </div>
+                                        </li>
+                                        <li style="margin-bottom: 0.5rem;">
+                                            <div style="padding-left: 1.5rem;">
+                                                <strong>for</strong> \(t = k \, f + 1, k \, f + 2, \ldots, (k+1) \, f \) <strong>do</strong>
+                                            </div>
+                                        </li>
+                                        <!-- 这里添加一个占位符，表示更多内容被隐藏 -->
+                                        <li style="margin-bottom: 0.5rem; color: #6d7280; font-style: italic;">
+                                            <div style="padding-left: 3rem;">
+                                                ... [Inner loop steps 6-10] ...
+                                            </div>
+                                        </li>
+                                        <li style="margin-bottom: 0.5rem;">
+                                            <div style="padding-left: 1.5rem;">
+                                                <strong>end for</strong>
+                                            </div>
+                                        </li>
+                                        <li style="margin-bottom: 0.5rem;"><strong>end for</strong></li>
+                                    </ol>
+                                    
+                                    <div style="margin-top: 1rem; padding-top: 0.8rem; border-top: 1px dashed #e0e7ff; color: #6d7280; font-size: 0.8rem; font-family: -apple-system, BlinkMacSystemFont, sans-serif;">
+                                        <strong>Key Insight:</strong> Maintains dual momentum buffers at different timescales, enabling hierarchical gradient compression and orthogonalization aligned with nested architectural geometries.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 展开状态下显示的完整内容 -->
+                            <div class="algorithm-expanded" style="padding: 1.5rem; display: none;">
+                                <div class="algorithm-description" style="margin-bottom: 1rem; color: #4b5563; font-style: italic; font-family: -apple-system, BlinkMacSystemFont, sans-serif;">
+                                    Advanced multi-scale variant with fast/slow momentum buffers for hierarchical gradient structure.
+                                </div>
+                                
+                                <div class="pseudocode" style="background: white; padding: 1.2rem; border-radius: 5px; border-left: 3px solid #8b5cf6; box-shadow: var(--shadow-sm);">
+                                    <div style="margin-bottom: 0.8rem; color: #1f2937; font-weight: 600;">
+                                        <strong>Input:</strong> Initial weights \(\Theta_0\), objective \(\mathcal{L}(\cdot)\), learning rate  
+                                        \(\eta > 0\), Newton-Schulz steps \(T\), momentum factor  
+                                        \(1 > \beta_1, \beta_2, \beta_3, \alpha \geq 0, \epsilon > 0\), frequency \(f\)
+                                    </div>
+                                    
+                                    <!-- 完整算法内容 -->
+                                    <ol style="padding-left: 1.5rem; margin: 0; color: #1f2937;">
+                                        <li style="margin-bottom: 0.5rem;">Initialize momentums:  
+                                            \[ M^{(1)}_0, M^{(2)}_0 \leftarrow 0, V_0 \leftarrow 0; \]</li>
+                                        <li style="margin-bottom: 0.5rem;"><strong>for</strong> lower-frequency iteration \(k = 0, 1, 2, \ldots\) <strong>do</strong></li>
+                                        <li style="margin-bottom: 0.5rem;">
+                                            <div style="padding-left: 1.5rem;">
+                                                Slow Memory:  
+                                                \[ M^{(2)}_t = M^{(2)}_{t-1} + \beta_3 \sum_{i=(k-1)}^{k}f \, g_i; \]
+                                            </div>
+                                        </li>
+                                        <li style="margin-bottom: 0.5rem;">
+                                            <div style="padding-left: 1.5rem;">
+                                                \[ O^{(2)}_t \leftarrow \text{Newton-Schulz}_T \left( M^{(2)}_t \right); \]
+                                            </div>
+                                        </li>
+                                        <li style="margin-bottom: 0.5rem;">
+                                            <div style="padding-left: 1.5rem;">
+                                                <strong>for</strong> \(t = k \, f + 1, k \, f + 2, \ldots, (k+1) \, f \) <strong>do</strong>
+                                            </div>
+                                        </li>
+                                        <li style="margin-bottom: 0.5rem;">
+                                            <div style="padding-left: 3rem;">
+                                                Compute Gradient:  
+                                                \[ g_t = \nabla_{\Theta_t} \mathcal{L}(\Theta_t); \]
+                                            </div>
+                                        </li>
+                                        <li style="margin-bottom: 0.5rem;">
+                                            <div style="padding-left: 3rem;">
+                                                First Momentum:  
+                                                \[ M^{(1)}_t = M^{(1)}_{t-1} + \beta_1 g_t; \]
+                                            </div>
+                                        </li>
+                                        <li style="margin-bottom: 0.5rem;">
+                                            <div style="padding-left: 3rem;">
+                                                Second Momentum:  
+                                                \[ V_t = V_{t-1} + \beta_2 g^2_t; \]
+                                            </div>
+                                        </li>
+                                        <li style="margin-bottom: 0.5rem;">
+                                            <div style="padding-left: 3rem;">
+                                                \[ O^{(1)}_t \leftarrow \text{Newton-Schulz}_T \left( M^{(1)}_t \right); \]
+                                            </div>
+                                        </li>
+                                        <li style="margin-bottom: 0.5rem;">
+                                            <div style="padding-left: 3rem;">
+                                                \[ \Theta_t \leftarrow \Theta_{t-1} - \eta \frac{O^{(1)}_t + \alpha \, O^{(2)}_t}{\sqrt{V_t + \epsilon}}; \]
+                                            </div>
+                                        </li>
+                                        <li style="margin-bottom: 0.5rem;">
+                                            <div style="padding-left: 1.5rem;">
+                                                <strong>end for</strong>
+                                            </div>
+                                        </li>
+                                        <li style="margin-bottom: 0.5rem;"><strong>end for</strong></li>
+                                    </ol>
+                                    
+                                    <div style="margin-top: 1rem; padding-top: 0.8rem; border-top: 1px dashed #e0e7ff; color: #6d7280; font-size: 0.8rem; font-family: -apple-system, BlinkMacSystemFont, sans-serif;">
+                                        <strong>Key Insight:</strong> Maintains dual momentum buffers at different timescales, enabling hierarchical gradient compression and orthogonalization aligned with nested architectural geometries.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    // 算法展开/收缩功能
+                    function toggleAlgorithmExpand(button) {
+                        const algorithmBox = button.closest('.algorithm-box');
+                        const collapsedContent = algorithmBox.querySelector('.algorithm-collapsed');
+                        const expandedContent = algorithmBox.querySelector('.algorithm-expanded');
+                        const toggleText = button.querySelector('.toggle-text');
+                        const toggleIcon = button.querySelector('i');
+                        
+                        if (collapsedContent.style.maxHeight && collapsedContent.style.maxHeight !== '0px') {
+                            // 当前是收缩状态，切换到展开
+                            collapsedContent.style.maxHeight = '0';
+                            expandedContent.style.display = 'block';
+                            toggleText.textContent = 'Collapse';
+                            toggleIcon.className = 'fas fa-chevron-up';
+                        } else {
+                            // 当前是展开状态，切换到收缩
+                            collapsedContent.style.maxHeight = '380px';
+                            expandedContent.style.display = 'none';
+                            toggleText.textContent = 'Expand';
+                            toggleIcon.className = 'fas fa-chevron-down';
+                        }
+                    }
+                </script>
+                <!-- 算法解释段落 -->
+                <div class="insight-box">
+                    <div class="insight-header">
+                        <i class="fas fa-brain"></i>
+                        Insights in Muon & M³ Algorithms
+                    </div>
+                    <p>Based on the theoretical framework presented in "Deriving Muon," the core insight behind the Muon algorithms lies in their explicit operationalization of gradient space orthogonalization as a geometric preconditioning strategy. This approach fundamentally reinterprets the optimizer's role from a simple gradient follower to an active geometric aligner. By applying iterative Newton-Schulz orthogonalization to momentum-accumulated gradients, Muon effectively projects raw gradient signals onto directions that respect the intrinsic geometry induced by the architectural backbone. This process implements a computationally efficient approximation to the exact duality map \( \mathfrak{D}_M \) prescribed by the network's modular norm, transforming the optimizer into a dynamic compensator for architectural heterogeneity.</p>
+                    
+                    <p>The advanced Multi-scale Momentum Muon (M³) variant extends this principle across temporal hierarchies, maintaining separate momentum buffers that operate at distinct timescales. This creates a nested memory system where fast-momentum tracks immediate gradient flow while slow-momentum aggregates longer-term statistical structure, enabling the optimizer to simultaneously adapt to both local curvature and global trajectory geometry. Crucially, this design mirrors the nested associative memory structure of modern architectures like continuum memory systems, establishing a coherent dynamical coupling where the optimizer's compression of gradient history aligns with the architecture's compression of token context across complementary timescales.</p>
+                    
+                    <div style="background: linear-gradient(to right, rgba(124, 58, 237, 0.1), rgba(139, 92, 246, 0.1)); padding: 1rem; border-radius: var(--border-radius); margin-top: 1rem; border-left: 3px solid var(--accent);">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 0.5rem; color: var(--secondary); font-weight: 600; font-size: 0.9rem;">
+                            <i class="fas fa-book"></i>
+                            Theoretical Foundation
+                        </div>
+                        <p style="margin: 0; font-size: 0.9rem; color: var(--gray-700);">
+                            This geometric perspective reframes optimization as a <strong>primal-dual alignment problem</strong>, where the optimizer's update rule must approximate the architecturally-prescribed duality map that transforms gradient covectors into weight vector updates consistent with the network's induced geometry.
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 id="principles">From Recognition to Principle: Formalizing Co-Design for Coupled Dynamical Systems<a href="#principles">#</a></h2>
+                
+                <p>Guided by the <strong>BOCB</strong> principle and the Nested Learning framework, we can derive formal, actionable principles for co-design. This moves beyond the ad-hoc pairing of existing components and toward the systematic engineering of <em>unified learning organisms</em> where architectural and optimization dynamics are jointly specified.</p>
+                
+                <div class="principle-box">
+                    <div class="principle-header">
+                        <span class="principle-number">1</span>
+                        <span>Geometric Coherence via Primal-Dual Alignment</span>
+                    </div>
+                    <p>The foremost principle is to explicitly align the <em>primal geometry</em> of the architecture with the <em>implicit dual geometry</em> of the optimizer. This alignment can be pursued in two complementary directions:</p>
+                    
+                    <p><strong>Top-Down (Architecture-First):</strong> Given a novel architectural component (e.g., a continuum memory block or a structured state-space layer), formally characterize the modular norm it induces. This norm dictates the ideal duality map, \( \mathfrak{D}_M \), for steepest descent. The optimizer must then be designed to approximate this map efficiently. For example, a layer designed to operate in RMS-to-RMS geometry naturally calls for an optimizer like Shampoo that approximates semi-orthogonal (polar factor) updates, rather than Adam's diagonal scaling. Muon, with its multi-scale momentum approach, provides another layer of sophistication, adding the ability to handle both fast and slow gradient updates, optimizing different components of the architecture in sync.</p>
+                    
+                    <p><strong>Bottom-Up (Optimizer-First):</strong> Given a computationally favored class of duality map approximations (e.g., diagonal adaptivity, block-diagonal K-FAC), one can design architectural families whose induced geometry is well-approximated by that class. This explains the historical success of simple feedforward networks with SGD: their near-Euclidean geometry is perfectly matched by SGD's identity duality map. Modern co-design might, for instance, create "Adam-optimal" layers whose gradient statistics are naturally whitened and decorrelated, minimizing the information loss from Adam's diagonal approximation. Muon rectifies backbone-optimizer coupling bias by orthogonalizing hidden-layer gradients via Newton-Schulz iterations, projecting updates onto the Stiefel manifold to preserve orthonormality.</p>
+                </div>
+
+                <div class="principle-box">
+                    <div class="principle-header">
+                        <span class="principle-number">2</span>
+                        <span>Phase-Consistent Optimizer Continuity Across Training Regimes</span>
+                    </div>
+                    <p>The BOCB framework reveals why maintaining optimizer consistency across different training phases—from pre-training to fine-tuning and beyond into continual learning—is often crucial for preserving learned geometric structure. Each training phase induces a specific <em>gradient flow regime</em> that is intrinsically coupled with the architectural geometry. The optimizer, through its implicit duality map, imprints a particular geometric signature onto the weight space, creating a coherent representation-geometry pairing that should be preserved throughout the model's lifecycle.</p>
+                    
+                    <p><strong>Pre-training to Fine-tuning Continuity:</strong> Large-scale pre-training establishes a geometric embedding of knowledge within the weight space, shaped by the optimizer's specific duality map. When fine-tuning, using the same optimizer family (e.g., maintaining AdamW throughout) preserves the geometric relationship between the pre-trained representation space and the gradient descent dynamics. Switching optimizers between phases can disrupt this delicate coupling, leading to suboptimal convergence—an empirical observation that holds even when learning rates are carefully tuned.</p>
+                    
+                    <p><strong>Adaptive Strategy Modulation within Consistent Geometry:</strong> While optimizer <em>identity</em> should remain consistent, hyperparameter strategies can and should adapt to phase-specific requirements. For instance, an optimizer like Muon might employ aggressive fast-momentum during pre-training for rapid exploration, then shift to stronger slow-momentum during fine-tuning for stable refinement of pre-trained representations. Similarly, learning rates can be adjusted, but the core geometric alignment mechanism—the optimizer's approximation of the architecture's duality map—should remain unchanged. This preserves geometric continuity while accommodating phase-specific dynamics.</p>
+    
+                    <p><strong>Continual Learning and Catastrophic Forgetting Mitigation:</strong> In continual learning scenarios, BOCB provides a geometric explanation for catastrophic forgetting: when new task gradients conflict with the geometric structure established by previous training, optimizer updates can overwrite essential knowledge. Optimizers with explicit memory separation (like Muon's multi-scale momentum) can maintain distinct geometric signatures for different tasks or temporal scales, enabling better knowledge retention through phase-consistent geometric preservation. The consistent application of the same geometric transformation (the optimizer's duality map) across tasks helps maintain a coherent representational manifold.</p>
+                    
+                    </div>
+                
+                <div class="section-divider"></div>
+                
+                <h2 id="conclusion">Conclusion<a href="#conclusion">#</a></h2>
+                
+                <p>In conclusion, the concept of <strong>Backbone-Optimizer Coupling Bias (BOCB)</strong> fundamentally challenges the prevailing decoupled view of architecture and optimization in deep learning. It asserts that the interdependence between a model's architecture and its optimizer is not merely a byproduct of practical design choices but a core constraint inherent to the nature of gradient-based learning in structured systems. By recognizing that each architecture induces a unique non-Euclidean geometry in weight space and that optimizers must approximate this geometry to navigate the solution space effectively, BOCB provides a new lens through which we must rethink both model and optimizer design. This rethinking leads to the need for co-design principles that treat the architecture and optimizer as a coupled dynamical system, each shaping and reshaping the other across nested timescales. By formalizing this relationship, we can develop more efficient and stable learning systems, such as those enabled by Muon, which leverages multi-scale memory, adaptive momentum, and geometric awareness to synchronize the architecture and optimizer. Ultimately, BOCB offers a pathway towards more sophisticated, harmonious systems that transcend the modular approach, where architecture and optimizer are not simply paired components but a unified, co-evolving system, reflecting a deeper understanding of the inherent biases and dynamics that govern neural network training.</p>
+                
+                <div class="reference-section" style="margin-top: 2.5rem;">
+                    <div class="reference-header">
+                        <i class="fas fa-quote-right"></i>
+                        Citing this Blog Post
+                    </div>
+                    <p style="margin: 1rem 0 0.8rem 0; color: var(--gray-700);">
+                        To cite this blog post, you can use the following BibTeX entry:
+                    </p>
+                    
+                    <div style="position: relative; margin-bottom: 1rem;">
+                        <div class="reference-link" style="font-family: 'Consolas', 'Monaco', 'Courier New', monospace; font-size: 0.9rem; padding: 1.2rem; padding-right: 3.5rem; background: #f8f9fa; border: 1px solid #e9ecef; border-left: 4px solid var(--primary); border-radius: 4px; overflow-x: auto; line-height: 1.5;">
+                            <pre style="margin: 0; white-space: pre-wrap; font-family: inherit;">
+    @misc{tian2025bocb,
+    author = {Tian, Juanxi and Gu, Yufei},
+    title = {Backbone-Optimizer Coupling Bias: The Hidden Co-Design Principle},
+    url = {https://tianshijing.github.io/ScalingOpt/},
+    year = {2025},
+    }
+                            </pre>
+                        </div>
+                        
+                        <button id="copyBibtexBtn" style="position: absolute; top: 0.8rem; right: 0.8rem; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; border: none; border-radius: 4px; padding: 0.4rem 0.8rem; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; transition: all 0.2s ease;">
+                            <i class="far fa-copy"></i>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                    
+                    <div id="copySuccessMsg" style="display: none; background: linear-gradient(to right, #d1fae5, #a7f3d0); border-left: 3px solid #10b981; padding: 0.6rem 1rem; border-radius: 4px; margin-top: 0.8rem; font-size: 0.85rem; color: #065f46;">
+                        <i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i>
+                        BibTeX entry copied to clipboard!
+                    </div>
+                </div>
+                
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const copyBtn = document.getElementById('copyBibtexBtn');
+                        const successMsg = document.getElementById('copySuccessMsg');
+                        
+                        if (copyBtn) {
+                            copyBtn.addEventListener('click', function() {
+                                const bibtexContent = `@misc{tian2025bocb,
+                  author = {Tian, Juanxi and Gu, Yufei},
+                  title = {Backbone-Optimizer Coupling Bias: The Hidden Co-Design Principle},
+                  url = {https://tianshijing.github.io/ScalingOpt/},
+                  year = {2025},
+                }`;
+                                
+                                // Copy to clipboard
+                                navigator.clipboard.writeText(bibtexContent).then(function() {
+                                    // Show success message
+                                    successMsg.style.display = 'block';
+                                    
+                                    // Change button text and icon temporarily
+                                    const originalHTML = copyBtn.innerHTML;
+                                    copyBtn.innerHTML = '<i class="fas fa-check"></i><span>Copied!</span>';
+                                    copyBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                                    
+                                    // Reset button after 2 seconds
+                                    setTimeout(function() {
+                                        copyBtn.innerHTML = originalHTML;
+                                        copyBtn.style.background = 'linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%)';
+                                    }, 2000);
+                                    
+                                    // Hide success message after 3 seconds
+                                    setTimeout(function() {
+                                        successMsg.style.display = 'none';
+                                    }, 3000);
+                                }).catch(function(err) {
+                                    console.error('Failed to copy: ', err);
+                                    // Fallback for older browsers
+                                    const textArea = document.createElement('textarea');
+                                    textArea.value = bibtexContent;
+                                    document.body.appendChild(textArea);
+                                    textArea.select();
+                                    try {
+                                        document.execCommand('copy');
+                                        // Show success message even with fallback
+                                        successMsg.style.display = 'block';
+                                        setTimeout(function() {
+                                            successMsg.style.display = 'none';
+                                        }, 3000);
+                                    } catch (err) {
+                                        console.error('Fallback copy failed: ', err);
+                                    }
+                                    document.body.removeChild(textArea);
+                                });
+                            });
+                        }
+                    });
+                </script>
+
+                <div class="reference-section">
+                    <div class="reference-header">
+                        <i class="fas fa-book"></i>
+                        References
+                    </div>
+                    <ul>
+                        <li>
+                            Bernstein, J. (2025). <em>Deriving Muon</em>. 
+                            <a href="https://jeremybernste.in/writing/deriving-muon" style="color: var(--primary); font-size: 0.85em;">[Link]</a>
+                        </li>
+                        <li>
+                            Jordan, K., Jin, Y., Boza, V., You, J., Cesista, F., Newhouse, L., & Bernstein, J. (2024). 
+                            <em>Muon: An optimizer for hidden layers in neural networks</em>.
+                            <a href="https://kellerjordan.github.io/posts/muon/" style="color: var(--primary); font-size: 0.85em;">[Link]</a>
+                        </li>
+                        <li>
+                            Bernstein, J., & Newhouse, K. (2024). <em>Modular duality in deep learning</em>. 
+                            arXiv preprint arXiv:2410.21265.
+                            <a href="https://arxiv.org/abs/2410.21265" style="color: var(--primary); font-size: 0.85em;">[arXiv]</a>
+                        </li>
+                        <li>
+                            Li, S., Tian, J., Wang, Z., Zhang, L., Liu, Z., Jin, W., Liu, Y., Sun, B., & Li, S. Z. (2024). 
+                            <em>Unveiling the Backbone-Optimizer Coupling Bias in Visual Representation Learning</em>. 
+                            arXiv preprint arXiv:2410.06373.
+                            <a href="https://arxiv.org/abs/2410.06373" style="color: var(--primary); font-size: 0.85em;">[arXiv]</a>
+                        </li>
+                        <li>
+                            Bernstein, J., & Newhouse, K. (2024). <em>Modular Duality and the Geometry of Neural Network Optimization</em>.
+                        </li>
+                        <li>
+                            Large, M., et al. (2024). <em>Nested Learning: Architectures and Optimizers as Associative Memory Systems</em>.
+                        </li>
+                        <li>
+                            Yang, G., & Hu, E. J. (2021). <em>Tensor Programs V: Tuning Large Neural Networks via Zero-Shot Hyperparameter Transfer</em>.
+                        </li>
+                    </ul>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="team-credit">
+                <i class="fas fa-brain"></i>
+                ScalingOpt Team
+            </div>
+            <div class="copyright">
+                © 2024 ScalingOpt. All rights reserved.<br>
+                This work represents ongoing research in neural architecture-optimizer co-design.
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript for Interactive Features -->
+    <script>
+        // Scroll Progress Bar
+        window.addEventListener('scroll', function() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            scrollProgress.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Table of Contents Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            const sections = document.querySelectorAll('h2[id]');
+            
+            // Set active section based on scroll position
+            function setActiveSection() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 80)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', setActiveSection);
+            setActiveSection(); // Initial call
+            
+            // Smooth scroll for TOC links
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 70,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Image Click to Zoom Functionality
+            const figures = document.querySelectorAll('.figure-container img');
+            
+            figures.forEach(img => {
+                // Add click event
+                img.addEventListener('click', function() {
+                    const overlay = document.createElement('div');
+                    overlay.style.cssText = `
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0,0,0,0.85);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        z-index: 9999;
+                        cursor: zoom-out;
+                    `;
+                    
+                    const enlargedImg = document.createElement('img');
+                    enlargedImg.src = this.src;
+                    enlargedImg.alt = this.alt;
+                    enlargedImg.style.cssText = `
+                        max-width: 90%;
+                        max-height: 90%;
+                        object-fit: contain;
+                        border-radius: 8px;
+                        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+                    `;
+                    
+                    overlay.appendChild(enlargedImg);
+                    document.body.appendChild(overlay);
+                    
+                    // Click to close
+                    overlay.addEventListener('click', function(e) {
+                        if (e.target === overlay || e.target === enlargedImg) {
+                            document.body.removeChild(overlay);
+                        }
+                    });
+                    
+                    // ESC key to close
+                    document.addEventListener('keydown', function closeOnEsc(e) {
+                        if (e.key === 'Escape') {
+                            document.body.removeChild(overlay);
+                            document.removeEventListener('keydown', closeOnEsc);
+                        }
+                    });
+                });
+            });
+        });
+
+        // MathJax Configuration
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                tags: 'ams'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    
+    <!-- MathJax CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</body>
+</html>
