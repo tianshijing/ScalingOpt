@@ -1,6 +1,19 @@
 // Blog Posts Data
 const blogPosts = [
     {
+        id: 'scalingopt-bocb',
+        title: 'Backbone-Optimizer Coupling Bias: The Hidden Co-Design Principle',
+        excerpt: 'A formal investigation into the intrinsic interdependence between neural network architectures and optimizers, introducing the Backbone-Optimizer Coupling Bias (BOCB) and principles for systematic co-design.',
+        content: 'Full blog content would go here...',
+        author: 'ScalingOpt Team',
+        publishDate: '2025-10-01',
+        readTime: '20 min read',
+        category: 'Research',
+        tags: ['Optimization', 'Architecture', 'Theory', 'BOCB'],
+        featured: true,
+        externalUrl: 'blogs/ScalingOpt/bocb.html'
+    },
+    {
         id: 'modular-manifolds-2025',
         title: 'Modular Manifolds',
         excerpt: 'When we train large neural networks, we need to keep them healthy. This post covers one appealing way to constrain the weight matrices of a neural network—by keeping the tensors constrained to submanifolds at each layer. We propose a manifold version of the Muon optimizer whose weights are constrained to the Stiefel manifold.',
