@@ -1015,7 +1015,7 @@
                         <div style="display: flex; align-items: flex-start; gap: 8px;">
                             <i class="fas fa-info-circle" style="color: var(--primary); flex-shrink: 0; margin-top: 2px;"></i>
                             <div>
-                                <strong>Table 1:</strong> Duality maps for three atomic modules: Linear, Embed, and Conv2D. These atomic modules are sufficient to build convolutional neural networks and transformers. In <code>Linear.dualize</code>, we let \( U\Sigma V^{\top} \) denote the reduced SVD of the gradient matrix \( G \). In <code>Conv2D.dualize</code>, we let \( U_{ij} \Sigma_{ij} V_{ij}^{\top} \) denote the reduced SVD of the slice of the gradient tensor \( G_{\cdot \cdot i j} \) at kernel indices \( i \) and \( j \). Section 5 provides GPU-friendly algorithms for computing these duality maps based on a family of Newton-Schulz iterations.
+                                <strong>Table 1:</strong> Duality maps for three atomic modules: Linear, Embed, and Conv2D. These atomic modules are sufficient to build convolutional neural networks and transformers. In <code>Linear.dualize</code>, we let \( U\Sigma V^{\top} \) denote the reduced SVD of the gradient matrix \( G \). In <code>Conv2D.dualize</code>, we let \( U_{ij} \Sigma_{ij} V_{ij}^{\top} \) denote the reduced SVD of the slice of the gradient tensor \( G_{\cdot \cdot i j} \) at kernel indices \( i \) and \( j \).
                             </div>
                         </div>
                     </div>
