@@ -1027,13 +1027,6 @@
                         Architectural Geometry
                     </div>
                     <p>Each fundamental layer type is associated with a canonical <em>operator norm</em> determined by the spaces it connects. These layer-wise norms are not independent. Through formal <strong>composition</strong> (series connection) and <strong>concatenation</strong> (parallel connection) rules, they recursively define a global, heterogeneous norm \( \|\cdot\|_M \) on the entire parameter space \( \Theta \) of the compound network.</p>
-                </div>
-                <div class="insight-box">
-                    <div class="insight-header">
-                        <i class="fas fa-shapes"></i>
-                        Architectural Geometry
-                    </div>
-                    <p>Each fundamental layer type is associated with a canonical <em>operator norm</em> determined by the spaces it connects:</p>
                     
                     <ul>
                         <li>A <strong>Linear</strong> layer \( y = Wx \), designed to map normalized (RMS-scale) vectors to normalized vectors, is naturally assigned the RMS→RMS operator norm: \( \|W\|_{\text{RMS→RMS}} = \sqrt{d_{\text{in}}/d_{\text{out}}} \cdot \|W\|_2 \). This norm measures the maximum amplification of a typical (unit RMS-norm) input.</li>
@@ -1097,8 +1090,172 @@
                         </div>
                     </div>
                 </div>
+
                 <h3 style="color: var(--secondary); font-size: 1.2rem; font-weight: 600; margin: 1.5rem 0 1rem; padding-left: 0.5rem; border-left: 3px solid var(--accent);">
-                    Muon & M³: Architecturally-Coupled Optimizers for Hidden Layers — Monolithic vs. Multi-Scale Memory Biases
+                    Adam vs. Adam-mini: Hessian-Aware Optimizers for Transformer Blocks — Per-Parameter vs. Block-Wise Adaptive Biases.
+                </h3>
+                <div class="algorithm-container" style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin: 2rem 0;">
+    
+                    <!-- 左侧算法：Adam -->
+                    <div class="algorithm-box" style="flex: 1; min-width: 300px;">
+                        <div class="algorithm-header" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; padding: 0.8rem 1.2rem; border-radius: var(--border-radius) var(--border-radius) 0 0; display: flex; align-items: center; gap: 8px; font-weight: 700;">
+                            <i class="fas fa-cogs"></i>
+                            Adam (Kingma & Ba, 2014)
+                        </div>
+                        <div class="algorithm-content" style="background: linear-gradient(to right, #eff6ff, #dbeafe); border: 1px solid #dbeafe; border-top: none; border-radius: 0 0 var(--border-radius) var(--border-radius); padding: 1.5rem; font-family: 'Consolas', 'Monaco', 'Courier New', monospace; font-size: 0.9rem; line-height: 1.6;">
+                            <div class="pseudocode" style="background: white; padding: 1.2rem; border-radius: 5px; border-left: 3px solid #3b82f6; box-shadow: var(--shadow-sm);">
+                                <div style="margin-bottom: 1rem; color: #1f2937; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, sans-serif;">
+                                    Coordinate-wise adaptive learning rates for all parameters
+                                </div>
+                                
+                                <ol style="padding-left: 1.5rem; margin: 0; color: #1f2937;">
+                                    <li style="margin-bottom: 0.6rem;">
+                                        Initialize time step \( t \leftarrow 0 \), 
+                                        <div style="padding-left: 1rem; margin-top: 0.2rem;">
+                                            \( m_0 \leftarrow 0 \), \( v_0 \leftarrow 0 \)
+                                        </div>
+                                    </li>
+                                    <li style="margin-bottom: 0.6rem;"><strong>while</strong> not converged <strong>do</strong></li>
+                                    <li style="margin-bottom: 0.6rem;">
+                                        <div style="padding-left: 1.5rem;">
+                                            \( t \leftarrow t + 1 \)<br>
+                                            Compute gradient \( g_t \leftarrow \nabla_\theta L_t(\theta_{t-1}) \)
+                                        </div>
+                                    </li>
+                                    <li style="margin-bottom: 0.6rem;">
+                                        <div style="padding-left: 1.5rem;">
+                                            Update first moment<br>
+                                            \( m_t \leftarrow \beta_1 m_{t-1} + (1-\beta_1) g_t \)
+                                        </div>
+                                    </li>
+                                    <li style="margin-bottom: 0.6rem;">
+                                        <div style="padding-left: 1.5rem;">
+                                            Update second moment<br>
+                                            \( v_t \leftarrow \beta_2 v_{t-1} + (1-\beta_2) g_t^2 \)
+                                        </div>
+                                    </li>
+                                    <li style="margin-bottom: 0.6rem;">
+                                        <div style="padding-left: 1.5rem;">
+                                            Bias correction<br>
+                                            \( \hat{m}_t \leftarrow m_t/(1-\beta_1^t) \)<br>
+                                            \( \hat{v}_t \leftarrow v_t/(1-\beta_2^t) \)
+                                        </div>
+                                    </li>
+                                    <li style="margin-bottom: 0.6rem;">
+                                        <div style="padding-left: 1.5rem;">
+                                            Update parameters<br>
+                                            \( \theta_t \leftarrow \theta_{t-1} - \eta \cdot \hat{m}_t/(\sqrt{\hat{v}_t}+\epsilon) \)
+                                        </div>
+                                    </li>
+                                    <li style="margin-bottom: 0.6rem;"><strong>end while</strong></li>
+                                </ol>
+                                
+                                <div style="margin-top: 1.2rem; padding-top: 0.8rem; border-top: 1px dashed #dbeafe; color: #6d7280; font-size: 0.8rem; font-family: -apple-system, BlinkMacSystemFont, sans-serif;">
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 0.3rem;">
+                                        <i class="fas fa-database" style="color: #3b82f6;"></i>
+                                        <strong>Memory:</strong> \( \mathcal{O}(2n) \) where \( n = \text{\#params} \)
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px;">
+                                        <i class="fas fa-bullseye" style="color: #3b82f6;"></i>
+                                        <strong>Key:</strong> Per-parameter adaptive learning rates \( \eta/\sqrt{v_i} \)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 右侧算法：Adam-mini -->
+                    <div class="algorithm-box" style="flex: 1; min-width: 300px;">
+                        <div class="algorithm-header" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 0.8rem 1.2rem; border-radius: var(--border-radius) var(--border-radius) 0 0; display: flex; align-items: center; gap: 8px; font-weight: 700;">
+                            <i class="fas fa-leaf"></i>
+                            Adam-mini (Zhang et al., 2024)
+                        </div>
+                        <div class="algorithm-content" style="background: linear-gradient(to right, #ecfdf5, #d1fae5); border: 1px solid #a7f3d0; border-top: none; border-radius: 0 0 var(--border-radius) var(--border-radius); padding: 1.5rem; font-family: 'Consolas', 'Monaco', 'Courier New', monospace; font-size: 0.9rem; line-height: 1.6;">
+                            <div class="pseudocode" style="background: white; padding: 1.2rem; border-radius: 5px; border-left: 3px solid #10b981; box-shadow: var(--shadow-sm);">
+                                <div style="margin-bottom: 1rem; color: #1f2937; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, sans-serif;">
+                                    Hessian-aware block-wise adaptive learning
+                                </div>
+                                
+                                <ol style="padding-left: 1.5rem; margin: 0; color: #1f2937;">
+                                    <li style="margin-bottom: 0.6rem;">
+                                        <strong>Preprocess:</strong> Partition params into \( B \) blocks by Hessian structure
+                                        <div style="padding-left: 1rem; margin-top: 0.2rem;">
+                                            Initialize \( t \leftarrow 0 \), \( m_0^{(b)} \leftarrow 0 \), \( v_0^{(b)} \leftarrow 0 \)
+                                        </div>
+                                    </li>
+                                    <li style="margin-bottom: 0.6rem;"><strong>while</strong> not converged <strong>do</strong></li>
+                                    <li style="margin-bottom: 0.6rem;">
+                                        <div style="padding-left: 1.5rem;">
+                                            \( t \leftarrow t + 1 \)<br>
+                                            Compute gradient \( g_t \leftarrow \nabla_\theta L_t(\theta_{t-1}) \)
+                                        </div>
+                                    </li>
+                                    <li style="margin-bottom: 0.6rem;">
+                                        <div style="padding-left: 1.5rem;">
+                                            <strong>for</strong> block \( b = 1, 2, \ldots, B \) <strong>do</strong>
+                                        </div>
+                                    </li>
+                                    <li style="margin-bottom: 0.6rem;">
+                                        <div style="padding-left: 3rem;">
+                                            Update block first moment<br>
+                                            \( m_t^{(b)} \leftarrow \beta_1 m_{t-1}^{(b)} + (1-\beta_1) g_t^{(b)} \)
+                                        </div>
+                                    </li>
+                                    <li style="margin-bottom: 0.6rem;">
+                                        <div style="padding-left: 3rem;">
+                                            Update block second moment<br>
+                                            \( v_t^{(b)} \leftarrow \beta_2 v_{t-1}^{(b)} + (1-\beta_2) \text{mean}((g_t^{(b)})^2) \)
+                                        </div>
+                                    </li>
+                                    <li style="margin-bottom: 0.6rem;">
+                                        <div style="padding-left: 3rem;">
+                                            Bias correction<br>
+                                            \( \hat{m}_t^{(b)} \leftarrow m_t^{(b)}/(1-\beta_1^t) \)<br>
+                                            \( \hat{v}_t^{(b)} \leftarrow v_t^{(b)}/(1-\beta_2^t) \)
+                                        </div>
+                                    </li>
+                                    <li style="margin-bottom: 0.6rem;">
+                                        <div style="padding-left: 3rem;">
+                                            Update block parameters<br>
+                                            \( \theta_t^{(b)} \leftarrow \theta_{t-1}^{(b)} - \eta \cdot \hat{m}_t^{(b)}/(\sqrt{\hat{v}_t^{(b)}}+\epsilon) \)
+                                        </div>
+                                    </li>
+                                    <li style="margin-bottom: 0.6rem;">
+                                        <div style="padding-left: 1.5rem;">
+                                            <strong>end for</strong>
+                                        </div>
+                                    </li>
+                                    <li style="margin-bottom: 0.6rem;"><strong>end while</strong></li>
+                                </ol>
+                                
+                                <div style="margin-top: 1.2rem; padding-top: 0.8rem; border-top: 1px dashed #a7f3d0; color: #6d7280; font-size: 0.8rem; font-family: -apple-system, BlinkMacSystemFont, sans-serif;">
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 0.3rem;">
+                                        <i class="fas fa-database" style="color: #10b981;"></i>
+                                        <strong>Memory:</strong> \( \mathcal{O}(n + B) \) ≈ 50% reduction over Adam
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px;">
+                                        <i class="fas fa-bullseye" style="color: #10b981;"></i>
+                                        <strong>Key:</strong> Block-wise learning rates \( \eta/\sqrt{v^{(b)}} \) by Hessian blocks
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="insight-box">
+                    <div class="insight-header">
+                        <i class="fas fa-brain"></i>
+                        Insights in Adam-mini Algorithms
+                    </div>
+                    
+                    <p>Building upon the empirical findings from the Adam-mini study, the intricate interplay between neural architecture and optimizer design becomes particularly evident in Transformers—unlike CNNs, which typically comprise repetitively stacked homogeneous layers, Transformers are composed of structurally and functionally heterogeneous parameter blocks (e.g., Query, Key, Value, and MLP sub-layers) arranged in a non-sequential, attention-driven topology. As revealed by Zhang et al. (2024), this architectural heterogeneity induces markedly distinct Hessian eigenvalue distributions across different Transformer blocks, a phenomenon scarcely observed in more uniform CNN architectures. In such settings, traditional optimizers like SGD—which apply a uniform learning rate globally—often underperform compared to adaptive methods like Adam(W), precisely because they fail to account for this inter-block spectral disparity. Adam-mini directly operationalizes this insight by strategically partitioning parameters according to the Hessian's block-diagonal substructure and assigning a single, shared—but carefully calibrated—learning rate per dense Hessian sub-block. This design reduces the learning rate overhead by over 99.9% while matching or surpassing AdamW’s performance, thereby empirically validating the hypothesis that optimizers must be co-designed with—and fundamentally aligned to—the inherent geometric and statistical properties of the architecture.</p>
+                    
+                </div>
+
+
+                <h3 style="color: var(--secondary); font-size: 1.2rem; font-weight: 600; margin: 1.5rem 0 1rem; padding-left: 0.5rem; border-left: 3px solid var(--accent);">
+                    Muon & M³: Architecturally-Coupled Optimizers for Hidden Layers — Monolithic vs. Multi-Scale Memory Biases.
                 </h3>
                 <!-- 添加的并列伪代码部分 -->
                 <div class="algorithm-container" style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin: 2rem 0;">
@@ -1328,10 +1485,10 @@
                     <div style="background: linear-gradient(to right, rgba(124, 58, 237, 0.1), rgba(139, 92, 246, 0.1)); padding: 1rem; border-radius: var(--border-radius); margin-top: 1rem; border-left: 3px solid var(--accent);">
                         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 0.5rem; color: var(--secondary); font-weight: 600; font-size: 0.9rem;">
                             <i class="fas fa-book"></i>
-                            Theoretical Foundation
+                            Muon & MoE
                         </div>
                         <p style="margin: 0; font-size: 0.9rem; color: var(--gray-700);">
-                            This geometric perspective reframes optimization as a <strong>primal-dual alignment problem</strong>, where the optimizer's update rule must approximate the architecturally-prescribed duality map that transforms gradient covectors into weight vector updates consistent with the network's induced geometry.
+                            MoE models includes shared components and repetitive expert block series that are unevenly trained. The sparsity in overall activations and massive scale imbalance across experts are complex for vanilla SGD or adaptive optimizers. For parameters that are updated intermittently, the second-order EMA may lag behind routing changes and result in training instability, while Muon applies orthogonal signed updates that has even magnitude on all directions, and may have even higher adaptivity to sparse activations or routing drift. Notably, Muon’s lower memory complexity also yield advantages in large-scale pretraining. 
                         </p>
                     </div>
                 </div>
@@ -1340,16 +1497,58 @@
                 
                 <p>Guided by the <strong>BOCB</strong> principle and the Nested Learning framework, we can derive formal, actionable principles for co-design. This moves beyond the ad-hoc pairing of existing components and toward the systematic engineering of <em>unified learning organisms</em> where architectural and optimization dynamics are jointly specified.</p>
                 
+                <div class="figure-container">
+                    <img 
+                        src="../../../assets/img/blogs/bocb.png" 
+                        alt="BOCB Diagram"
+                        loading="lazy"
+                    >
+                    <div class="figure-caption">
+                        <strong>Figure 2:</strong> At each step \( t \), the base adaptive optimizer controls the update of gradients \( G_t \) to model weights \( W_{t+1} \) by computing parameter-wise learning rates \( \alpha_t \) with historical constraints to modulate the first-order moments \( M_t \). \( S_t \) is the scale factors with architectural constraints.
+                    </div>
+                </div>
+
                 <div class="principle-box">
                     <div class="principle-header">
                         <span class="principle-number">1</span>
-                        <span>Geometric Coherence via Primal-Dual Alignment</span>
+                        <span>Geometric consistency via Primal-Dual Alignment</span>
                     </div>
                     <p>The foremost principle is to explicitly align the <em>primal geometry</em> of the architecture with the <em>implicit dual geometry</em> of the optimizer. This alignment can be pursued in two complementary directions:</p>
                     
                     <p><strong>Top-Down (Architecture-First):</strong> Given a novel architectural component (e.g., a continuum memory block or a structured state-space layer), formally characterize the modular norm it induces. This norm dictates the ideal duality map, \( \mathfrak{D}_M \), for steepest descent. The optimizer must then be designed to approximate this map efficiently. For example, a layer designed to operate in RMS-to-RMS geometry naturally calls for an optimizer like Shampoo that approximates semi-orthogonal (polar factor) updates, rather than Adam's diagonal scaling. Muon, with its multi-scale momentum approach, provides another layer of sophistication, adding the ability to handle both fast and slow gradient updates, optimizing different components of the architecture in sync.</p>
                     
                     <p><strong>Bottom-Up (Optimizer-First):</strong> Given a computationally favored class of duality map approximations (e.g., diagonal adaptivity, block-diagonal K-FAC), one can design architectural families whose induced geometry is well-approximated by that class. This explains the historical success of simple feedforward networks with SGD: their near-Euclidean geometry is perfectly matched by SGD's identity duality map. Modern co-design might, for instance, create "Adam-optimal" layers whose gradient statistics are naturally whitened and decorrelated, minimizing the information loss from Adam's diagonal approximation. Muon rectifies backbone-optimizer coupling bias by orthogonalizing hidden-layer gradients via Newton-Schulz iterations, projecting updates onto the Stiefel manifold to preserve orthonormality.</p>
+                </div>
+
+                <div class="figure-container">
+                    <svg viewBox="0 0 800 100" style="width: 100%; height: auto; font-family: sans-serif; max-width: 800px; margin: 0 auto; display: block;">
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#1f2937" />
+                            </marker>
+                        </defs>
+                        
+                        <!-- Box 1: Pre-training -->
+                        <rect x="10" y="20" width="200" height="60" rx="8" ry="8" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="2" />
+                        <text x="110" y="55" text-anchor="middle" fill="#1f2937" font-size="16" font-weight="600">Pre-training</text>
+                        
+                        <!-- Arrow 1 -->
+                        <line x1="210" y1="50" x2="250" y2="50" stroke="#1f2937" stroke-width="2" marker-end="url(#arrowhead)" />
+                        
+                        <!-- Box 2: Supervised Fine-tuning -->
+                        <rect x="260" y="20" width="240" height="60" rx="8" ry="8" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="2" />
+                        <text x="380" y="55" text-anchor="middle" fill="#1f2937" font-size="16" font-weight="600">Supervised Fine-tuning</text>
+                        
+                        <!-- Arrow 2 -->
+                        <line x1="500" y1="50" x2="540" y2="50" stroke="#1f2937" stroke-width="2" marker-end="url(#arrowhead)" />
+                        
+                        <!-- Box 3: ... -->
+                        <rect x="550" y="20" width="200" height="60" rx="8" ry="8" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="2" />
+                        <text x="650" y="55" text-anchor="middle" fill="#1f2937" font-size="16" font-weight="600">Post-training</text>
+                    </svg>
+                    <div class="figure-caption">
+                        <strong>Figure 3:</strong> Progressive Training Stages: Pre-training, Supervised Fine-tuning, Post-training and subsequent phases.
+                    </div>
                 </div>
 
                 <div class="principle-box">
@@ -1497,7 +1696,9 @@
                             Large, M., et al. (2024). <em>Nested Learning: Architectures and Optimizers as Associative Memory Systems</em>.
                         </li>
                         <li>
-                            Yang, G., & Hu, E. J. (2021). <em>Tensor Programs V: Tuning Large Neural Networks via Zero-Shot Hyperparameter Transfer</em>.
+                            Zhang, Y., Chen, C., Li, Z., Ding, T., Wu, C., Kingma, D. P., ... & Sun, R. (2024). <em>Adam-mini: Use fewer learning rates to gain more</em>.
+                            arXiv preprint arXiv:2406.16793.
+                            <a href="https://arxiv.org/abs/2406.16793" style="color: var(--primary); font-size: 0.85em;">[arXiv]</a>
                         </li>
                     </ul>
                 </div>
