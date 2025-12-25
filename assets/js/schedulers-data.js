@@ -4,7 +4,7 @@ const schedulers = [
     "id": "step_lr",
     "name": "StepLR",
     "fullName": "Step Learning Rate Decay",
-    "description": "Decays the learning rate of each parameter group by gamma every step_size epochs.",
+    "description": "Reduces the learning rate by a fixed factor at regular intervals, creating a distinctive step pattern. Works well when you have knowledge about your training process and can anticipate when the model should transition from exploration to fine-tuning. Particularly useful for image classification tasks where you might want to reduce the learning rate after the model has learned basic features.",
     "year": 2010,
     "month": "January",
     "category": "Decay",
@@ -16,8 +16,11 @@ const schedulers = [
     "advantages": [
       "Simple and easy to tune",
       "Standard baseline for many tasks",
-      "Predictable behavior"
+      "Predictable behavior",
+      "Explicit control over training phases",
+      "Ideal when you know your training phases"
     ],
+    "useCase": "Use StepLR when you understand when your model should transition from exploration to fine-tuning. It gives you explicit control over these phases.",
     "hyperparameters": {
       "step_size": {
         "default": 30,
@@ -80,7 +83,7 @@ const schedulers = [
     "id": "exponential_lr",
     "name": "ExponentialLR",
     "fullName": "Exponential Learning Rate Decay",
-    "description": "Decays the learning rate of each parameter group by gamma every epoch.",
+    "description": "Smoothly reduces the learning rate by multiplying it by a decay factor each epoch, creating a continuous decay curve. This ensures the model consistently makes smaller and smaller updates as training progresses. Particularly effective for problems where you want gradual refinement without sharp transitions that might disrupt training momentum.",
     "year": 2010,
     "month": "January",
     "category": "Decay",
@@ -92,8 +95,11 @@ const schedulers = [
     "advantages": [
       "Smooth decay",
       "Continuous adjustment",
-      "Simple single parameter"
+      "Simple single parameter",
+      "No abrupt changes",
+      "Stable convergence"
     ],
+    "useCase": "Use ExponentialLR when you want smooth, predictable decay without sudden changes that might disrupt training momentum.",
     "hyperparameters": {
       "gamma": {
         "default": 0.9,
@@ -113,7 +119,7 @@ const schedulers = [
     "id": "cosine_annealing_lr",
     "name": "CosineAnnealingLR",
     "fullName": "Cosine Annealing Learning Rate",
-    "description": "Set the learning rate of each parameter group using a cosine annealing schedule.",
+    "description": "Follows a cosine curve, starting high and smoothly decreasing to a minimum value. The cosine shape provides more training time at higher learning rates early on, then gradually transitions to fine-tuning phases. Research suggests cosine annealing can help models escape local minima and often achieves better final performance than linear decay schedules, especially in complex optimization landscapes.",
     "year": 2016,
     "month": "August",
     "category": "Cyclic",
@@ -125,8 +131,12 @@ const schedulers = [
     "advantages": [
       "Smooth transition",
       "Reaches lower minima",
-      "No abrupt drops"
+      "No abrupt drops",
+      "Helps escape local minima",
+      "Better final performance",
+      "Natural exploration phases"
     ],
+    "useCase": "Use CosineAnnealingLR when you want to escape local minima. The cosine pattern provides natural exploration phases that can help the model find better solutions.",
     "hyperparameters": {
       "T_max": {
         "default": 50,
@@ -151,7 +161,7 @@ const schedulers = [
     "id": "reduce_lr_on_plateau",
     "name": "ReduceLROnPlateau",
     "fullName": "Reduce LR On Plateau",
-    "description": "Reduce learning rate when a metric has stopped improving.",
+    "description": "Takes an adaptive approach by monitoring validation metrics and reducing the learning rate only when improvement stagnates. This scheduler responds to actual training progress rather than following a predetermined schedule, making it excellent for cases where you're unsure about optimal scheduling. It reduces the learning rate when validation loss stops improving for a specified number of epochs (patience parameter).",
     "year": 2011,
     "month": "January",
     "category": "Adaptive",
@@ -163,8 +173,12 @@ const schedulers = [
     "advantages": [
       "Dynamic adjustment",
       "Responds to training progress",
-      "No need to pre-define schedule"
+      "No need to pre-define schedule",
+      "Responsive to training dynamics",
+      "Excellent when uncertain about scheduling",
+      "Often achieves best performance"
     ],
+    "useCase": "Use ReduceLROnPlateau when you're uncertain about optimal scheduling. This adaptive approach responds to actual training progress, making it an excellent default choice for most problems.",
     "hyperparameters": {
       "factor": {
         "default": 0.1,
@@ -194,7 +208,7 @@ const schedulers = [
     "id": "cyclic_lr",
     "name": "CyclicLR",
     "fullName": "Cyclical Learning Rates",
-    "description": "Sets the learning rate of each parameter group according to cyclical learning rate policy.",
+    "description": "Oscillates between minimum and maximum learning rates in a triangular pattern. This advanced optimization technique challenges traditional learning rate assumptions by periodically increasing the learning rate, which can help escape saddle points and improve generalization. The cyclical pattern allows the model to explore different regions of the loss landscape.",
     "year": 2015,
     "month": "June",
     "category": "Cyclic",
@@ -206,8 +220,12 @@ const schedulers = [
     "advantages": [
       "Escapes saddle points",
       "Improved generalization",
-      "No need for fine-tuning"
+      "No need for fine-tuning",
+      "Advanced optimization technique",
+      "Explores loss landscape",
+      "Challenges traditional assumptions"
     ],
+    "useCase": "Use CyclicalLR for advanced optimization techniques when you want to experiment with more sophisticated approaches that challenge traditional learning rate assumptions.",
     "hyperparameters": {
       "base_lr": {
         "default": 0.001,

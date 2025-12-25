@@ -2983,7 +2983,7 @@ const optimizers = [
       "Large Models"
     ],
     "githubUrl": "https://github.com/huawei-noah/noah-research/tree/master/ROOT",
-    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\rho \\\\\n        &\\textbf{Initialize:} \\theta_0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad \\text{Update } \\hat{v}_t \\text{ (RMSProp-like)} \\\\\n        &\\quad \\text{Update } M_t \\text{ via Newton-Schulz} \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\frac{M_t}{\\sqrt{\\hat{v}_t} + \\epsilon} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1, \\beta_2, \\epsilon, K \\text{ (NS steps)} \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\beta_1 m_{t-1} + (1-\\beta_1) g_t \\\\\n        &\\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g_t^2 \\\\\n        &\\quad \\hat{v}_t \\leftarrow v_t / (1-\\beta_2^t) \\\\\n        &\\quad \\text{Reshape } m_t \\text{ to matrix } M_t \\text{ for layer-wise orthogonalization} \\\\\n        &\\quad O_t \\leftarrow \\text{NewtonSchulz}(M_t, K) \\text{ (dimension-robust)} \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\frac{O_t}{\\sqrt{\\hat{v}_t} + \\epsilon} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "gluon",

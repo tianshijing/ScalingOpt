@@ -44,14 +44,109 @@
                     <h1 class="text-4xl md:text-5xl font-bold text-blue-900 mb-4">
                         Scheduler <span class="gradient-text">Library</span>
                     </h1>
-                    <p class="text-xl text-blue-700 max-w-3xl mx-auto">
+                    <p class="text-xl text-blue-700 max-w-3xl mx-auto mb-6">
                         Explore our comprehensive collection of <span id="total-schedulers">10+</span> learning rate schedulers. 
                         Find the perfect strategy for your model training.
                     </p>
                 </div>
 
+                <!-- Introduction Section -->
+                <section class="bg-white rounded-xl shadow-lg p-8 mb-8 border border-gray-100" data-aos="fade-up" data-aos-delay="100">
+                    <div class="max-w-4xl mx-auto">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Why Learning Rate Schedulers Matter</h2>
+                        <div class="prose prose-lg text-gray-600 max-w-none">
+                            <p class="mb-4">
+                                The learning rate is arguably one of the most important hyperparameters in machine learning. While a fixed learning rate can work, it often leads to suboptimal results. Learning rate schedulers offer a more dynamic approach by automatically adjusting the learning rate during training.
+                            </p>
+                            <p class="mb-4">
+                                <strong>Fixed learning rates create several problems:</strong>
+                            </p>
+                            <ul class="list-disc list-inside mb-4 space-y-2 text-gray-700">
+                                <li><strong>Learning rate too high:</strong> The model oscillates around the optimal point, unable to settle into the minimum</li>
+                                <li><strong>Learning rate too low:</strong> Training progresses extremely slowly, wasting computational resources and potentially getting trapped in poor local minima</li>
+                                <li><strong>No adaptation:</strong> Cannot adjust to different phases of training</li>
+                            </ul>
+                            <p class="mb-4">
+                                Learning rate schedulers address these issues by dynamically adjusting your model's learning rate based on training progress or performance metrics. Early in training, when weights are far from optimal, a higher learning rate helps make rapid progress. As the model approaches convergence, a lower learning rate allows for fine-tuning and prevents overshooting the minimum.
+                            </p>
+                            <p class="text-sm text-gray-500 italic">
+                                Reference: <a href="https://machinelearningmastery.com/a-gentle-introduction-to-learning-rate-schedulers/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline">A Gentle Introduction to Learning Rate Schedulers</a>
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Decision Guide Section -->
+                <section class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl shadow-lg p-8 mb-8 border border-blue-100" data-aos="fade-up" data-aos-delay="150">
+                    <div class="max-w-4xl mx-auto">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Choosing the Right Scheduler</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                        <i data-lucide="target" class="w-5 h-5 text-blue-600"></i>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-gray-900">When you know your training phases</h3>
+                                </div>
+                                <p class="text-gray-600 text-sm mb-2">→ <strong>StepLR</strong></p>
+                                <p class="text-gray-500 text-xs">If you understand when your model should transition from exploration to fine-tuning, StepLR gives you explicit control over these phases.</p>
+                            </div>
+
+                            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                                        <i data-lucide="trending-down" class="w-5 h-5 text-green-600"></i>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-gray-900">When you want smooth decay</h3>
+                                </div>
+                                <p class="text-gray-600 text-sm mb-2">→ <strong>ExponentialLR</strong></p>
+                                <p class="text-gray-500 text-xs">For stable, continuous reduction without sudden changes that might disrupt training momentum.</p>
+                            </div>
+
+                            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                                        <i data-lucide="mountain" class="w-5 h-5 text-purple-600"></i>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-gray-900">When you want to escape local minima</h3>
+                                </div>
+                                <p class="text-gray-600 text-sm mb-2">→ <strong>CosineAnnealingLR</strong></p>
+                                <p class="text-gray-500 text-xs">The cosine pattern provides natural exploration phases that can help the model find better solutions.</p>
+                            </div>
+
+                            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mr-3">
+                                        <i data-lucide="activity" class="w-5 h-5 text-orange-600"></i>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-gray-900">When you're uncertain about scheduling</h3>
+                                </div>
+                                <p class="text-gray-600 text-sm mb-2">→ <strong>ReduceLROnPlateau</strong></p>
+                                <p class="text-gray-500 text-xs">This adaptive approach responds to actual training progress, making it excellent when you're unsure about optimal timing. <strong>Recommended as a default choice.</strong></p>
+                            </div>
+
+                            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 md:col-span-2">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center mr-3">
+                                        <i data-lucide="repeat" class="w-5 h-5 text-indigo-600"></i>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-gray-900">For Schedule-Free optimization</h3>
+                                </div>
+                                <p class="text-gray-600 text-sm mb-2">→ <strong>Schedule-Free</strong></p>
+                                <p class="text-gray-500 text-xs">Eschews learning rate schedules entirely in favor of a novel iterate averaging scheme, achieving SOTA performance without the need to specify a stopping step T.</p>
+                            </div>
+                        </div>
+                        <div class="mt-6 p-4 bg-blue-100 rounded-lg border border-blue-200">
+                            <p class="text-sm text-blue-900 text-center">
+                                <i data-lucide="info" class="w-4 h-4 inline mr-1"></i>
+                                <strong>Tip:</strong> Start with <strong>ReduceLROnPlateau</strong> for most problems, then experiment with others based on your specific needs.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- Timeline Section -->
-                <section class="mb-8 relative" data-aos="fade-up" data-aos-delay="100">
+                <section class="mb-8 relative" data-aos="fade-up" data-aos-delay="200">
                     <div class="text-center mb-12">
                         <button id="toggle-timeline" class="inline-flex items-center justify-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity">
                             <h2 class="text-3xl font-bold text-gray-900">Evolution <span class="text-blue-600">Trajectory</span></h2>

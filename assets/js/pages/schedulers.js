@@ -186,6 +186,19 @@ function initializeSchedulers() {
                         ${highlightedDesc}
                     </p>
 
+                    <!-- Use Case -->
+                    ${scheduler.useCase ? `
+                        <div class="mb-4 p-3 bg-blue-50 border-l-4 border-blue-500 rounded-r">
+                            <p class="text-xs font-semibold text-blue-900 mb-1">
+                                <i data-lucide="lightbulb" class="w-3 h-3 inline mr-1"></i>
+                                When to Use:
+                            </p>
+                            <p class="text-xs text-blue-800 leading-relaxed">
+                                ${scheduler.useCase}
+                            </p>
+                        </div>
+                    ` : ''}
+
                     <!-- Category and Tags -->
                     <div class="mb-4">
                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getCategoryColor(scheduler.category)} mb-2">
