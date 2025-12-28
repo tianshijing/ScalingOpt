@@ -48,6 +48,19 @@ const papers = [
     featured: true
   },
   {
+    id: 'hyperparameter-transfer-matrix-preconditioned-2025',
+    title: 'Hyperparameter Transfer Enables Consistent Gains of Matrix-Preconditioned Optimizers Across Scales',
+    authors: ['Shikai Qiu', 'Zixi Chen', 'Hoang Phan', 'Qi Lei', 'Andrew Gordon Wilson'],
+    year: 2025,
+    venue: 'NeurIPS 2025',
+    category: 'Analysis',
+    abstract: 'Several recently introduced deep learning optimizers utilizing matrix-level preconditioning have shown promising speedups relative to the current dominant optimizer AdamW, particularly in relatively small-scale experiments. However, efforts to validate and replicate their successes have reported mixed results. To better understand the effectiveness of these optimizers at scale, in this work we investigate how to scale preconditioned optimizers via hyperparameter transfer, building on prior works such as μP. We study how the optimal learning rate and weight decay should scale with model width and depth for a wide range of optimizers, including Shampoo, SOAP, and Muon, accounting for the impact of commonly used techniques such as blocking and grafting. We find that scaling the learning rate according to μP improves transfer, but can still suffer from significant finite-width deviations that cause drifting optimal learning rates, which we show can be mitigated by blocking and explicit spectral normalization. For compute-optimal scaling, we find scaling independent weight decay as 1/width is nearly optimal across optimizers. Applying these scaling rules, we show Muon and Shampoo consistently achieve 1.4× and 1.3× speedup over AdamW for training Llama-architecture language models of sizes ranging from 190M to 1.4B, whereas the speedup vanishes rapidly with scale under incorrect scaling. Based on these results and further ablations, we argue that studying optimal hyperparameter transfer is essential for reliably comparing optimizers at scale given a realistic tuning budget.',
+    arxivUrl: 'https://arxiv.org/abs/2512.05620',
+    githubUrl: 'https://github.com/charliezchen/scaling-matrix-preconditioning',
+    tags: ['Hyperparameter Transfer', 'Matrix-Preconditioned Optimizers', 'μP', 'Shampoo', 'SOAP', 'Muon', 'Scaling', 'Weight Decay', 'Spectral Normalization'],
+    featured: true
+  },
+  {
     id: 'stabilizing-rl-llms-2025',
     title: 'Stabilizing Reinforcement Learning with LLMs: Formulation and Practices',
     authors: ['Chujie Zheng', 'Kai Dang', 'Bowen Yu', 'Mingze Li', 'Huiqiang Jiang', 'Junrong Lin', 'Yuqiong Liu', 'Hao Lin', 'Chencan Wu', 'Feng Hu', 'An Yang', 'Jingren Zhou', 'Junyang Lin'],

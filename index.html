@@ -59,8 +59,8 @@
                 <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
                     <div class="text-center" data-aos="fade-up" data-aos-duration="1000">
                         <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 text-gray-900 tracking-tight">
-                            ScalingOpt
-                            <span class="block text-2xl md:text-4xl lg:text-5xl text-blue-600 font-light mt-4" data-aos="fade-up" data-aos-delay="200">
+                            <span aria-label="ScalingOpt">ScalingOpt</span>
+                            <span class="block text-2xl md:text-4xl lg:text-5xl text-blue-600 font-light mt-4" data-aos="fade-up" data-aos-delay="200" aria-label="Optimization at Scale">
                                 Optimization at Scale
                             </span>
                         </h1>
@@ -69,15 +69,15 @@
                             <span class="text-blue-600 font-semibold"> large-scale deep learning</span>. 
                         </p>
                         <div class="flex flex-col sm:flex-row gap-6 justify-center items-center" data-aos="fade-up" data-aos-delay="600">
-                            <a href="pages/optimizers.html" class="group inline-flex items-center px-8 py-4 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-blue-500/30 hover:-translate-y-1">
-                                <i data-lucide="zap" class="mr-2 w-5 h-5"></i>
+                            <a href="pages/optimizers.html" class="group btn-primary inline-flex items-center px-8 py-4 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-blue-500/30 hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-blue-300" aria-label="Explore optimizers page">
+                                <i data-lucide="zap" class="mr-2 w-5 h-5" aria-hidden="true"></i>
                                 Explore Optimizers
-                                <i data-lucide="arrow-right" class="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
+                                <i data-lucide="arrow-right" class="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" aria-hidden="true"></i>
                             </a>
-                            <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="group inline-flex items-center px-8 py-4 bg-white text-gray-700 font-semibold rounded-xl border border-gray-200 hover:border-blue-300 hover:text-blue-600 transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-1">
-                                <i data-lucide="github" class="mr-2 w-5 h-5"></i>
-                                View on GitHub
-                                <i data-lucide="arrow-right" class="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
+                            <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="group inline-flex items-center px-8 py-4 bg-white text-gray-700 font-semibold rounded-xl border-2 border-gray-200 hover:border-blue-300 hover:text-blue-600 transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-blue-100" aria-label="Give us a Star on GitHub (opens in new tab)">
+                                <i data-lucide="github" class="mr-2 w-5 h-5" aria-hidden="true"></i>
+                                Give us a Star on GitHub!
+                                <i data-lucide="star" class="ml-2 w-5 h-5 group-hover:scale-110 transition-transform text-yellow-500" aria-hidden="true"></i>
                             </a>
                         </div>
                     </div>
@@ -97,16 +97,16 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         <!-- News Item 1 -->
                         <div class="group" data-aos="fade-up" data-aos-delay="0">
-                            <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 h-full flex flex-col">
+                            <div class="card-enhanced bg-white rounded-2xl p-6 border border-gray-100 shadow-sm h-full flex flex-col">
                                 <div class="flex items-center gap-3 mb-4">
                                     <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">New Paper</span>
                                     <span class="text-gray-500 text-sm">Dec 2025</span>
                                 </div>
                                 <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
-                                    Stabilizing RL with LLMs
+                                    Hyperparameter Transfer for Matrix-Preconditioned Optimizers
                                 </h3>
                                 <p class="text-gray-600 mb-4 flex-grow">
-                                    New paper on stabilizing Reinforcement Learning with LLMs: Formulation and Practices added to our collection.
+                                    New NeurIPS 2025 paper on hyperparameter transfer enabling consistent gains of matrix-preconditioned optimizers (Shampoo, SOAP, Muon) across scales.
                                 </p>
                                 <a href="pages/papers.html" class="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium mt-auto">
                                     Read Paper <i data-lucide="arrow-right" class="ml-2 w-4 h-4"></i>
@@ -116,7 +116,7 @@
 
                         <!-- News Item 2 -->
                         <div class="group" data-aos="fade-up" data-aos-delay="100">
-                            <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 h-full flex flex-col">
+                            <div class="card-enhanced bg-white rounded-2xl p-6 border border-gray-100 shadow-sm h-full flex flex-col">
                                 <div class="flex items-center gap-3 mb-4">
                                     <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Blog Update</span>
                                     <span class="text-gray-500 text-sm">Dec 2025</span>
@@ -135,7 +135,7 @@
 
                         <!-- News Item 3 -->
                         <div class="group" data-aos="fade-up" data-aos-delay="200">
-                            <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 h-full flex flex-col">
+                            <div class="card-enhanced bg-white rounded-2xl p-6 border border-gray-100 shadow-sm h-full flex flex-col">
                                 <div class="flex items-center gap-3 mb-4">
                                     <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">Community</span>
                                     <span class="text-gray-500 text-sm">Dec 2025</span>
@@ -210,7 +210,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                         <!-- Apollo -->
                         <div class="group relative" data-aos="fade-up" data-aos-delay="100">
-                            <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-xl hover:border-blue-200 transition-all duration-300 hover:-translate-y-2">
+                            <div class="card-enhanced bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
                                 <div class="flex items-center justify-between mb-4">
                                     <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
                                         Apollo (2)
@@ -232,7 +232,7 @@
 
                         <!-- Conda -->
                         <div class="group relative" data-aos="fade-up" data-aos-delay="200">
-                            <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-xl hover:border-blue-200 transition-all duration-300 hover:-translate-y-2">
+                            <div class="card-enhanced bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
                                 <div class="flex items-center justify-between mb-4">
                                     <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
                                         Conda
@@ -254,7 +254,7 @@
 
                         <!-- Muon -->
                         <div class="group relative" data-aos="fade-up" data-aos-delay="300">
-                            <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-xl hover:border-blue-200 transition-all duration-300 hover:-translate-y-2">
+                            <div class="card-enhanced bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
                                 <div class="flex items-center justify-between mb-4">
                                     <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
                                         Muon
@@ -276,7 +276,7 @@
 
                         <!-- SOAP -->
                         <div class="group relative" data-aos="fade-up" data-aos-delay="400">
-                            <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-xl hover:border-blue-200 transition-all duration-300 hover:-translate-y-2">
+                            <div class="card-enhanced bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
                                 <div class="flex items-center justify-between mb-4">
                                     <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
                                         SOAP
@@ -318,7 +318,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                             <!-- Hugging Face -->
                             <a href="https://huggingface.co/docs/transformers/main/optimizers" target="_blank" class="group relative block h-full" data-aos="fade-up" data-aos-delay="100">
-                                <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-xl hover:border-yellow-400 transition-all duration-300 hover:-translate-y-2 h-full flex flex-col">
+                                <div class="card-enhanced bg-white rounded-xl p-6 border border-gray-200 shadow-sm h-full flex flex-col">
                                     <div class="flex items-center mb-4">
                                         <span class="text-2xl mr-3">🤗</span>
                                         <h4 class="text-lg font-bold text-gray-900 group-hover:text-yellow-600 transition-colors">
@@ -337,7 +337,7 @@
 
                             <!-- Meta Research -->
                             <a href="https://github.com/facebookresearch/optimizers" target="_blank" class="group relative block h-full" data-aos="fade-up" data-aos-delay="200">
-                                <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-xl hover:border-blue-400 transition-all duration-300 hover:-translate-y-2 h-full flex flex-col">
+                                <div class="card-enhanced bg-white rounded-xl p-6 border border-gray-200 shadow-sm h-full flex flex-col">
                                     <div class="flex items-center mb-4">
                                         <h4 class="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
                                             Meta Research
@@ -355,7 +355,7 @@
 
                             <!-- NVIDIA -->
                             <a href="https://github.com/NVIDIA/TensorRT-Model-Optimizer" target="_blank" class="group relative block h-full" data-aos="fade-up" data-aos-delay="300">
-                                <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-xl hover:border-green-400 transition-all duration-300 hover:-translate-y-2 h-full flex flex-col">
+                                <div class="card-enhanced bg-white rounded-xl p-6 border border-gray-200 shadow-sm h-full flex flex-col">
                                     <div class="flex items-center mb-4">
                                         <h4 class="text-lg font-bold text-gray-900 group-hover:text-green-600 transition-colors">
                                             NVIDIA TensorRT
@@ -389,7 +389,7 @@
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
                         <div class="group relative" data-aos="fade-up" data-aos-delay="100">
-                            <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                            <div class="card-enhanced bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
                                 <div class="text-center">
                                     <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-50 text-blue-600 rounded-xl mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
                                         <i data-lucide="search" class="w-8 h-8"></i>
@@ -405,7 +405,7 @@
                         </div>
                         
                         <div class="group relative" data-aos="fade-up" data-aos-delay="200">
-                            <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                            <div class="card-enhanced bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
                                 <div class="text-center">
                                     <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-50 text-indigo-600 rounded-xl mb-6 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
                                         <i data-lucide="graduation-cap" class="w-8 h-8"></i>
@@ -421,7 +421,7 @@
                         </div>
                         
                         <div class="group relative" data-aos="fade-up" data-aos-delay="300">
-                            <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                            <div class="card-enhanced bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
                                 <div class="text-center">
                                     <div class="inline-flex items-center justify-center w-16 h-16 bg-teal-50 text-teal-600 rounded-xl mb-6 group-hover:bg-teal-600 group-hover:text-white transition-colors duration-300">
                                         <i data-lucide="github" class="w-8 h-8"></i>
@@ -458,12 +458,12 @@
                             Discover, learn, and contribute to the future of machine learning optimization.
                         </p>
                         <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
-                            <a href="pages/optimizers.html" class="group inline-flex items-center px-8 py-4 bg-white text-blue-600 font-semibold rounded-xl hover:bg-blue-50 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1">
+                            <a href="pages/optimizers.html" class="group btn-primary inline-flex items-center px-8 py-4 bg-white text-blue-600 font-semibold rounded-xl hover:bg-blue-50 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-blue-100">
                                 <i data-lucide="zap" class="mr-2 w-5 h-5"></i>
                                 Browse Optimizers
                                 <i data-lucide="arrow-right" class="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
                             </a>
-                            <a href="pages/community.html" class="group inline-flex items-center px-8 py-4 bg-blue-700 text-white font-semibold rounded-xl border border-blue-500 hover:bg-blue-800 transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-1">
+                            <a href="pages/community.html" class="group btn-primary inline-flex items-center px-8 py-4 bg-blue-700 text-white font-semibold rounded-xl border-2 border-blue-500 hover:bg-blue-800 transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-blue-300">
                                 <i data-lucide="book-open" class="mr-2 w-5 h-5"></i>
                                 Join Community
                                 <i data-lucide="arrow-right" class="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform"></i>

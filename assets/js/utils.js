@@ -82,34 +82,82 @@ function animateCountUp(elementId, targetCount) {
     requestAnimationFrame(updateCount);
 }
 
-// Back to Top Button Logic
+// Back to Top Button Logic - Enhanced
 function initBackToTop() {
-    // Create button if it doesn't exist (in case it's not in the layout)
+    // Create button if it doesn't exist
     let backToTopButton = document.getElementById('back-to-top');
     if (!backToTopButton) {
         backToTopButton = document.createElement('button');
         backToTopButton.id = 'back-to-top';
-        backToTopButton.className = 'fixed bottom-8 right-8 bg-blue-600 text-white p-3 rounded-full shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-blue-700 hover:-translate-y-1 z-50';
+        backToTopButton.className = 'back-to-top';
         backToTopButton.setAttribute('aria-label', 'Back to top');
+        backToTopButton.setAttribute('title', 'Back to top');
         backToTopButton.innerHTML = '<i data-lucide="arrow-up" class="w-6 h-6"></i>';
         document.body.appendChild(backToTopButton);
         if (window.lucide) lucide.createIcons();
     }
 
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 300) {
-            backToTopButton.classList.remove('opacity-0', 'invisible');
-        } else {
-            backToTopButton.classList.add('opacity-0', 'invisible');
+    // Throttled scroll handler for better performance
+    let ticking = false;
+    const handleScroll = () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                const scrollY = window.scrollY || window.pageYOffset;
+                if (scrollY > 300) {
+                    backToTopButton.classList.add('visible');
+                } else {
+                    backToTopButton.classList.remove('visible');
+                }
+                ticking = false;
+            });
+            ticking = true;
         }
-    });
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
     backToTopButton.addEventListener('click', () => {
         window.scrollTo({
             top: 0,
             behavior: 'smooth'
         });
+        // Add haptic feedback if available
+        if (navigator.vibrate) {
+            navigator.vibrate(10);
+        }
     });
+
+    // Keyboard support
+    backToTopButton.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            backToTopButton.click();
+        }
+    });
+}
+
+// Enhanced navbar scroll effect
+function initNavbarScroll() {
+    const navbar = document.querySelector('nav');
+    if (!navbar) return;
+
+    let ticking = false;
+    const handleScroll = () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                const scrollY = window.scrollY || window.pageYOffset;
+                if (scrollY > 50) {
+                    navbar.classList.add('navbar-scrolled');
+                } else {
+                    navbar.classList.remove('navbar-scrolled');
+                }
+                ticking = false;
+            });
+            ticking = true;
+        }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
 }
 
 // Initialize common libraries
@@ -120,13 +168,45 @@ function initCommon() {
             duration: 800,
             once: true,
             offset: 100,
-            easing: 'ease-out-cubic'
+            easing: 'ease-out-cubic',
+            disable: window.matchMedia('(prefers-reduced-motion: reduce)').matches
         });
     }
 
     // Initialize Lucide icons
     if (window.lucide) {
         lucide.createIcons();
+    }
+
+    // Initialize navbar scroll effect
+    initNavbarScroll();
+
+    // Lazy load images
+    initLazyLoading();
+}
+
+// Lazy loading for images
+function initLazyLoading() {
+    if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+                        img.classList.add('loaded');
+                        img.removeAttribute('data-src');
+                        observer.unobserve(img);
+                    }
+                }
+            });
+        }, {
+            rootMargin: '50px'
+        });
+
+        document.querySelectorAll('img[data-src]').forEach(img => {
+            imageObserver.observe(img);
+        });
     }
 }
 
