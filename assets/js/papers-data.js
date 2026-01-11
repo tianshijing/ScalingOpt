@@ -1093,6 +1093,42 @@ const papers = [
     featured: true
   },
   {
+    id: 'polargrad-matrix-gradient-optimizers-2025',
+    title: 'PolarGrad: A Class of Matrix-Gradient Optimizers from a Unifying Preconditioning Perspective',
+    authors: ['Tim Tsz-Kit Lau', 'Qi Long', 'Weijie Su'],
+    year: 2025,
+    venue: 'arXiv preprint',
+    category: 'New Optimizer',
+    abstract: 'The ever-growing scale of deep learning models and training data underscores the critical importance of efficient optimization methods. While preconditioned gradient methods such as Adam and AdamW are the de facto optimizers for training neural networks and large language models, structure-aware preconditioned optimizers like Shampoo and Muon, which utilize the matrix structure of gradients, have demonstrated promising evidence of faster convergence. In this paper, we introduce a unifying framework for analyzing "matrix-aware" preconditioned methods, which not only sheds light on the effectiveness of Muon and related optimizers but also leads to a class of new structure-aware preconditioned methods. A key contribution of this framework is its precise distinction between preconditioning strategies that treat neural network weights as vectors (addressing curvature anisotropy) versus those that consider their matrix structure (addressing gradient anisotropy). This perspective provides new insights into several empirical phenomena in language model pre-training, including Adam\'s training instabilities, Muon\'s accelerated convergence, and the necessity of learning rate warmup for Adam. Building upon this framework, we introduce PolarGrad, a new class of preconditioned optimization methods based on the polar decomposition of matrix-valued gradients. As a special instance, PolarGrad includes Muon with updates scaled by the nuclear norm of the gradients. We provide numerical implementations of these methods, leveraging efficient numerical polar decomposition algorithms for enhanced convergence. Our extensive evaluations across diverse matrix optimization problems and language model pre-training tasks demonstrate that PolarGrad outperforms both Adam and Muon.',
+    arxivUrl: 'https://arxiv.org/abs/2505.21799',
+    tags: ['PolarGrad', 'Matrix-Gradient Optimizers', 'Preconditioning', 'Polar Decomposition', 'Muon', 'Shampoo', 'Adam', 'Language Models', 'Gradient Anisotropy'],
+    featured: true
+  },
+  {
+    id: 'isotropic-curvature-model-2025',
+    title: 'Isotropic Curvature Model for Understanding Deep Learning Optimization: Is Gradient Orthogonalization Optimal?',
+    authors: ['Weijie Su'],
+    year: 2025,
+    venue: 'arXiv preprint',
+    category: 'Analysis',
+    abstract: 'In this paper, we introduce a model for analyzing deep learning optimization over a single iteration by leveraging the matrix structure of the weights. We derive the model by assuming isotropy of curvature, including the second-order Hessian and higher-order terms, of the loss function across all perturbation directions; hence, we call it the isotropic curvature model. This model is a convex optimization program amenable to analysis, which allows us to understand how an update on the weights in the form of a matrix relates to the change in the total loss function. As an application, we use the isotropic curvature model to analyze the recently introduced Muon optimizer and other matrix-gradient methods for training language models. First, we show that under a general growth condition on the curvature, the optimal update matrix is obtained by making the spectrum of the original gradient matrix more homogeneous -- that is, making its singular values closer in ratio -- which in particular improves the conditioning of the update matrix. Next, we show that the orthogonalized gradient becomes optimal for the isotropic curvature model when the curvature exhibits a phase transition in growth. Taken together, these results suggest that the gradient orthogonalization employed in Muon and other related methods is directionally correct but may not be strictly optimal. Finally, we discuss future research on how to leverage the isotropic curvature model for designing new optimization methods for training deep learning and language models.',
+    arxivUrl: 'https://arxiv.org/abs/2511.00674',
+    tags: ['Isotropic Curvature Model', 'Deep Learning Optimization', 'Gradient Orthogonalization', 'Muon', 'Matrix-Gradient Methods', 'Language Models', 'Hessian', 'Convex Optimization'],
+    featured: true
+  },
+  {
+    id: 'batch-size-large-scale-pretraining-2026',
+    title: 'How to Set the Batch Size for Large-Scale Pre-training?',
+    authors: ['Yunhua Zhou', 'Junhao Huang', 'Shuhao Xin', 'Yechen Zhang', 'Runyu Peng', 'Qiping Guo', 'Xipeng Qiu'],
+    year: 2026,
+    venue: 'arXiv preprint',
+    category: 'Analysis',
+    abstract: 'The concept of Critical Batch Size, as pioneered by OpenAI, has long served as a foundational principle for large-scale pre-training. However, with the paradigm shift towards the Warmup-Stable-Decay (WSD) learning rate scheduler, we observe that the original theoretical framework and its underlying mechanisms fail to align with new pre-training dynamics. To bridge this gap between theory and practice, this paper derives a revised E(S) relationship tailored for WSD scheduler, characterizing the trade-off between training data consumption E and steps S during pre-training. Our theoretical analysis reveals two fundamental properties of WSD-based pre-training: 1) B_min, the minimum batch size threshold required to achieve a target loss, and 2) B_opt, the optimal batch size that maximizes data efficiency by minimizing total tokens. Building upon these properties, we propose a dynamic Batch Size Scheduler. Extensive experiments demonstrate that our revised formula precisely captures the dynamics of large-scale pre-training, and the resulting scheduling strategy significantly enhances both training efficiency and final model quality.',
+    arxivUrl: 'https://arxiv.org/abs/2601.05034',
+    tags: ['Batch Size', 'Large-Scale Pre-training', 'Critical Batch Size', 'WSD Scheduler', 'Learning Rate Schedule', 'Data Efficiency', 'Training Dynamics'],
+    featured: true
+  },
+  {
     id: 'adaptive-memory-momentum-2025',
     title: 'Adaptive Memory Momentum via a Model-Based Framework for Deep Learning Optimization',
     authors: ['Kristi Topollai', 'Anna Choromanska'],
