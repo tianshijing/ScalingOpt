@@ -45,19 +45,25 @@ function initializeOptimizers() {
 
         let currentYear = null;
 
+        // Mark the latest optimizers (last 5) and SSO as "Latest"
+        const totalOptimizers = sortedOptimizers.length;
+        const latestStartIndex = Math.max(0, totalOptimizers - 5);
+        
         sortedOptimizers.forEach((opt, index) => {
             const isLeft = index % 2 === 0;
             const yearChanged = opt.year !== currentYear;
             currentYear = opt.year;
+            // Mark last 5 and SSO as latest, but exclude adamuon and gluon
+            const isLatest = (index >= latestStartIndex || opt.id === 'sso') && opt.id !== 'adamuon' && opt.id !== 'gluon';
 
             const itemHtml = `
                 <div class="relative flex items-center justify-between md:justify-normal mb-8 ${isLeft ? 'md:flex-row-reverse' : ''} group">
                     <!-- Date/Year Marker (Mobile: Left side, Desktop: Center) -->
-                    <div class="absolute left-4 md:left-1/2 transform -translate-x-1/2 flex items-center justify-center w-4 h-4 rounded-full bg-blue-500 border-4 border-white shadow-sm z-10 group-hover:scale-125 transition-transform duration-300"></div>
+                    <div class="absolute left-4 md:left-1/2 transform -translate-x-1/2 flex items-center justify-center w-4 h-4 rounded-full ${isLatest ? 'bg-yellow-500' : 'bg-blue-500'} border-4 border-white shadow-sm z-10 group-hover:scale-125 transition-transform duration-300"></div>
 
                     <!-- Content Card -->
                     <div class="ml-12 md:ml-0 md:w-[45%] ${isLeft ? 'md:mr-auto md:pr-8 text-left md:text-right' : 'md:ml-auto md:pl-8 text-left'}">
-                        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 group-hover:-translate-y-1 relative overflow-hidden">
+                        <div class="bg-white p-5 rounded-xl shadow-sm border ${isLatest ? 'border-yellow-200' : 'border-gray-100'} hover:shadow-md transition-all duration-300 group-hover:-translate-y-1 relative overflow-hidden">
                             <!-- Decorative background gradient -->
                             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${getCategoryColor(opt.category).includes('blue') ? 'from-blue-400 to-blue-600' : 'from-purple-400 to-purple-600'}"></div>
                             
@@ -65,6 +71,11 @@ function initializeOptimizers() {
                                 <span class="text-xs font-semibold tracking-wider text-blue-600 uppercase bg-blue-50 px-2 py-0.5 rounded-full">
                                     ${opt.month || ''} ${opt.year}
                                 </span>
+                                ${isLatest ? `
+                                    <span class="text-xs font-semibold tracking-wider text-yellow-700 uppercase bg-yellow-100 px-2 py-0.5 rounded-full">
+                                        Latest
+                                    </span>
+                                ` : ''}
                             </div>
                             
                             <h3 class="text-lg font-bold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">

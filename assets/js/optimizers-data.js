@@ -3541,6 +3541,76 @@ const optimizers = [
     ],
     "githubUrl": "https://github.com/zeke-xie/adaptive-inertia-adai",
     "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_1 \\\\\n        &\\textbf{Initialize:} \\theta_0, z_0 \\leftarrow \\theta_0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad z_t \\leftarrow \\beta_1 z_{t-1} + (1-\\beta_1) \\theta_{t-1} - \\eta g_t \\\\\n        &\\quad \\theta_t \\leftarrow (1-\\frac{1}{t}) \\theta_{t-1} + \\frac{1}{t} z_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+  },
+  {
+    "id": "sso",
+    "name": "SSO",
+    "fullName": "Spectral Sphere Optimizer",
+    "description": "Enforces strict module-wise spectral constraints on both weights and their updates, realizing a fully μP-aligned optimization process through steepest descent on the spectral sphere",
+    "year": 2026,
+    "month": "January",
+    "category": "Second-order",
+    "paper": {
+      "title": "Controlled LLM Training on Spectral Sphere",
+      "url": "https://arxiv.org/pdf/2601.08393v1",
+      "authors": [
+        "Tian Xie",
+        "Haoming Luo",
+        "Haoyu Tang",
+        "Yiwen Hu",
+        "Jason Klein",
+        "Liu Qingnan Ren",
+        "Yang Wang",
+        "Wayne Xin Zhao",
+        "Rui Yan",
+        "Bing Su",
+        "Chong Luo",
+        "Baining Guo"
+      ]
+    },
+    "advantages": [
+      "Fully μP-aligned optimization",
+      "Strict spectral constraints on weights and updates",
+      "Improved MoE router load balancing",
+      "Suppressed outliers and bounded activations",
+      "Better stability than AdamW and Muon"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.001,
+        "range": "1e-4 to 1e-2",
+        "description": "Learning rate (scaled by μP LR scaler)"
+      },
+      "spectral_radius": {
+        "default": 1.0,
+        "range": "0.5 to 2.0",
+        "description": "Target spectral radius R for weight matrices"
+      },
+      "lambda": {
+        "default": 0.01,
+        "range": "1e-3 to 0.1",
+        "description": "Dynamic retraction coefficient (spectral weight decay)"
+      },
+      "retraction_type": {
+        "default": "dynamic",
+        "range": "hard/dynamic",
+        "description": "Hard retraction (exact projection) or dynamic retraction (soft spectral decay)"
+      }
+    },
+    "implementation": {
+      "pytorch": false,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 75,
+    "tags": [
+      "Spectral Norm",
+      "μP-aligned",
+      "Manifold Optimization",
+      "Stability"
+    ],
+    "githubUrl": "https://github.com/Unakar/Spectral-Sphere-Optimizer",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, R, \\lambda \\\\\n        &\\textbf{Initialize:} \\boldsymbol{W}_0 \\text{ with } \\|\\boldsymbol{W}_0\\|_2 = R \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad \\boldsymbol{G}_t \\leftarrow \\nabla_{\\boldsymbol{W}} f(\\boldsymbol{W}_{t-1}) \\\\\n        &\\quad \\text{Solve } h(\\lambda^*) = \\|\\boldsymbol{G}_t + \\lambda^* \\boldsymbol{W}_{t-1}\\|_* - R = 0 \\text{ for } \\lambda^* \\\\\n        &\\quad \\boldsymbol{T}_t \\leftarrow \\text{msign}(\\boldsymbol{G}_t + \\lambda^* \\boldsymbol{W}_{t-1}) \\\\\n        &\\quad \\boldsymbol{W}_t \\leftarrow \\boldsymbol{W}_{t-1} - \\eta \\boldsymbol{T}_t \\\\\n        &\\quad \\sigma_t \\leftarrow \\|\\boldsymbol{W}_t\\|_2 \\text{ (via Power Iteration)} \\\\\n        &\\quad \\boldsymbol{W}_t \\leftarrow \\frac{R}{\\sigma_t} \\boldsymbol{W}_t \\text{ (retraction)} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   }
 ];
 
