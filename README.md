@@ -1,4 +1,4 @@
-# ScalingOpt - Optimization Community
+# ScalingOpt - Optimization-Centric Efficient AI community.
 <div align="center">
   <img width="243.5" height="186.7" alt="2a0ff7d09549aec917655f98551eaa32" src="https://github.com/user-attachments/assets/d0a7d40e-1be4-4a34-a943-e19caef400d4" />
 </div>
