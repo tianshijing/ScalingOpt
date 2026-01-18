@@ -14,6 +14,8 @@ If this repository has been helpful to you, please consider giving it a ⭐️ t
 
 ## 📢 News
 
+[2026.1] We are always welcoming new members to join us. ScalingOpt has now supplemented the A-Summary-Sheet-of-Optimization-in-Deep-Learning (collecting over 100 types of optimizers), authored by Yifeng Liu.
+
 [2025.12] ScalingOpt team has published its first blog post: [Backbone-Optimizer Coupling Bias: The Hidden Co-Design Principle](https://tianshijing.github.io/ScalingOpt/pages/blogs/ScalingOpt/bocb.html). Welcome to read it!
 
 [2025.11] ScalingOpt has been officially released and is currently undergoing continuous improvement and expansion of its content. Please stay tuned!
