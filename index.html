@@ -611,7 +611,7 @@
                 </div>
                 <div class="relative z-10 text-center">
                     <h2 class="text-5xl md:text-6xl font-black mb-6 tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white to-blue-200">The Inverted Pyramid of the Optimization Field</h2>
-                    <p class="text-blue-200/80 text-xl md:text-2xl font-medium max-w-4xl mx-auto">A multi-layered taxonomy defining the structural hierarchy of modern deep learning efficiency and algorithmic design.</p>
+                    <p class="text-blue-200/80 text-xl md:text-2xl font-medium max-w-4xl mx-auto italic">Structural Hierarchy of Neural Network Learning.</p>
                 </div>
             </div>
 
@@ -672,7 +672,7 @@
                                         <div class="layer-id-badge">Level 5</div>
                                         <div class="layer-titles">
                                             <h3 class="layer-main-title">Model Architecture</h3>
-                                            <p class="layer-category-label">Inductive Bias & Structural Design</p>
+                                            <p class="layer-category-label">Backbone & Structural Topology</p>
                                         </div>
                                     </div>
                                     <div class="layer-action">
@@ -686,80 +686,35 @@
                                     <div class="expansion-grid">
                                         <div class="expansion-info">
                                             <h4 class="info-label">Core Objective</h4>
-                                            <p class="info-content">Define the connectivity and operational flow that shape the loss landscape, determining its curvature, smoothness, and the "navigability" for the optimizer.</p>
+                                            <p class="info-content">Design the <strong>Backbone</strong> and its <strong>Structural Topology</strong> to establish the connectivity and operational flow that shape the high-dimensional loss landscape.</p>
                                         </div>
                                         <div class="expansion-info">
                                             <h4 class="info-label">Architectural Patterns</h4>
                                             <div class="tech-stack-tags">
+                                                <span class="tech-tag">Transformer Backbones</span>
                                                 <span class="tech-tag">Mixture of Experts (MoE)</span>
+                                                <span class="tech-tag">SSM (Mamba / S4)</span>
+                                                <span class="tech-tag">Residual / Graph Topology</span>
+                                                <span class="tech-tag">GQA / MQA / Attention</span>
                                                 <span class="tech-tag">Rotary Positional Embeddings</span>
                                                 <span class="tech-tag">SwiGLU / Gated MLPs</span>
-                                                <span class="tech-tag">RMSNorm / LayerNorm</span>
-                                                <span class="tech-tag">Residual / Skip Connections</span>
-                                                <span class="tech-tag">Grouped Query Attention</span>
-                                                <span class="tech-tag">CNN / ViT Blocks</span>
-                                                <span class="tech-tag">SSM (Mamba / S4)</span>
+                                                <span class="tech-tag">Scaling Laws (Depth/Width)</span>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="expansion-description mt-6">
-                                        <p>Architecture defines the <strong>Inductive Bias</strong>. The choice of <strong>Attention</strong> vs. <strong>SSM</strong> changes the information bottleneck. <strong>Mixture of Experts (MoE)</strong> decouples parameter count from compute cost. These structural decisions determine the gradient flow characteristics (e.g., exploding/vanishing gradients) and directly influence how sensitive the model is to optimizer choices and hyperparameter settings.</p>
+                                        <p>The backbone's <strong>Structural Topology</strong> defines the fundamental path of information processing. Decisions like residual connectivity, layer depth vs. width, and query mechanisms (GQA/MQA) create the geometric substrate for optimization. This level dictates the model's capacity and inductive bias, determining how gradients propagate through the neural hierarchy and shaping the "navigability" of the optimization space.</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Level 4: Hyperparameters -->
+                        <!-- Level 4: Training Decorators -->
                         <div class="pyramid-layer-3d level-4" onclick="toggleLevel(4)">
                             <div class="layer-block">
                                 <div class="layer-front">
                                     <div class="layer-main-info">
                                         <div class="layer-id-badge">Level 4</div>
-                                        <div class="layer-titles">
-                                            <h3 class="layer-main-title">Hyperparameters</h3>
-                                            <p class="layer-category-label">Global Configuration & Control</p>
-                                        </div>
-                                    </div>
-                                    <div class="layer-action">
-                                        <span class="view-details-btn">Expand Details</span>
-                                        <i data-lucide="chevron-down" class="layer-chevron-icon"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="layer-expansion-panel">
-                                <div class="expansion-card">
-                                    <div class="expansion-grid">
-                                        <div class="expansion-info">
-                                            <h4 class="info-label">Core Objective</h4>
-                                            <p class="info-content">Govern the pace and precision of the learning trajectory, ensuring the system converges to a high-quality local minimum without diverging.</p>
-                                        </div>
-                                        <div class="expansion-info">
-                                            <h4 class="info-label">Control Variables</h4>
-                                            <div class="tech-stack-tags">
-                                                <span class="tech-tag">Peak Learning Rate</span>
-                                                <span class="tech-tag">Batch Size / Token Budget</span>
-                                                <span class="tech-tag">Warmup / Decay Steps</span>
-                                                <span class="tech-tag">Weight Decay Alpha</span>
-                                                <span class="tech-tag">Gradient Clip Threshold</span>
-                                                <span class="tech-tag">Optimizer Beta1 / Beta2</span>
-                                                <span class="tech-tag">Epsilon Stability</span>
-                                                <span class="tech-tag">Micro-batch Accumulation</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="expansion-description mt-6">
-                                        <p>Hyperparameters are the manual "tuning knobs" of deep learning. A mismatched <strong>Learning Rate Schedule</strong> can ruin months of training. <strong>Batch Size</strong> affects the signal-to-noise ratio of gradients. These exogenous factors don't change the algorithm itself but define its operational environment, often requiring <strong>Grid/Random Search</strong> or <strong>Bayesian Optimization</strong> to find the Pareto optimal set.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Level 3: Training Decorators -->
-                        <div class="pyramid-layer-3d level-3" onclick="toggleLevel(3)">
-                            <div class="layer-block">
-                                <div class="layer-front">
-                                    <div class="layer-main-info">
-                                        <div class="layer-id-badge">Level 3</div>
                                         <div class="layer-titles">
                                             <h3 class="layer-main-title">Training Decorators</h3>
                                             <p class="layer-category-label">Stability & Generalization Enhancers</p>
@@ -794,6 +749,51 @@
                                     </div>
                                     <div class="expansion-description mt-6">
                                         <p>Decorators modify the standard training loop to improve outcomes. <strong>Normalization</strong> (LayerNorm, RMSNorm) prevents internal covariate shift. <strong>Regularization</strong> (Dropout, Weight Decay) imposes a complexity penalty to improve generalization. <strong>Model Averaging</strong> (EMA) produces smoother, more robust weights by keeping a moving average of the trajectory, essentially acting as a low-pass filter on the update steps.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Level 3: Hyperparameters -->
+                        <div class="pyramid-layer-3d level-3" onclick="toggleLevel(3)">
+                            <div class="layer-block">
+                                <div class="layer-front">
+                                    <div class="layer-main-info">
+                                        <div class="layer-id-badge">Level 3</div>
+                                        <div class="layer-titles">
+                                            <h3 class="layer-main-title">Hyperparameters</h3>
+                                            <p class="layer-category-label">Global Configuration & Control</p>
+                                        </div>
+                                    </div>
+                                    <div class="layer-action">
+                                        <span class="view-details-btn">Expand Details</span>
+                                        <i data-lucide="chevron-down" class="layer-chevron-icon"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layer-expansion-panel">
+                                <div class="expansion-card">
+                                    <div class="expansion-grid">
+                                        <div class="expansion-info">
+                                            <h4 class="info-label">Core Objective</h4>
+                                            <p class="info-content">Govern the pace and precision of the learning trajectory, ensuring the system converges to a high-quality local minimum without diverging.</p>
+                                        </div>
+                                        <div class="expansion-info">
+                                            <h4 class="info-label">Control Variables</h4>
+                                            <div class="tech-stack-tags">
+                                                <span class="tech-tag">Peak Learning Rate</span>
+                                                <span class="tech-tag">Batch Size / Token Budget</span>
+                                                <span class="tech-tag">Warmup / Decay Steps</span>
+                                                <span class="tech-tag">Weight Decay Alpha</span>
+                                                <span class="tech-tag">Gradient Clip Threshold</span>
+                                                <span class="tech-tag">Optimizer Beta1 / Beta2</span>
+                                                <span class="tech-tag">Epsilon Stability</span>
+                                                <span class="tech-tag">Micro-batch Accumulation</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="expansion-description mt-6">
+                                        <p>Hyperparameters are the manual "tuning knobs" of deep learning. A mismatched <strong>Learning Rate Schedule</strong> can ruin months of training. <strong>Batch Size</strong> affects the signal-to-noise ratio of gradients. These exogenous factors don't change the algorithm itself but define its operational environment, often requiring <strong>Grid/Random Search</strong> or <strong>Bayesian Optimization</strong> to find the Pareto optimal set.</p>
                                     </div>
                                 </div>
                             </div>
