@@ -546,6 +546,33 @@ a {
     transition: color 0.2s ease;
 }
 
+/* Benchmark Table Styling */
+.benchmark-table-container {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+
+.benchmark-table-container::-webkit-scrollbar {
+    height: 6px;
+}
+
+.benchmark-table-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.benchmark-table-container::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 20px;
+}
+
+.benchmark-table-container::-webkit-scrollbar-thumb:hover {
+    background-color: #94a3b8;
+}
+
+table tr:nth-child(even) {
+    background-color: rgba(248, 250, 252, 0.5);
+}
+
 a:focus {
     outline: 2px solid #3b82f6;
     outline-offset: 2px;
