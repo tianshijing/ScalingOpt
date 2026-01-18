@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimization Summary Sheet - ScalingOpt</title>
+    <meta name="description" content="A comprehensive summary sheet of optimization algorithms in deep learning, providing an academic and systematic overview of modern optimizers.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="../assets/css/styles.css">
+
+    <style>
+        .pdf-container {
+            height: calc(100vh - 160px);
+            min-height: 600px;
+        }
+        .knowledge-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .knowledge-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -8px rgba(59, 130, 246, 0.15);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50 font-inter">
+    <div class="flex flex-col min-h-screen">
+        <!-- Navbar -->
+        <div id="navbar-placeholder"></div>
+
+        <!-- Main Content -->
+        <main class="flex-grow">
+            <!-- Hero Header -->
+            <section class="bg-white border-b border-gray-100 py-12">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <div data-aos="fade-right">
+                            <nav class="flex mb-4 text-sm text-gray-500 items-center gap-2">
+                                <a href="../index.html" class="hover:text-blue-600 transition-colors">Home</a>
+                                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                                <span class="text-blue-600 font-medium">Optimization Summary</span>
+                            </nav>
+                            <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+                                Deep Learning <span class="gradient-text">Optimization Summary Sheet</span>
+                            </h1>
+                            <p class="mt-3 text-lg text-slate-600 max-w-2xl">
+                                An academic synthesis of optimization theories, algorithms, and practical strategies in modern deep learning systems.
+                            </p>
+                        </div>
+                        <div class="flex gap-3" data-aos="fade-left">
+                            <a href="../assets/pdf/A_Summary_Sheet_of_Optimization_in_Deep_Learning.pdf" download class="inline-flex items-center px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-all shadow-md hover:shadow-blue-500/20">
+                                <i data-lucide="download" class="w-5 h-5 mr-2"></i>
+                                Download PDF
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Interactive Reader Section -->
+            <section class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="grid grid-cols-1 xl:grid-cols-4 gap-8">
+                    
+                    <!-- Sidebar: Academic Framework -->
+                    <div class="xl:col-span-1 space-y-6 order-2 xl:order-1" data-aos="fade-up">
+                        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 sticky top-24">
+                            <h3 class="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
+                                <i data-lucide="layers-3" class="w-5 h-5 text-blue-600"></i>
+                                Systematic Taxonomy
+                            </h3>
+                            
+                            <div class="space-y-4">
+                                <!-- Generation 1 -->
+                                <div class="p-4 rounded-xl bg-blue-50/50 border border-blue-100 group">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <div class="p-1.5 bg-blue-100 text-blue-600 rounded-lg group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                            <i data-lucide="target" class="w-4 h-4"></i>
+                                        </div>
+                                        <h4 class="font-bold text-blue-900 text-sm">1st Gen: Directional</h4>
+                                    </div>
+                                    <p class="text-[11px] text-slate-600 leading-relaxed">
+                                        Foundational methods focusing on gradient direction and noise reduction (SGD, Momentum).
+                                    </p>
+                                </div>
+
+                                <!-- Generation 2 -->
+                                <div class="p-4 rounded-xl bg-indigo-50/50 border border-indigo-100 group">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <div class="p-1.5 bg-indigo-100 text-indigo-600 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                                            <i data-lucide="zap" class="w-4 h-4"></i>
+                                        </div>
+                                        <h4 class="font-bold text-indigo-900 text-sm">2nd Gen: Adaptive</h4>
+                                    </div>
+                                    <p class="text-[11px] text-slate-600 leading-relaxed">
+                                        Methods using historical gradient information for per-parameter learning rates (Adam, RMSProp).
+                                    </p>
+                                </div>
+
+                                <!-- Generation 3 -->
+                                <div class="p-4 rounded-xl bg-purple-50/50 border border-purple-100 group">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <div class="p-1.5 bg-purple-100 text-purple-600 rounded-lg group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                                            <i data-lucide="sparkles" class="w-4 h-4"></i>
+                                        </div>
+                                        <h4 class="font-bold text-purple-900 text-sm">3rd Gen: Higher-order</h4>
+                                    </div>
+                                    <p class="text-[11px] text-slate-600 leading-relaxed">
+                                        Modern techniques incorporating curvature information and scaling stability (Second-order, Shampoo).
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="mt-8 pt-6 border-t border-slate-100">
+                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Key Theoretical Pillars</h4>
+                                <ul class="space-y-2">
+                                    <li class="flex items-start gap-2 text-[11px] text-slate-600">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-blue-500 mt-0.5"></i>
+                                        Convergence analysis of non-convex landscapes.
+                                    </li>
+                                    <li class="flex items-start gap-2 text-[11px] text-slate-600">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-blue-500 mt-0.5"></i>
+                                        Relationship between batch size and generalization.
+                                    </li>
+                                    <li class="flex items-start gap-2 text-[11px] text-slate-600">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-blue-500 mt-0.5"></i>
+                                        Hessian-based acceleration mechanisms.
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="mt-8 pt-6 border-t border-slate-100">
+                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Academic Citation</h4>
+                                <div class="bg-slate-900 rounded-xl p-4 overflow-hidden relative group">
+                                    <pre class="text-[10px] text-blue-300 font-mono leading-tight overflow-x-auto">@misc{liu2024summary,
+  author={Yifeng Liu},
+  title={A Summary Sheet of Optimization in Deep Learning},
+  year={2024},
+  month={Dec},
+  howpublished={\url{https://github.com/lauyikfung/A-Summary-Sheet-of-Optimization-in-Deep-Learning/A_Summary_Sheet_of_Optimization_in_Deep_Learning.pdf}}
+}</pre>
+                                    <button 
+                                        onclick="copyCitation()"
+                                        class="absolute top-2 right-2 p-1.5 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                                        title="Copy BibTeX"
+                                    >
+                                        <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="mt-8 pt-6 border-t border-slate-100">
+                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Related Resources</h4>
+                                <ul class="space-y-3">
+                                    <li>
+                                        <a href="optimizers.html" class="text-sm text-slate-600 hover:text-blue-600 flex items-center gap-2 transition-colors">
+                                            <i data-lucide="library" class="w-4 h-4"></i>
+                                            Optimizer Library
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="visualizations.html" class="text-sm text-slate-600 hover:text-blue-600 flex items-center gap-2 transition-colors">
+                                            <i data-lucide="pie-chart" class="w-4 h-4"></i>
+                                            Visualizations
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="papers.html" class="text-sm text-slate-600 hover:text-blue-600 flex items-center gap-2 transition-colors">
+                                            <i data-lucide="file-text" class="w-4 h-4"></i>
+                                            Research Papers
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Reader: PDF Viewer -->
+                    <div class="xl:col-span-3 order-1 xl:order-2" data-aos="fade-left">
+                        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden pdf-container">
+                            <iframe 
+                                src="../assets/pdf/A_Summary_Sheet_of_Optimization_in_Deep_Learning.pdf#toolbar=0&navpanes=0&scrollbar=0" 
+                                class="w-full h-full border-none"
+                                title="Optimization Summary Sheet PDF"
+                            ></iframe>
+                        </div>
+                        <div class="mt-6 flex flex-col md:flex-row justify-between items-center bg-blue-50/50 p-4 rounded-xl border border-blue-100 text-blue-800 text-sm">
+                            <div class="flex items-center gap-2 mb-2 md:mb-0">
+                                <i data-lucide="info" class="w-5 h-5 text-blue-500"></i>
+                                <span><b>Smart Reading Tip:</b> Use the scrollbar on the PDF to navigate pages. For a full experience, click "Download PDF".</span>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <span class="flex items-center gap-1.5 text-slate-500 text-xs">
+                                    <i data-lucide="user" class="w-3.5 h-3.5"></i>
+                                    Author: <b>Yifeng Liu</b>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <div id="footer-placeholder"></div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="../assets/js/utils.js"></script>
+    <script src="../assets/js/layout.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Re-initialize Lucide icons as they are inside dynamic content
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+        });
+
+        function copyCitation() {
+            const bibtex = `@misc{liu2024summary,
+  author={Yifeng Liu},
+  title={A Summary Sheet of Optimization in Deep Learning},
+  year={2024},
+  month={Dec},
+  howpublished={\\url{https://github.com/lauyikfung/A-Summary-Sheet-of-Optimization-in-Deep-Learning/A_Summary_Sheet_of_Optimization_in_Deep_Learning.pdf}}
+}`;
+            navigator.clipboard.writeText(bibtex).then(() => {
+                const btn = event.currentTarget;
+                const icon = btn.querySelector('i');
+                const originalIcon = icon.getAttribute('data-lucide');
+                
+                // Change to checkmark
+                icon.setAttribute('data-lucide', 'check');
+                if (window.lucide) window.lucide.createIcons();
+                btn.classList.add('bg-green-500/20', 'text-green-400');
+                
+                setTimeout(() => {
+                    icon.setAttribute('data-lucide', originalIcon);
+                    if (window.lucide) window.lucide.createIcons();
+                    btn.classList.remove('bg-green-500/20', 'text-green-400');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
