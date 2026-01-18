@@ -616,276 +616,326 @@
             </div>
 
             <!-- Modal Body -->
-            <div class="p-6 md:p-10 lg:p-16 overflow-y-auto custom-scrollbar flex-grow bg-slate-50/50">
+            <div class="p-6 md:p-10 lg:p-12 overflow-y-auto custom-scrollbar flex-grow bg-slate-50/50">
                 <div class="pyramid-container-3d">
-                    <div class="pyramid-perspective-wrapper">
-                        <!-- Level 6: Infrastructure (System & Hardware) -->
-                        <div class="pyramid-layer-3d level-6" onclick="toggleLevel(6)">
-                            <div class="layer-block">
-                                <div class="layer-front">
-                                    <div class="layer-main-info">
-                                        <div class="layer-id-badge">Level 6</div>
-                                        <div class="layer-titles">
-                                            <h3 class="layer-main-title">Infrastructure (System & Hardware)</h3>
-                                            <p class="layer-category-label">High-Performance Computing & Efficiency</p>
+                    <div class="pyramid-visual-root">
+                        <!-- Left Labels (Functional View) -->
+                        <div class="side-labels left-labels hidden lg:flex">
+                            <div style="height: 100px;" class="label-group">
+                                <div class="label-bracket"></div>
+                                <div class="label-content">
+                                    <div class="label-title">Execution</div>
+                                    <div class="label-desc">System Runtime</div>
+                                </div>
+                            </div>
+                            <div style="height: 216px; margin-top: 16px;" class="label-group">
+                                <div class="label-bracket"></div>
+                                <div class="label-content">
+                                    <div class="label-title">Topology</div>
+                                    <div class="label-desc">Architectural Constraints</div>
+                                </div>
+                            </div>
+                            <div style="height: 100px; margin-top: 16px;" class="label-group">
+                                <div class="label-bracket"></div>
+                                <div class="label-content">
+                                    <div class="label-title">Scheduling</div>
+                                    <div class="label-desc">Training Policy</div>
+                                </div>
+                            </div>
+                            <div style="height: 216px; margin-top: 16px;" class="label-group">
+                                <div class="label-bracket"></div>
+                                <div class="label-content">
+                                    <div class="label-title">Algorithm</div>
+                                    <div class="label-desc">Update Core Logic</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Central Pyramid -->
+                        <div class="pyramid-perspective-wrapper">
+                            <!-- Level 6: Infrastructure (System & Hardware) -->
+                            <div class="pyramid-layer-3d level-6" onclick="toggleLevel(6)">
+                                <div class="layer-block">
+                                    <div class="layer-front">
+                                        <div class="layer-main-info">
+                                            <div class="layer-id-badge">Level 6</div>
+                                            <div class="layer-titles">
+                                                <h3 class="layer-main-title">Infrastructure</h3>
+                                                <p class="layer-category-label">System & Efficiency</p>
+                                            </div>
+                                        </div>
+                                        <div class="layer-action">
+                                            <i data-lucide="chevron-down" class="layer-chevron-icon"></i>
                                         </div>
                                     </div>
-                                    <div class="layer-action">
-                                        <span class="view-details-btn">Expand Details</span>
-                                        <i data-lucide="chevron-down" class="layer-chevron-icon"></i>
+                                </div>
+                                <div class="layer-expansion-panel">
+                                    <div class="expansion-card">
+                                        <div class="expansion-grid">
+                                            <div class="expansion-info">
+                                                <h4 class="info-label">Core Objective</h4>
+                                                <p class="info-content">Minimize computational bottlenecks by optimizing memory bandwidth, interconnect latency, and hardware utilization through specialized kernels and distributed parallelism.</p>
+                                            </div>
+                                            <div class="expansion-info">
+                                                <h4 class="info-label">Technological Stack</h4>
+                                                <div class="tech-stack-tags">
+                                                    <span class="tech-tag">FlashAttention-1/2/3</span>
+                                                    <span class="tech-tag">DeepSpeed (ZeRO 1/2/3)</span>
+                                                    <span class="tech-tag">FSDP / DDP / Megatron-LM</span>
+                                                    <span class="tech-tag">Quantization (NF4/GGUF/FP8)</span>
+                                                    <span class="tech-tag">NVLink / InfiniBand / NCCL</span>
+                                                    <span class="tech-tag">Triton / CUDA / TVM</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="expansion-description mt-6">
+                                            <p>At the base of the hierarchy, <strong>Infrastructure</strong> focuses on physical execution. <strong>Distributed Parallelism</strong> allows scaling across thousands of GPUs, while <strong>Specialized Kernels</strong> achieve near-theoretical hardware peaks.</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="layer-expansion-panel">
-                                <div class="expansion-card">
-                                    <div class="expansion-grid">
-                                        <div class="expansion-info">
-                                            <h4 class="info-label">Core Objective</h4>
-                                            <p class="info-content">Minimize computational bottlenecks by optimizing memory bandwidth, interconnect latency, and hardware utilization through specialized kernels and distributed parallelism.</p>
-                                        </div>
-                                        <div class="expansion-info">
-                                            <h4 class="info-label">Technological Stack</h4>
-                                            <div class="tech-stack-tags">
-                                                <span class="tech-tag">FlashAttention-1/2/3</span>
-                                                <span class="tech-tag">DeepSpeed (ZeRO 1/2/3)</span>
-                                                <span class="tech-tag">FSDP / DDP / Megatron-LM</span>
-                                                <span class="tech-tag">Quantization (NF4/GGUF/FP8)</span>
-                                                <span class="tech-tag">NVLink / InfiniBand / NCCL</span>
-                                                <span class="tech-tag">Triton / CUDA / TVM</span>
-                                                <span class="tech-tag">Offloading (CPU/Disk)</span>
-                                                <span class="tech-tag">Gradient Checkpointing</span>
+
+                            <!-- Level 5: Model Architecture -->
+                            <div class="pyramid-layer-3d level-5" onclick="toggleLevel(5)">
+                                <div class="layer-block">
+                                    <div class="layer-front">
+                                        <div class="layer-main-info">
+                                            <div class="layer-id-badge">Level 5</div>
+                                            <div class="layer-titles">
+                                                <h3 class="layer-main-title">Model Architecture</h3>
+                                                <p class="layer-category-label">Inductive Bias & Structural Topology</p>
                                             </div>
                                         </div>
+                                        <div class="layer-action">
+                                            <i data-lucide="chevron-down" class="layer-chevron-icon"></i>
+                                        </div>
                                     </div>
-                                    <div class="expansion-description mt-6">
-                                        <p>At the base of the hierarchy, <strong>Infrastructure</strong> focuses on how math is physically executed. <strong>Distributed Parallelism</strong> (Tensor, Pipeline, Expert) allows scaling across thousands of GPUs. <strong>Memory Optimizations</strong> like ZeRO and Gradient Checkpointing mitigate the VRAM wall. <strong>Specialized Kernels</strong> (FlashAttention, Triton) bypass standard library overhead to achieve near-theoretical hardware peaks, ensuring that the theoretical algorithms above can actually run at scale.</p>
+                                </div>
+                                <div class="layer-expansion-panel">
+                                    <div class="expansion-card">
+                                        <div class="expansion-grid">
+                                            <div class="expansion-info">
+                                                <h4 class="info-label">Core Objective</h4>
+                                                <p class="info-content">Design the <strong>Backbone</strong> and its <strong>Structural Topology</strong> to establish the connectivity and operational flow that shape the loss landscape.</p>
+                                            </div>
+                                            <div class="expansion-info">
+                                                <h4 class="info-label">Architectural Patterns</h4>
+                                                <div class="tech-stack-tags">
+                                                    <span class="tech-tag">Transformer</span>
+                                                    <span class="tech-tag">MoE</span>
+                                                    <span class="tech-tag">Mamba / S4</span>
+                                                    <span class="tech-tag">Residual Topology</span>
+                                                    <span class="tech-tag">GQA / MQA</span>
+                                                    <span class="tech-tag">SwiGLU</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="expansion-description mt-6">
+                                            <p>Decisions like residual connectivity and query mechanisms create the geometric substrate for optimization, determining how gradients propagate through the hierarchy.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Level 4: Training Decorators -->
+                            <div class="pyramid-layer-3d level-4" onclick="toggleLevel(4)">
+                                <div class="layer-block">
+                                    <div class="layer-front">
+                                        <div class="layer-main-info">
+                                            <div class="layer-id-badge">Level 4</div>
+                                            <div class="layer-titles">
+                                                <h3 class="layer-main-title">Training Decorators</h3>
+                                                <p class="layer-category-label">Stability & Generalization</p>
+                                            </div>
+                                        </div>
+                                        <div class="layer-action">
+                                            <i data-lucide="chevron-down" class="layer-chevron-icon"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layer-expansion-panel">
+                                    <div class="expansion-card">
+                                        <div class="expansion-grid">
+                                            <div class="expansion-info">
+                                                <h4 class="info-label">Core Objective</h4>
+                                                <p class="info-content">Refine the optimization process by adding noise, constraints, or normalization to prevent overfitting and ensure numerical stability.</p>
+                                            </div>
+                                            <div class="expansion-info">
+                                                <h4 class="info-label">Refinement Techniques</h4>
+                                                <div class="tech-stack-tags">
+                                                    <span class="tech-tag">LayerNorm / RMSNorm</span>
+                                                    <span class="tech-tag">Dropout</span>
+                                                    <span class="tech-tag">EMA / SWA</span>
+                                                    <span class="tech-tag">Weight Decay</span>
+                                                    <span class="tech-tag">Mixup</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="expansion-description mt-6">
+                                            <p>Decorators modify the standard training loop. <strong>Normalization</strong> prevents shift, while <strong>Regularization</strong> imposes a complexity penalty to improve generalization.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Level 3: Hyperparameters -->
+                            <div class="pyramid-layer-3d level-3" onclick="toggleLevel(3)">
+                                <div class="layer-block">
+                                    <div class="layer-front">
+                                        <div class="layer-main-info">
+                                            <div class="layer-id-badge">Level 3</div>
+                                            <div class="layer-titles">
+                                                <h3 class="layer-main-title">Hyperparameters</h3>
+                                                <p class="layer-category-label">Global Configuration</p>
+                                            </div>
+                                        </div>
+                                        <div class="layer-action">
+                                            <i data-lucide="chevron-down" class="layer-chevron-icon"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layer-expansion-panel">
+                                    <div class="expansion-card">
+                                        <div class="expansion-grid">
+                                            <div class="expansion-info">
+                                                <h4 class="info-label">Core Objective</h4>
+                                                <p class="info-content">Govern the pace and precision of the learning trajectory, ensuring the system converges without diverging.</p>
+                                            </div>
+                                            <div class="expansion-info">
+                                                <h4 class="info-label">Control Variables</h4>
+                                                <div class="tech-stack-tags">
+                                                    <span class="tech-tag">Learning Rate</span>
+                                                    <span class="tech-tag">Batch Size</span>
+                                                    <span class="tech-tag">Warmup</span>
+                                                    <span class="tech-tag">Gradient Clip</span>
+                                                    <span class="tech-tag">Beta1 / Beta2</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="expansion-description mt-6">
+                                            <p>Hyperparameters are the manual tuning knobs. They define the operational environment and signal-to-noise ratio of gradients.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Level 2: Optimizer -->
+                            <div class="pyramid-layer-3d level-2" onclick="toggleLevel(2)">
+                                <div class="layer-block">
+                                    <div class="layer-front">
+                                        <div class="layer-main-info">
+                                            <div class="layer-id-badge">Level 2</div>
+                                            <div class="layer-titles">
+                                                <h3 class="layer-main-title">Optimizer</h3>
+                                                <p class="layer-category-label">Update Algorithms</p>
+                                            </div>
+                                        </div>
+                                        <div class="layer-action">
+                                            <i data-lucide="chevron-down" class="layer-chevron-icon"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layer-expansion-panel">
+                                    <div class="expansion-card">
+                                        <div class="expansion-grid">
+                                            <div class="expansion-info">
+                                                <h4 class="info-label">Core Objective</h4>
+                                                <p class="info-content">Implement the mathematical update logic that translates raw gradients into parameter steps.</p>
+                                            </div>
+                                            <div class="expansion-info">
+                                                <h4 class="info-label">Algorithm Zoo</h4>
+                                                <div class="tech-stack-tags">
+                                                    <span class="tech-tag">AdamW</span>
+                                                    <span class="tech-tag">Muon</span>
+                                                    <span class="tech-tag">Lion</span>
+                                                    <span class="tech-tag">Sophia</span>
+                                                    <span class="tech-tag">Shampoo</span>
+                                                    <span class="tech-tag">SAM</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="expansion-description mt-6">
+                                            <p>Optimizers handle momentum, variance, and curvature estimation. <strong>Adaptive Methods</strong> scale steps per-parameter, while <strong>Second-order</strong> methods approximate the Hessian.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Level 1: Foundational Rules -->
+                            <div class="pyramid-layer-3d level-1" onclick="toggleLevel(1)">
+                                <div class="layer-block">
+                                    <div class="layer-front">
+                                        <div class="layer-main-info">
+                                            <div class="layer-id-badge">Level 1</div>
+                                            <div class="layer-titles">
+                                                <h3 class="layer-main-title">Foundational Rules</h3>
+                                                <p class="layer-category-label">Mathematical & Algorithmic Core</p>
+                                            </div>
+                                        </div>
+                                        <div class="layer-action">
+                                            <i data-lucide="chevron-down" class="layer-chevron-icon"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layer-expansion-panel">
+                                    <div class="expansion-card">
+                                        <div class="expansion-grid">
+                                            <div class="expansion-info">
+                                                <h4 class="info-label">Core Objective</h4>
+                                                <p class="info-content">Define the bedrock calculus of learning: how a loss signal is derived and credit is assigned.</p>
+                                            </div>
+                                            <div class="expansion-info">
+                                                <h4 class="info-label">The Bedrock</h4>
+                                                <div class="tech-stack-tags">
+                                                    <span class="tech-tag">Gradient Descent</span>
+                                                    <span class="tech-tag">Back-propagation</span>
+                                                    <span class="tech-tag">Auto-Diff</span>
+                                                    <span class="tech-tag">BP-free</span>
+                                                    <span class="tech-tag">NTK</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="expansion-description mt-6">
+                                            <p>This level defines the theoretical limits of what is learnable, providing the fundamental minimization principle and the efficient recursive algorithm for the chain rule.</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Level 5: Model Architecture -->
-                        <div class="pyramid-layer-3d level-5" onclick="toggleLevel(5)">
-                            <div class="layer-block">
-                                <div class="layer-front">
-                                    <div class="layer-main-info">
-                                        <div class="layer-id-badge">Level 5</div>
-                                        <div class="layer-titles">
-                                            <h3 class="layer-main-title">Model Architecture</h3>
-                                            <p class="layer-category-label">Backbone & Structural Topology</p>
-                                        </div>
-                                    </div>
-                                    <div class="layer-action">
-                                        <span class="view-details-btn">Expand Details</span>
-                                        <i data-lucide="chevron-down" class="layer-chevron-icon"></i>
-                                    </div>
+                        <!-- Right Labels (Space View) -->
+                        <div class="side-labels right-labels hidden lg:flex">
+                            <div style="height: 100px;" class="label-group">
+                                <div class="label-bracket"></div>
+                                <div class="label-content">
+                                    <div class="label-title">System Infrastructure</div>
+                                    <div class="label-desc">Computational substrate for high-performance execution.</div>
                                 </div>
                             </div>
-                            <div class="layer-expansion-panel">
-                                <div class="expansion-card">
-                                    <div class="expansion-grid">
-                                        <div class="expansion-info">
-                                            <h4 class="info-label">Core Objective</h4>
-                                            <p class="info-content">Design the <strong>Backbone</strong> and its <strong>Structural Topology</strong> to establish the connectivity and operational flow that shape the high-dimensional loss landscape.</p>
-                                        </div>
-                                        <div class="expansion-info">
-                                            <h4 class="info-label">Architectural Patterns</h4>
-                                            <div class="tech-stack-tags">
-                                                <span class="tech-tag">Transformer Backbones</span>
-                                                <span class="tech-tag">Mixture of Experts (MoE)</span>
-                                                <span class="tech-tag">SSM (Mamba / S4)</span>
-                                                <span class="tech-tag">Residual / Graph Topology</span>
-                                                <span class="tech-tag">GQA / MQA / Attention</span>
-                                                <span class="tech-tag">Rotary Positional Embeddings</span>
-                                                <span class="tech-tag">SwiGLU / Gated MLPs</span>
-                                                <span class="tech-tag">Scaling Laws (Depth/Width)</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="expansion-description mt-6">
-                                        <p>The backbone's <strong>Structural Topology</strong> defines the fundamental path of information processing. Decisions like residual connectivity, layer depth vs. width, and query mechanisms (GQA/MQA) create the geometric substrate for optimization. This level dictates the model's capacity and inductive bias, determining how gradients propagate through the neural hierarchy and shaping the "navigability" of the optimization space.</p>
-                                    </div>
+                            <div style="height: 216px; margin-top: 16px;" class="label-group group">
+                                <div class="label-bracket group-hover:border-blue-500 group-hover:border-l-4"></div>
+                                <div class="label-content">
+                                    <div class="label-title">Parameter Space</div>
+                                    <div class="label-desc">High-dimensional manifold of weights and structural connectivity.</div>
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- Level 4: Training Decorators -->
-                        <div class="pyramid-layer-3d level-4" onclick="toggleLevel(4)">
-                            <div class="layer-block">
-                                <div class="layer-front">
-                                    <div class="layer-main-info">
-                                        <div class="layer-id-badge">Level 4</div>
-                                        <div class="layer-titles">
-                                            <h3 class="layer-main-title">Training Decorators</h3>
-                                            <p class="layer-category-label">Stability & Generalization Enhancers</p>
-                                        </div>
-                                    </div>
-                                    <div class="layer-action">
-                                        <span class="view-details-btn">Expand Details</span>
-                                        <i data-lucide="chevron-down" class="layer-chevron-icon"></i>
-                                    </div>
+                            <div style="height: 100px; margin-top: 16px;" class="label-group group">
+                                <div class="label-bracket group-hover:border-indigo-500 group-hover:border-l-4"></div>
+                                <div class="label-content">
+                                    <div class="label-title">Control Interface</div>
+                                    <div class="label-desc">Adaptive bridge modulating the mapping of error signals.</div>
+                                </div>
+                                <!-- Interaction Indicators -->
+                                <div class="absolute -left-12 top-0 bottom-0 flex flex-col justify-around items-center text-blue-400 opacity-40">
+                                    <i data-lucide="arrow-up" class="w-4 h-4 animate-bounce"></i>
+                                    <i data-lucide="arrow-down" class="w-4 h-4 animate-bounce" style="animation-delay: 0.5s"></i>
                                 </div>
                             </div>
-                            <div class="layer-expansion-panel">
-                                <div class="expansion-card">
-                                    <div class="expansion-grid">
-                                        <div class="expansion-info">
-                                            <h4 class="info-label">Core Objective</h4>
-                                            <p class="info-content">Refine the optimization process by adding noise, constraints, or normalization to prevent overfitting and ensure numerical stability across deep layers.</p>
-                                        </div>
-                                        <div class="expansion-info">
-                                            <h4 class="info-label">Refinement Techniques</h4>
-                                            <div class="tech-stack-tags">
-                                                <span class="tech-tag">LayerNorm / BatchNorm</span>
-                                                <span class="tech-tag">Dropout / DropPath / DropConnect</span>
-                                                <span class="tech-tag">Label Smoothing</span>
-                                                <span class="tech-tag">Stochastic Depth</span>
-                                                <span class="tech-tag">EMA / SWA (Model Averaging)</span>
-                                                <span class="tech-tag">Weight Decay (L2)</span>
-                                                <span class="tech-tag">Data Augmentation / Mixup</span>
-                                                <span class="tech-tag">Curriculum Learning</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="expansion-description mt-6">
-                                        <p>Decorators modify the standard training loop to improve outcomes. <strong>Normalization</strong> (LayerNorm, RMSNorm) prevents internal covariate shift. <strong>Regularization</strong> (Dropout, Weight Decay) imposes a complexity penalty to improve generalization. <strong>Model Averaging</strong> (EMA) produces smoother, more robust weights by keeping a moving average of the trajectory, essentially acting as a low-pass filter on the update steps.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Level 3: Hyperparameters -->
-                        <div class="pyramid-layer-3d level-3" onclick="toggleLevel(3)">
-                            <div class="layer-block">
-                                <div class="layer-front">
-                                    <div class="layer-main-info">
-                                        <div class="layer-id-badge">Level 3</div>
-                                        <div class="layer-titles">
-                                            <h3 class="layer-main-title">Hyperparameters</h3>
-                                            <p class="layer-category-label">Global Configuration & Control</p>
-                                        </div>
-                                    </div>
-                                    <div class="layer-action">
-                                        <span class="view-details-btn">Expand Details</span>
-                                        <i data-lucide="chevron-down" class="layer-chevron-icon"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="layer-expansion-panel">
-                                <div class="expansion-card">
-                                    <div class="expansion-grid">
-                                        <div class="expansion-info">
-                                            <h4 class="info-label">Core Objective</h4>
-                                            <p class="info-content">Govern the pace and precision of the learning trajectory, ensuring the system converges to a high-quality local minimum without diverging.</p>
-                                        </div>
-                                        <div class="expansion-info">
-                                            <h4 class="info-label">Control Variables</h4>
-                                            <div class="tech-stack-tags">
-                                                <span class="tech-tag">Peak Learning Rate</span>
-                                                <span class="tech-tag">Batch Size / Token Budget</span>
-                                                <span class="tech-tag">Warmup / Decay Steps</span>
-                                                <span class="tech-tag">Weight Decay Alpha</span>
-                                                <span class="tech-tag">Gradient Clip Threshold</span>
-                                                <span class="tech-tag">Optimizer Beta1 / Beta2</span>
-                                                <span class="tech-tag">Epsilon Stability</span>
-                                                <span class="tech-tag">Micro-batch Accumulation</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="expansion-description mt-6">
-                                        <p>Hyperparameters are the manual "tuning knobs" of deep learning. A mismatched <strong>Learning Rate Schedule</strong> can ruin months of training. <strong>Batch Size</strong> affects the signal-to-noise ratio of gradients. These exogenous factors don't change the algorithm itself but define its operational environment, often requiring <strong>Grid/Random Search</strong> or <strong>Bayesian Optimization</strong> to find the Pareto optimal set.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Level 2: Optimizer -->
-                        <div class="pyramid-layer-3d level-2" onclick="toggleLevel(2)">
-                            <div class="layer-block">
-                                <div class="layer-front">
-                                    <div class="layer-main-info">
-                                        <div class="layer-id-badge">Level 2</div>
-                                        <div class="layer-titles">
-                                            <h3 class="layer-main-title">Optimizer</h3>
-                                            <p class="layer-category-label">Mathematical Update Algorithms</p>
-                                        </div>
-                                    </div>
-                                    <div class="layer-action">
-                                        <span class="view-details-btn">Expand Details</span>
-                                        <i data-lucide="chevron-down" class="layer-chevron-icon"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="layer-expansion-panel">
-                                <div class="expansion-card">
-                                    <div class="expansion-grid">
-                                        <div class="expansion-info">
-                                            <h4 class="info-label">Core Objective</h4>
-                                            <p class="info-content">Implement the mathematical update logic that translates raw gradients into parameter steps, handling momentum, variance, and curvature estimation.</p>
-                                        </div>
-                                        <div class="expansion-info">
-                                            <h4 class="info-label">Algorithm Zoo</h4>
-                                            <div class="tech-stack-tags">
-                                                <span class="tech-tag">Adam / AdamW / Adam-mini</span>
-                                                <span class="tech-tag">SGD with Momentum / NAG</span>
-                                                <span class="tech-tag">Muon</span>
-                                                <span class="tech-tag">Lion / Sophia / Adan</span>
-                                                <span class="tech-tag">AdaBelief / MadGrad</span>
-                                                <span class="tech-tag">Schedule-Free / D-Adaptation</span>
-                                                <span class="tech-tag">K-FAC / Shampoo (2nd Order)</span>
-                                                <span class="tech-tag">LAMB / LARS (Large Batch)</span>
-                                                <span class="tech-tag">SAM / ASAM (Flatness Aware)</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="expansion-description mt-6">
-                                        <p>Optimizers are the "engines" of learning. <strong>Adaptive Methods</strong> (AdamW) use first and second moments to scale steps per-parameter. <strong>Memory-Efficient</strong> variants (Lion, Adam-mini) reduce the 2x-3x optimizer state overhead. <strong>Second-order Methods</strong> (Shampoo) approximate the Hessian for faster convergence. <strong>Flatness-aware</strong> methods (SAM) seek wider minima to guarantee better generalization, representing the bridge between simple calculus and complex geometry.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Level 1: Foundational Rules -->
-                        <div class="pyramid-layer-3d level-1" onclick="toggleLevel(1)">
-                            <div class="layer-block">
-                                <div class="layer-front">
-                                    <div class="layer-main-info">
-                                        <div class="layer-id-badge">Level 1</div>
-                                        <div class="layer-titles">
-                                            <h3 class="layer-main-title">Foundational Rules</h3>
-                                            <p class="layer-category-label">Mathematical & Algorithmic Core</p>
-                                        </div>
-                                    </div>
-                                    <div class="layer-action">
-                                        <span class="view-details-btn">Expand Details</span>
-                                        <i data-lucide="chevron-down" class="layer-chevron-icon"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="layer-expansion-panel">
-                                <div class="expansion-card">
-                                    <div class="expansion-grid">
-                                        <div class="expansion-info">
-                                            <h4 class="info-label">Core Objective</h4>
-                                            <p class="info-content">Define the bedrock calculus of learning: how a loss signal is derived from data and how credit is assigned to individual parameters across the network.</p>
-                                        </div>
-                                        <div class="expansion-info">
-                                            <h4 class="info-label">The Bedrock</h4>
-                                            <div class="tech-stack-tags">
-                                                <span class="tech-tag">Gradient Descent (GD)</span>
-                                                <span class="tech-tag">Back-propagation (Chain Rule)</span>
-                                                <span class="tech-tag">Automatic Differentiation</span>
-                                                <span class="tech-tag">BP-free Methods (FA / DFA)</span>
-                                                <span class="tech-tag">Evolutionary Strategies (ES)</span>
-                                                <span class="tech-tag">Implicit / Heuristic Gradients</span>
-                                                <span class="tech-tag">Neural Tangent Kernels</span>
-                                                <span class="tech-tag">Information Bottleneck</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="expansion-description mt-6">
-                                        <p>This is the "Universal Law" of modern AI. <strong>Gradient Descent</strong> provides the fundamental minimization principle. <strong>Back-propagation</strong> provides the efficient recursive algorithm to apply the chain rule. Beyond these, the frontier of <strong>BP-free learning</strong> (like Feedback Alignment) seeks biologically plausible or more scalable alternatives. This level defines the theoretical limits of what is learnable and forms the mathematical substrate for all layers above.</p>
-                                    </div>
+                            <div style="height: 216px; margin-top: 16px;" class="label-group group">
+                                <div class="label-bracket group-hover:border-blue-400 group-hover:border-l-4"></div>
+                                <div class="label-content">
+                                    <div class="label-title">Gradient Space</div>
+                                    <div class="label-desc">Domain of vector fields where learning trajectories are derived.</div>
                                 </div>
                             </div>
                         </div>
@@ -907,19 +957,114 @@
 
         .pyramid-container-3d {
             width: 100%;
-            padding: 40px 0;
+            padding: 60px 0;
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
+        }
+
+        .pyramid-visual-root {
+            display: flex;
+            align-items: stretch;
+            justify-content: center;
+            width: 100%;
+            max-width: 1300px;
+            gap: 40px;
+            position: relative;
+        }
+
+        /* Side Labels Styles */
+        .side-labels {
+            width: 220px;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+            pointer-events: none;
+        }
+
+        .label-group {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .label-bracket {
+            position: absolute;
+            top: 5px;
+            bottom: 5px;
+            width: 12px;
+            border: 2px solid rgba(30, 58, 138, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .left-labels .label-bracket {
+            right: 0;
+            border-right: none;
+            border-radius: 8px 0 0 8px;
+        }
+
+        .right-labels .label-bracket {
+            left: 0;
+            border-left: none;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .label-content {
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .left-labels .label-content { text-align: right; padding-right: 25px; }
+        .right-labels .label-content { text-align: left; padding-left: 25px; }
+
+        .label-title {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #1e3a8a;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+
+        .label-desc {
+            font-size: 0.75rem;
+            color: #64748b;
+            line-height: 1.4;
+            font-style: italic;
+        }
+
+        /* Vertical connectors for interaction */
+        .interaction-arrow {
+            position: absolute;
+            right: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #3b82f6;
+            opacity: 0.6;
+        }
+
+        .arrow-line {
+            width: 2px;
+            height: 40px;
+            background: currentColor;
         }
 
         .pyramid-perspective-wrapper {
-            width: 100%;
-            max-width: 1100px;
+            flex: 1;
+            max-width: 800px;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 16px;
+            z-index: 1;
         }
 
         .pyramid-layer-3d {
@@ -931,7 +1076,7 @@
 
         .layer-block {
             position: relative;
-            height: 140px;
+            height: 100px; /* Reduced height for better fit */
             width: 100%;
             transition: all 0.4s ease;
         }
@@ -942,9 +1087,9 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 80px;
-            border-radius: 16px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            padding: 0 40px; /* Reduced padding */
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             overflow: hidden;
             transition: all 0.3s ease;
         }
