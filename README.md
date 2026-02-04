@@ -13,6 +13,7 @@ Welcome to **ScalingOpt (Optimization Community)**, a dedicated community for ad
 If this repository has been helpful to you, please consider giving it a ⭐️ to show your support. Your support helps us reach more researchers and contributes to the growth of this resource. Thank you! ☺️
 
 ## 📢 News
+[2026.2] ScalingOpt's latest optimizer, Mano, is now officially released! Authored by Yufei Gu.
 
 [2026.1] We are always welcoming new members to join us. ScalingOpt has now supplemented the A-Summary-Sheet-of-Optimization-in-Deep-Learning (collecting over 100 types of optimizers), authored by Yifeng Liu.
 
