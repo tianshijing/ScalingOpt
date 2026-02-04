@@ -45,7 +45,7 @@ function initializeOptimizers() {
 
         let currentYear = null;
 
-        // Mark the latest optimizers (last 5) and SSO as "Latest"
+        // Mark the latest optimizers (last 5) and Mano as "Latest"
         const totalOptimizers = sortedOptimizers.length;
         const latestStartIndex = Math.max(0, totalOptimizers - 5);
         
@@ -53,8 +53,8 @@ function initializeOptimizers() {
             const isLeft = index % 2 === 0;
             const yearChanged = opt.year !== currentYear;
             currentYear = opt.year;
-            // Mark last 5 and SSO as latest, but exclude adamuon and gluon
-            const isLatest = (index >= latestStartIndex || opt.id === 'sso') && opt.id !== 'adamuon' && opt.id !== 'gluon';
+            // Mark last 5 and Mano as latest, but exclude adamuon, gluon, and conda
+            const isLatest = (index >= latestStartIndex || opt.id === 'mano') && opt.id !== 'adamuon' && opt.id !== 'gluon' && opt.id !== 'conda';
 
             const itemHtml = `
                 <div class="relative flex items-center justify-between md:justify-normal mb-8 ${isLeft ? 'md:flex-row-reverse' : ''} group">

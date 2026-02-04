@@ -2666,7 +2666,7 @@ const optimizers = [
       "Optimization"
     ],
     "githubUrl": "https://github.com/Chongjie-Si/AdaMuon",
-    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\mu, \\beta_2, \\epsilon, K \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\mu m_{t-1} + g_t \\\\\n        &\\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g_t^2 \\\\\n        &\\quad O_t \\leftarrow \\text{NewtonSchulz}(m_t, K) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta (O_t \\odot \\frac{1}{\sqrt{v_t} + \\epsilon}) \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\mu, \\beta_2, \\epsilon, K \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\mu m_{t-1} + g_t \\\\\n        &\\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g_t^2 \\\\\n        &\\quad O_t \\leftarrow \\text{NewtonSchulz}(m_t, K) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta (O_t \\odot \\frac{1}{\\sqrt{v_t} + \\epsilon}) \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "conda",
@@ -3611,6 +3611,73 @@ const optimizers = [
     ],
     "githubUrl": "https://github.com/Unakar/Spectral-Sphere-Optimizer",
     "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, R, \\lambda \\\\\n        &\\textbf{Initialize:} \\boldsymbol{W}_0 \\text{ with } \\|\\boldsymbol{W}_0\\|_2 = R \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad \\boldsymbol{G}_t \\leftarrow \\nabla_{\\boldsymbol{W}} f(\\boldsymbol{W}_{t-1}) \\\\\n        &\\quad \\text{Solve } h(\\lambda^*) = \\|\\boldsymbol{G}_t + \\lambda^* \\boldsymbol{W}_{t-1}\\|_* - R = 0 \\text{ for } \\lambda^* \\\\\n        &\\quad \\boldsymbol{T}_t \\leftarrow \\text{msign}(\\boldsymbol{G}_t + \\lambda^* \\boldsymbol{W}_{t-1}) \\\\\n        &\\quad \\boldsymbol{W}_t \\leftarrow \\boldsymbol{W}_{t-1} - \\eta \\boldsymbol{T}_t \\\\\n        &\\quad \\sigma_t \\leftarrow \\|\\boldsymbol{W}_t\\|_2 \\text{ (via Power Iteration)} \\\\\n        &\\quad \\boldsymbol{W}_t \\leftarrow \\frac{R}{\\sigma_t} \\boldsymbol{W}_t \\text{ (retraction)} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+  },
+  {
+    "id": "mano",
+    "name": "Mano",
+    "fullName": "Mano: Restriking Manifold Optimization for LLM Training",
+    "description": "Manifold optimization method that projects momentum onto tangent space and constrains it on rotational Oblique manifold",
+    "year": 2026,
+    "month": "January",
+    "category": "Second-order",
+    "paper": {
+      "title": "Mano: Restriking Manifold Optimization for LLM Training",
+      "url": "https://arxiv.org/abs/2601.23000",
+      "authors": [
+        "Yufei Gu",
+        "Zeke Xie"
+      ]
+    },
+    "advantages": [
+      "Manifold optimization for LLMs",
+      "Projects momentum onto tangent space",
+      "Constrains on rotational Oblique manifold",
+      "Better performance than AdamW and Muon",
+      "Lower memory consumption",
+      "Reduced computational complexity"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.001,
+        "range": "1e-4 to 1e-2",
+        "description": "Learning rate"
+      },
+      "wd": {
+        "default": 0.1,
+        "range": "0.0 to 0.1",
+        "description": "Weight decay coefficient"
+      },
+      "momentum": {
+        "default": 0.95,
+        "range": "0.9 to 0.99",
+        "description": "Momentum coefficient for internal SGD"
+      },
+      "nesterov": {
+        "default": "False",
+        "range": "True/False",
+        "description": "Use Nesterov-style momentum"
+      },
+      "adamw_betas": {
+        "default": "(0.9, 0.95)",
+        "range": "(0.8-0.99, 0.9-0.99)",
+        "description": "Betas for internal AdamW optimizer"
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 85,
+    "tags": [
+      "Manifold Optimization",
+      "Oblique Manifold",
+      "Tangent Space",
+      "LLM Training",
+      "Second-order"
+    ],
+    "githubUrl": "https://github.com/xie-lab-ml/Mano-Restriking-Manifold-Optimization-for-LLM-Training",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\mu, \\lambda \\text{ (weight decay)} \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\mu m_{t-1} + g_t \\\\\n        &\\quad d \\leftarrow t \\bmod 2 \\text{ (rotating dimension)} \\\\\n        &\\quad \\hat{\\theta} \\leftarrow \\frac{\\theta_{t-1}}{\\|\\theta_{t-1}\\|_2} \\text{ (normalize)} \\\\\n        &\\quad \\boldsymbol{T}_t \\leftarrow m_t - (m_t^T \\hat{\\theta}) \\hat{\\theta} \\text{ (tangent projection)} \\\\\n        &\\quad \\boldsymbol{u}_t \\leftarrow \\frac{\\boldsymbol{T}_t}{\\|\\boldsymbol{T}_t\\|_2} \\text{ (oblique mapping)} \\\\\n        &\\quad \\theta_t \\leftarrow (1 - \\eta \\lambda) \\theta_{t-1} - \\eta \\cdot 0.2 \\sqrt{n_d} \\boldsymbol{u}_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   }
 ];
 
