@@ -81,6 +81,19 @@ const blogPosts = [
         featured: true,
         externalUrl: 'https://hackmd.io/@l_WDq7lkQq29Pz-KD1JPNA/SJL6n1PYgg'
     },
+    {
+        id: 'bam-norm-balancing-2026',
+        title: 'Norm Balancing Optimizers',
+        excerpt: 'Balancing row and column-wise update magnitudes alone can reproduce a surprising share of Muon\'s performance. Across a CNN, an MLP, and a small transformer, this lightweight norm-balancing step often matches AdamW and sometimes closes much of the gap to Muon, without explicit orthogonalization and without any extra variance/second-moment buffers.',
+        content: 'Full blog content would go here...',
+        author: 'Sarthak Mangla, Abel Gurung',
+        publishDate: '2026-02-17',
+        readTime: '15 min read',
+        category: 'Research',
+        tags: ['Optimizer', 'Muon', 'Norm Balancing', 'BAM', 'SinkNorm', 'Preconditioning'],
+        featured: true,
+        externalUrl: 'https://www.sarthakmangla.com/blog/bam'
+    },
     // Jianlin Su's Posts
     {
         id: 'jianlin-weight-decay-ema',

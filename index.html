@@ -89,14 +89,163 @@
                 </div>
             </section>
 
+            <!-- ScalingOPT Showcase -->
+            <section class="py-24 bg-white relative overflow-hidden">
+                <div class="absolute inset-0 bg-dot-pattern opacity-20 pointer-events-none"></div>
+                <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex flex-col lg:flex-row items-center gap-16">
+                        <!-- Left: Info -->
+                        <div class="lg:w-1/2" data-aos="fade-right">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                                    <i data-lucide="flask-conical" class="w-5 h-5 text-white"></i>
+                                </div>
+                                <span class="inline-flex items-center px-3 py-1 bg-blue-50 border border-blue-100 rounded-full text-xs font-semibold text-blue-600 tracking-wide">OUR CODEBASE</span>
+                            </div>
+                            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">
+                                Scaling<span class="text-blue-600">OPT</span>
+                            </h2>
+                            <p class="text-gray-500 leading-relaxed mb-6">
+                                A research-oriented PyTorch codebase for optimizer-centric scaling studies in large language model training. Designed to make optimizer comparisons reproducible, fair, and ergonomically extensible.
+                            </p>
+
+                            <!-- Key highlights -->
+                            <div class="grid grid-cols-2 gap-3 mb-8">
+                                <div class="flex items-start gap-2.5">
+                                    <div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                        <i data-lucide="layers" class="w-3.5 h-3.5 text-blue-500"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-gray-900">30+ Optimizers</p>
+                                        <p class="text-xs text-gray-400">Single entrypoint</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-2.5">
+                                    <div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                        <i data-lucide="cpu" class="w-3.5 h-3.5 text-blue-500"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-gray-900">17 Model Configs</p>
+                                        <p class="text-xs text-gray-400">9M to 13B params</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-2.5">
+                                    <div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                        <i data-lucide="database" class="w-3.5 h-3.5 text-blue-500"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-gray-900">3 Data Pipelines</p>
+                                        <p class="text-xs text-gray-400">C4, Pile, OpenWebText</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-2.5">
+                                    <div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                        <i data-lucide="monitor" class="w-3.5 h-3.5 text-blue-500"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-gray-900">Multi-GPU DDP</p>
+                                        <p class="text-xs text-gray-400">Native torchrun</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-wrap gap-3">
+                                <a href="https://github.com/OpenEnvision-Lab/ScalingOPT" target="_blank" rel="noopener noreferrer" class="group inline-flex items-center px-5 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-gray-800 transition-all duration-300 shadow-sm">
+                                    <i data-lucide="github" class="mr-2 w-4 h-4"></i>
+                                    View on GitHub
+                                    <i data-lucide="arrow-up-right" class="ml-2 w-3.5 h-3.5 opacity-50 group-hover:opacity-100 transition-opacity"></i>
+                                </a>
+                                <a href="pages/packages.html" class="inline-flex items-center px-5 py-2.5 bg-blue-50 text-blue-600 text-sm font-semibold rounded-xl border border-blue-200/60 hover:bg-blue-100/60 transition-all duration-300">
+                                    <i data-lucide="package" class="mr-2 w-4 h-4"></i>
+                                    All Packages
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Right: Visual Card -->
+                        <div class="lg:w-1/2" data-aos="fade-left">
+                            <div class="relative">
+                                <div class="absolute -inset-4 bg-gradient-to-br from-blue-100/40 to-indigo-100/40 rounded-3xl blur-2xl"></div>
+                                <div class="relative bg-white rounded-2xl border border-blue-100/80 shadow-xl shadow-blue-500/5 overflow-hidden">
+                                    <!-- Header bar -->
+                                    <div class="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 px-6 py-4 flex items-center justify-between">
+                                        <div class="flex items-center gap-3">
+                                            <div class="flex gap-1.5">
+                                                <div class="w-3 h-3 rounded-full bg-red-400/80"></div>
+                                                <div class="w-3 h-3 rounded-full bg-yellow-400/80"></div>
+                                                <div class="w-3 h-3 rounded-full bg-green-400/80"></div>
+                                            </div>
+                                            <span class="text-gray-400 text-xs font-mono">ScalingOPT</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="px-2 py-0.5 bg-blue-500/20 text-blue-300 text-[10px] font-bold rounded-full uppercase tracking-wider">LLM</span>
+                                        </div>
+                                    </div>
+                                    <!-- Content -->
+                                    <div class="p-6 space-y-5">
+                                        <!-- Supported architectures -->
+                                        <div>
+                                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2.5">Architectures</p>
+                                            <div class="flex flex-wrap gap-2">
+                                                <span class="px-2.5 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-lg border border-blue-100">LLaMA 9M–13B</span>
+                                                <span class="px-2.5 py-1 bg-indigo-50 text-indigo-700 text-xs font-semibold rounded-lg border border-indigo-100">GPT-2 124M</span>
+                                                <span class="px-2.5 py-1 bg-purple-50 text-purple-700 text-xs font-semibold rounded-lg border border-purple-100">Qwen3 0.6B–1.7B</span>
+                                            </div>
+                                        </div>
+                                        <!-- Optimizer categories -->
+                                        <div>
+                                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2.5">Optimizer Categories</p>
+                                            <div class="flex flex-wrap gap-1.5">
+                                                <span class="px-2 py-0.5 bg-gray-50 text-gray-600 text-[11px] font-medium rounded-md border border-gray-100">AdamW</span>
+                                                <span class="px-2 py-0.5 bg-gray-50 text-gray-600 text-[11px] font-medium rounded-md border border-gray-100">Muon</span>
+                                                <span class="px-2 py-0.5 bg-gray-50 text-gray-600 text-[11px] font-medium rounded-md border border-gray-100">SOAP</span>
+                                                <span class="px-2 py-0.5 bg-gray-50 text-gray-600 text-[11px] font-medium rounded-md border border-gray-100">Shampoo</span>
+                                                <span class="px-2 py-0.5 bg-gray-50 text-gray-600 text-[11px] font-medium rounded-md border border-gray-100">APOLLO</span>
+                                                <span class="px-2 py-0.5 bg-gray-50 text-gray-600 text-[11px] font-medium rounded-md border border-gray-100">MARS</span>
+                                                <span class="px-2 py-0.5 bg-gray-50 text-gray-600 text-[11px] font-medium rounded-md border border-gray-100">Lion</span>
+                                                <span class="px-2 py-0.5 bg-gray-50 text-gray-600 text-[11px] font-medium rounded-md border border-gray-100">Sophia</span>
+                                                <span class="px-2 py-0.5 bg-gray-50 text-gray-600 text-[11px] font-medium rounded-md border border-gray-100">Adam-Mini</span>
+                                                <span class="px-2 py-0.5 bg-gray-50 text-gray-600 text-[11px] font-medium rounded-md border border-gray-100">LAMB</span>
+                                                <span class="px-2 py-0.5 bg-gray-50 text-gray-600 text-[11px] font-medium rounded-md border border-gray-100">GaLore</span>
+                                                <span class="px-2 py-0.5 bg-gray-50 text-gray-600 text-[11px] font-medium rounded-md border border-gray-100">+20 more</span>
+                                            </div>
+                                        </div>
+                                        <!-- Training modes -->
+                                        <div>
+                                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2.5">Training Modes</p>
+                                            <div class="grid grid-cols-3 gap-2">
+                                                <div class="text-center p-2.5 bg-gradient-to-b from-blue-50/80 to-white rounded-lg border border-blue-100/50">
+                                                    <i data-lucide="brain" class="w-4 h-4 text-blue-500 mx-auto mb-1"></i>
+                                                    <p class="text-[11px] font-semibold text-gray-700">Pretrain</p>
+                                                </div>
+                                                <div class="text-center p-2.5 bg-gradient-to-b from-blue-50/80 to-white rounded-lg border border-blue-100/50">
+                                                    <i data-lucide="settings" class="w-4 h-4 text-blue-500 mx-auto mb-1"></i>
+                                                    <p class="text-[11px] font-semibold text-gray-700">SFT / DPO</p>
+                                                </div>
+                                                <div class="text-center p-2.5 bg-gradient-to-b from-blue-50/80 to-white rounded-lg border border-blue-100/50">
+                                                    <i data-lucide="check-circle" class="w-4 h-4 text-blue-500 mx-auto mb-1"></i>
+                                                    <p class="text-[11px] font-semibold text-gray-700">Evaluation</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- News Section -->
-            <section class="py-20 bg-white border-y border-gray-100">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <section class="py-24 bg-gradient-to-b from-blue-50/30 to-white relative">
+                <div class="absolute inset-0 bg-grid-pattern opacity-20 pointer-events-none"></div>
+                <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16" data-aos="fade-up">
-                        <h2 class="text-3xl font-bold text-gray-900 mb-4">
+                        <span class="inline-flex items-center px-3 py-1 bg-blue-50 border border-blue-100 rounded-full text-xs font-semibold text-blue-600 mb-4 tracking-wide">WHAT'S NEW</span>
+                        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                             Latest News
                         </h2>
-                        <p class="text-lg text-gray-600">Recent updates from the ScalingOpt community</p>
+                        <p class="text-lg text-gray-500 max-w-2xl mx-auto">Recent updates from the ScalingOpt community</p>
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

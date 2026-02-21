@@ -1563,6 +1563,18 @@ const papers = [
     featured: false
   },
   {
+    id: 'masking-updates-adaptive-optimizers-2026',
+    title: 'On Surprising Effectiveness of Masking Updates in Adaptive Optimizers',
+    authors: ['Taejong Joo', 'Wenhan Xia', 'Cheolmin Kim', 'Ming Zhang', 'Eugene Ie'],
+    year: 2026,
+    venue: 'arXiv preprint',
+    category: 'New Optimizer',
+    abstract: 'Training large language models (LLMs) relies almost exclusively on dense adaptive optimizers with increasingly sophisticated preconditioners. We challenge this by showing that randomly masking parameter updates can be highly effective, with a masked variant of RMSProp consistently outperforming recent state-of-the-art optimizers. Our analysis reveals that the random masking induces a curvature-dependent geometric regularization that smooths the optimization trajectory. Motivated by this finding, we introduce Momentum-aligned gradient masking (Magma), which modulates the masked updates using momentum-gradient alignment. Extensive LLM pre-training experiments show that Magma is a simple drop-in replacement for adaptive optimizers with consistent gains and negligible computational overhead. Notably, for the 1B model size, Magma reduces perplexity by over 19% and 9% compared to Adam and Muon, respectively.',
+    arxivUrl: 'https://arxiv.org/abs/2602.15322',
+    tags: ['Adaptive Optimizer', 'Masking', 'Magma', 'RMSProp', 'LLM Training', 'Preconditioning'],
+    featured: true
+  },
+  {
     id: 'spectral-gradient-updates-2025',
     title: 'When Do Spectral Gradient Updates Help in Deep Learning?',
     authors: ['Damek Davis', 'Dmitriy Drusvyatskiy'],

@@ -21,7 +21,7 @@
     <!-- Custom Styles -->
     <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
-<body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 font-inter">
+<body class="min-h-screen bg-white font-inter">
     <div class="flex flex-col min-h-screen">
         <!-- Navbar -->
         <div id="navbar-placeholder"></div>
@@ -57,6 +57,88 @@
                         <i data-lucide="package-open" class="w-12 h-12 mx-auto mb-3 text-gray-400"></i>
                         <p class="text-gray-600 font-medium">No packages found</p>
                         <p class="text-sm text-gray-500 mt-1">Try adjusting your search terms</p>
+                    </div>
+                </div>
+
+                <!-- Featured: ScalingOPT -->
+                <div class="mb-12" data-aos="fade-up" data-aos-delay="80">
+                    <div class="relative group">
+                        <div class="absolute -inset-1 bg-gradient-to-r from-blue-400 via-blue-500 to-indigo-500 rounded-2xl opacity-10 group-hover:opacity-20 blur-lg transition-opacity duration-500"></div>
+                        <div class="relative bg-white rounded-2xl border border-blue-100/80 shadow-sm overflow-hidden">
+                            <div class="flex flex-col md:flex-row">
+                                <!-- Left -->
+                                <div class="md:w-7/12 p-8 flex flex-col justify-center">
+                                    <div class="flex items-center gap-3 mb-4">
+                                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                                            <i data-lucide="flask-conical" class="w-5 h-5 text-white"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-xl font-bold text-gray-900">ScalingOPT</h3>
+                                            <span class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Our Codebase</span>
+                                        </div>
+                                        <span class="ml-auto px-2.5 py-1 bg-blue-50 text-blue-600 text-xs font-bold rounded-lg border border-blue-100">Featured</span>
+                                    </div>
+                                    <p class="text-gray-500 text-sm leading-relaxed mb-5">
+                                        A research-oriented PyTorch codebase for optimizer-centric scaling studies in large language model training. Part of the ScalingOpt community — designed to make optimizer comparisons reproducible, fair, and ergonomically extensible.
+                                    </p>
+                                    <div class="flex flex-wrap gap-1.5 mb-5">
+                                        <span class="px-2 py-0.5 bg-gray-50 text-gray-600 text-[11px] font-medium rounded-md border border-gray-100">30+ Optimizers</span>
+                                        <span class="px-2 py-0.5 bg-gray-50 text-gray-600 text-[11px] font-medium rounded-md border border-gray-100">17 Model Configs</span>
+                                        <span class="px-2 py-0.5 bg-gray-50 text-gray-600 text-[11px] font-medium rounded-md border border-gray-100">Multi-GPU DDP</span>
+                                        <span class="px-2 py-0.5 bg-gray-50 text-gray-600 text-[11px] font-medium rounded-md border border-gray-100">SFT / DPO / GRPO</span>
+                                        <span class="px-2 py-0.5 bg-gray-50 text-gray-600 text-[11px] font-medium rounded-md border border-gray-100">14+ Benchmarks</span>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <a href="https://github.com/OpenEnvision-Lab/ScalingOPT" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-4 py-2 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-gray-800 transition-all duration-300 shadow-sm">
+                                            <i data-lucide="github" class="mr-2 w-4 h-4"></i> GitHub
+                                            <i data-lucide="arrow-up-right" class="ml-1.5 w-3.5 h-3.5 opacity-50"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <!-- Right: Stats -->
+                                <div class="md:w-5/12 bg-gradient-to-br from-blue-50/50 to-indigo-50/30 border-t md:border-t-0 md:border-l border-blue-100/40 p-8 flex flex-col justify-center">
+                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Highlights</p>
+                                    <div class="space-y-3">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center border border-blue-100/60 shadow-sm">
+                                                <i data-lucide="layers" class="w-4 h-4 text-blue-500"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-semibold text-gray-800">Single Entrypoint</p>
+                                                <p class="text-xs text-gray-400">Switch optimizers via CLI flag</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center border border-blue-100/60 shadow-sm">
+                                                <i data-lucide="cpu" class="w-4 h-4 text-blue-500"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-semibold text-gray-800">LLaMA · GPT-2 · Qwen3</p>
+                                                <p class="text-xs text-gray-400">9M to 13B parameters</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center border border-blue-100/60 shadow-sm">
+                                                <i data-lucide="database" class="w-4 h-4 text-blue-500"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-semibold text-gray-800">C4 · Pile · OpenWebText</p>
+                                                <p class="text-xs text-gray-400">3 dataset pipelines built-in</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center border border-blue-100/60 shadow-sm">
+                                                <i data-lucide="bar-chart-3" class="w-4 h-4 text-blue-500"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-semibold text-gray-800">Full Eval Suite</p>
+                                                <p class="text-xs text-gray-400">14+ benchmarks via lm-eval</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
