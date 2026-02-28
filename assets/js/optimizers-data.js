@@ -3678,6 +3678,265 @@ const optimizers = [
     ],
     "githubUrl": "https://github.com/xie-lab-ml/Mano-Restriking-Manifold-Optimization-for-LLM-Training",
     "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\mu, \\lambda \\text{ (weight decay)} \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\mu m_{t-1} + g_t \\\\\n        &\\quad d \\leftarrow t \\bmod 2 \\text{ (rotating dimension)} \\\\\n        &\\quad \\hat{\\theta} \\leftarrow \\frac{\\theta_{t-1}}{\\|\\theta_{t-1}\\|_2} \\text{ (normalize)} \\\\\n        &\\quad \\boldsymbol{T}_t \\leftarrow m_t - (m_t^T \\hat{\\theta}) \\hat{\\theta} \\text{ (tangent projection)} \\\\\n        &\\quad \\boldsymbol{u}_t \\leftarrow \\frac{\\boldsymbol{T}_t}{\\|\\boldsymbol{T}_t\\|_2} \\text{ (oblique mapping)} \\\\\n        &\\quad \\theta_t \\leftarrow (1 - \\eta \\lambda) \\theta_{t-1} - \\eta \\cdot 0.2 \\sqrt{n_d} \\boldsymbol{u}_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+  },
+  {
+    "id": "aro",
+    "name": "ARO",
+    "fullName": "Adaptively Rotated Optimization",
+    "description": "Matrix optimization framework with rotational symmetries for large model training",
+    "year": 2026,
+    "month": "February",
+    "category": "First-order",
+    "paper": {
+      "title": "ARO: A New Lens On Matrix Optimization For Large Models",
+      "url": "https://arxiv.org/abs/2602.09006",
+      "authors": [
+        "Wenbo Gong",
+        "Javier Zazo",
+        "Qijun Luo",
+        "Puqian Wang",
+        "James Hensman",
+        "Chao Ma"
+      ]
+    },
+    "advantages": [
+      "1.3-1.35× improvement over AdamW in LLM pretraining",
+      "Normed steepest descent in rotated coordinate system",
+      "Exploits cross-layer and cross-module couplings",
+      "Grounded in rotational symmetries of residual streams",
+      "Scales to 8B parameters with no diminishing returns"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.001,
+        "range": "1e-5 to 1e-2",
+        "description": "Learning rate"
+      },
+      "rotation_policy": {
+        "default": "norm_informed",
+        "range": "norm_informed, adaptive",
+        "description": "Policy for determining gradient rotation"
+      },
+      "weight_decay": {
+        "default": 0.01,
+        "range": "0.0 to 0.1",
+        "description": "Weight decay coefficient"
+      }
+    },
+    "implementation": {
+      "pytorch": false,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 88,
+    "tags": [
+      "Matrix Optimization",
+      "Rotational Symmetry",
+      "Large Models",
+      "LLM Training",
+      "Gradient Rotation"
+    ],
+    "githubUrl": "",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta \\text{ (learning rate)}, \\text{rotation policy} \\\\\n        &\\textbf{Initialize:} \\theta_0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad R_t \\leftarrow \\text{RotationMatrix}(g_t, \\text{policy}) \\\\\n        &\\quad \\tilde{g}_t \\leftarrow R_t^T g_t \\text{ (rotate gradient)} \\\\\n        &\\quad d_t \\leftarrow \\frac{\\tilde{g}_t}{\\|\\tilde{g}_t\\|} \\text{ (normed direction)} \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta R_t d_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+  },
+  {
+    "id": "swan",
+    "name": "SWAN",
+    "fullName": "SGD with Whitening And Normalization",
+    "description": "Stateless optimizer using SGD with gradient normalization and whitening preprocessing",
+    "year": 2024,
+    "month": "December",
+    "category": "First-order",
+    "paper": {
+      "title": "SWAN: SGD with Normalization and Whitening Enables Stateless LLM Training",
+      "url": "https://arxiv.org/abs/2412.13148",
+      "authors": [
+        "Chao Ma",
+        "Wenbo Gong",
+        "Meyer Scetbon",
+        "Edward Meeds"
+      ]
+    },
+    "advantages": [
+      "~50% memory reduction compared to Adam",
+      "Stateless optimizer with no stored state variables",
+      "2x speedup in LLaMA training (same perplexity, half tokens)",
+      "Normalization stabilizes gradient distributions",
+      "Whitening counteracts local curvature effects",
+      "Performance comparable or better than Adam"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.01,
+        "range": "1e-5 to 1e-1",
+        "description": "Learning rate"
+      },
+      "normalization": {
+        "default": "True",
+        "range": "True/False",
+        "description": "Enable gradient normalization"
+      },
+      "whitening": {
+        "default": "True",
+        "range": "True/False",
+        "description": "Enable gradient whitening"
+      },
+      "momentum": {
+        "default": 0.9,
+        "range": "0.0 to 1.0",
+        "description": "Momentum factor for SGD"
+      }
+    },
+    "implementation": {
+      "pytorch": false,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 92,
+    "tags": [
+      "Memory Efficient",
+      "Stateless",
+      "SGD",
+      "Normalization", 
+      "Whitening",
+      "LLM Training"
+    ],
+    "githubUrl": "",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta \\text{ (learning rate)}, \\mu \\text{ (momentum)} \\\\\n        &\\textbf{Initialize:} \\theta_0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad \\bar{g}_t \\leftarrow \\frac{g_t}{\\|g_t\\|} \\text{ (normalization)} \\\\\n        &\\quad \\tilde{g}_t \\leftarrow \\text{Whiten}(\\bar{g}_t) \\text{ (whitening)} \\\\\n        &\\quad v_t \\leftarrow \\mu v_{t-1} + \\tilde{g}_t \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta v_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+  },
+  {
+    "id": "sinkgd",
+    "name": "SinkGD",
+    "fullName": "Sinkhorn Gradient Descent",
+    "description": "Stateless optimizer using gradient multi-normalization with Sinkhorn alternating projections",
+    "year": 2025,
+    "month": "February",
+    "category": "First-order",
+    "paper": {
+      "title": "Gradient Multi-Normalization for Stateless and Scalable LLM Training",
+      "url": "https://arxiv.org/abs/2502.06742",
+      "authors": [
+        "Anonymous"
+      ]
+    },
+    "advantages": [
+      "3x speedup in effective throughput vs Adam",
+      "Stateless optimizer with no memory overhead",
+      "More efficient than SWAN's whitening operations",
+      "Alternating projection scheme with Sinkhorn normalization",
+      "Scalable to large LLM training (1B+ parameters)",
+      "Competitive perplexity performance"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.01,
+        "range": "1e-5 to 1e-1",
+        "description": "Learning rate"
+      },
+      "multi_norm_weights": {
+        "default": "[0.5, 0.3, 0.2]",
+        "range": "List of positive weights",
+        "description": "Weights for multi-normalization scheme"
+      },
+      "sinkhorn_iterations": {
+        "default": 5,
+        "range": "1 to 20",
+        "description": "Number of Sinkhorn iterations for alternating projections"
+      },
+      "momentum": {
+        "default": 0.9,
+        "range": "0.0 to 1.0",
+        "description": "Momentum factor"
+      }
+    },
+    "implementation": {
+      "pytorch": false,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 89,
+    "tags": [
+      "Stateless",
+      "Memory Efficient",
+      "Multi-Normalization",
+      "Sinkhorn",
+      "LLM Training",
+      "Scalable"
+    ],
+    "githubUrl": "",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\{w_i\\}_i, K \\text{ (Sinkhorn iters)} \\\\\n        &\\textbf{Initialize:} \\theta_0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad \\text{for } i=1 \\text{ to } n \\text{ do} \\\\\n        &\\quad\\quad \\bar{g}_t^{(i)} \\leftarrow w_i \\frac{g_t}{\\|g_t\\|_i} \\text{ (multi-norm)} \\\\\n        &\\quad \\text{end for} \\\\\n        &\\quad \\tilde{g}_t \\leftarrow \\text{Sinkhorn}(\\{\\bar{g}_t^{(i)}\\}_i, K) \\\\\n        &\\quad v_t \\leftarrow \\mu v_{t-1} + \\tilde{g}_t \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta v_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+  },
+  {
+    "id": "normuon",
+    "name": "NorMuon",
+    "fullName": "Neuron-wise Normalized Muon",
+    "description": "Enhanced Muon optimizer combining orthogonalization with neuron-level adaptive learning rates",
+    "year": 2025,
+    "month": "October",
+    "category": "Second-order",
+    "paper": {
+      "title": "NorMuon: Making Muon more efficient and scalable",
+      "url": "https://arxiv.org/abs/2510.05491",
+      "authors": [
+        "Zichong Li",
+        "Liming Liu", 
+        "Chen Liang",
+        "Weizhu Chen",
+        "Tuo Zhao"
+      ]
+    },
+    "advantages": [
+      "21.74% better training efficiency than Adam",
+      "11.31% improvement over Muon",
+      "Combines orthogonalization with adaptive learning rates",
+      "Row-wise normalization after orthogonalization",
+      "Balanced parameter utilization across neurons",
+      "Efficient distributed implementation under FSDP2",
+      "Comparable memory footprint to Muon"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.001,
+        "range": "1e-5 to 1e-2",
+        "description": "Learning rate"
+      },
+      "beta2": {
+        "default": 0.95,
+        "range": "0.9 to 0.999",
+        "description": "Second-order momentum coefficient for neuron statistics"
+      },
+      "orthogonal_eps": {
+        "default": 1e-8,
+        "range": "1e-10 to 1e-6",
+        "description": "Epsilon for orthogonalization stability"
+      },
+      "normalize_neurons": {
+        "default": "True",
+        "range": "True/False",
+        "description": "Enable neuron-wise normalization"
+      },
+      "weight_decay": {
+        "default": 0.01,
+        "range": "0.0 to 0.1",
+        "description": "Weight decay coefficient"
+      }
+    },
+    "implementation": {
+      "pytorch": false,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 91,
+    "tags": [
+      "Orthogonalization",
+      "Adaptive Learning Rate",
+      "Neuron-wise Normalization",
+      "Distributed Training",
+      "LLM Training",
+      "Memory Efficient"
+    ],
+    "githubUrl": "",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_2, \\epsilon \\text{ (orthogonal)} \\\\\n        &\\textbf{Initialize:} \\theta_0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g_t^2 \\text{ (neuron stats)} \\\\\n        &\\quad \\hat{g}_t \\leftarrow \\text{Orthogonalize}(g_t) \\\\\n        &\\quad \\tilde{g}_t \\leftarrow \\text{RowNormalize}(\\hat{g}_t, \\sqrt{v_t}) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\tilde{g}_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   }
 ];
 

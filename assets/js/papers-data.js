@@ -1585,5 +1585,89 @@ const papers = [
     arxivUrl: 'https://arxiv.org/abs/2512.04299',
     tags: ['Spectral Gradient', 'Muon', 'Deep Learning Theory', 'Stable Rank', 'Transformer Training'],
     featured: false
+  },
+  {
+    id: 'soap-muon-iterative-whitening-2025',
+    title: 'Improving SOAP using Iterative Whitening and Muon',
+    authors: ['Nikhil Vyas', 'Rosie Zhao', 'Depen Morwani', 'Mujin Kwun', 'Sham Kakade'],
+    year: 2025,
+    venue: 'Technical Report',
+    category: 'New Optimizer',
+    abstract: 'We propose combining SOAP and Muon optimizers through an iterative whitening framework. We first apply SOAP on the smaller side (as in GaLore) and then apply Muon on the resulting preconditioned gradient. This approach leverages the benefits of both optimizers: SOAP removes conditioning from one side while Muon conditions the other side, enabling preconditioning of both sides without significantly increasing computational costs. At large batch sizes, we observe improvements over both one-sided SOAP and Muon, achieving 3x speedup in effective throughput compared to Adam. We also develop theoretical insights by framing SOAP-Muon as an iterative whitening process, showing that iterative approaches outperform one-shot methods used in standard SOAP.',
+    arxivUrl: 'https://nikhilvyas.github.io/SOAP_Muon.pdf',
+    tags: ['SOAP', 'Muon', 'Iterative Whitening', 'Preconditioning', 'LLM Training', 'Optimizer Combination'],
+    featured: true
+  },
+  {
+    id: 'aro-matrix-optimization-2026',
+    title: 'ARO: A New Lens On Matrix Optimization For Large Models',
+    authors: ['Wenbo Gong', 'Javier Zazo', 'Qijun Luo', 'Puqian Wang', 'James Hensman', 'Chao Ma'],
+    year: 2026,
+    venue: 'arXiv preprint',
+    category: 'New Optimizer',
+    abstract: 'We propose ARO (Adaptively Rotated Optimization), a new matrix optimization framework that treats gradient rotation as a core design principle. ARO performs normed steepest descent in a rotated coordinate system where rotation is determined by a novel norm-informed policy. This approach goes beyond existing orthogonalization and whitening-based optimizers by exploiting rotational symmetries of residual streams. ARO consistently outperforms AdamW by 1.3–1.35× in LLM pretraining and orthogonalization methods by 1.1–1.15×, with testing conducted on models up to 8B activated parameters with up to 8× overtrain budget.',
+    arxivUrl: 'https://arxiv.org/abs/2602.09006',
+    tags: ['Matrix Optimization', 'Gradient Rotation', 'LLM Training', 'Rotational Symmetry', 'Large Models'],
+    featured: true
+  },
+  {
+    id: 'convex-dominance-deep-learning-2026',
+    title: 'Convex Dominance in Deep Learning I: A Scaling Law of Loss and Learning Rate',
+    authors: ['Kaizhao Liang', 'Georgy Noarov', 'Lizhang Chen', 'Clement Gehring', 'Qiang Liu', 'Krzysztof Choromanski'],
+    year: 2026,
+    venue: 'arXiv preprint',
+    category: 'Analysis',
+    abstract: 'We study the loss dynamics in deep learning and show that neural networks quickly become weakly convex after initial training phases. This convex dominance perspective enables predictable loss dynamics and yields scaling laws for learning rates and losses that extrapolate across 80× training horizons and 70× model sizes. Our theoretical framework provides new insights into the optimization landscape of deep neural networks and explains why certain optimization algorithms work well in practice.',
+    arxivUrl: 'https://arxiv.org/abs/2602.07145',
+    tags: ['Convex Analysis', 'Scaling Laws', 'Loss Dynamics', 'Deep Learning Theory', 'Learning Rate'],
+    featured: true
+  },
+  {
+    id: 'teon-tensorized-orthonormalization-2025',
+    title: 'TEON: Tensorized Orthonormalization Beyond Layer-Wise Muon for Large Language Model Pre-Training',
+    authors: ['Zhanpeng Zhou', 'Yuchen Xie', 'Zongqing Lu'],
+    year: 2025,
+    venue: 'arXiv preprint',
+    category: 'New Optimizer',
+    abstract: 'TEON extends the Muon optimizer by generalizing orthogonalization beyond individual layers, modeling neural network gradients as structured higher-order tensors. This tensorized approach demonstrates improved convergence guarantees over layer-wise Muon and shows consistent improvements in training and validation perplexity across GPT and LLaMA models ranging from 60M to 1B parameters. TEON provides a principled way to capture cross-layer dependencies in gradient updates.',
+    arxivUrl: 'https://arxiv.org/abs/2601.23261',
+    tags: ['Tensorized Optimization', 'Orthonormalization', 'Muon Extension', 'LLM Training', 'Cross-layer Dependencies'],
+    featured: true
+  },
+  {
+    id: 'robust-scaling-laws-optimizers-2026',
+    title: 'Towards Robust Scaling Laws for Optimizers',
+    authors: ['Elliot Paquette', 'Courtney Paquette', 'Boris Hanin'],
+    year: 2026,
+    venue: 'arXiv preprint',
+    category: 'Analysis',
+    abstract: 'We study optimizer-specific scaling relationships and propose a unified framework with shared power-law exponents and optimizer-specific rescaling factors rather than separate scaling laws for each optimizer. This enables direct comparison between optimizers like Muon, Shampoo, SOAP, and AdamW. We show that separate scaling laws per optimizer are ill-conditioned and provide theoretical analysis on convex quadratic objectives to understand these scaling behaviors.',
+    arxivUrl: 'https://arxiv.org/abs/2602.07712',
+    tags: ['Scaling Laws', 'Optimizer Comparison', 'Power Laws', 'Muon', 'Shampoo', 'SOAP', 'AdamW'],
+    featured: false
+  },
+  {
+    id: 'decoupling-variance-adaptive-gradient-2026',
+    title: 'Decoupling Variance and Scale-Invariant Updates in Adaptive Gradient Descent for Unified Vector and Matrix Optimization',
+    authors: ['Ryo Karakida', 'Tomoumi Takase', 'Tomohiko Yokoyama'],
+    year: 2026,
+    venue: 'arXiv preprint',
+    category: 'New Optimizer',
+    abstract: 'DeVA (Decoupled Variance Adaptation) bridges vector-based and matrix-based optimization by decoupling variance adaptation from scale-invariant updates. This framework unifies Adam-style methods with spectral optimizers like Muon and SOAP, reducing token usage by approximately 6.6% across language modeling and image classification tasks. DeVA provides a theoretical foundation for understanding the relationship between different classes of optimizers.',
+    arxivUrl: 'https://arxiv.org/abs/2602.06880',
+    tags: ['Variance Adaptation', 'Scale Invariance', 'Unified Optimization', 'Adam', 'Spectral Optimizers', 'Matrix Optimization'],
+    featured: false
+  },
+  {
+    id: 'orthogonal-matrices-optimization-scale-2026',
+    title: 'An Embarrassingly Simple Way to Optimize Orthogonal Matrices at Scale',
+    authors: ['Ameyya Prabhu', 'Franziska Meier', 'Ping Li'],
+    year: 2026,
+    venue: 'arXiv preprint',
+    category: 'New Optimizer',
+    abstract: 'POGO is a GPU-friendly algorithm for optimizing orthogonal matrices at scale, consisting of only 5 matrix products while maintaining orthogonality constraints. This method enables optimization of thousands of orthogonal matrices in minutes and provides an embarrassingly simple yet effective approach to large-scale orthogonal matrix optimization problems in machine learning.',
+    arxivUrl: 'https://arxiv.org/abs/2602.14656',
+    tags: ['Orthogonal Matrices', 'GPU Optimization', 'Large Scale', 'Matrix Constraints', 'Efficient Algorithms'],
+    featured: false
   }
 ];
