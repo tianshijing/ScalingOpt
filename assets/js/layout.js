@@ -244,7 +244,7 @@ function injectLayout() {
 
             <div class="border-t border-gray-100 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
                 <p class="text-gray-500 text-sm">
-                    © 2025 ScalingOpt Community. All rights reserved.
+                    © 2026 ScalingOpt Community. All rights reserved.
                 </p>
                 <div class="flex items-center space-x-1 text-gray-500 text-sm mt-4 md:mt-0">
                     <span>Made with</span>
