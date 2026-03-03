@@ -3937,6 +3937,71 @@ const optimizers = [
     ],
     "githubUrl": "",
     "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_2, \\epsilon \\text{ (orthogonal)} \\\\\n        &\\textbf{Initialize:} \\theta_0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g_t^2 \\text{ (neuron stats)} \\\\\n        &\\quad \\hat{g}_t \\leftarrow \\text{Orthogonalize}(g_t) \\\\\n        &\\quad \\tilde{g}_t \\leftarrow \\text{RowNormalize}(\\hat{g}_t, \\sqrt{v_t}) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\tilde{g}_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+  },
+  {
+    "id": "muon_plus",
+    "name": "Muon+",
+    "fullName": "Muon+ (Muon with Post-Orthogonalization Normalization)",
+    "description": "Enhances Muon by adding a normalization step after orthogonalization, improving optimization stability and final model quality across architectures and training regimes",
+    "year": 2026,
+    "month": "February",
+    "category": "Second-order",
+    "paper": {
+      "title": "Muon+: Towards Better Muon via One Additional Normalization Step",
+      "url": "https://arxiv.org/abs/2602.21545",
+      "authors": [
+        "Ruijie Zhang",
+        "Yequan Zhao",
+        "Ziyue Liu",
+        "Zhengyang Wang",
+        "Zheng Zhang"
+      ]
+    },
+    "advantages": [
+      "Consistent improvement over Muon across all model scales and architectures",
+      "Reduces learning rate sensitivity; stable over a broader LR range",
+      "Effective in both compute-optimal and long-horizon overtraining regimes",
+      "Compatible with any polar/orthogonalization method (Jordan, You, PolarExpress)",
+      "Simple one-line addition on top of Muon"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.02,
+        "range": "1e-3 to 1e-1",
+        "description": "Learning rate"
+      },
+      "momentum": {
+        "default": 0.95,
+        "range": "0.9 to 0.99",
+        "description": "Momentum coefficient (mu)"
+      },
+      "norm_direction": {
+        "default": "col_row",
+        "range": "col / row / col_row / row_col",
+        "description": "Direction for post-orthogonalization normalization; col_row and row_col typically perform best"
+      },
+      "eps": {
+        "default": 1e-8,
+        "range": "1e-10 to 1e-6",
+        "description": "Epsilon for numerical stability in normalization denominator"
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 78,
+    "tags": [
+      "Orthogonal Updates",
+      "Newton-Schulz",
+      "Post-Orthogonalization Normalization",
+      "Second-order",
+      "LLM Training",
+      "Muon Variant"
+    ],
+    "githubUrl": "https://github.com/K1seki221/MuonPlus",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\mu, d \\in \\{\\text{col, row, col\\_row, row\\_col}\\}, \\epsilon \\\\\n        &\\textbf{Initialize:} W_0,\\; M_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad G_t \\leftarrow \\nabla_W f_t(W_{t-1}) \\\\\n        &\\quad M_t \\leftarrow \\mu M_{t-1} + (1-\\mu) G_t \\\\\n        &\\quad U_t \\leftarrow \\operatorname{Ortho}(M_t) \\quad\\text{(Newton-Schulz)} \\\\\n        &\\quad O_t \\leftarrow \\operatorname{Norm}_{(d)}(U_t) \\quad\\text{(col/row } \\ell_2 \\text{ normalization)} \\\\\n        &\\quad W_t \\leftarrow W_{t-1} - \\eta \\sqrt{m/n}\\; O_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   }
 ];
 
