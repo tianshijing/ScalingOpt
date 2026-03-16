@@ -3939,6 +3939,114 @@ const optimizers = [
     "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\beta_2, \\epsilon \\text{ (orthogonal)} \\\\\n        &\\textbf{Initialize:} \\theta_0, v_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g_t^2 \\text{ (neuron stats)} \\\\\n        &\\quad \\hat{g}_t \\leftarrow \\text{Orthogonalize}(g_t) \\\\\n        &\\quad \\tilde{g}_t \\leftarrow \\text{RowNormalize}(\\hat{g}_t, \\sqrt{v_t}) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\tilde{g}_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
+    "id": "skipupdate",
+    "name": "SkipUpdate",
+    "fullName": "SkipUpdate (Masked Updates for Adaptive Optimizers)",
+    "description": "Randomly masks block updates in adaptive optimizers to induce curvature-dependent geometric regularization",
+    "year": 2026,
+    "month": "February",
+    "category": "First-order",
+    "paper": {
+      "title": "On Surprising Effectiveness of Masking Updates in Adaptive Optimizers",
+      "url": "https://arxiv.org/abs/2602.15322",
+      "authors": [
+        "Taejong Joo",
+        "Wenhan Xia",
+        "Cheolmin Kim",
+        "Ming Zhang",
+        "Eugene Ie"
+      ]
+    },
+    "advantages": [
+      "Consistently outperforms dense adaptive optimizers in LLM pre-training",
+      "Induces curvature-dependent regularization without explicit curvature computation",
+      "Simple drop-in wrapper for adaptive optimizers",
+      "Negligible computational overhead"
+    ],
+    "hyperparameters": {
+      "mask_prob": {
+        "default": 0.5,
+        "range": "0.1 to 0.9",
+        "description": "Bernoulli mask probability for skipping block updates"
+      }
+    },
+    "implementation": {
+      "pytorch": false,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 82,
+    "tags": [
+      "Adaptive Optimizers",
+      "Gradient Masking",
+      "Geometric Regularization",
+      "LLM Training",
+      "RMSProp Variant",
+      "First-order"
+    ],
+    "githubUrl": "",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, p \\text{ (mask prob)}, \\Delta_t \\text{ (base update)} \\\\\n        &\\textbf{for each block } b \\text{ do} \\\\\n        &\\quad m_t^{(b)} \\sim \\text{Bernoulli}(p) \\\\\n        &\\quad \\theta_{t+1}^{(b)} \\leftarrow \\theta_t^{(b)} - m_t^{(b)} \\Delta_t^{(b)} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+  },
+  {
+    "id": "magma",
+    "name": "Magma",
+    "fullName": "Momentum-aligned Gradient Masking",
+    "description": "Modulates masked updates using momentum–gradient alignment to prioritize consistent directions",
+    "year": 2026,
+    "month": "February",
+    "category": "First-order",
+    "paper": {
+      "title": "On Surprising Effectiveness of Masking Updates in Adaptive Optimizers",
+      "url": "https://arxiv.org/abs/2602.15322",
+      "authors": [
+        "Taejong Joo",
+        "Wenhan Xia",
+        "Cheolmin Kim",
+        "Ming Zhang",
+        "Eugene Ie"
+      ]
+    },
+    "advantages": [
+      "Consistent gains over adaptive optimizers and SkipUpdate",
+      "Drop-in replacement with negligible computational overhead",
+      "Improves with model scale in LLM pre-training",
+      "Suppresses momentum-inconsistent updates"
+    ],
+    "hyperparameters": {
+      "mask_prob": {
+        "default": 0.5,
+        "range": "0.1 to 0.9",
+        "description": "Bernoulli mask probability for updates"
+      },
+      "tau": {
+        "default": 1.0,
+        "range": "0.1 to 5.0",
+        "description": "Temperature for cosine-similarity sigmoid"
+      },
+      "alignment_momentum": {
+        "default": 0.9,
+        "range": "0.5 to 0.99",
+        "description": "EMA coefficient for alignment score"
+      }
+    },
+    "implementation": {
+      "pytorch": false,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 84,
+    "tags": [
+      "Adaptive Optimizers",
+      "Gradient Masking",
+      "Momentum Alignment",
+      "LLM Training",
+      "RMSProp Variant",
+      "First-order"
+    ],
+    "githubUrl": "",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, p, \\tau \\\\\n        &\\textbf{for each block } b \\text{ do} \\\\\n        &\\quad \\tilde{s}_t^{(b)} \\leftarrow \\sigma\\left(\\frac{\\cos(\\mu_t^{(b)}, g_t^{(b)})}{\\tau}\\right) \\\\\n        &\\quad s_t^{(b)} \\leftarrow \\alpha s_{t-1}^{(b)} + (1-\\alpha) \\tilde{s}_t^{(b)} \\\\\n        &\\quad m_t^{(b)} \\sim \\text{Bernoulli}(p) \\\\\n        &\\quad \\theta_{t+1}^{(b)} \\leftarrow \\theta_t^{(b)} - s_t^{(b)} m_t^{(b)} \\Delta_t^{(b)} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+  },
+  {
     "id": "muon_plus",
     "name": "Muon+",
     "fullName": "Muon+ (Muon with Post-Orthogonalization Normalization)",
