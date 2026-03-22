@@ -398,10 +398,11 @@ img {
     transition: opacity 0.3s ease;
 }
 
-img[loading="lazy"] {
+img[loading="lazy"][data-src] {
     opacity: 0;
 }
 
+img[loading="lazy"]:not([data-src]),
 img.loaded {
     opacity: 1;
 }
