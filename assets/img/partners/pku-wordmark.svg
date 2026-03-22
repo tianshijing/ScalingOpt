@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120" role="img" aria-labelledby="title desc">
+  <title id="title">Peking University wordmark</title>
+  <desc id="desc">Wordmark for Peking University.</desc>
+  <rect x="2" y="2" width="396" height="116" rx="24" fill="#ffffff" stroke="#eadadb" stroke-width="2"/>
+  <circle cx="58" cy="60" r="28" fill="#8c1515"/>
+  <path d="M46 76V44h14c8 0 13 4 13 10 0 6-5 10-13 10h-6v12H46zm8-20h5c4 0 6-2 6-4s-2-4-6-4h-5v8z" fill="#ffffff"/>
+  <text x="102" y="56" fill="#0f172a" font-family="Helvetica, Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="1.8">PEKING</text>
+  <text x="102" y="82" fill="#475569" font-family="Helvetica, Arial, sans-serif" font-size="14" letter-spacing="1.8">UNIVERSITY</text>
+</svg>

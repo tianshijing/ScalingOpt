@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120" role="img" aria-labelledby="title desc">
+  <title id="title">UCLA wordmark</title>
+  <desc id="desc">Wordmark for the University of California, Los Angeles.</desc>
+  <rect x="2" y="2" width="396" height="116" rx="24" fill="#ffffff" stroke="#d3e5f2" stroke-width="2"/>
+  <path d="M28 78V42h10v28h16v8H28zm32 0V42h10v28h16v8H60zm28 0 14-36h10l14 36h-10l-3-8h-12l-3 8H88zm16-16h8l-4-12-4 12z" fill="#2774ae"/>
+  <text x="148" y="56" fill="#0f172a" font-family="Helvetica, Arial, sans-serif" font-size="30" font-weight="700" letter-spacing="2">UCLA</text>
+  <text x="148" y="82" fill="#475569" font-family="Helvetica, Arial, sans-serif" font-size="13" letter-spacing="1.35">UNIVERSITY OF CALIFORNIA, LOS ANGELES</text>
+</svg>

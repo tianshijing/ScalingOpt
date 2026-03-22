@@ -1669,5 +1669,29 @@ const papers = [
     arxivUrl: 'https://arxiv.org/abs/2602.14656',
     tags: ['Orthogonal Matrices', 'GPU Optimization', 'Large Scale', 'Matrix Constraints', 'Efficient Algorithms'],
     featured: false
+  },
+  {
+    id: 'width-scaling-operator-norms-moga-2026',
+    title: 'On the Width Scaling of Neural Optimizers Under Matrix Operator Norms I: Row/Column Normalization and Hyperparameter Transfer',
+    authors: ['Ruihan Xu', 'Jiajin Li', 'Yiping Lu'],
+    year: 2026,
+    venue: 'arXiv preprint',
+    category: 'New Optimizer',
+    abstract: 'A central question in modern deep learning is how to design optimizers whose behavior remains stable as the network width increases. This work interprets optimizers including AdamW and Muon as steepest descent under matrix operator norms, linking optimizer geometry with the Lipschitz structure of the forward map. Standard p-to-q operator norms lack layerwise composability for width-independent bounds in deep nets; the authors introduce mean-normalized operator norms that are composable, yield width-independent smoothness bounds, and motivate rescaled AdamW, row normalization, and column normalization. Width-aware scaling recovers μP as a special case and enables cross-width learning-rate transfer. Muon can suffer O(√w) worst-case smoothness growth, while row-normalized variants achieve width-independent guarantees. They propose MOGA (Matrix Operator Geometry Aware), using only row/column normalization for stable transfer; GPT-2 and LLaMA pretraining show MOGA (especially row-normalized) competitive with Muon and faster in large-token, low-loss regimes.',
+    arxivUrl: 'https://arxiv.org/abs/2603.09952',
+    tags: ['Width Scaling', 'Operator Norms', 'Muon', 'AdamW', 'μP', 'Hyperparameter Transfer', 'MOGA', 'Row Normalization', 'LLM'],
+    featured: false
+  },
+  {
+    id: 'explaining-neural-scaling-laws-2024',
+    title: 'Explaining Neural Scaling Laws',
+    authors: ['Yasaman Bahri', 'Ethan Dyer', 'Jared Kaplan', 'Jaehoon Lee', 'Utkarsh Sharma'],
+    year: 2024,
+    venue: 'PNAS',
+    category: 'Analysis',
+    abstract: 'The population loss of trained deep neural networks often follows precise power-law scaling relations with either the size of the training dataset or the number of parameters in the network. This paper proposes a theory that explains the origins of and connects these scaling laws. It identifies variance-limited and resolution-limited scaling behavior for both dataset and model size, for a total of four scaling regimes. Variance-limited scaling follows from well-behaved infinite-data or infinite-width limits; resolution-limited behavior is explained by models effectively resolving a smooth data manifold, related in the large-width limit to spectra of certain kernels, with evidence that width and dataset resolution-limited exponents are related by a duality. The authors exhibit all four regimes in controlled settings and test predictions on standard architectures and datasets, providing a taxonomy of scaling regimes and insight into mechanisms driving loss improvements.',
+    arxivUrl: 'https://arxiv.org/abs/2102.06701',
+    tags: ['Scaling Laws', 'Power Laws', 'Infinite Width', 'Neural Networks', 'Theory', 'Data Scaling', 'Model Scaling'],
+    featured: false
   }
 ];

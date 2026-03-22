@@ -2331,6 +2331,66 @@ const optimizers = [
     "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\mu, K \\text{ (NS steps)} \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\mu m_{t-1} + g_t \\\\\n        &\\quad O_t \\leftarrow \\text{NewtonSchulz}(m_t, K) \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta O_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
+    "id": "htmuon",
+    "name": "HTMuon",
+    "fullName": "HTMuon: Heavy-Tailed Spectral Correction for Muon",
+    "description": "Extends Muon with heavy-tailed spectral correction (HT-SR motivated) to yield heavier-tailed updates and weight spectra while retaining cross-parameter structure; interpretable as steepest descent under a Schatten-q norm and usable as a plug-in on Muon variants",
+    "year": 2026,
+    "month": "March",
+    "category": "Second-order",
+    "paper": {
+      "title": "HTMuon: Improving Muon via Heavy-Tailed Spectral Correction",
+      "url": "https://arxiv.org/abs/2603.10067",
+      "authors": [
+        "Tianyu Pang",
+        "Yujie Fang",
+        "Zihang Liu",
+        "Shenyang Deng",
+        "Lei Hsiung",
+        "Shuhua Yu",
+        "Yaoqing Yang"
+      ]
+    },
+    "advantages": [
+      "Improves Muon on LLM pretraining and image classification",
+      "Heavier-tailed updates and induced heavy-tailed weight spectra",
+      "Preserves Muon-style modeling of parameter interdependence",
+      "Plug-in on existing Muon variants",
+      "Theoretical link to Schatten-q constrained steepest descent"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.02,
+        "range": "1e-3 to 1e-1",
+        "description": "Learning rate (often aligned with Muon schedules)"
+      },
+      "momentum": {
+        "default": 0.95,
+        "range": "0.9 to 0.99",
+        "description": "Momentum coefficient"
+      },
+      "nesterov": {
+        "default": "True",
+        "range": "True/False",
+        "description": "Use Nesterov momentum (as in standard Muon setups)"
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 80,
+    "tags": [
+      "Muon Variant",
+      "Heavy-Tailed",
+      "Spectral",
+      "LLM"
+    ],
+    "githubUrl": "https://github.com/TDCSZ327/HTmuon",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\mu, K \\text{ (NS steps)} \\\\\n        &\\textbf{Initialize:} \\theta_0, m_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla f(\\theta_{t-1}) \\\\\n        &\\quad m_t \\leftarrow \\mu m_{t-1} + g_t \\\\\n        &\\quad O_t \\leftarrow \\text{NewtonSchulz}(m_t, K) \\\\\n        &\\quad \\tilde{O}_t \\leftarrow \\text{HTSpectralCorr}(O_t) \\quad \\text{(heavy-tailed Schatten-}q\\text{ correction)} \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta \\tilde{O}_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+  },
+  {
     "id": "lion",
     "name": "Lion",
     "fullName": "EvoLved Sign Momentum",

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120" role="img" aria-labelledby="title desc">
+  <title id="title">UIUC wordmark</title>
+  <desc id="desc">Wordmark for University of Illinois Urbana-Champaign.</desc>
+  <rect x="2" y="2" width="396" height="116" rx="24" fill="#ffffff" stroke="#f2dcc9" stroke-width="2"/>
+  <rect x="30" y="34" width="56" height="52" rx="14" fill="#e84a27"/>
+  <path d="M44 44h28v8H44zm10 12h8v18h-8z" fill="#ffffff"/>
+  <text x="108" y="56" fill="#111827" font-family="Helvetica, Arial, sans-serif" font-size="30" font-weight="700" letter-spacing="2">UIUC</text>
+  <text x="108" y="82" fill="#6b7280" font-family="Helvetica, Arial, sans-serif" font-size="13" letter-spacing="1.2">UNIVERSITY OF ILLINOIS URBANA-CHAMPAIGN</text>
+</svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120" role="img" aria-labelledby="title desc">
+  <title id="title">Qwen wordmark</title>
+  <desc id="desc">Wordmark for Qwen research.</desc>
+  <defs>
+    <linearGradient id="qwen-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f766e"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="396" height="116" rx="24" fill="#ffffff" stroke="#d4e2f5" stroke-width="2"/>
+  <path d="M48 36c14 0 26 12 26 26S62 88 48 88 22 76 22 62s12-26 26-26zm0 12c-8 0-14 6-14 14s6 14 14 14 14-6 14-14-6-14-14-14z" fill="url(#qwen-grad)"/>
+  <path d="M58 76 74 92" stroke="url(#qwen-grad)" stroke-width="8" stroke-linecap="round"/>
+  <text x="104" y="60" fill="#0f172a" font-family="Helvetica, Arial, sans-serif" font-size="32" font-weight="700" letter-spacing="1.5">Qwen</text>
+  <text x="104" y="84" fill="#475569" font-family="Helvetica, Arial, sans-serif" font-size="13" letter-spacing="1.8">FOUNDATION MODEL RESEARCH PARTNER</text>
+</svg>

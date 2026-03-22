@@ -513,6 +513,36 @@ select:focus {
     transform: translateX(-50%) translateY(-4px);
 }
 
+/* Homepage partner showcase */
+.partner-logo-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.partner-logo-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(255, 255, 255, 0));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.partner-logo-card:hover::after {
+    opacity: 1;
+}
+
+.partner-logo-image {
+    max-height: 72px;
+    width: 100%;
+    object-fit: contain;
+}
+
+.partner-kicker {
+    letter-spacing: 0.22em;
+}
+
 /* Dark mode support (preparation) */
 @media (prefers-color-scheme: dark) {
     /* Will be implemented if needed */

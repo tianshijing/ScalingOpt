@@ -21,6 +21,8 @@ If this repository is helpful, please consider giving it a star. Your support he
 - Community-driven curation and continuous updates
 
 ## News
+[2026.3] Mano v2 is now officially released! Developed by Yufei Gu and Juanxi Tian, stay tuned for updates.
+
 [2026.2] ScalingOpt's latest optimizer, Mano, is now officially released! Authored by Yufei Gu.
 
 [2026.1] We are always welcoming new members to join us. ScalingOpt has now supplemented the A-Summary-Sheet-of-Optimization-in-Deep-Learning (collecting over 100 types of optimizers), authored by Yifeng Liu.

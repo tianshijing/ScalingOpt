@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120" role="img" aria-labelledby="title desc">
+  <title id="title">HKUST wordmark</title>
+  <desc id="desc">Wordmark for the Hong Kong University of Science and Technology.</desc>
+  <rect x="2" y="2" width="396" height="116" rx="24" fill="#ffffff" stroke="#dbe6da" stroke-width="2"/>
+  <path d="M41 40h34v10H41zm0 16h34v10H41zm0 16h34v10H41z" fill="#0f766e"/>
+  <path d="M58 32v56" stroke="#0f766e" stroke-width="6" stroke-linecap="round"/>
+  <text x="102" y="56" fill="#0f172a" font-family="Helvetica, Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="1.5">HKUST</text>
+  <text x="102" y="82" fill="#475569" font-family="Helvetica, Arial, sans-serif" font-size="12.5" letter-spacing="1.05">HONG KONG UNIVERSITY OF SCIENCE AND TECHNOLOGY</text>
+</svg>

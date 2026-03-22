@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120" role="img" aria-labelledby="title desc">
+  <title id="title">NUS wordmark</title>
+  <desc id="desc">Wordmark for the National University of Singapore.</desc>
+  <rect x="2" y="2" width="396" height="116" rx="24" fill="#ffffff" stroke="#d9e4f3" stroke-width="2"/>
+  <path d="M30 38h36v44H30z" fill="#f97316"/>
+  <path d="M42 48h12c8 0 14 6 14 14s-6 14-14 14H42V48zm10 10v8h2c3 0 5-2 5-4s-2-4-5-4h-2z" fill="#ffffff"/>
+  <text x="96" y="56" fill="#0f172a" font-family="Helvetica, Arial, sans-serif" font-size="30" font-weight="700" letter-spacing="2">NUS</text>
+  <text x="96" y="82" fill="#475569" font-family="Helvetica, Arial, sans-serif" font-size="13" letter-spacing="1.5">NATIONAL UNIVERSITY OF SINGAPORE</text>
+</svg>

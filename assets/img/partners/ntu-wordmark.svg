@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120" role="img" aria-labelledby="title desc">
+  <title id="title">NTU wordmark</title>
+  <desc id="desc">Wordmark for Nanyang Technological University.</desc>
+  <rect x="2" y="2" width="396" height="116" rx="24" fill="#ffffff" stroke="#d7e3f4" stroke-width="2"/>
+  <circle cx="58" cy="60" r="28" fill="#113a75"/>
+  <path d="M45 60h26" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+  <path d="M58 47v26" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+  <text x="100" y="56" fill="#0f172a" font-family="Helvetica, Arial, sans-serif" font-size="30" font-weight="700" letter-spacing="2">NTU</text>
+  <text x="100" y="82" fill="#475569" font-family="Helvetica, Arial, sans-serif" font-size="13" letter-spacing="1.6">NANYANG TECHNOLOGICAL UNIVERSITY</text>
+</svg>
