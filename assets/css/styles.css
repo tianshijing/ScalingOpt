@@ -540,6 +540,10 @@ select:focus {
     object-fit: contain;
 }
 
+.partner-logo-image--wide {
+    max-height: 88px;
+}
+
 .partner-kicker {
     letter-spacing: 0.22em;
 }
