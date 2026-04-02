@@ -4170,6 +4170,199 @@ const optimizers = [
     ],
     "githubUrl": "https://github.com/K1seki221/MuonPlus",
     "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\mu, d \\in \\{\\text{col, row, col\\_row, row\\_col}\\}, \\epsilon \\\\\n        &\\textbf{Initialize:} W_0,\\; M_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad G_t \\leftarrow \\nabla_W f_t(W_{t-1}) \\\\\n        &\\quad M_t \\leftarrow \\mu M_{t-1} + (1-\\mu) G_t \\\\\n        &\\quad U_t \\leftarrow \\operatorname{Ortho}(M_t) \\quad\\text{(Newton-Schulz)} \\\\\n        &\\quad O_t \\leftarrow \\operatorname{Norm}_{(d)}(U_t) \\quad\\text{(col/row } \\ell_2 \\text{ normalization)} \\\\\n        &\\quad W_t \\leftarrow W_{t-1} - \\eta \\sqrt{m/n}\\; O_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+  },
+  {
+    "id": "muoneq",
+    "name": "MuonEq",
+    "fullName": "MuonEq: Balancing Before Orthogonalization with Lightweight Equilibration",
+    "description": "A lightweight Muon variant that rebalances the momentum matrix before Newton-Schulz orthogonalization using row and column norm statistics",
+    "year": 2026,
+    "month": "March",
+    "category": "Second-order",
+    "paper": {
+      "title": "MuonEq: Balancing Before Orthogonalization with Lightweight Equilibration",
+      "url": "https://arxiv.org/abs/2603.28254",
+      "authors": [
+        "Da Chang",
+        "Qiankun Shi",
+        "Lvgang Zhang",
+        "Yu Li",
+        "Ruijie Zhang",
+        "Yao Lu",
+        "Yongxiang Liu",
+        "Ganzhao Yuan"
+      ]
+    },
+    "advantages": [
+      "Balances Muon updates before orthogonalization with only O(m+n) auxiliary state",
+      "Row-normalized variant is the natural default for hidden matrix weights",
+      "Improves convergence and validation perplexity over Muon on LLaMA2 pretraining",
+      "Removes marginal scale mismatch without heavier whitening preconditioners",
+      "Preserves Muon-type stationarity guarantees"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.02,
+        "range": "1e-3 to 1e-1",
+        "description": "Learning rate"
+      },
+      "momentum": {
+        "default": 0.95,
+        "range": "0.9 to 0.99",
+        "description": "Momentum coefficient"
+      },
+      "variant": {
+        "default": "R",
+        "range": "R / C / RC",
+        "description": "Row, column, or two-sided row-column equilibration before orthogonalization"
+      },
+      "eps": {
+        "default": 1e-8,
+        "range": "1e-10 to 1e-6",
+        "description": "Numerical stabilizer for row and column norm normalization"
+      }
+    },
+    "implementation": {
+      "pytorch": false,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 79,
+    "tags": [
+      "Muon Variant",
+      "Equilibration",
+      "Pre-Orthogonalization",
+      "Newton-Schulz",
+      "LLM Training",
+      "Second-order"
+    ],
+    "githubUrl": "",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\mu, v \\in \\{\\text{R, C, RC}\\}, \\epsilon \\\\\n        &\\textbf{Initialize:} W_0,\\; M_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad G_t \\leftarrow \\nabla_W f_t(W_{t-1}) \\\\\n        &\\quad M_t \\leftarrow \\mu M_{t-1} + (1-\\mu) G_t \\\\\n        &\\quad E_t \\leftarrow \\operatorname{Equilibrate}(M_t; v, \\epsilon) \\quad\\text{(row/col norm balancing)} \\\\\n        &\\quad U_t \\leftarrow \\operatorname{Ortho}(E_t) \\quad\\text{(finite-step Newton-Schulz)} \\\\\n        &\\quad W_t \\leftarrow W_{t-1} - \\eta\\, U_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+  },
+  {
+    "id": "hyperp",
+    "name": "HyperP",
+    "fullName": "HyperP (Hypersphere Parameterization)",
+    "description": "A transferable hypersphere optimization framework for Muon that constrains weights to a Frobenius sphere and enables stable learning-rate transfer across scale",
+    "year": 2026,
+    "month": "March",
+    "category": "Second-order",
+    "paper": {
+      "title": "Rethinking Language Model Scaling under Transferable Hypersphere Optimization",
+      "url": "https://arxiv.org/abs/2603.28743",
+      "authors": [
+        "Liliang Ren",
+        "Yang Liu",
+        "Yelong Shen",
+        "Weizhu Chen"
+      ]
+    },
+    "advantages": [
+      "Transfers a single base learning rate across width, depth, token budget, and MoE granularity",
+      "Delivers 1.58x compute efficiency over a strong Muon baseline at large scale",
+      "Keeps instability indicators bounded and non-increasing under FLOPs scaling",
+      "Shows weight decay is a first-order no-op on the Frobenius sphere",
+      "Introduces SqrtGate for improved MoE granularity scaling"
+    ],
+    "hyperparameters": {
+      "base_lr": {
+        "default": 0.001,
+        "range": "1e-4 to 1e-2",
+        "description": "Base learning rate transferred across scales under HyperP"
+      },
+      "sphere_radius": {
+        "default": 1.0,
+        "range": "Positive scalar",
+        "description": "Target Frobenius-sphere radius for constrained weight matrices"
+      },
+      "optimizer": {
+        "default": "Muon",
+        "range": "Muon",
+        "description": "Underlying optimizer used with hypersphere parameterization"
+      },
+      "scaling_rule": {
+        "default": "Depth-μP",
+        "range": "Depth-μP",
+        "description": "Scaling rule retained under HyperP for width/depth transfer"
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 77,
+    "tags": [
+      "Hypersphere Constraint",
+      "Hyperparameter Transfer",
+      "Muon",
+      "Scaling Laws",
+      "MoE",
+      "Second-order"
+    ],
+    "githubUrl": "https://github.com/microsoft/ArchScale",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\mu, R \\\\\n        &\\textbf{Initialize:} W_0 \\text{ on the Frobenius sphere},\\; M_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad G_t \\leftarrow \\nabla_W f_t(W_{t-1}) \\\\\n        &\\quad G_t^{\\top} \\leftarrow G_t - \\frac{\\langle G_t, W_{t-1} \\rangle}{\\|W_{t-1}\\|_F^2} W_{t-1} \\quad\\text{(tangent projection)} \\\\\n        &\\quad M_t \\leftarrow \\mu M_{t-1} + G_t^{\\top} \\\\\n        &\\quad U_t \\leftarrow \\operatorname{Muon}(M_t) \\\\\n        &\\quad \\widetilde{W}_t \\leftarrow W_{t-1} - \\eta U_t \\\\\n        &\\quad W_t \\leftarrow R \\cdot \\widetilde{W}_t / \\|\\widetilde{W}_t\\|_F \\quad\\text{(sphere retraction)} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+  },
+  {
+    "id": "gram_newton_schulz",
+    "name": "Gram Newton-Schulz",
+    "fullName": "Gram Newton-Schulz (GramMuon)",
+    "description": "A hardware-aware Muon acceleration that performs Newton-Schulz iterations on the Gram matrix to cut orthogonalization cost while preserving training quality",
+    "year": 2026,
+    "month": "March",
+    "category": "Second-order",
+    "paper": {
+      "title": "Gram Newton-Schulz: A Fast, Hardware-Aware Newton-Schulz Algorithm for Muon",
+      "url": "https://dao-lab.ai/blog/2026/gram-newton-schulz/",
+      "authors": [
+        "Dao AI Lab"
+      ]
+    },
+    "advantages": [
+      "Reduces Muon orthogonalization runtime by roughly 40-50% in reported experiments",
+      "Preserves optimization quality within 0.01 validation perplexity of standard Muon",
+      "Shifts most computation to smaller symmetric Gram-matrix operations",
+      "Enables greater use of optimized symmetric GEMM kernels",
+      "Provides a drop-in replacement path for standard Muon orthogonalization"
+    ],
+    "hyperparameters": {
+      "ns_steps": {
+        "default": 5,
+        "range": "3 to 7",
+        "description": "Number of Newton-Schulz polynomial iterations"
+      },
+      "restart_after": {
+        "default": 2,
+        "range": "1 to 4",
+        "description": "Iteration after which the stabilized variant reconstructs the Gram matrix"
+      },
+      "eps": {
+        "default": 1e-7,
+        "range": "1e-8 to 1e-6",
+        "description": "Normalization epsilon before half-precision Gram iterations"
+      },
+      "precision": {
+        "default": "float16",
+        "range": "float16 / bfloat16",
+        "description": "Reduced precision used for the accelerated orthogonalization routine"
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 74,
+    "tags": [
+      "Muon Variant",
+      "Gram Matrix",
+      "Newton-Schulz",
+      "Hardware-aware",
+      "Orthogonal Updates",
+      "Second-order"
+    ],
+    "githubUrl": "",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} X, \\{(a_t, b_t, c_t)\\}_{t=1}^T, \\epsilon \\\\\n        &\\quad X \\leftarrow X / (\\|X\\|_F + \\epsilon) \\\\\n        &\\quad R_0 \\leftarrow XX^{\\top},\\; Q_0 \\leftarrow I \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad Z_t \\leftarrow b_t R_{t-1} + c_t R_{t-1}^2 \\\\\n        &\\quad Q_t \\leftarrow a_t Q_{t-1} + Z_t Q_{t-1} \\\\\n        &\\quad R_t \\leftarrow a_t R_{t-1} + Z_t R_{t-1} Z_t \\\\\n        &\\quad \\text{if } t = t_{\\mathrm{restart}} \\text{ then reconstruct Gram state} \\\\\n        &\\textbf{end for} \\\\\n        &\\quad \\operatorname{GramNS}(X) \\leftarrow Q_T X\n    \\end{aligned}"
   }
 ];
 

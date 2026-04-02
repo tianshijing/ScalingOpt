@@ -30,6 +30,13 @@ function initializeOptimizers() {
         return months[month] || 0;
     }
 
+    function compareOptimizersByTimeDesc(a, b) {
+        if (a.year !== b.year) return b.year - a.year;
+        const monthDiff = getMonthNumber(b.month) - getMonthNumber(a.month);
+        if (monthDiff !== 0) return monthDiff;
+        return a.name.localeCompare(b.name);
+    }
+
     function renderTimeline() {
         const container = document.getElementById('timeline-container');
         // Clear existing items except the line
@@ -247,11 +254,11 @@ function initializeOptimizers() {
                 case 'popularity':
                     return b.popularity - a.popularity;
                 case 'year':
-                    return b.year - a.year;
+                    return compareOptimizersByTimeDesc(a, b);
                 case 'name':
                     return a.name.localeCompare(b.name);
                 default:
-                    return 0;
+                    return compareOptimizersByTimeDesc(a, b);
             }
         });
 

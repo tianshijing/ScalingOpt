@@ -6,6 +6,11 @@ function injectLayout() {
     // Determine root path based on current location
     const isPagesDir = window.location.pathname.includes('/pages/');
     const rootPath = isPagesDir ? '../' : './';
+    const githubLogo = `
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.29-.01-1.05-.02-2.06-3.34.73-4.04-1.61-4.04-1.61-.55-1.38-1.33-1.75-1.33-1.75-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.31-5.47-1.34-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.31-.54-1.56.12-3.25 0 0 1.01-.32 3.3 1.23A11.47 11.47 0 0 1 12 6.8c1.02 0 2.05.14 3.01.41 2.29-1.55 3.3-1.23 3.3-1.23.66 1.69.25 2.94.12 3.25.77.84 1.24 1.91 1.24 3.22 0 4.6-2.8 5.62-5.48 5.92.43.37.82 1.1.82 2.22 0 1.6-.01 2.89-.01 3.28 0 .32.21.7.83.58C20.57 21.79 24 17.29 24 12c0-6.63-5.37-12-12-12Z"/>
+        </svg>
+    `;
     
     // Navbar HTML
     const navbarHTML = `
@@ -88,8 +93,8 @@ function injectLayout() {
                         <i data-lucide="users" class="w-4 h-4"></i>
                         <span>Community</span>
                     </a>
-                    <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-1 px-3 py-2 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200">
-                        <i data-lucide="github" class="w-5 h-5"></i>
+                    <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 px-3 py-2 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200" aria-label="GitHub repository">
+                        ${githubLogo}
                         <span class="hidden lg:inline">GitHub</span>
                     </a>
                 </div>
@@ -174,8 +179,8 @@ function injectLayout() {
                     <i data-lucide="users" class="w-4 h-4"></i>
                     <span>Community</span>
                 </a>
-                <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
-                    <i data-lucide="github" class="w-4 h-4"></i>
+                <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200" aria-label="GitHub repository">
+                    ${githubLogo}
                     <span>GitHub</span>
                 </a>
             </div>
@@ -198,8 +203,8 @@ function injectLayout() {
                         Discover, compare, and contribute to cutting-edge optimizers for large-scale machine learning.
                     </p>
                     <div class="flex space-x-4">
-                        <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-blue-600 transition-colors duration-200">
-                            <i data-lucide="github" class="w-5 h-5"></i>
+                        <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-blue-600 transition-colors duration-200" aria-label="GitHub repository">
+                            ${githubLogo}
                         </a>
                         <a href="mailto:juanxitian1031@gmail.com" class="text-gray-400 hover:text-blue-600 transition-colors duration-200">
                             <i data-lucide="mail" class="w-5 h-5"></i>
@@ -345,4 +350,3 @@ function initMobileMenu() {
         });
     }
 }
-

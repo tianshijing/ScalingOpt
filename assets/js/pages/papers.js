@@ -9,8 +9,13 @@ AOS.init({
 // Filter and search functionality
 let filteredPapers = [...papers];
 
-// Sort papers by year (newest to oldest) by default
-filteredPapers.sort((a, b) => b.year - a.year);
+function comparePapersByTimeDesc(a, b) {
+    if (a.year !== b.year) return b.year - a.year;
+    return a.title.localeCompare(b.title);
+}
+
+// Sort papers by time (newest to oldest) by default
+filteredPapers.sort(comparePapersByTimeDesc);
 
 function getCategoryColor(category) {
     const colors = {
@@ -140,11 +145,11 @@ function filterPapers() {
     filteredPapers.sort((a, b) => {
         switch (sortBy) {
             case 'year':
-                return b.year - a.year;
+                return comparePapersByTimeDesc(a, b);
             case 'title':
                 return a.title.localeCompare(b.title);
             default:
-                return 0;
+                return comparePapersByTimeDesc(a, b);
         }
     });
 

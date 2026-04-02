@@ -1683,6 +1683,30 @@ const papers = [
     featured: false
   },
   {
+    id: 'sharp-capacity-scaling-spectral-optimizers-2026',
+    title: 'Sharp Capacity Scaling of Spectral Optimizers in Learning Associative Memory',
+    authors: ['Juno Kim', 'Eshaan Nichani', 'Denny Wu', 'Alberto Bietti', 'Jason D. Lee'],
+    year: 2026,
+    venue: 'arXiv preprint',
+    category: 'Analysis',
+    abstract: 'This paper studies why spectral optimizers such as Muon can outperform SGD through the tractable setting of linear associative memory. Moving beyond orthogonal embeddings to Gaussian inputs and outputs, it sharply characterizes the recovery rates of one step of Muon and SGD under a power-law frequency distribution. The authors show that Muon has substantially larger storage capacity and a larger critical batch size, then analyze multi-step dynamics under a thresholded gradient approximation, where Muon achieves much faster initial recovery before both methods approach the information-theoretic limit. The work provides a quantitative explanation of Muon’s signal amplification and suggests scaling-law insights for more realistic language modeling tasks.',
+    arxivUrl: 'https://arxiv.org/abs/2603.26554',
+    tags: ['Spectral Optimizers', 'Muon', 'Associative Memory', 'Capacity Scaling', 'Batch Size', 'Optimization Theory'],
+    featured: false
+  },
+  {
+    id: 'high-dimensional-theory-two-phase-optimizers-2026',
+    title: 'High dimensional theory of two-phase optimizers',
+    authors: ['Atish Agarwala'],
+    year: 2026,
+    venue: 'arXiv preprint',
+    category: 'Analysis',
+    abstract: 'This paper analyzes LA-DiLoCo, a simple two-phase optimizer, in a high-dimensional linear regression setting. It shows that the single-worker version yields a different signal-noise tradeoff from SGD that can be advantageous in many regimes, while the multi-worker version introduces extra noise that can be mitigated by hyperparameter choice. The paper also studies SLA, which adds momentum on top of LA, and argues that stacking two momentum operators creates an opportunity for acceleration through a nonlinear transformation of the effective Hessian spectrum, maximized by Nesterov momentum. Overall, the work frames two-phase optimizers as a promising paradigm for understanding and improving large-scale training algorithms.',
+    arxivUrl: 'https://arxiv.org/abs/2603.26954',
+    tags: ['Two-phase Optimizers', 'DiLoCo', 'High-dimensional Theory', 'Momentum', 'Hessian Spectrum', 'Optimization Theory'],
+    featured: false
+  },
+  {
     id: 'explaining-neural-scaling-laws-2024',
     title: 'Explaining Neural Scaling Laws',
     authors: ['Yasaman Bahri', 'Ethan Dyer', 'Jared Kaplan', 'Jaehoon Lee', 'Utkarsh Sharma'],
