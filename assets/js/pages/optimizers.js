@@ -30,9 +30,33 @@ function initializeOptimizers() {
         return months[month] || 0;
     }
 
+    function extractArxivSortKey(url) {
+        if (!url) return null;
+        const match = url.match(/arxiv\.org\/(?:abs|pdf)\/(\d{4})\.(\d+)(?:v\d+)?(?:\.pdf)?/i);
+        if (!match) return null;
+        return Number(`${match[1]}${match[2].padStart(5, '0')}`);
+    }
+
     function compareOptimizersByTimeDesc(a, b) {
         if (a.year !== b.year) return b.year - a.year;
+        const aArxivKey = extractArxivSortKey(a.paper?.url);
+        const bArxivKey = extractArxivSortKey(b.paper?.url);
+        if (aArxivKey !== null && bArxivKey !== null && aArxivKey !== bArxivKey) {
+            return bArxivKey - aArxivKey;
+        }
         const monthDiff = getMonthNumber(b.month) - getMonthNumber(a.month);
+        if (monthDiff !== 0) return monthDiff;
+        return a.name.localeCompare(b.name);
+    }
+
+    function compareOptimizersByTimeAsc(a, b) {
+        if (a.year !== b.year) return a.year - b.year;
+        const aArxivKey = extractArxivSortKey(a.paper?.url);
+        const bArxivKey = extractArxivSortKey(b.paper?.url);
+        if (aArxivKey !== null && bArxivKey !== null && aArxivKey !== bArxivKey) {
+            return aArxivKey - bArxivKey;
+        }
+        const monthDiff = getMonthNumber(a.month) - getMonthNumber(b.month);
         if (monthDiff !== 0) return monthDiff;
         return a.name.localeCompare(b.name);
     }
@@ -45,10 +69,7 @@ function initializeOptimizers() {
         container.appendChild(line);
 
         // Sort all optimizers chronologically
-        const sortedOptimizers = [...optimizers].sort((a, b) => {
-            if (a.year !== b.year) return a.year - b.year;
-            return getMonthNumber(a.month) - getMonthNumber(b.month);
-        });
+        const sortedOptimizers = [...optimizers].sort(compareOptimizersByTimeAsc);
 
         let currentYear = null;
 

@@ -1683,6 +1683,18 @@ const papers = [
     featured: false
   },
   {
+    id: 'enhancing-llm-training-spectral-clipping-2026',
+    title: 'Enhancing LLM Training via Spectral Clipping',
+    authors: ['Xiaowen Jiang', 'Andrei Semenov', 'Sebastian U. Stich'],
+    year: 2026,
+    venue: 'arXiv preprint',
+    category: 'New Optimizer',
+    abstract: 'This paper introduces SPECTRA, a spectral clipping framework for LLM training that constrains update spectral norms and optionally suppresses sparse spectral noise spikes before the optimizer step. The authors show that post-spectral clipping recovers a Composite Frank-Wolfe view of spectral-norm constrained optimization, while efficient soft clipping via Newton-Schulz iterations avoids expensive SVD computations. Across LLM pretraining experiments, SPECTRA improves validation loss for optimizers including AdamW, Signum, and AdEMAMix, with smaller learned weight norms and stronger regularization behavior.',
+    arxivUrl: 'https://arxiv.org/pdf/2603.14315',
+    tags: ['SPECTRA', 'Spectral Clipping', 'LLM Training', 'AdamW', 'Signum', 'AdEMAMix', 'Regularization'],
+    featured: false
+  },
+  {
     id: 'sharp-capacity-scaling-spectral-optimizers-2026',
     title: 'Sharp Capacity Scaling of Spectral Optimizers in Learning Associative Memory',
     authors: ['Juno Kim', 'Eshaan Nichani', 'Denny Wu', 'Alberto Bietti', 'Jason D. Lee'],
@@ -1704,6 +1716,30 @@ const papers = [
     abstract: 'This paper analyzes LA-DiLoCo, a simple two-phase optimizer, in a high-dimensional linear regression setting. It shows that the single-worker version yields a different signal-noise tradeoff from SGD that can be advantageous in many regimes, while the multi-worker version introduces extra noise that can be mitigated by hyperparameter choice. The paper also studies SLA, which adds momentum on top of LA, and argues that stacking two momentum operators creates an opportunity for acceleration through a nonlinear transformation of the effective Hessian spectrum, maximized by Nesterov momentum. Overall, the work frames two-phase optimizers as a promising paradigm for understanding and improving large-scale training algorithms.',
     arxivUrl: 'https://arxiv.org/abs/2603.26954',
     tags: ['Two-phase Optimizers', 'DiLoCo', 'High-dimensional Theory', 'Momentum', 'Hessian Spectrum', 'Optimization Theory'],
+    featured: false
+  },
+  {
+    id: 'newton-muon-optimizer-2026',
+    title: 'The Newton-Muon Optimizer',
+    authors: ['Zhehang Du', 'Weijie Su'],
+    year: 2026,
+    venue: 'arXiv preprint',
+    category: 'New Optimizer',
+    abstract: 'This paper derives Newton-Muon from a quadratic surrogate that augments Muon with output-space curvature and input second-moment information. The resulting update rule interprets standard Muon as an implicit Newton-type method missing a right-side preconditioner induced by the layer input covariance. On reproduced GPT-2 pretraining speedrun settings, Newton-Muon reaches the target validation loss in fewer steps and slightly lower wall-clock time than the original Muon configuration.',
+    arxivUrl: 'https://arxiv.org/pdf/2604.01472',
+    tags: ['Newton-Muon', 'Muon', 'Second-Order', 'Matrix Optimization', 'LLM Pretraining', 'Curvature'],
+    featured: false
+  },
+  {
+    id: 'evolution-optimization-methods-2026',
+    title: 'Evolution of Optimization Methods: Algorithms, Scenarios, and Evaluations',
+    authors: ['Tong Zhang', 'Jiangning Zhang', 'Zhucun Xue', 'Juntao Jiang', 'Yicheng Xu', 'Chengming Xu', 'Teng Hu', 'Xingyu Xie', 'Xiaobin Hu', 'Yabiao Wang', 'Yong Liu', 'Shuicheng Yan'],
+    year: 2026,
+    venue: 'arXiv preprint',
+    category: 'Survey',
+    abstract: 'This survey analyzes the evolution of deep learning optimization from first-order methods such as SGD and Adam to second-order and zeroth-order techniques motivated by modern large-scale, privacy-sensitive, and distributed training. Beyond organizing the field conceptually, the paper reports a broad empirical evaluation of mainstream optimizers across diverse architectures and scenarios. It distills design trade-offs between convergence speed, generalization, efficiency, memory use, and robustness, offering practical guidance for future optimizer design.',
+    arxivUrl: 'https://arxiv.org/abs/2604.12968',
+    tags: ['Survey', 'Optimization Methods', 'SGD', 'Adam', 'Second-Order', 'Zeroth-Order', 'Evaluation'],
     featured: false
   },
   {

@@ -4172,6 +4172,134 @@ const optimizers = [
     "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\mu, d \\in \\{\\text{col, row, col\\_row, row\\_col}\\}, \\epsilon \\\\\n        &\\textbf{Initialize:} W_0,\\; M_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad G_t \\leftarrow \\nabla_W f_t(W_{t-1}) \\\\\n        &\\quad M_t \\leftarrow \\mu M_{t-1} + (1-\\mu) G_t \\\\\n        &\\quad U_t \\leftarrow \\operatorname{Ortho}(M_t) \\quad\\text{(Newton-Schulz)} \\\\\n        &\\quad O_t \\leftarrow \\operatorname{Norm}_{(d)}(U_t) \\quad\\text{(col/row } \\ell_2 \\text{ normalization)} \\\\\n        &\\quad W_t \\leftarrow W_{t-1} - \\eta \\sqrt{m/n}\\; O_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
+    "id": "moga",
+    "name": "MOGA",
+    "fullName": "MOGA: Matrix Operator Geometry Aware",
+    "description": "A width-aware optimizer built on row and column normalization that enables stable learning-rate transfer across model widths",
+    "year": 2026,
+    "month": "March",
+    "category": "First-order",
+    "paper": {
+      "title": "On the Width Scaling of Neural Optimizers Under Matrix Operator Norms I: Row/Column Normalization and Hyperparameter Transfer",
+      "url": "https://arxiv.org/abs/2603.09952",
+      "authors": [
+        "Ruihan Xu",
+        "Jiajin Li",
+        "Yiping Lu"
+      ]
+    },
+    "advantages": [
+      "Uses only row and column normalization while remaining competitive with Muon",
+      "Provides width-independent smoothness guarantees under mean-normalized operator norms",
+      "Supports principled cross-width learning-rate transfer and recovers muP-style scaling rules",
+      "Notably faster than Muon in large-token and low-loss training regimes"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.001,
+        "range": "1e-5 to 1e-2",
+        "description": "Base learning rate before width-aware scaling"
+      },
+      "normalization": {
+        "default": "row",
+        "range": "row / column / row_column",
+        "description": "Normalization geometry applied to matrix updates"
+      },
+      "scaling_rule": {
+        "default": "muP-compatible",
+        "range": "width-aware",
+        "description": "Rule used to transfer the learning rate across model widths"
+      },
+      "eps": {
+        "default": 1e-8,
+        "range": "1e-10 to 1e-6",
+        "description": "Numerical stabilizer for normalization"
+      }
+    },
+    "implementation": {
+      "pytorch": false,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 80,
+    "tags": [
+      "Width-aware",
+      "Row Normalization",
+      "Column Normalization",
+      "Hyperparameter Transfer",
+      "LLM Training",
+      "First-order"
+    ],
+    "githubUrl": "",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta_0, \\epsilon, \\mathcal{N} \\in \\{\\text{row, column, row\\_column}\\} \\\\\n        &\\textbf{Initialize:} W_0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad G_t \\leftarrow \\nabla_W f_t(W_{t-1}) \\\\\n        &\\quad \\widetilde{G}_t \\leftarrow \\operatorname{Normalize}_{\\mathcal{N}}(G_t; \\epsilon) \\\\\n        &\\quad \\eta_t \\leftarrow \\operatorname{WidthScale}(\\eta_0, W_{t-1}) \\\\\n        &\\quad W_t \\leftarrow W_{t-1} - \\eta_t \\, \\widetilde{G}_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+  },
+  {
+    "id": "rmnp",
+    "name": "RMNP",
+    "fullName": "RMNP: Row-Momentum Normalized Preconditioning",
+    "description": "A scalable matrix-based optimizer that replaces Muon's Newton-Schulz orthogonalization with simple row-wise momentum normalization",
+    "year": 2026,
+    "month": "March",
+    "category": "Second-order",
+    "paper": {
+      "title": "RMNP: Row-Momentum Normalized Preconditioning for Scalable Matrix-Based Optimization",
+      "url": "https://arxiv.org/abs/2603.20527",
+      "authors": [
+        "Shenyang Deng",
+        "Zhuoli Ouyang",
+        "Tianyu Pang",
+        "Zihang Liu",
+        "Ruochen Jin",
+        "Shuhua Yu",
+        "Yaoqing Yang"
+      ]
+    },
+    "advantages": [
+      "Cuts per-step preconditioning complexity from O(mn min(m,n)) to O(mn)",
+      "Maintains competitive optimization performance relative to Muon in LLM pretraining",
+      "Motivated by the diagonal block structure of Transformer layerwise Hessians",
+      "Comes with non-convex convergence guarantees matching recent Muon-style results"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.02,
+        "range": "1e-3 to 1e-1",
+        "description": "Learning rate"
+      },
+      "momentum": {
+        "default": 0.95,
+        "range": "0.9 to 0.99",
+        "description": "Momentum coefficient"
+      },
+      "eps": {
+        "default": 1e-8,
+        "range": "1e-10 to 1e-6",
+        "description": "Stabilizer for row-wise normalization"
+      },
+      "weight_decay": {
+        "default": 0.01,
+        "range": "0.0 to 0.1",
+        "description": "Weight decay coefficient"
+      }
+    },
+    "implementation": {
+      "pytorch": false,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 81,
+    "tags": [
+      "Muon Variant",
+      "Row Normalization",
+      "Preconditioning",
+      "LLM Training",
+      "Scalable",
+      "Second-order"
+    ],
+    "githubUrl": "",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\mu, \\epsilon \\\\\n        &\\textbf{Initialize:} W_0,\\; M_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad G_t \\leftarrow \\nabla_W f_t(W_{t-1}) \\\\\n        &\\quad M_t \\leftarrow \\mu M_{t-1} + (1-\\mu) G_t \\\\\n        &\\quad R_t \\leftarrow \\operatorname{RowNormalize}(M_t; \\epsilon) \\\\\n        &\\quad W_t \\leftarrow W_{t-1} - \\eta \\, R_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+  },
+  {
     "id": "muoneq",
     "name": "MuonEq",
     "fullName": "MuonEq: Balancing Before Orthogonalization with Lightweight Equilibration",
@@ -4302,6 +4430,137 @@ const optimizers = [
     ],
     "githubUrl": "https://github.com/microsoft/ArchScale",
     "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\mu, R \\\\\n        &\\textbf{Initialize:} W_0 \\text{ on the Frobenius sphere},\\; M_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad G_t \\leftarrow \\nabla_W f_t(W_{t-1}) \\\\\n        &\\quad G_t^{\\top} \\leftarrow G_t - \\frac{\\langle G_t, W_{t-1} \\rangle}{\\|W_{t-1}\\|_F^2} W_{t-1} \\quad\\text{(tangent projection)} \\\\\n        &\\quad M_t \\leftarrow \\mu M_{t-1} + G_t^{\\top} \\\\\n        &\\quad U_t \\leftarrow \\operatorname{Muon}(M_t) \\\\\n        &\\quad \\widetilde{W}_t \\leftarrow W_{t-1} - \\eta U_t \\\\\n        &\\quad W_t \\leftarrow R \\cdot \\widetilde{W}_t / \\|\\widetilde{W}_t\\|_F \\quad\\text{(sphere retraction)} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+  },
+  {
+    "id": "nexus",
+    "name": "Nexus",
+    "fullName": "Nexus Optimizer",
+    "description": "An optimizer that maximizes gradient similarity across pretraining data sources to encourage common minima and better downstream generalization",
+    "year": 2026,
+    "month": "April",
+    "category": "First-order",
+    "paper": {
+      "title": "Nexus: Same Pretraining Loss, Better Downstream Generalization via Common Minima",
+      "url": "https://arxiv.org/abs/2604.09258",
+      "authors": [
+        "Huanran Chen",
+        "Huaqing Zhang",
+        "Xiao Li",
+        "Yinpeng Dong",
+        "Ke Shen",
+        "Jun Zhu"
+      ]
+    },
+    "advantages": [
+      "Improves downstream performance without improving pretraining loss",
+      "Encourages task-specific minima to stay geometrically close during pretraining",
+      "Reduces out-of-distribution loss and improves complex reasoning benchmarks",
+      "Highlights optimizer implicit bias beyond scalar pretraining-loss comparisons"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.001,
+        "range": "1e-5 to 1e-2",
+        "description": "Learning rate"
+      },
+      "beta1": {
+        "default": 0.9,
+        "range": "0.8 to 0.99",
+        "description": "First-moment coefficient"
+      },
+      "beta2": {
+        "default": 0.95,
+        "range": "0.9 to 0.999",
+        "description": "Second-moment coefficient"
+      },
+      "similarity_weight": {
+        "default": 1.0,
+        "range": "0.1 to 10.0",
+        "description": "Weight on the gradient-similarity regularization signal"
+      }
+    },
+    "implementation": {
+      "pytorch": false,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 84,
+    "tags": [
+      "Gradient Similarity",
+      "Generalization",
+      "LLM Pretraining",
+      "Common Minima",
+      "Multi-source Training",
+      "First-order"
+    ],
+    "githubUrl": "",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\alpha, K, \\operatorname{Opt}_{\\mathrm{outer}} \\\\\n        &\\textbf{Initialize:} W^{\\mathrm{main}} \\leftarrow W_0,\\; W^{\\mathrm{inner}} \\leftarrow W_0 \\\\\n        &\\textbf{for each mini-batch } B_t \\textbf{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_W \\mathcal{L}(B_t; W^{\\mathrm{inner}}) \\\\\n        &\\quad W^{\\mathrm{inner}} \\leftarrow W^{\\mathrm{inner}} - \\alpha \\, \\frac{g_t}{\\|g_t\\|_2 + \\epsilon} \\quad\\text{(NSGD inner step)} \\\\\n        &\\quad \\textbf{if } t \\bmod K = 0 \\textbf{ then} \\\\\n        &\\quad\\quad \\Delta_t \\leftarrow W^{\\mathrm{main}} - W^{\\mathrm{inner}} \\quad\\text{(Nexus pseudo-gradient)} \\\\\n        &\\quad\\quad W^{\\mathrm{main}} \\leftarrow \\operatorname{Opt}_{\\mathrm{outer}}\\!\\left(W^{\\mathrm{main}}, \\Delta_t\\right) \\\\\n        &\\quad\\quad W^{\\mathrm{inner}} \\leftarrow W^{\\mathrm{main}} \\quad\\text{(re-synchronize inner model)} \\\\\n        &\\quad \\textbf{end if} \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+  },
+  {
+    "id": "muon2",
+    "name": "Muon^2",
+    "fullName": "Muon^2: Adaptive Second-Moment Preconditioned Muon",
+    "description": "An extension of Muon that applies Adam-style second-moment preconditioning before orthogonalization to reduce Newton-Schulz iterations",
+    "year": 2026,
+    "month": "April",
+    "category": "Second-order",
+    "paper": {
+      "title": "Muon^2: Boosting Muon via Adaptive Second-Moment Preconditioning",
+      "url": "https://arxiv.org/abs/2604.09967",
+      "authors": [
+        "Ziyue Liu",
+        "Ruijie Zhang",
+        "Zhengyang Wang",
+        "Yequan Zhao",
+        "Yupeng Su",
+        "Zi Yang",
+        "Zheng Zhang"
+      ]
+    },
+    "advantages": [
+      "Improves Muon's orthogonalization quality through adaptive second-moment preconditioning",
+      "Consistently outperforms Muon and recent Muon variants from 60M to 1.3B models",
+      "Reduces Newton-Schulz iterations by 40 percent in reported experiments",
+      "Includes a factorized memory-efficient variant with most of the gains preserved"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.02,
+        "range": "1e-3 to 1e-1",
+        "description": "Learning rate"
+      },
+      "momentum": {
+        "default": 0.95,
+        "range": "0.9 to 0.99",
+        "description": "Momentum coefficient"
+      },
+      "beta2": {
+        "default": 0.95,
+        "range": "0.9 to 0.999",
+        "description": "Second-moment coefficient for adaptive preconditioning"
+      },
+      "ns_steps": {
+        "default": 3,
+        "range": "1 to 5",
+        "description": "Number of Newton-Schulz iterations after preconditioning"
+      }
+    },
+    "implementation": {
+      "pytorch": false,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 86,
+    "tags": [
+      "Muon Variant",
+      "Adaptive Preconditioning",
+      "Newton-Schulz",
+      "LLM Training",
+      "Matrix Optimization",
+      "Second-order"
+    ],
+    "githubUrl": "",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\mu, \\beta_2, K, \\epsilon \\\\\n        &\\textbf{Initialize:} W_0,\\; M_0 \\leftarrow 0,\\; V_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad G_t \\leftarrow \\nabla_W f_t(W_{t-1}) \\\\\n        &\\quad M_t \\leftarrow \\mu M_{t-1} + (1-\\mu) G_t \\\\\n        &\\quad V_t \\leftarrow \\beta_2 V_{t-1} + (1-\\beta_2) (M_t \\odot M_t) \\\\\n        &\\quad P_t \\leftarrow M_t \\oslash (\\sqrt{V_t} + \\epsilon) \\\\\n        &\\quad U_t \\leftarrow \\operatorname{Ortho}_K(P_t) \\quad\\text{(Newton-Schulz)} \\\\\n        &\\quad W_t \\leftarrow W_{t-1} - \\eta \\, U_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
     "id": "gram_newton_schulz",

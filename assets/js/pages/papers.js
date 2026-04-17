@@ -9,8 +9,20 @@ AOS.init({
 // Filter and search functionality
 let filteredPapers = [...papers];
 
+function extractArxivSortKey(url) {
+    if (!url) return null;
+    const match = url.match(/arxiv\.org\/(?:abs|pdf)\/(\d{4})\.(\d+)(?:v\d+)?(?:\.pdf)?/i);
+    if (!match) return null;
+    return Number(`${match[1]}${match[2].padStart(5, '0')}`);
+}
+
 function comparePapersByTimeDesc(a, b) {
     if (a.year !== b.year) return b.year - a.year;
+    const aArxivKey = extractArxivSortKey(a.arxivUrl);
+    const bArxivKey = extractArxivSortKey(b.arxivUrl);
+    if (aArxivKey !== null && bArxivKey !== null && aArxivKey !== bArxivKey) {
+        return bArxivKey - aArxivKey;
+    }
     return a.title.localeCompare(b.title);
 }
 
@@ -29,8 +41,10 @@ function getCategoryColor(category) {
 function renderPapers(papersToRender, searchTerm = '') {
     const container = document.getElementById('papers-container');
     const resultsCount = document.getElementById('results-count');
+    const totalCount = document.getElementById('total-count');
 
     resultsCount.textContent = papersToRender.length;
+    if (totalCount) totalCount.textContent = papers.length;
 
     if (papersToRender.length === 0) {
         container.innerHTML = `
