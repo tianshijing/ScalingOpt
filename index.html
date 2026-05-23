@@ -680,6 +680,89 @@
                 </div>
             </section>
 
+            <!-- Optimizer Survey Highlight -->
+            <section class="py-16 bg-gradient-to-r from-blue-900 to-indigo-900 relative overflow-hidden">
+                <div class="absolute inset-0 bg-grid-pattern opacity-10"></div>
+                <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-300/60 to-transparent"></div>
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div class="flex flex-col lg:flex-row-reverse items-center gap-12">
+                        <div class="lg:w-1/2" data-aos="fade-left">
+                            <span class="inline-flex items-center px-3 py-1 bg-blue-500/20 text-blue-200 rounded-full text-xs font-bold uppercase tracking-widest mb-6 border border-blue-500/30">
+                                <i data-lucide="network" class="w-3 h-3 mr-2"></i> Optimizer Survey
+                            </span>
+                            <h2 class="text-3xl md:text-5xl font-extrabold text-white mb-6 leading-tight">
+                                Evolution of Optimization Methods:<br><span class="text-blue-400">Algorithms, Scenarios, and Evaluations</span>
+                            </h2>
+                            <p class="text-xl text-blue-100 mb-8 leading-relaxed">
+                                A 2026 survey that connects first-order, second-order, zeroth-order, and scenario-oriented optimization methods, with empirical evaluations across architectures and training settings.
+                            </p>
+                            <div class="flex flex-wrap gap-4">
+                                <a href="https://arxiv.org/abs/2604.12968" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-8 py-4 bg-white text-blue-900 font-bold rounded-xl hover:bg-blue-50 transition-all shadow-xl hover:shadow-blue-500/20 group">
+                                    Read Survey
+                                    <i data-lucide="external-link" class="ml-2 w-5 h-5 group-hover:scale-110 transition-transform"></i>
+                                </a>
+                                <a href="https://github.com/APRIL-AIGC/Awesome-Optimizer" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-8 py-4 bg-white/10 text-white font-bold rounded-xl hover:bg-white/15 transition-all border border-white/20 group">
+                                    Benchmark Repo
+                                    <i data-lucide="code-2" class="ml-2 w-5 h-5 group-hover:scale-110 transition-transform"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="lg:w-1/2 w-full" data-aos="fade-right">
+                            <div class="relative space-y-5">
+                                <div class="absolute -inset-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur-2xl opacity-25"></div>
+                                <div class="relative flex items-center justify-between gap-4 rounded-2xl border border-white/20 bg-white/10 backdrop-blur p-6 shadow-2xl">
+                                    <div>
+                                        <p class="text-xs font-bold uppercase tracking-widest text-blue-200 mb-2">Unified Taxonomy</p>
+                                        <h3 class="text-2xl font-black text-white">Optimization Method Map</h3>
+                                    </div>
+                                    <div class="hidden sm:flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/20 text-blue-100 border border-blue-400/30">
+                                        <i data-lucide="route" class="w-6 h-6"></i>
+                                    </div>
+                                </div>
+                                <div class="relative grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                    <div class="rounded-xl border border-blue-100 bg-blue-50 p-4 shadow-xl">
+                                        <i data-lucide="arrow-down-up" class="w-5 h-5 text-blue-600 mb-3"></i>
+                                        <h4 class="font-bold text-slate-900 mb-1">Algorithms</h4>
+                                        <p class="text-sm text-slate-600">SGD, Adam, Shampoo, Muon, and emerging optimizer families.</p>
+                                    </div>
+                                    <div class="rounded-xl border border-indigo-100 bg-indigo-50 p-4 shadow-xl">
+                                        <i data-lucide="layers-3" class="w-5 h-5 text-indigo-600 mb-3"></i>
+                                        <h4 class="font-bold text-slate-900 mb-1">Scenarios</h4>
+                                        <p class="text-sm text-slate-600">Large-scale, privacy-sensitive, distributed, and memory-limited training.</p>
+                                    </div>
+                                    <div class="rounded-xl border border-sky-100 bg-sky-50 p-4 shadow-xl">
+                                        <i data-lucide="bar-chart-3" class="w-5 h-5 text-sky-600 mb-3"></i>
+                                        <h4 class="font-bold text-slate-900 mb-1">Evaluations</h4>
+                                        <p class="text-sm text-slate-600">Controlled comparisons across architectures and training horizons.</p>
+                                    </div>
+                                </div>
+                                <div class="relative rounded-xl border border-white/20 overflow-hidden bg-white shadow-2xl">
+                                    <div class="grid grid-cols-4 text-center text-xs font-bold uppercase tracking-wide text-slate-500 bg-slate-50">
+                                        <div class="p-3 border-r border-slate-200">First-order</div>
+                                        <div class="p-3 border-r border-slate-200">Second-order</div>
+                                        <div class="p-3 border-r border-slate-200">Zeroth-order</div>
+                                        <div class="p-3">Scenario</div>
+                                    </div>
+                                    <div class="grid grid-cols-4 min-h-24">
+                                        <div class="p-4 border-r border-slate-200 flex items-center justify-center text-blue-700 font-semibold">Gradient-driven</div>
+                                        <div class="p-4 border-r border-slate-200 flex items-center justify-center text-purple-700 font-semibold">Curvature-aware</div>
+                                        <div class="p-4 border-r border-slate-200 flex items-center justify-center text-rose-700 font-semibold">Perturbation-based</div>
+                                        <div class="p-4 flex items-center justify-center text-blue-700 font-semibold">Systems-aware</div>
+                                    </div>
+                                </div>
+                                <div class="relative flex flex-wrap gap-2">
+                                    <span class="px-3 py-1 rounded-full bg-white/90 text-slate-700 text-xs font-semibold">Convergence</span>
+                                    <span class="px-3 py-1 rounded-full bg-white/90 text-slate-700 text-xs font-semibold">Generalization</span>
+                                    <span class="px-3 py-1 rounded-full bg-white/90 text-slate-700 text-xs font-semibold">Efficiency</span>
+                                    <span class="px-3 py-1 rounded-full bg-white/90 text-slate-700 text-xs font-semibold">Memory</span>
+                                    <span class="px-3 py-1 rounded-full bg-white/90 text-slate-700 text-xs font-semibold">Robustness</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Academic Resource Highlight -->
             <section class="py-16 bg-gradient-to-r from-blue-900 to-indigo-900 relative overflow-hidden">
                 <div class="absolute inset-0 bg-grid-pattern opacity-10"></div>

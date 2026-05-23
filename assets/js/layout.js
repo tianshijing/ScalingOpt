@@ -15,7 +15,7 @@ function injectLayout() {
     // Navbar HTML
     const navbarHTML = `
     <nav class="bg-white/95 backdrop-blur-md border-b border-blue-100 sticky top-0 z-50 shadow-sm transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-screen-2xl mx-auto px-3 sm:px-4 lg:px-6">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
                     <a href="${rootPath}index.html" class="flex items-center group transition-transform duration-300 hover:scale-105">
@@ -89,6 +89,21 @@ function injectLayout() {
                         <i data-lucide="file-text" class="w-4 h-4"></i>
                         <span>Blogs</span>
                     </a>
+                    <div class="relative group">
+                        <button class="flex items-center space-x-1 px-3 py-2 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 font-medium nav-link-group focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" aria-expanded="false" aria-haspopup="true" aria-label="Links menu">
+                            <i data-lucide="link" class="w-4 h-4"></i>
+                            <span>Links</span>
+                            <i data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-200 group-hover:rotate-180"></i>
+                        </button>
+                        <div class="absolute left-0 mt-2 w-48 bg-white rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border border-gray-100 overflow-hidden" role="menu" aria-label="Links submenu">
+                            <div class="py-2">
+                                <a href="https://openenvision.github.io/BlogXiv/" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-all duration-200 rounded-lg mx-1">
+                                    <img src="https://openenvision.github.io/BlogXiv/site/assets/img/brand/icon.svg" alt="" class="w-5 h-5 object-contain">
+                                    <span class="text-base font-semibold">BlogXiv</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                     <a href="${rootPath}pages/community.html" class="flex items-center space-x-1 px-3 py-2 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 font-medium nav-link" data-page="community.html">
                         <i data-lucide="users" class="w-4 h-4"></i>
                         <span>Community</span>
@@ -175,6 +190,21 @@ function injectLayout() {
                     <i data-lucide="file-text" class="w-4 h-4"></i>
                     <span>Blogs</span>
                 </a>
+                <div class="space-y-1">
+                    <button id="mobile-links-btn" class="w-full flex items-center justify-between px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200" aria-expanded="false" aria-controls="mobile-links-menu">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="link" class="w-4 h-4"></i>
+                            <span>Links</span>
+                        </div>
+                        <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                    </button>
+                    <div id="mobile-links-menu" class="hidden pl-4">
+                        <a href="https://openenvision.github.io/BlogXiv/" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
+                            <img src="https://openenvision.github.io/BlogXiv/site/assets/img/brand/icon.svg" alt="" class="w-5 h-5 object-contain">
+                            <span class="text-base font-semibold">BlogXiv</span>
+                        </a>
+                    </div>
+                </div>
                 <a href="${rootPath}pages/community.html" class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200">
                     <i data-lucide="users" class="w-4 h-4"></i>
                     <span>Community</span>
@@ -196,7 +226,7 @@ function injectLayout() {
                 <!-- Brand -->
                 <div class="col-span-1 md:col-span-2">
                     <div class="flex items-center mb-4">
-                        <span class="text-xl font-bold text-blue-900">ScalingOpt</span>
+                        <span class="text-2xl font-bold text-blue-900">ScalingOpt</span>
                     </div>
                     <p class="text-gray-600 mb-4 max-w-md">
                         A comprehensive platform for scaling optimization algorithms. 
@@ -347,6 +377,15 @@ function initMobileMenu() {
     if (collectionBtn && collectionMenu) {
         collectionBtn.addEventListener('click', () => {
             collectionMenu.classList.toggle('hidden');
+        });
+    }
+
+    const linksBtn = document.getElementById('mobile-links-btn');
+    const linksMenu = document.getElementById('mobile-links-menu');
+    if (linksBtn && linksMenu) {
+        linksBtn.addEventListener('click', () => {
+            const isHidden = linksMenu.classList.toggle('hidden');
+            linksBtn.setAttribute('aria-expanded', (!isHidden).toString());
         });
     }
 }

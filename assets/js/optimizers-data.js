@@ -4622,6 +4622,130 @@ const optimizers = [
     ],
     "githubUrl": "",
     "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} X, \\{(a_t, b_t, c_t)\\}_{t=1}^T, \\epsilon \\\\\n        &\\quad X \\leftarrow X / (\\|X\\|_F + \\epsilon) \\\\\n        &\\quad R_0 \\leftarrow XX^{\\top},\\; Q_0 \\leftarrow I \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad Z_t \\leftarrow b_t R_{t-1} + c_t R_{t-1}^2 \\\\\n        &\\quad Q_t \\leftarrow a_t Q_{t-1} + Z_t Q_{t-1} \\\\\n        &\\quad R_t \\leftarrow a_t R_{t-1} + Z_t R_{t-1} Z_t \\\\\n        &\\quad \\text{if } t = t_{\\mathrm{restart}} \\text{ then reconstruct Gram state} \\\\\n        &\\textbf{end for} \\\\\n        &\\quad \\operatorname{GramNS}(X) \\leftarrow Q_T X\n    \\end{aligned}"
+  },
+  {
+    "id": "stosignsgd",
+    "name": "StoSignSGD",
+    "fullName": "Stochastic SignSGD with Unbiased Structural Stochasticity",
+    "description": "Sign-based optimizer that injects unbiased structural stochasticity into the sign operator for stable LLM training",
+    "year": 2026,
+    "month": "April",
+    "category": "First-order",
+    "paper": {
+      "title": "StoSignSGD: Unbiased Structural Stochasticity Fixes SignSGD for Training Large Language Models",
+      "url": "https://arxiv.org/abs/2604.15416",
+      "authors": [
+        "Dingzhi Yu",
+        "Rui Pan",
+        "Yuxing Liu",
+        "Tong Zhang"
+      ]
+    },
+    "advantages": [
+      "Fixes SignSGD non-convergence issues on non-smooth objectives through unbiased structural stochasticity",
+      "Matches sharp lower-bound convergence rates in online convex optimization",
+      "Improves non-convex non-smooth complexity bounds by dimensional factors",
+      "Stable in low-precision FP8 LLM pretraining where AdamW can fail",
+      "Improves fine-tuning performance on 7B mathematical reasoning tasks"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.001,
+        "range": "1e-5 to 1e-1",
+        "description": "Learning rate"
+      },
+      "stochasticity": {
+        "default": "structural",
+        "range": "structural / converted sign",
+        "description": "Unbiased stochastic sign conversion strategy"
+      },
+      "eps": {
+        "default": 1e-8,
+        "range": "1e-10 to 1e-6",
+        "description": "Numerical stabilizer for sign conversion"
+      }
+    },
+    "implementation": {
+      "pytorch": false,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 86,
+    "tags": [
+      "Sign-based",
+      "Structural Stochasticity",
+      "Unbiased Updates",
+      "LLM Training",
+      "FP8",
+      "First-order"
+    ],
+    "githubUrl": "",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\epsilon, \\mathcal{S}_{\\mathrm{sto}} \\text{ (unbiased stochastic sign map)} \\\\\n        &\\textbf{Initialize:} \\theta_0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad g_t \\leftarrow \\nabla_{\\theta} f_t(\\theta_{t-1}) \\\\\n        &\\quad u_t \\leftarrow \\mathcal{S}_{\\mathrm{sto}}(g_t; \\epsilon) \\quad\\text{with } \\mathbb{E}[u_t\\mid g_t] = g_t \\\\\n        &\\quad \\theta_t \\leftarrow \\theta_{t-1} - \\eta\\, u_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+  },
+  {
+    "id": "nora",
+    "name": "Nora",
+    "fullName": "Normalized Orthogonal Row Alignment",
+    "description": "A scalable matrix optimizer that stabilizes weight norms and angular velocities with row-wise orthogonal momentum projection",
+    "year": 2026,
+    "month": "May",
+    "category": "Second-order",
+    "paper": {
+      "title": "Nora: Normalized Orthogonal Row Alignment for Scalable Matrix Optimizer",
+      "url": "https://arxiv.org/abs/2605.03769",
+      "authors": [
+        "Jinghui Yuan",
+        "Jiaxuan Zou",
+        "Shuo Wang",
+        "Yong Liu",
+        "Feiping Nie"
+      ]
+    },
+    "advantages": [
+      "Unifies Muon-like preconditioning, scale-invariant stability, and low computational overhead",
+      "Projects row-wise momentum onto the orthogonal complement of the weights",
+      "Maintains optimal O(mn) matrix-update complexity",
+      "Leverages Transformer Hessian block-diagonal dominance for structured preconditioning",
+      "Provides scaling theorems for large-scale training"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.02,
+        "range": "1e-4 to 1e-1",
+        "description": "Learning rate for matrix blocks"
+      },
+      "momentum": {
+        "default": 0.95,
+        "range": "0.9 to 0.99",
+        "description": "Momentum coefficient"
+      },
+      "eps": {
+        "default": 1e-8,
+        "range": "1e-10 to 1e-6",
+        "description": "Numerical stabilizer for row norms"
+      },
+      "weight_decay": {
+        "default": 0.01,
+        "range": "0.0 to 0.1",
+        "description": "Weight decay coefficient"
+      }
+    },
+    "implementation": {
+      "pytorch": false,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 87,
+    "tags": [
+      "Matrix Optimizer",
+      "Row Alignment",
+      "Scale-invariant",
+      "LLM Training",
+      "Scalable",
+      "Second-order"
+    ],
+    "githubUrl": "",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\mu, \\epsilon \\\\\n        &\\textbf{Initialize:} W_0,\\; M_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad G_t \\leftarrow \\nabla_W f_t(W_{t-1}) \\\\\n        &\\quad M_t \\leftarrow \\mu M_{t-1} + (1-\\mu)G_t \\\\\n        &\\quad C_t \\leftarrow \\frac{\\langle M_t, W_{t-1}\\rangle_{\\mathrm{row}}}{\\|W_{t-1}\\|_{\\mathrm{row}}^2 + \\epsilon} \\\\\n        &\\quad P_t \\leftarrow M_t - C_t \\odot W_{t-1} \\quad\\text{(row-wise orthogonal projection)} \\\\\n        &\\quad U_t \\leftarrow \\operatorname{RowNormalize}(P_t;\\epsilon) \\\\\n        &\\quad W_t \\leftarrow W_{t-1} - \\eta\\, U_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   }
 ];
 
