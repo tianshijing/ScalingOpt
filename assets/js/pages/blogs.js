@@ -1,6 +1,34 @@
 // Blog Posts Data
 const blogPosts = [
     {
+        id: 'pion-muon-beyond-pretraining-2026',
+        title: 'Rethinking Muon Beyond Pretraining: Spectral Failures and High-Pass Remedies for VLA and RLVR',
+        excerpt: 'Pion replaces Muon uniform spectral whitening with a Promotion plus Suppression high-pass Newton-Schulz iteration, preserving dominant singular modes while damping noisy tail directions in VLA training and RLVR post-training.',
+        content: 'Full blog content would go here...',
+        author: 'Chongyu Fan, Gaowen Liu, Mingyi Hong, Ramana Rao Kompella, Sijia Liu',
+        publishDate: '2026-05-15',
+        readTime: '18 min read',
+        category: 'Research',
+        tags: ['Pion', 'Muon', 'Newton-Schulz', 'VLA', 'RLVR', 'Optimization'],
+        featured: true,
+        image: 'curated/pion-muon-beyond-pretraining-2026.png',
+        externalUrl: 'https://chongyu-fan.netlify.app/posts/pion/'
+    },
+    {
+        id: 'aurora-leverage-aware-optimizer-2026',
+        title: 'Aurora: A Leverage-Aware Optimizer for Rectangular Matrices',
+        excerpt: 'Aurora studies row-leverage imbalance in tall matrices, explains how Muon can under-update MLP neurons, and proposes a leverage-aware update that balances row energy while preserving semi-orthogonal structure.',
+        content: 'Full blog content would go here...',
+        author: 'Alec Dewulf, Dhruv Pai, Li Yang, Ashley Zhang, Ben Keigwin',
+        publishDate: '2026-05-05',
+        readTime: '24 min read',
+        category: 'Research',
+        tags: ['Aurora', 'Muon', 'Leverage Scores', 'Riemannian Optimization', 'Neuron Death'],
+        featured: true,
+        image: 'curated/aurora-leverage-aware-optimizer-2026.png',
+        externalUrl: 'https://blog.tilderesearch.com/blog/aurora#d-solving-for-the-riemannian-gradient'
+    },
+    {
         id: 'scalingopt-bocb',
         title: 'Backbone-Optimizer Coupling Bias: The Hidden Co-Design Principle',
         excerpt: 'A formal investigation into the intrinsic interdependence between neural network architectures and optimizers, introducing the Backbone-Optimizer Coupling Bias (BOCB) and principles for systematic co-design.',
@@ -52,6 +80,7 @@ const blogPosts = [
         category: 'Tutorial',
         tags: ['Muon', 'Optimization', 'Neural Networks', 'Theory', 'Derivation'],
         featured: true,
+        image: 'curated/deriving-muon-2025.png',
         externalUrl: 'https://jeremybernste.in/writing/deriving-muon'
     },
     {
@@ -92,7 +121,78 @@ const blogPosts = [
         category: 'Research',
         tags: ['Optimizer', 'Muon', 'Norm Balancing', 'BAM', 'SinkNorm', 'Preconditioning'],
         featured: true,
+        image: 'curated/bam-norm-balancing-2026.png',
         externalUrl: 'https://www.sarthakmangla.com/blog/bam'
+    },
+    {
+        id: 'ruder-gradient-descent-overview',
+        title: 'An Overview of Gradient Descent Optimization Algorithms',
+        excerpt: 'A classic, still-useful guide to SGD, momentum, Nesterov acceleration, Adagrad, Adadelta, RMSprop, Adam, AdaMax, Nadam, AMSGrad, and practical optimizer selection.',
+        content: 'Full blog content would go here...',
+        author: 'Sebastian Ruder',
+        publishDate: '2016-01-19',
+        readTime: '28 min read',
+        category: 'Tutorial',
+        tags: ['SGD', 'Momentum', 'Adam', 'RMSprop', 'AdaGrad', 'Optimizer Survey'],
+        featured: true,
+        image: 'curated/ruder-gradient-descent.png',
+        externalUrl: 'https://www.ruder.io/optimizing-gradient-descent/'
+    },
+    {
+        id: 'distill-why-momentum-works',
+        title: 'Why Momentum Really Works',
+        excerpt: 'A visual Distill article explaining how momentum changes the geometry of optimization, why initialization matters, and how accelerated methods behave in deep learning.',
+        content: 'Full blog content would go here...',
+        author: 'Gabriel Goh',
+        publishDate: '2017-04-04',
+        readTime: '20 min read',
+        category: 'Tutorial',
+        tags: ['Momentum', 'Visualization', 'Initialization', 'Dynamics', 'Distill'],
+        featured: true,
+        image: 'curated/distill-momentum.png',
+        externalUrl: 'https://distill.pub/2017/momentum/'
+    },
+    {
+        id: 'lilian-weng-optimization-deep-learning',
+        title: 'Optimization for Deep Learning Highlights in 2017',
+        excerpt: 'A carefully organized survey of optimization research threads in deep learning, including adaptive gradients, generalization, sharp minima, large-batch training, and training dynamics.',
+        content: 'Full blog content would go here...',
+        author: 'Lilian Weng',
+        publishDate: '2018-11-30',
+        readTime: '35 min read',
+        category: 'Research',
+        tags: ['Deep Learning', 'Generalization', 'Large Batch', 'Adaptive Methods', 'Survey'],
+        featured: true,
+        image: 'curated/lilian-optimization.png',
+        externalUrl: 'https://lilianweng.github.io/posts/2018-11-30-optimization/'
+    },
+    {
+        id: 'fastai-adamw-superconvergence',
+        title: 'AdamW and Super-convergence Is Now the Fastest Way to Train Neural Nets',
+        excerpt: 'A practical fast.ai deep dive into AdamW, decoupled weight decay, one-cycle training, AMSGrad, and why optimizer hyperparameters must be tuned with regularization.',
+        content: 'Full blog content would go here...',
+        author: 'Sylvain Gugger and Jeremy Howard',
+        publishDate: '2018-07-02',
+        readTime: '24 min read',
+        category: 'Research',
+        tags: ['AdamW', 'Weight Decay', 'Super-convergence', 'One-cycle', 'fast.ai'],
+        featured: true,
+        image: 'curated/fastai-adamw-superconvergence.png',
+        externalUrl: 'https://www.fast.ai/posts/2018-07-02-adam-weight-decay.html'
+    },
+    {
+        id: 'google-tuning-playbook-optimizers',
+        title: 'Deep Learning Tuning Playbook: Choosing and Tuning Optimizers',
+        excerpt: 'Google Research guidance on optimizer choice, Adam hyperparameter search, learning rate schedules, batch size, and systematic tuning practice for deep learning projects.',
+        content: 'Full blog content would go here...',
+        author: 'Google Research / Brain Team',
+        publishDate: '2023-01-19',
+        readTime: '45 min read',
+        category: 'Tutorial',
+        tags: ['Tuning', 'Adam', 'Learning Rate', 'Batch Size', 'Google Research'],
+        featured: true,
+        image: 'curated/google-tuning-playbook.png',
+        externalUrl: 'https://github.com/google-research/tuning_playbook'
     },
     // Jianlin Su's Posts
     {
@@ -512,6 +612,7 @@ function getCategoryColor(category) {
     const colors = {
         'Research': 'bg-blue-100 text-blue-800 border-blue-200',
         'Tutorial': 'bg-green-100 text-green-800 border-green-200',
+        'Analysis': 'bg-cyan-100 text-cyan-800 border-cyan-200',
         'News': 'bg-purple-100 text-purple-800 border-purple-200',
         'Opinion': 'bg-orange-100 text-orange-800 border-orange-200'
     };
@@ -521,54 +622,77 @@ function getCategoryColor(category) {
 function renderAllPosts(postsToRender) {
     const container = document.getElementById('all-posts');
     const filteredCount = document.getElementById('filtered-count');
+    const totalCount = document.getElementById('total-count');
 
     if (filteredCount) {
         filteredCount.textContent = postsToRender.length;
     }
 
-    container.innerHTML = postsToRender.map(post => `
-        <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 p-6 group">
-            <div class="flex flex-col md:flex-row md:items-start md:space-x-6">
-                <div class="flex-shrink-0 mb-4 md:mb-0">
-                    <div class="w-24 h-24 rounded-lg overflow-hidden relative bg-gray-100">
-                        ${post.image ? `
-                            <img 
-                                src="../assets/img/blogs/${post.image}" 
-                                alt="${post.title}" 
-                                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center\\'><i data-lucide=\\'file-text\\' class=\\'w-8 h-8 text-white\\'></i></div>'; lucide.createIcons();"
-                            />
-                        ` : `
-                            <div class="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                                <i data-lucide="file-text" class="w-8 h-8 text-white"></i>
-                            </div>
-                        `}
-                    </div>
-                </div>
+    if (totalCount) {
+        totalCount.textContent = blogPosts.length;
+    }
+
+    container.innerHTML = postsToRender.map(post => {
+        const imageSrc = post.image
+            ? (post.image.startsWith('http') || post.image.startsWith('../') ? post.image : `../assets/img/blogs/${post.image}`)
+            : '';
+
+        return `
+        <article class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 overflow-hidden group">
+            <div class="flex flex-col md:flex-row">
+                <a
+                    href="${post.externalUrl}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="block h-56 md:h-auto md:w-72 lg:w-80 flex-shrink-0 overflow-hidden bg-slate-100 relative"
+                    aria-label="Open ${post.title}"
+                >
+                    ${imageSrc ? `
+                        <img
+                            src="${imageSrc}"
+                            alt="${post.title}"
+                            class="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                            loading="lazy"
+                            onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'w-full h-full bg-gradient-to-br from-blue-500 to-indigo-700 flex items-center justify-center\\'><i data-lucide=\\'file-text\\' class=\\'w-12 h-12 text-white\\'></i></div>'; lucide.createIcons();"
+                        />
+                    ` : `
+                        <div class="w-full h-full bg-gradient-to-br from-blue-500 to-indigo-700 flex items-center justify-center">
+                            <i data-lucide="file-text" class="w-12 h-12 text-white"></i>
+                        </div>
+                    `}
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </a>
                 
-                <div class="flex-1">
-                    <div class="flex items-center justify-between mb-2">
+                <div class="flex-1 p-6 md:p-7">
+                    <div class="flex flex-wrap items-center gap-2 mb-3">
                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${getCategoryColor(post.category)}">
                             ${post.category}
                         </span>
+                        ${post.featured ? `
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200">
+                                Editor's pick
+                            </span>
+                        ` : ''}
                     </div>
                     
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">
+                    <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-3 leading-tight group-hover:text-blue-700 transition-colors">
                         ${post.title}
                     </h3>
                     
-                    <p class="text-gray-600 mb-4">
+                    <p class="text-gray-600 mb-5 leading-relaxed">
                         ${post.excerpt}
                     </p>
                     
-                    <div class="flex items-center justify-between text-sm text-gray-500 mb-3">
+                    <div class="flex items-center text-sm text-gray-500 mb-4">
                         <span>By ${post.author}</span>
+                        <span class="mx-2 text-gray-300">•</span>
+                        <span>${post.readTime}</span>
                     </div>
                     
-                    <div class="flex items-center justify-between">
-                        <div class="flex flex-wrap gap-1">
+                    <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                        <div class="flex flex-wrap gap-1.5">
                             ${post.tags.map(tag => `
-                                <span class="inline-flex items-center px-2 py-1 rounded text-xs bg-gray-100 text-gray-600">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600">
                                     ${tag}
                                 </span>
                             `).join('')}
@@ -586,8 +710,9 @@ function renderAllPosts(postsToRender) {
                     </div>
                 </div>
             </div>
-        </div>
-    `).join('');
+        </article>
+        `;
+    }).join('');
 
     // Re-initialize icons for the new content
     lucide.createIcons();

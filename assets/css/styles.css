@@ -178,6 +178,36 @@
   transform: translateY(-1px);
 }
 
+/* Live traffic widget */
+.visitor-map-widget {
+  width: 100%;
+  max-width: 280px;
+  min-height: 138px;
+  overflow: hidden;
+  border-radius: 0.75rem;
+}
+
+.visitor-map-widget #mapmyvisitors-widget {
+  width: 100% !important;
+  max-width: 280px !important;
+  min-height: 136px !important;
+  border-radius: 0.75rem !important;
+  overflow: hidden !important;
+}
+
+.visitor-map-widget #mapmyvisitors-widget > .mapmyvisitors-map-container {
+  border-radius: 0.75rem !important;
+  overflow: hidden !important;
+}
+
+.visitor-map-widget .mapmyvisitors-bottom-text {
+  display: none !important;
+}
+
+.visitor-map-widget .mapmyvisitors-loading {
+  border-radius: 0.75rem !important;
+}
+
 /* Responsive adjustments - Enhanced */
 @media (max-width: 768px) {
   .text-5xl {

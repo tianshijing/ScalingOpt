@@ -1,6 +1,73 @@
 document.addEventListener('DOMContentLoaded', function() {
     injectLayout();
+    initTotalPageviews();
 });
+
+function initTotalPageviews() {
+    const display = document.getElementById('total-pageviews');
+    const status = document.getElementById('total-pageviews-status');
+    if (!display) return;
+
+    function setStatus(text, className) {
+        if (!status) return;
+        status.textContent = text;
+        status.className = className;
+    }
+
+    function renderCount(value, animate = false) {
+        if (!display) return;
+        const count = Number(value);
+        if (!Number.isFinite(count)) {
+            display.textContent = String(value);
+            return;
+        }
+        if (animate && typeof animateCountUp === 'function') {
+            animateCountUp('total-pageviews', count);
+        } else {
+            display.textContent = count.toLocaleString();
+        }
+    }
+
+    function syncFromMapWidget() {
+        const source = document.querySelector('.mapmyvisitors-visitors');
+        const rawText = source ? source.textContent.trim() : '';
+        const match = rawText.match(/[\d,]+/);
+        if (match) {
+            const value = Number(match[0].replace(/,/g, ''));
+            renderCount(value);
+            setStatus('Live total', 'mt-2 text-xs font-semibold text-emerald-600');
+            return true;
+        }
+        return false;
+    }
+
+    if (syncFromMapWidget()) return;
+
+    setStatus('Awaiting map', 'mt-2 text-xs font-semibold text-blue-600');
+
+    let attempts = 0;
+    const poller = window.setInterval(() => {
+        attempts += 1;
+        if (syncFromMapWidget() || attempts >= 30) {
+            window.clearInterval(poller);
+            if (attempts >= 30 && display.textContent === '...') {
+                display.textContent = 'Loading';
+                setStatus('Map syncing', 'mt-2 text-xs font-semibold text-blue-600');
+            }
+        }
+    }, 500);
+
+    const observer = new MutationObserver(() => {
+        if (syncFromMapWidget()) {
+            observer.disconnect();
+        }
+    });
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        characterData: true
+    });
+}
 
 function injectLayout() {
     // Determine root path based on current location

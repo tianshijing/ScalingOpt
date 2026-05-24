@@ -4746,6 +4746,146 @@ const optimizers = [
     ],
     "githubUrl": "",
     "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\mu, \\epsilon \\\\\n        &\\textbf{Initialize:} W_0,\\; M_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad G_t \\leftarrow \\nabla_W f_t(W_{t-1}) \\\\\n        &\\quad M_t \\leftarrow \\mu M_{t-1} + (1-\\mu)G_t \\\\\n        &\\quad C_t \\leftarrow \\frac{\\langle M_t, W_{t-1}\\rangle_{\\mathrm{row}}}{\\|W_{t-1}\\|_{\\mathrm{row}}^2 + \\epsilon} \\\\\n        &\\quad P_t \\leftarrow M_t - C_t \\odot W_{t-1} \\quad\\text{(row-wise orthogonal projection)} \\\\\n        &\\quad U_t \\leftarrow \\operatorname{RowNormalize}(P_t;\\epsilon) \\\\\n        &\\quad W_t \\leftarrow W_{t-1} - \\eta\\, U_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+  },
+  {
+    "id": "pion",
+    "name": "Pion",
+    "fullName": "sPectral hIgh-pass Optimization on momeNtum",
+    "description": "A Muon drop-in replacement that swaps uniform spectral whitening for high-pass Newton-Schulz filtering to keep dominant directions while suppressing noisy tail singular modes",
+    "year": 2026,
+    "month": "May",
+    "category": "Second-order",
+    "paper": {
+      "title": "Rethinking Muon Beyond Pretraining: Spectral Failures and High-Pass Remedies for VLA and RLVR",
+      "url": "https://chongyu-fan.netlify.app/posts/pion/",
+      "authors": [
+        "Chongyu Fan",
+        "Gaowen Liu",
+        "Mingyi Hong",
+        "Ramana Rao Kompella",
+        "Sijia Liu"
+      ]
+    },
+    "advantages": [
+      "Drop-in replacement for Muon-style Newton-Schulz orthogonalization",
+      "Uses Promotion plus Suppression steps to create a spectral high-pass filter",
+      "Anchors dominant singular values near one while suppressing noisy tail components",
+      "Supports per-head filtering to preserve attention-head heterogeneity during post-training",
+      "Improves VLA training and stabilizes RLVR post-training where Muon can collapse"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.02,
+        "range": "1e-4 to 1e-1",
+        "description": "Learning rate for matrix-aware updates"
+      },
+      "momentum": {
+        "default": 0.95,
+        "range": "0.9 to 0.99",
+        "description": "Momentum coefficient for the update matrix"
+      },
+      "promotion_steps": {
+        "default": 1,
+        "range": "1 to 3",
+        "description": "Number of high-singular-value promotion iterations"
+      },
+      "suppression_steps": {
+        "default": 4,
+        "range": "3 to 6",
+        "description": "Number of low-singular-value suppression iterations"
+      },
+      "per_head": {
+        "default": "False",
+        "range": "True/False",
+        "description": "Apply Pion independently to reshaped attention-head blocks"
+      }
+    },
+    "implementation": {
+      "pytorch": false,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 90,
+    "tags": [
+      "Muon Variant",
+      "High-pass Filtering",
+      "Newton-Schulz",
+      "VLA Training",
+      "RLVR",
+      "Second-order"
+    ],
+    "githubUrl": "",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\mu, k_p, k_s, \\text{per-head flag} \\\\\n        &\\textbf{Initialize:} W_0,\\; M_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad G_t \\leftarrow \\nabla_W f_t(W_{t-1}) \\\\\n        &\\quad M_t \\leftarrow \\mu M_{t-1} + (1-\\mu)G_t \\\\\n        &\\quad X_t \\leftarrow M_t /(\\|M_t\\|_F + \\epsilon) \\\\\n        &\\quad \\text{if per-head then reshape } X_t \\text{ into head blocks} \\\\\n        &\\quad Y_t \\leftarrow \\operatorname{Promote}_{k_p}(X_t) \\quad\\text{(lift dominant singular modes)} \\\\\n        &\\quad U_t \\leftarrow \\operatorname{Suppress}_{k_s}(Y_t) \\quad\\text{(damp noisy tail modes)} \\\\\n        &\\quad \\text{restore original shape if needed} \\\\\n        &\\quad W_t \\leftarrow W_{t-1} - \\eta\\, U_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+  },
+  {
+    "id": "aurora",
+    "name": "Aurora",
+    "fullName": "Aurora: A Leverage-Aware Optimizer for Rectangular Matrices",
+    "description": "A Muon-family optimizer for rectangular matrices that corrects row-leverage imbalance while preserving semi-orthogonal update structure to mitigate MLP neuron death",
+    "year": 2026,
+    "month": "May",
+    "category": "Second-order",
+    "paper": {
+      "title": "Aurora: A Leverage-Aware Optimizer for Rectangular Matrices",
+      "url": "https://blog.tilderesearch.com/blog/aurora#d-solving-for-the-riemannian-gradient",
+      "authors": [
+        "Alec Dewulf",
+        "Dhruv Pai",
+        "Li Yang",
+        "Ashley Zhang",
+        "Ben Keigwin"
+      ]
+    },
+    "advantages": [
+      "Targets row-leverage anisotropy in tall MLP matrices where Muon can leave neurons under-updated",
+      "Jointly encourages semi-orthogonality and uniform row update energy",
+      "Keeps the polar-update precision that naive row normalization can degrade",
+      "Improves reported 1.1B-scale training and modded-nanoGPT optimization results",
+      "Open-source release includes practical Aurora and a Riemannian reference solver"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.02,
+        "range": "1e-4 to 1e-1",
+        "description": "Learning rate for matrix blocks"
+      },
+      "momentum": {
+        "default": 0.95,
+        "range": "0.9 to 0.99",
+        "description": "Momentum coefficient for the gradient matrix"
+      },
+      "mode": {
+        "default": "damped",
+        "range": "damped / Riemannian",
+        "description": "Practical damped iteration or reference Riemannian solver"
+      },
+      "row_energy_target": {
+        "default": "n/m",
+        "range": "n/m for tall m x n matrices",
+        "description": "Target squared row norm for equal-row-energy updates"
+      },
+      "projection_steps": {
+        "default": 2,
+        "range": "1 to 4",
+        "description": "Alternating or damped projection steps used to balance row energy"
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 92,
+    "tags": [
+      "Muon Variant",
+      "Leverage Scores",
+      "Rectangular Matrices",
+      "Riemannian Optimization",
+      "Neuron Death",
+      "Second-order"
+    ],
+    "githubUrl": "https://github.com/tilde-research/aurora-release",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\mu, r=n/m, K \\\\\n        &\\textbf{Initialize:} W_0,\\; M_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad G_t \\leftarrow \\nabla_W f_t(W_{t-1}) \\\\\n        &\\quad M_t \\leftarrow \\mu M_{t-1} + (1-\\mu)G_t \\\\\n        &\\quad O_t \\leftarrow \\operatorname{polar}(M_t) \\quad\\text{(semi-orthogonal Muon direction)} \\\\\n        &\\quad U_t \\leftarrow \\operatorname{AuroraBalance}_K(O_t, r) \\\\\n        &\\quad \\text{s.t. } U_t^{\\top}U_t \\approx I,\\; \\|U_{t,i:}\\|_2^2 \\approx r \\\\\n        &\\quad W_t \\leftarrow W_{t-1} - \\eta\\, U_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   }
 ];
 

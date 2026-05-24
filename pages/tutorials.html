@@ -120,6 +120,9 @@
                                         class="w-full px-4 py-3 pr-10 text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white transition-all duration-200 shadow-sm appearance-none cursor-pointer"
                                     >
                                         <option value="All">All Series</option>
+                                        <option value="Optimizer Tutorials">Curated Optimizer Tutorials</option>
+                                        <option value="Framework Optimizer Guides">Framework Optimizer Guides</option>
+                                        <option value="Training Practice">Training Practice</option>
                                         <option value="Optimization for Machine Learning">Optimization for Machine Learning</option>
                                         <option value="Convex Optimization">Convex Optimization</option>
                                     </select>
@@ -269,6 +272,95 @@
     <script src="../assets/js/layout.js"></script>
     <script>
         const tutorials = [
+            {
+                id: 'd2l-optimization-algorithms',
+                title: 'Dive into Deep Learning: Optimization Algorithms',
+                description: 'Interactive textbook chapter covering gradient descent, stochastic gradient descent, minibatches, momentum, AdaGrad, RMSProp, Adam, and implementation tradeoffs.',
+                level: 'Intermediate',
+                duration: 'Chapter',
+                type: 'Interactive',
+                topics: ['SGD', 'Momentum', 'AdaGrad', 'RMSProp', 'Adam', 'D2L'],
+                author: 'Aston Zhang, Zachary C. Lipton, Mu Li, Alex J. Smola',
+                series: 'Optimizer Tutorials',
+                coverImage: 'curated/d2l-optimization-algorithms.png',
+                coverFit: 'contain'
+            },
+            {
+                id: 'pytorch-optimizing-model-parameters',
+                title: 'PyTorch: Optimizing Model Parameters',
+                description: 'A concise hands-on tutorial for the training loop, loss backpropagation, torch.optim usage, parameter updates, and the practical optimizer workflow in PyTorch.',
+                level: 'Beginner',
+                duration: '30 min',
+                type: 'Notebook',
+                topics: ['PyTorch', 'torch.optim', 'Training Loop', 'SGD', 'Backpropagation'],
+                author: 'PyTorch Tutorials',
+                series: 'Framework Optimizer Guides',
+                coverImage: 'curated/pytorch-optimizing-model-parameters.png',
+                coverFit: 'contain'
+            },
+            {
+                id: 'optax-getting-started',
+                title: 'Optax: Getting Started with Gradient Transformations',
+                description: 'Official Optax guide to composing optimizers and gradient transformations in JAX, including Adam, schedules, clipping, masking, and update application.',
+                level: 'Intermediate',
+                duration: '45 min',
+                type: 'Notebook',
+                topics: ['Optax', 'JAX', 'Adam', 'Gradient Transformations', 'Schedules'],
+                author: 'Google DeepMind Optax Team',
+                series: 'Framework Optimizer Guides',
+                coverImage: 'curated/optax-getting-started.png'
+            },
+            {
+                id: 'tensorflow-core-optimizers',
+                title: 'TensorFlow Core: Optimizers',
+                description: 'TensorFlow guide that builds optimizers from first principles, walking through gradients, learning rates, Adam-style updates, and visual behavior on toy objectives.',
+                level: 'Intermediate',
+                duration: '45 min',
+                type: 'Notebook',
+                topics: ['TensorFlow', 'Gradient Descent', 'Adam', 'Custom Training', 'Visualization'],
+                author: 'TensorFlow',
+                series: 'Framework Optimizer Guides',
+                coverImage: 'curated/tensorflow-core-optimizers.png',
+                coverFit: 'contain'
+            },
+            {
+                id: 'google-tuning-playbook',
+                title: 'Deep Learning Tuning Playbook',
+                description: 'Google Research playbook for systematic optimizer and learning-rate tuning, covering Adam, batch size, schedules, search spaces, and experiment hygiene.',
+                level: 'Advanced',
+                duration: 'Guide',
+                type: 'Article',
+                topics: ['Tuning', 'Adam', 'Learning Rate', 'Batch Size', 'Training Practice'],
+                author: 'Google Research / Brain Team',
+                series: 'Training Practice',
+                coverImage: 'curated/google-tuning-playbook.png'
+            },
+            {
+                id: 'cs231n-optimization-1',
+                title: 'CS231n: Optimization - Stochastic Gradient Descent',
+                description: 'Stanford CS231n notes introducing optimization as local iterative improvement, gradient descent, stochastic mini-batch training, and step-size behavior.',
+                level: 'Beginner',
+                duration: '30 min',
+                type: 'Article',
+                topics: ['SGD', 'Step Size', 'Gradient Descent', 'CS231n', 'Neural Networks'],
+                author: 'Stanford CS231n',
+                series: 'Optimizer Tutorials',
+                coverImage: 'curated/cs231n-optimization-1.png',
+                coverFit: 'contain'
+            },
+            {
+                id: 'cs231n-neural-networks-3',
+                title: 'CS231n: Update Rules, Learning Rates, and Annealing',
+                description: 'Practical CS231n guide to SGD, momentum, Nesterov momentum, adaptive methods, learning-rate schedules, regularization, and hyperparameter search.',
+                level: 'Intermediate',
+                duration: '45 min',
+                type: 'Article',
+                topics: ['Momentum', 'Nesterov', 'Learning Rate', 'Adam', 'Hyperparameters'],
+                author: 'Stanford CS231n',
+                series: 'Optimizer Tutorials',
+                coverImage: 'curated/cs231n-neural-networks-3.png',
+                coverFit: 'contain'
+            },
             {
                 id: 'data-centric-methods',
                 title: 'Data-centric Methods',
@@ -462,7 +554,7 @@
                 topics: ['Convex Optimization', 'Stanford', 'Stephen Boyd'],
                 author: 'Stephen Boyd, Stanford',
                 series: 'Convex Optimization',
-                useTextCover: true
+                coverImage: 'stanford-ee364a.jpg'
             },
             {
                 id: 'stanford-ee364b',
@@ -474,7 +566,7 @@
                 topics: ['Convex Optimization', 'Stanford', 'Stephen Boyd'],
                 author: 'Stephen Boyd, Stanford',
                 series: 'Convex Optimization',
-                useTextCover: true
+                coverImage: 'stanford-ee364b.jpg'
             },
             {
                 id: 'cmu-convex-opt-2018',
@@ -486,7 +578,7 @@
                 topics: ['Convex Optimization', 'CMU', 'Ryan Tibshirani'],
                 author: 'Ryan Tibshirani, CMU',
                 series: 'Convex Optimization',
-                useTextCover: true
+                coverImage: 'cmu-convex-opt-2018.png'
             },
             {
                 id: 'convex-optimization-ahmad-bazzi',
@@ -498,7 +590,7 @@
                 topics: ['Convex Optimization', 'Ahmad Bazzi'],
                 author: 'Ahmad Bazzi',
                 series: 'Convex Optimization',
-                useTextCover: true
+                coverImage: 'convex-optimization-ahmad-bazzi.png'
             },
             {
                 id: 'optimization-algorithms-ut-austin',
@@ -509,7 +601,7 @@
                 type: 'Video',
                 topics: ['Optimization Algorithms', 'UT Austin', 'Constantine Caramanis'],
                 author: 'Constantine Caramanis, UT Austin',
-                useTextCover: true
+                coverImage: 'optimization-algorithms-ut-austin.png'
             },
             {
                 id: 'optimization-methods-kit',
@@ -520,12 +612,19 @@
                 type: 'Video',
                 topics: ['Optimization Methods', 'Machine Learning', 'KIT', 'Julius Pfrommer'],
                 author: 'Julius Pfrommer, KIT',
-                useTextCover: true
+                coverImage: 'optimization-methods-kit.png'
             }
         ];
 
         function getPdfUrl(tutorialId) {
             const pdfMap = {
+                'd2l-optimization-algorithms': 'https://d2l.ai/chapter_optimization/index.html',
+                'pytorch-optimizing-model-parameters': 'https://docs.pytorch.org/tutorials/beginner/basics/optimization_tutorial.html',
+                'optax-getting-started': 'https://optax.readthedocs.io/en/latest/getting_started.html',
+                'tensorflow-core-optimizers': 'https://www.tensorflow.org/guide/core/optimizers_core',
+                'google-tuning-playbook': 'https://github.com/google-research/tuning_playbook',
+                'cs231n-optimization-1': 'https://cs231n.github.io/optimization-1/',
+                'cs231n-neural-networks-3': 'https://cs231n.github.io/neural-networks-3/',
                 'data-centric-methods': '../Tutorial/Presentation___Data-centric_Methods__mobile.pdf',
                 'optimizer-preconditioners-main': '../Tutorial/Presentation___Optimizer_Preconditioners__main.pdf',
                 'optimizer-preconditioners-mobile': '../Tutorial/Presentation___Optimizer_Preconditioners__mobile.pdf',
@@ -568,26 +667,32 @@
         lucide.createIcons();
 
         // Mobile menu toggle
-        document.getElementById('mobile-menu-button').addEventListener('click', function() {
-            const mobileMenu = document.getElementById('mobile-menu');
-            const icon = this.querySelector('i');
-            
-            if (mobileMenu.classList.contains('hidden')) {
-                mobileMenu.classList.remove('hidden');
-                icon.setAttribute('data-lucide', 'x');
-            } else {
-                mobileMenu.classList.add('hidden');
-                icon.setAttribute('data-lucide', 'menu');
-            }
-            
-            lucide.createIcons();
-        });
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        if (mobileMenuButton) {
+            mobileMenuButton.addEventListener('click', function() {
+                const mobileMenu = document.getElementById('mobile-menu');
+                const icon = this.querySelector('i');
+                if (!mobileMenu || !icon) return;
+                
+                if (mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.remove('hidden');
+                    icon.setAttribute('data-lucide', 'x');
+                } else {
+                    mobileMenu.classList.add('hidden');
+                    icon.setAttribute('data-lucide', 'menu');
+                }
+                
+                lucide.createIcons();
+            });
+        }
 
         // Close mobile menu when clicking on links
         document.querySelectorAll('#mobile-menu a').forEach(link => {
             link.addEventListener('click', function() {
-                document.getElementById('mobile-menu').classList.add('hidden');
-                document.querySelector('#mobile-menu-button i').setAttribute('data-lucide', 'menu');
+                const mobileMenu = document.getElementById('mobile-menu');
+                const mobileIcon = document.querySelector('#mobile-menu-button i');
+                if (mobileMenu) mobileMenu.classList.add('hidden');
+                if (mobileIcon) mobileIcon.setAttribute('data-lucide', 'menu');
                 lucide.createIcons();
             });
         });
@@ -595,20 +700,22 @@
         // Back to Top Button Logic
         const backToTopButton = document.getElementById('back-to-top');
         
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 300) {
-                backToTopButton.classList.remove('opacity-0', 'invisible');
-            } else {
-                backToTopButton.classList.add('opacity-0', 'invisible');
-            }
-        });
-
-        backToTopButton.addEventListener('click', () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
+        if (backToTopButton) {
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    backToTopButton.classList.remove('opacity-0', 'invisible');
+                } else {
+                    backToTopButton.classList.add('opacity-0', 'invisible');
+                }
             });
-        });
+
+            backToTopButton.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        }
 
         // Filter functionality
         let filteredTutorials = [...tutorials];
@@ -632,6 +739,15 @@
             return icons[type] || 'book-open';
         }
 
+        function getTutorialCover(tutorial) {
+            if (tutorial.coverImage) {
+                return tutorial.coverImage.startsWith('http') || tutorial.coverImage.startsWith('../')
+                    ? tutorial.coverImage
+                    : `../assets/img/tutorials/${tutorial.coverImage}`;
+            }
+            return `../assets/img/tutorials/${tutorial.id}.png`;
+        }
+
         function renderTutorials(tutorialsToRender) {
             const grid = document.getElementById('tutorials-grid');
 
@@ -645,9 +761,9 @@
                             </div>
                         ` : `
                             <img 
-                                src="../assets/img/tutorials/${tutorial.id}.png" 
+                                src="${getTutorialCover(tutorial)}" 
                                 alt="${tutorial.title}" 
-                                class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                                class="w-full h-full ${tutorial.coverFit === 'contain' ? 'object-contain bg-white p-6' : 'object-cover object-top'} transition-transform duration-500 group-hover:scale-105"
                                 onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center\'><i data-lucide=\'${getTypeIcon(tutorial.type)}\' class=\'w-16 h-16 text-white\'></i></div>'; lucide.createIcons();"
                             />
                         `}

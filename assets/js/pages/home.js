@@ -34,42 +34,9 @@ function updateStatistics() {
     }
 }
 
-// Visitor counter functionality
-function updateVisitorCount() {
-    // Check if this is a new visitor
-    const visitorKey = 'scalingopt_visitor';
-    const visitCountKey = 'scalingopt_visit_count';
-    const lastVisitKey = 'scalingopt_last_visit';
-    
-    const today = new Date().toDateString();
-    const lastVisit = localStorage.getItem(lastVisitKey);
-    const isNewVisitor = !localStorage.getItem(visitorKey);
-    const isNewDay = lastVisit !== today;
-    
-    // If this is a new visitor or a new day, increment the count
-    if (isNewVisitor || isNewDay) {
-        let currentCount = parseInt(localStorage.getItem(visitCountKey)) || 100;
-        currentCount++;
-        localStorage.setItem(visitCountKey, currentCount.toString());
-        localStorage.setItem(visitorKey, 'true');
-        localStorage.setItem(lastVisitKey, today);
-        
-        // Update the display with animation
-        animateCountUp('visitor-count', currentCount);
-    } else {
-        // Just display the current count
-        const currentCount = parseInt(localStorage.getItem(visitCountKey)) || 100;
-        const visitorElement = document.getElementById('visitor-count');
-        if (visitorElement) {
-            visitorElement.textContent = currentCount;
-        }
-    }
-}
-
 // Initialize all statistics when page loads
 window.addEventListener('DOMContentLoaded', function() {
     setTimeout(function() {
         updateStatistics();
-        updateVisitorCount();
     }, 100); // Small delay to ensure data files are loaded
 });
