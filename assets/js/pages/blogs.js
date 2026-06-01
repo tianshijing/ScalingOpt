@@ -1,6 +1,86 @@
 // Blog Posts Data
 const blogPosts = [
     {
+        id: 'nvidia-emerging-optimizers-megatron-2026',
+        title: 'Advancing Emerging Optimizers for Accelerated LLM Training with NVIDIA Megatron',
+        excerpt: 'A production-focused technical deep dive into scaling Muon and other higher-order optimizers with Megatron Core, including layer-wise distributed optimization, tensor-parallel Newton-Schulz modes, and GB300 throughput measurements.',
+        content: 'Full blog content would go here...',
+        author: 'Hao Wu, Dheevatsa Mudigere, Mikail Khona, Sangkug Lym, Dingqing Yang, NVIDIA Team',
+        publishDate: '2026-04-22',
+        readTime: '18 min read',
+        category: 'Research',
+        tags: ['Muon', 'Megatron', 'Distributed Training', 'Newton-Schulz', 'LLM Systems'],
+        featured: true,
+        communityPick: true,
+        sourceLabel: 'NVIDIA Technical Blog',
+        image: 'curated/nvidia-emerging-optimizers-2026.svg',
+        externalUrl: 'https://developer.nvidia.com/blog/advancing-emerging-optimizers-for-accelerated-llm-training-with-nvidia-megatron/'
+    },
+    {
+        id: 'gram-newton-schulz-2026',
+        title: 'Gram Newton-Schulz: A Fast, Hardware-Aware Newton-Schulz Algorithm for Muon',
+        excerpt: 'Dao AI Lab rewrites Muon orthogonalization around the Gram matrix, adds a stability restart analysis, and reports 40-50% lower orthogonalization runtime while preserving language-model training quality.',
+        content: 'Full blog content would go here...',
+        author: 'Jack Zhang, Noah Amsel, Berlin Chen, Tri Dao',
+        publishDate: '2026-03-31',
+        readTime: '30 min read',
+        category: 'Research',
+        tags: ['Muon', 'Gram Newton-Schulz', 'Hardware-aware', 'CuTeDSL', 'Orthogonalization'],
+        featured: true,
+        communityPick: true,
+        sourceLabel: 'Dao AI Lab',
+        image: 'curated/gram-newton-schulz-2026.svg',
+        externalUrl: 'https://dao-lab.ai/blog/2026/gram-newton-schulz/'
+    },
+    {
+        id: 'adam-to-muon-2026',
+        title: 'Optimizers: From Adam to Muon',
+        excerpt: 'A clear community explainer that walks from vector-based Adam-style adaptation to matrix-aware Muon updates, emphasizing why orthogonalized momentum matters for modern language-model training.',
+        content: 'Full blog content would go here...',
+        author: 'Masoud Rezvani',
+        publishDate: '2026-03-30',
+        readTime: '12 min read',
+        category: 'Tutorial',
+        tags: ['AdamW', 'Muon', 'Matrix Optimization', 'LLM Training', 'Explainer'],
+        featured: true,
+        communityPick: true,
+        sourceLabel: 'Community Blog',
+        image: 'curated/adam-to-muon-2026.svg',
+        externalUrl: 'https://smasoudrezvani.github.io/blog/2026/muon-optimizer/'
+    },
+    {
+        id: 'hf-muon-collective-momentum-2025',
+        title: 'Muon Optimizer: The Power of Collective Momentum',
+        excerpt: 'A Hugging Face community article that motivates Muon through model scaling, saddle-point behavior, memory tradeoffs, and the shift from per-parameter accounting to matrix-level geometric updates.',
+        content: 'Full blog content would go here...',
+        author: 'Yi Cui',
+        publishDate: '2025-11-14',
+        readTime: '16 min read',
+        category: 'Tutorial',
+        tags: ['Muon', 'Hugging Face', 'Orthogonalization', 'Memory', 'Community'],
+        featured: true,
+        communityPick: true,
+        sourceLabel: 'Hugging Face Community',
+        image: 'curated/hf-muon-collective-momentum-2025.svg',
+        externalUrl: 'https://huggingface.co/blog/onekq/muon-optimizer'
+    },
+    {
+        id: 'muon-optimizer-explained-nanochat-2025',
+        title: 'The Muon Optimizer Explained: Why Orthogonal Gradients Work',
+        excerpt: 'A hands-on nanochat-oriented tutorial with Newton-Schulz intuition, code snippets, visual comparisons, hyperparameter guidance, and practical advice for splitting Muon and AdamW parameter groups.',
+        content: 'Full blog content would go here...',
+        author: 'José David Baena',
+        publishDate: '2025-10-15',
+        readTime: '21 min read',
+        category: 'Tutorial',
+        tags: ['Muon', 'nanochat', 'PyTorch', 'Newton-Schulz', 'Hands-on'],
+        featured: true,
+        communityPick: true,
+        sourceLabel: 'Community Tutorial',
+        image: 'curated/muon-optimizer-explained-2025.svg',
+        externalUrl: 'https://josedavidbaena.com/blog/nanochat/muon-optimizer-explained'
+    },
+    {
         id: 'pion-muon-beyond-pretraining-2026',
         title: 'Rethinking Muon Beyond Pretraining: Spectral Failures and High-Pass Remedies for VLA and RLVR',
         excerpt: 'Pion replaces Muon uniform spectral whitening with a Promotion plus Suppression high-pass Newton-Schulz iteration, preserving dominant singular modes while damping noisy tail directions in VLA training and RLVR post-training.',
@@ -11,6 +91,7 @@ const blogPosts = [
         category: 'Research',
         tags: ['Pion', 'Muon', 'Newton-Schulz', 'VLA', 'RLVR', 'Optimization'],
         featured: true,
+        communityPick: true,
         image: 'curated/pion-muon-beyond-pretraining-2026.png',
         externalUrl: 'https://chongyu-fan.netlify.app/posts/pion/'
     },
@@ -25,6 +106,7 @@ const blogPosts = [
         category: 'Research',
         tags: ['Aurora', 'Muon', 'Leverage Scores', 'Riemannian Optimization', 'Neuron Death'],
         featured: true,
+        communityPick: true,
         image: 'curated/aurora-leverage-aware-optimizer-2026.png',
         externalUrl: 'https://blog.tilderesearch.com/blog/aurora#d-solving-for-the-riemannian-gradient'
     },
@@ -121,6 +203,7 @@ const blogPosts = [
         category: 'Research',
         tags: ['Optimizer', 'Muon', 'Norm Balancing', 'BAM', 'SinkNorm', 'Preconditioning'],
         featured: true,
+        communityPick: true,
         image: 'curated/bam-norm-balancing-2026.png',
         externalUrl: 'https://www.sarthakmangla.com/blog/bam'
     },
@@ -619,6 +702,87 @@ function getCategoryColor(category) {
     return colors[category] || 'bg-gray-100 text-gray-800 border-gray-200';
 }
 
+function getPostImageSrc(post) {
+    if (!post.image) return '';
+    return post.image.startsWith('http') || post.image.startsWith('../')
+        ? post.image
+        : `../assets/img/blogs/${post.image}`;
+}
+
+function formatPostDate(dateString) {
+    if (!dateString) return '';
+    const date = new Date(`${dateString}T00:00:00`);
+    if (Number.isNaN(date.getTime())) return dateString;
+    return date.toLocaleDateString('en', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function renderCommunityPicks() {
+    const container = document.getElementById('community-picks');
+    if (!container) return;
+
+    const picks = blogPosts
+        .filter(post => post.communityPick)
+        .sort((a, b) => new Date(b.publishDate) - new Date(a.publishDate))
+        .slice(0, 6);
+
+    container.innerHTML = picks.map((post, index) => {
+        const imageSrc = getPostImageSrc(post);
+        const accent = index % 3 === 0
+            ? 'from-teal-500 to-cyan-700'
+            : index % 3 === 1
+                ? 'from-amber-500 to-rose-600'
+                : 'from-indigo-500 to-slate-800';
+
+        return `
+            <a
+                href="${post.externalUrl}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="group block bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+            >
+                <div class="h-40 bg-slate-100 overflow-hidden relative">
+                    ${imageSrc ? `
+                        <img
+                            src="${imageSrc}"
+                            alt="${post.title}"
+                            class="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                            loading="lazy"
+                            onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'w-full h-full bg-gradient-to-br ${accent} flex items-center justify-center\\'><i data-lucide=\\'rss\\' class=\\'w-10 h-10 text-white\\'></i></div>'; lucide.createIcons();"
+                        />
+                    ` : `
+                        <div class="w-full h-full bg-gradient-to-br ${accent} flex items-center justify-center">
+                            <i data-lucide="rss" class="w-10 h-10 text-white"></i>
+                        </div>
+                    `}
+                    <div class="absolute right-4 top-4 inline-flex items-center gap-1 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                        Recent
+                    </div>
+                </div>
+                <div class="p-5">
+                    <div class="flex flex-wrap items-center gap-2 mb-3 text-xs">
+                        <span class="font-semibold text-blue-700">${post.sourceLabel || post.category}</span>
+                        <span class="text-slate-300">•</span>
+                        <span class="text-slate-500">${formatPostDate(post.publishDate)}</span>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-950 leading-snug line-clamp-2 group-hover:text-blue-700 transition-colors">
+                        ${post.title}
+                    </h3>
+                    <p class="mt-3 text-sm leading-relaxed text-slate-600 line-clamp-3">
+                        ${post.excerpt}
+                    </p>
+                    <div class="mt-4 flex items-center justify-between gap-3 border-t border-slate-100 pt-4">
+                        <span class="text-xs text-slate-500 line-clamp-1">${post.author}</span>
+                        <i data-lucide="arrow-up-right" class="w-4 h-4 shrink-0 text-blue-600 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"></i>
+                    </div>
+                </div>
+            </a>
+        `;
+    }).join('');
+
+    lucide.createIcons();
+}
+
 function renderAllPosts(postsToRender) {
     const container = document.getElementById('all-posts');
     const filteredCount = document.getElementById('filtered-count');
@@ -633,9 +797,7 @@ function renderAllPosts(postsToRender) {
     }
 
     container.innerHTML = postsToRender.map(post => {
-        const imageSrc = post.image
-            ? (post.image.startsWith('http') || post.image.startsWith('../') ? post.image : `../assets/img/blogs/${post.image}`)
-            : '';
+        const imageSrc = getPostImageSrc(post);
 
         return `
         <article class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 overflow-hidden group">
@@ -668,6 +830,11 @@ function renderAllPosts(postsToRender) {
                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${getCategoryColor(post.category)}">
                             ${post.category}
                         </span>
+                        ${post.sourceLabel ? `
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white text-slate-600 border border-slate-200">
+                                ${post.sourceLabel}
+                            </span>
+                        ` : ''}
                         ${post.featured ? `
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200">
                                 Editor's pick
@@ -684,6 +851,8 @@ function renderAllPosts(postsToRender) {
                     </p>
                     
                     <div class="flex items-center text-sm text-gray-500 mb-4">
+                        <span>${formatPostDate(post.publishDate)}</span>
+                        <span class="mx-2 text-gray-300">•</span>
                         <span>By ${post.author}</span>
                         <span class="mx-2 text-gray-300">•</span>
                         <span>${post.readTime}</span>
@@ -726,6 +895,8 @@ function filterPosts() {
         const matchesCategory = selectedCategory === 'All' || post.category === selectedCategory;
         const matchesSearch = post.title.toLowerCase().includes(searchTerm) ||
                              post.excerpt.toLowerCase().includes(searchTerm) ||
+                             post.author.toLowerCase().includes(searchTerm) ||
+                             (post.sourceLabel || '').toLowerCase().includes(searchTerm) ||
                              post.tags.some(tag => tag.toLowerCase().includes(searchTerm));
         return matchesCategory && matchesSearch;
     });
@@ -739,6 +910,7 @@ document.getElementById('category-filter').addEventListener('change', filterPost
 
 // Initial render
 updateStats();
+renderCommunityPicks();
 renderAllPosts(filteredPosts);
 
 function toggleSection(id) {

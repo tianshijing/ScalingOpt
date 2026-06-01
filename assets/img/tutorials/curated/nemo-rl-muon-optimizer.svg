@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">NeMo-RL Muon Guide</title>
+  <desc id="desc">A tutorial cover for configuring Muon in NeMo-RL.</desc>
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#065f46"/><stop offset=".55" stop-color="#0891b2"/><stop offset="1" stop-color="#111827"/></linearGradient></defs>
+  <rect width="1200" height="680" fill="url(#bg)"/>
+  <rect x="110" y="165" width="440" height="330" rx="24" fill="#ecfeff"/>
+  <path d="M170 245h290M170 310h220M170 375h270M170 440h175" stroke="#0f766e" stroke-width="18" stroke-linecap="round"/>
+  <rect x="660" y="155" width="355" height="355" rx="30" fill="#0f172a" stroke="#99f6e4" stroke-width="3"/>
+  <path d="M735 295h205M735 360h205M735 425h205M800 230v250M875 230v250" stroke="#22d3ee" stroke-width="12" stroke-linecap="round"/>
+  <text x="92" y="86" fill="#f0fdfa" font-family="Inter, Arial, sans-serif" font-size="40" font-weight="800">NeMo-RL Muon</text>
+  <text x="92" y="132" fill="#a7f3d0" font-family="Inter, Arial, sans-serif" font-size="23" font-weight="600">Configuration guide for LLM training</text>
+  <text x="92" y="620" fill="#ccfbf1" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="600">Megatron backend • SFT • RL recipes</text>
+</svg>

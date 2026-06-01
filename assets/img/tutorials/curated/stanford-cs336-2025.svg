@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">Stanford CS336</title>
+  <desc id="desc">A course cover for language modeling from scratch.</desc>
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7f1d1d"/><stop offset=".5" stop-color="#475569"/><stop offset="1" stop-color="#0f172a"/></linearGradient></defs>
+  <rect width="1200" height="680" fill="url(#bg)"/>
+  <g transform="translate(145 170)">
+    <rect width="910" height="330" rx="28" fill="#fff7ed" opacity=".97"/>
+    <path d="M85 105h220M85 165h330M85 225h270" stroke="#b91c1c" stroke-width="18" stroke-linecap="round"/>
+    <g transform="translate(560 60)" fill="none" stroke="#334155" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="0" y="0" width="210" height="210" rx="22"/>
+      <path d="M55 70h100M55 110h100M55 150h100M105 35v145"/>
+    </g>
+  </g>
+  <text x="92" y="86" fill="#fff7ed" font-family="Inter, Arial, sans-serif" font-size="42" font-weight="800">CS336</text>
+  <text x="92" y="132" fill="#fed7aa" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="600">Language Modeling from Scratch</text>
+  <text x="92" y="620" fill="#fee2e2" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="600">Tokenizer • Transformer • optimizer • scaling</text>
+</svg>

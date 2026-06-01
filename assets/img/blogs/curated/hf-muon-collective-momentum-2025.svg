@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">Collective Momentum</title>
+  <desc id="desc">A cover showing coordinated update directions for Muon.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#164e63"/>
+      <stop offset=".55" stop-color="#365314"/>
+      <stop offset="1" stop-color="#292524"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="680" fill="url(#bg)"/>
+  <g transform="translate(165 180)" fill="none" stroke="#ecfccb" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M0 250C140 100 230 360 370 195S610 75 765 250"/>
+    <path d="M110 215l70-70 70 70M390 185l70-70 70 70M670 235l70-70 70 70" opacity=".75"/>
+  </g>
+  <g fill="#fef3c7">
+    <rect x="190" y="430" width="95" height="95" rx="16" opacity=".95"/>
+    <rect x="365" y="360" width="95" height="95" rx="16" opacity=".85"/>
+    <rect x="540" y="310" width="95" height="95" rx="16" opacity=".95"/>
+    <rect x="715" y="365" width="95" height="95" rx="16" opacity=".85"/>
+    <rect x="890" y="430" width="95" height="95" rx="16" opacity=".95"/>
+  </g>
+  <text x="92" y="86" fill="#fefce8" font-family="Inter, Arial, sans-serif" font-size="40" font-weight="800">Collective Momentum</text>
+  <text x="92" y="132" fill="#bef264" font-family="Inter, Arial, sans-serif" font-size="23" font-weight="600">A community guide to Muon intuition</text>
+  <text x="92" y="620" fill="#ecfccb" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="600">Group dynamics • saddle points • memory tradeoffs</text>
+</svg>

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">From Adam to Muon</title>
+  <desc id="desc">A cover contrasting vector-based and matrix-based optimization.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7c2d12"/>
+      <stop offset=".5" stop-color="#9f1239"/>
+      <stop offset="1" stop-color="#1f2937"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="680" fill="url(#bg)"/>
+  <g transform="translate(110 190)" fill="none" stroke-linecap="round">
+    <path d="M20 250C110 90 220 310 330 150S520 115 610 210 820 330 995 115" stroke="#fed7aa" stroke-width="12"/>
+    <path d="M20 315H1030" stroke="#f8fafc" stroke-width="3" opacity=".35"/>
+  </g>
+  <g transform="translate(160 215)">
+    <rect x="0" y="0" width="275" height="220" rx="24" fill="#fff7ed"/>
+    <text x="42" y="68" fill="#9a3412" font-family="Inter, Arial, sans-serif" font-size="36" font-weight="900">Adam</text>
+    <path d="M52 112h168M52 150h120M52 188h190" stroke="#fb923c" stroke-width="12" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(760 215)">
+    <rect x="0" y="0" width="275" height="220" rx="24" fill="#fdf2f8"/>
+    <text x="42" y="68" fill="#9f1239" font-family="Inter, Arial, sans-serif" font-size="36" font-weight="900">Muon</text>
+    <path d="M68 116l56-44 56 44-56 44zM150 156l50-38 50 38-50 38z" fill="none" stroke="#e11d48" stroke-width="10" stroke-linejoin="round"/>
+  </g>
+  <text x="92" y="86" fill="#fff7ed" font-family="Inter, Arial, sans-serif" font-size="40" font-weight="800">From Adam to Muon</text>
+  <text x="92" y="132" fill="#fed7aa" font-family="Inter, Arial, sans-serif" font-size="23" font-weight="600">Vector adaptation meets matrix geometry</text>
+  <text x="92" y="620" fill="#fee2e2" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="600">Momentum • orthogonalization • language-model training</text>
+</svg>

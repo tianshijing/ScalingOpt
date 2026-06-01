@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">CS231n Optimization 2026</title>
+  <desc id="desc">A course cover for regularization and optimization.</desc>
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#92400e"/><stop offset=".55" stop-color="#be123c"/><stop offset="1" stop-color="#1e293b"/></linearGradient></defs>
+  <rect width="1200" height="680" fill="url(#bg)"/>
+  <path d="M130 520C230 300 360 560 480 350S720 140 1000 260" fill="none" stroke="#ffedd5" stroke-width="14" stroke-linecap="round"/>
+  <path d="M130 520C260 445 365 445 490 408S765 318 1000 260" fill="none" stroke="#fecdd3" stroke-width="8" stroke-linecap="round" opacity=".55"/>
+  <g fill="#fff7ed">
+    <rect x="150" y="165" width="165" height="115" rx="20"/>
+    <rect x="388" y="155" width="165" height="115" rx="20" opacity=".88"/>
+    <rect x="626" y="165" width="165" height="115" rx="20"/>
+    <rect x="864" y="155" width="165" height="115" rx="20" opacity=".88"/>
+  </g>
+  <text x="92" y="86" fill="#fff7ed" font-family="Inter, Arial, sans-serif" font-size="40" font-weight="800">CS231n 2026</text>
+  <text x="92" y="132" fill="#fed7aa" font-family="Inter, Arial, sans-serif" font-size="23" font-weight="600">Regularization and Optimization</text>
+  <text x="92" y="620" fill="#ffe4e6" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="600">SGD • Momentum • AdamW • learning-rate schedules</text>
+</svg>

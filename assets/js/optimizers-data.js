@@ -4748,6 +4748,154 @@ const optimizers = [
     "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\mu, \\epsilon \\\\\n        &\\textbf{Initialize:} W_0,\\; M_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad G_t \\leftarrow \\nabla_W f_t(W_{t-1}) \\\\\n        &\\quad M_t \\leftarrow \\mu M_{t-1} + (1-\\mu)G_t \\\\\n        &\\quad C_t \\leftarrow \\frac{\\langle M_t, W_{t-1}\\rangle_{\\mathrm{row}}}{\\|W_{t-1}\\|_{\\mathrm{row}}^2 + \\epsilon} \\\\\n        &\\quad P_t \\leftarrow M_t - C_t \\odot W_{t-1} \\quad\\text{(row-wise orthogonal projection)} \\\\\n        &\\quad U_t \\leftarrow \\operatorname{RowNormalize}(P_t;\\epsilon) \\\\\n        &\\quad W_t \\leftarrow W_{t-1} - \\eta\\, U_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
   },
   {
+    "id": "muown",
+    "name": "Muown",
+    "fullName": "Muown: Row-Norm Control for Muon Optimization",
+    "description": "A drop-in Muon replacement that separates row magnitudes from matrix directions, updating row norms with Adam under ell-infinity geometry while applying Muon to normalized directions",
+    "year": 2026,
+    "month": "May",
+    "category": "Second-order",
+    "paper": {
+      "title": "Muown: Row-Norm Control for Muon Optimization",
+      "url": "https://arxiv.org/abs/2605.10797",
+      "authors": [
+        "Kai Lion",
+        "Florian Hübler",
+        "Bingcong Li",
+        "Antonio Orvieto",
+        "Niao He"
+      ]
+    },
+    "advantages": [
+      "Identifies row-magnitude growth as an empirical driver of Muon spectral-norm drift",
+      "Promotes the row-magnitude vector to an explicit optimizer variable",
+      "Applies Muon-style spectral updates to the direction component while Adam updates row magnitudes",
+      "Improves reported GPT-style pretraining perplexity over Muon, SOAP, AdamW, and Lion from 124M to 2.7B parameters",
+      "Widens the near-optimal learning-rate plateau and reduces sensitivity to weight decay"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.002,
+        "range": "2.5e-4 to 8e-3",
+        "description": "Learning rate shared by direction and row-magnitude updates"
+      },
+      "beta1": {
+        "default": 0.95,
+        "range": "0.9 to 0.99",
+        "description": "Momentum coefficient for the Muon direction update"
+      },
+      "magnitude_betas": {
+        "default": "(0.9, 0.99)",
+        "range": "(0.8, 0.999)",
+        "description": "Adam coefficients for the row-magnitude optimizer"
+      },
+      "weight_decay": {
+        "default": 0.0,
+        "range": "0.0 to 0.3",
+        "description": "Optional decoupled weight decay on the effective weight"
+      },
+      "row_norm_eps": {
+        "default": 1e-8,
+        "range": "1e-10 to 1e-6",
+        "description": "Numerical stabilizer for row-norm normalization"
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 93,
+    "tags": [
+      "Muon Variant",
+      "Row-Norm Control",
+      "Weight Normalization",
+      "Spectral Norm",
+      "LLM Training",
+      "Second-order"
+    ],
+    "githubUrl": "https://github.com/kcc-lion/muown",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta_t, \\beta_1, \\lambda, \\epsilon \\\\\n        &\\textbf{State:} g, r, m_g, v_g, M \\quad\\text{with } r=\\|R\\|_{\\mathrm{row}} \\\\\n        &\\textbf{for each matrix } W \\in \\mathbb{R}^{m\\times n} \\textbf{ do} \\\\\n        &\\quad R \\leftarrow \\operatorname{Diag}(r \\oslash g) W \\\\\n        &\\quad D \\leftarrow \\operatorname{Diag}(1 \\oslash (r+\\epsilon)) R \\\\\n        &\\quad G_g \\leftarrow (\\nabla_W L(W) \\odot D)\\mathbf{1}_n \\\\\n        &\\quad G_R \\leftarrow \\operatorname{Diag}(g \\oslash (r+\\epsilon))\\operatorname{Proj}_{D}(\\nabla_W L(W)) \\\\\n        &\\quad M \\leftarrow \\beta_1 M + G_R \\\\\n        &\\quad O \\leftarrow \\arg\\min_{\\|O\\|_{S_\\infty}\\le 1}\\langle \\beta_1M + G_R, O\\rangle \\\\\n        &\\quad R \\leftarrow R + 0.2\\sqrt{\\max(m,n)}\\,\\eta_t O \\\\\n        &\\quad g \\leftarrow \\operatorname{Adam}(g, G_g, m_g, v_g, \\eta_t) \\\\\n        &\\quad r \\leftarrow \\|R\\|_{\\mathrm{row}} \\\\\n        &\\quad W \\leftarrow \\operatorname{Diag}(g \\oslash (r+\\epsilon)) R - \\eta_t\\lambda W \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+  },
+  {
+    "id": "mona",
+    "name": "MONA",
+    "fullName": "Muon Optimizer with Nesterov Acceleration",
+    "description": "A Muon variant that injects a curvature-aware acceleration term from an exponential moving average of gradient differences before Newton-Schulz orthogonalization",
+    "year": 2026,
+    "month": "May",
+    "category": "Second-order",
+    "paper": {
+      "title": "MONA: Muon Optimizer with Nesterov Acceleration for Scalable Language Model Training",
+      "url": "https://arxiv.org/abs/2605.26842",
+      "authors": [
+        "Jiacheng Li",
+        "Jianchao Tan",
+        "Hongtao Xu",
+        "Jiaqi Zhang",
+        "Yifan Lu",
+        "Yerui Sun",
+        "Yuchen Xie",
+        "Xunliang Cai"
+      ]
+    },
+    "advantages": [
+      "Adds curvature-aware acceleration directly before Muon's orthogonalization step",
+      "Uses an EMA of gradient differences to help escape sharp minima while preserving spectral-norm regularization",
+      "Reports stronger convergence than Muon and AdamW across 1B, 6B, and 68B MoE pretraining",
+      "Improves downstream general capability, math reasoning, and code benchmarks after large-scale pretraining",
+      "Includes MONA-Lite strategies that reduce auxiliary acceleration-state memory by about 75%"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 0.02,
+        "range": "1e-4 to 1e-1",
+        "description": "Learning rate for matrix blocks"
+      },
+      "momentum": {
+        "default": 0.95,
+        "range": "0.9 to 0.99",
+        "description": "Momentum coefficient for the Muon buffer"
+      },
+      "beta_a": {
+        "default": 0.98,
+        "range": "0.975 to 0.99",
+        "description": "Acceleration EMA coefficient for gradient differences"
+      },
+      "alpha": {
+        "default": "-1/(2(1-beta_a))",
+        "range": "Negative acceleration coefficient",
+        "description": "Scale applied to the acceleration buffer before orthogonalization"
+      },
+      "ns_steps": {
+        "default": 5,
+        "range": "3 to 7",
+        "description": "Number of Newton-Schulz orthogonalization iterations"
+      },
+      "weight_decay": {
+        "default": 0.1,
+        "range": "0.0 to 0.3",
+        "description": "Weight decay coefficient"
+      }
+    },
+    "implementation": {
+      "pytorch": false,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 94,
+    "tags": [
+      "Muon Variant",
+      "Nesterov Acceleration",
+      "Gradient Differences",
+      "MoE Training",
+      "LLM Training",
+      "Second-order"
+    ],
+    "githubUrl": "",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\mu, \\beta_a, \\alpha, \\lambda, \\gamma, T \\\\\n        &\\textbf{Initialize:} W_0,\\; M_0 \\leftarrow 0,\\; A_0 \\leftarrow 0,\\; G_0 \\leftarrow 0 \\\\\n        &\\textbf{for } k=1 \\text{ to } K \\text{ do} \\\\\n        &\\quad G_k \\leftarrow \\nabla_W \\ell(W_k, \\zeta_k) \\\\\n        &\\quad D_k \\leftarrow G_k - G_{k-1} \\\\\n        &\\quad A_k \\leftarrow \\beta_a A_{k-1} + (1-\\beta_a)D_k \\\\\n        &\\quad \\widetilde{G}_k \\leftarrow G_k + \\alpha A_k \\\\\n        &\\quad M_k \\leftarrow \\mu M_{k-1} + \\widetilde{G}_k \\\\\n        &\\quad O_k \\leftarrow \\operatorname{NewtonSchulz}(M_k, T) \\\\\n        &\\quad W_{k+1} \\leftarrow W_k - \\eta(\\gamma O_k + \\lambda W_k) \\\\\n        &\\quad G_{k-1} \\leftarrow G_k \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+  },
+  {
     "id": "pion",
     "name": "Pion",
     "fullName": "sPectral hIgh-pass Optimization on momeNtum",

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">Emerging Optimizers with Megatron</title>
+  <desc id="desc">A geometric cover showing distributed optimizer layers and accelerator lanes.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f766e"/>
+      <stop offset="0.52" stop-color="#155e75"/>
+      <stop offset="1" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="lane" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a7f3d0"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="680" fill="url(#bg)"/>
+  <path d="M90 515H1080M90 430H1080M90 345H1080" stroke="#94a3b8" stroke-width="2" opacity=".28"/>
+  <g opacity=".95">
+    <rect x="130" y="150" width="175" height="300" rx="18" fill="#ecfeff" opacity=".95"/>
+    <rect x="370" y="105" width="175" height="390" rx="18" fill="#ccfbf1" opacity=".95"/>
+    <rect x="610" y="165" width="175" height="270" rx="18" fill="#a7f3d0" opacity=".95"/>
+    <rect x="850" y="120" width="175" height="360" rx="18" fill="#cffafe" opacity=".95"/>
+  </g>
+  <g fill="none" stroke="url(#lane)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M220 515C330 455 330 365 455 342S650 365 700 292 815 205 950 230"/>
+    <path d="M220 575C390 515 495 535 630 480S800 398 970 430" opacity=".55"/>
+  </g>
+  <g fill="#0f172a" opacity=".75">
+    <circle cx="220" cy="515" r="12"/>
+    <circle cx="455" cy="342" r="12"/>
+    <circle cx="700" cy="292" r="12"/>
+    <circle cx="950" cy="230" r="12"/>
+  </g>
+  <text x="92" y="86" fill="#ecfeff" font-family="Inter, Arial, sans-serif" font-size="36" font-weight="800">Emerging Optimizers</text>
+  <text x="92" y="132" fill="#a7f3d0" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="600">Megatron scale-up notes</text>
+  <text x="92" y="620" fill="#e0f2fe" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="600">Layer-wise distribution • Newton-Schulz • Muon systems</text>
+</svg>
