@@ -1,73 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     injectLayout();
-    initTotalPageviews();
 });
-
-function initTotalPageviews() {
-    const display = document.getElementById('total-pageviews');
-    const status = document.getElementById('total-pageviews-status');
-    if (!display) return;
-
-    function setStatus(text, className) {
-        if (!status) return;
-        status.textContent = text;
-        status.className = className;
-    }
-
-    function renderCount(value, animate = false) {
-        if (!display) return;
-        const count = Number(value);
-        if (!Number.isFinite(count)) {
-            display.textContent = String(value);
-            return;
-        }
-        if (animate && typeof animateCountUp === 'function') {
-            animateCountUp('total-pageviews', count);
-        } else {
-            display.textContent = count.toLocaleString();
-        }
-    }
-
-    function syncFromMapWidget() {
-        const source = document.querySelector('.mapmyvisitors-visitors');
-        const rawText = source ? source.textContent.trim() : '';
-        const match = rawText.match(/[\d,]+/);
-        if (match) {
-            const value = Number(match[0].replace(/,/g, ''));
-            renderCount(value);
-            setStatus('Live total', 'mt-2 text-xs font-semibold text-emerald-600');
-            return true;
-        }
-        return false;
-    }
-
-    if (syncFromMapWidget()) return;
-
-    setStatus('Awaiting map', 'mt-2 text-xs font-semibold text-blue-600');
-
-    let attempts = 0;
-    const poller = window.setInterval(() => {
-        attempts += 1;
-        if (syncFromMapWidget() || attempts >= 30) {
-            window.clearInterval(poller);
-            if (attempts >= 30 && display.textContent === '...') {
-                display.textContent = 'Loading';
-                setStatus('Map syncing', 'mt-2 text-xs font-semibold text-blue-600');
-            }
-        }
-    }, 500);
-
-    const observer = new MutationObserver(() => {
-        if (syncFromMapWidget()) {
-            observer.disconnect();
-        }
-    });
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-        characterData: true
-    });
-}
 
 function injectLayout() {
     // Determine root path based on current location
@@ -299,6 +232,11 @@ function injectLayout() {
                         A comprehensive platform for scaling optimization algorithms. 
                         Discover, compare, and contribute to cutting-edge optimizers for large-scale machine learning.
                     </p>
+                    <a href="https://openenvision.github.io/" target="_blank" rel="noopener noreferrer" class="group inline-flex items-center gap-2.5 mb-6 rounded-lg border border-blue-100 bg-blue-50/50 px-3 py-2 text-sm transition-colors hover:border-blue-300 hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2" aria-label="ScalingOpt is a project of OpenEnvision. Visit OpenEnvision (opens in a new tab)">
+                        <span class="text-slate-500">A project of</span>
+                        <span class="font-semibold text-blue-900">OpenEnvision</span>
+                        <svg class="text-blue-500 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"/></svg>
+                    </a>
                     <div class="flex space-x-4">
                         <a href="https://github.com/tianshijing/ScalingOpt" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-blue-600 transition-colors duration-200" aria-label="GitHub repository">
                             ${githubLogo}

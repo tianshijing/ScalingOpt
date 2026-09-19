@@ -33,7 +33,7 @@
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     
     <!-- Custom Styles -->
-    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/styles.css?v=openenvision-brand-2">
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 font-inter">
     <div class="flex flex-col min-h-screen">
@@ -58,6 +58,11 @@
                 
                 <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
                     <div class="text-center" data-aos="fade-up" data-aos-duration="1000">
+                        <a href="https://openenvision.github.io/" target="_blank" rel="noopener noreferrer" class="affiliation-link affiliation-link--hero" aria-label="ScalingOpt is a project of OpenEnvision. Visit OpenEnvision (opens in a new tab)">
+                            <span class="affiliation-link__label">A project of</span>
+                            <span class="affiliation-link__name">OpenEnvision</span>
+                            <svg class="affiliation-link__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"/></svg>
+                        </a>
                         <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 text-gray-900 tracking-tight">
                             <span aria-label="ScalingOpt">ScalingOpt</span>
                             <span class="block text-2xl md:text-4xl lg:text-5xl text-blue-600 font-light mt-4" data-aos="fade-up" data-aos-delay="200" aria-label="Optimization at Scale">
@@ -84,23 +89,6 @@
                                 Give us a Star on GitHub!
                                 <i data-lucide="star" class="ml-2 w-5 h-5 group-hover:scale-110 transition-transform text-yellow-500" aria-hidden="true"></i>
                             </a>
-                        </div>
-                        <div class="mt-10 flex justify-center" data-aos="fade-up" data-aos-delay="760">
-                            <div class="inline-flex w-full max-w-xl flex-col items-start justify-between gap-5 rounded-2xl border border-blue-100/80 bg-white/90 px-5 py-4 text-left shadow-xl shadow-blue-500/10 backdrop-blur sm:flex-row sm:items-center sm:px-6">
-                                <div class="flex items-center gap-4">
-                                    <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/25">
-                                        <i data-lucide="globe-2" class="h-5 w-5" aria-hidden="true"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-xs font-bold uppercase tracking-[0.18em] text-blue-600">Live Traffic</p>
-                                        <p class="mt-1 text-sm font-medium text-slate-500">Total Pageviews</p>
-                                    </div>
-                                </div>
-                                <div class="min-w-24 text-left sm:text-right">
-                                    <div id="total-pageviews" class="font-mono text-4xl font-black leading-none text-slate-900 tabular-nums sm:text-5xl" aria-live="polite">...</div>
-                                    <div id="total-pageviews-status" class="mt-2 text-xs font-semibold text-emerald-600">Syncing live</div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -322,199 +310,6 @@
                                 </a>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </section>
-            <!-- Team Members -->
-            <section class="py-20 bg-white border-b border-gray-200">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="text-center mb-16" data-aos="fade-up">
-                        <h2 class="text-3xl font-bold text-gray-900 mb-4">Members</h2>
-                        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                            Meet the members behind ScalingOpt. We thank them for their contributions.
-                        </p>
-                    </div>
-
-                    <div class="flex flex-wrap justify-center gap-10" data-aos="fade-up" data-aos-delay="100">
-                        <!-- Juanxi Tian -->
-                        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 text-center group w-full md:w-auto md:max-w-sm">
-                            <img src="https://github.com/tianshijing.png" alt="Juanxi Tian" class="w-24 h-24 rounded-full mb-6 mx-auto object-cover shadow-sm group-hover:shadow-md transition-shadow duration-300">
-                            <h3 class="text-xl font-bold text-gray-900 mb-2">Juanxi Tian</h3>
-                            <a href="https://tianshijing.github.io" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors">
-                                <i data-lucide="globe" class="w-4 h-4 mr-2"></i>
-                                Personal Page
-                            </a>
-                        </div>
-
-                        <!-- Yufei Gu -->
-                        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 text-center group w-full md:w-auto md:max-w-sm">
-                            <img src="https://github.com/Yufei-Gu-451.png" alt="Yufei Gu" class="w-24 h-24 rounded-full mb-6 mx-auto object-cover shadow-sm group-hover:shadow-md transition-shadow duration-300">
-                            <h3 class="text-xl font-bold text-gray-900 mb-2">Yufei Gu</h3>
-                            <a href="https://github.com/Yufei-Gu-451" target="_blank" class="inline-flex items-center text-gray-600 hover:text-blue-600 transition-colors">
-                                <i data-lucide="github" class="w-4 h-4 mr-2"></i>
-                                GitHub Profile
-                            </a>
-                        </div>
-
-                        <!-- Yifeng Liu -->
-                        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 text-center group w-full md:w-auto md:max-w-sm">
-                            <img src="https://github.com/lauyikfung.png" alt="Yifeng Liu" class="w-24 h-24 rounded-full mb-6 mx-auto object-cover shadow-sm group-hover:shadow-md transition-shadow duration-300">
-                            <h3 class="text-xl font-bold text-gray-900 mb-2">Yifeng Liu</h3>
-                            <a href="https://lauyikfung.github.io/" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors">
-                                <i data-lucide="globe" class="w-4 h-4 mr-2"></i>
-                                Personal Page
-                            </a>
-                        </div>
-
-                        <!-- Rui Pan -->
-                        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 text-center group w-full md:w-auto md:max-w-sm">
-                            <img src="https://github.com/research4pan.png" alt="Rui Pan" class="w-24 h-24 rounded-full mb-6 mx-auto object-cover shadow-sm group-hover:shadow-md transition-shadow duration-300">
-                            <h3 class="text-xl font-bold text-gray-900 mb-2">Rui Pan</h3>
-                            <a href="https://github.com/research4pan" target="_blank" class="inline-flex items-center text-gray-600 hover:text-blue-600 transition-colors">
-                                <i data-lucide="github" class="w-4 h-4 mr-2"></i>
-                                GitHub Profile
-                            </a>
-                        </div>
-
-                        <!-- Yongliang Wu -->
-                        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 text-center group w-full md:w-auto md:max-w-sm">
-                            <img src="https://github.com/yongliang-wu.png" alt="Yongliang Wu" class="w-24 h-24 rounded-full mb-6 mx-auto object-cover shadow-sm group-hover:shadow-md transition-shadow duration-300">
-                            <h3 class="text-xl font-bold text-gray-900 mb-2">Yongliang Wu</h3>
-                            <a href="https://yongliang-wu.github.io" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors">
-                                <i data-lucide="globe" class="w-4 h-4 mr-2"></i>
-                                Personal Page
-                            </a>
-                        </div>
-
-                        <!-- Qunzhong Wang -->
-                        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 text-center group w-full md:w-auto md:max-w-sm">
-                            <img src="https://github.com/qunzhongwang.png" alt="Qunzhong Wang" class="w-24 h-24 rounded-full mb-6 mx-auto object-cover shadow-sm group-hover:shadow-md transition-shadow duration-300">
-                            <h3 class="text-xl font-bold text-gray-900 mb-2">Qunzhong Wang</h3>
-                            <a href="http://qunzhongwang.github.io" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors">
-                                <i data-lucide="globe" class="w-4 h-4 mr-2"></i>
-                                Personal Page
-                            </a>
-                        </div>
-
-                        <!-- Yiming Dong -->
-                        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 text-center group w-full md:w-auto md:max-w-sm">
-                            <img src="https://scholar.googleusercontent.com/citations?view_op=medium_photo&user=AOYX3WcAAAAJ" alt="Yiming Dong" class="w-24 h-24 rounded-full mb-6 mx-auto object-cover shadow-sm group-hover:shadow-md transition-shadow duration-300">
-                            <h3 class="text-xl font-bold text-gray-900 mb-2">Yiming Dong</h3>
-                            <a href="https://scholar.google.com/citations?user=AOYX3WcAAAAJ&hl=en" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors">
-                                <i data-lucide="graduation-cap" class="w-4 h-4 mr-2"></i>
-                                Google Scholar
-                            </a>
-                        </div>
-
-                        <!-- Junjie Wang -->
-                        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 text-center group w-full md:w-auto md:max-w-sm">
-                            <img src="https://scholar.googleusercontent.com/citations?view_op=medium_photo&user=vJlZY-gAAAAJ" alt="Junjie Wang" class="w-24 h-24 rounded-full mb-6 mx-auto object-cover shadow-sm group-hover:shadow-md transition-shadow duration-300">
-                            <h3 class="text-xl font-bold text-gray-900 mb-2">Junjie Wang</h3>
-                            <a href="https://scholar.google.com/citations?user=vJlZY-gAAAAJ&hl=zh-CN" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors">
-                                <i data-lucide="graduation-cap" class="w-4 h-4 mr-2"></i>
-                                Google Scholar
-                            </a>
-                        </div>
-
-                        <!-- Jiaxuan Zou -->
-                        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 text-center group w-full md:w-auto md:max-w-sm">
-                            <img src="https://github.com/jiaxuanzou0714.png" alt="Jiaxuan Zou" class="w-24 h-24 rounded-full mb-6 mx-auto object-cover shadow-sm group-hover:shadow-md transition-shadow duration-300">
-                            <h3 class="text-xl font-bold text-gray-900 mb-2">Jiaxuan Zou</h3>
-                            <a href="https://jiaxuanzou0714.github.io" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors">
-                                <i data-lucide="globe" class="w-4 h-4 mr-2"></i>
-                                Personal Page
-                            </a>
-                        </div>
-
-                    </div>
-
-                    <div class="mt-16 text-center" data-aos="fade-up" data-aos-delay="200">
-                        <p class="text-gray-600 italic">
-                            Team member information is continuously updated. We welcome email applications for collaboration.
-                        </p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Collaborating Institutions -->
-            <section class="py-24 bg-gradient-to-b from-slate-50 via-white to-blue-50/40 relative overflow-hidden">
-                <div class="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none"></div>
-                <div class="absolute top-12 left-1/2 -translate-x-1/2 w-[32rem] h-[32rem] bg-blue-100/30 rounded-full blur-3xl pointer-events-none"></div>
-                <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="text-center max-w-4xl mx-auto mb-14" data-aos="fade-up">
-                        <span class="partner-kicker inline-flex items-center px-4 py-1.5 rounded-full border border-blue-200 bg-white text-[11px] font-semibold text-blue-700 uppercase tracking-[0.22em] shadow-sm">
-                            Collaborating Institutions and Research Partners
-                        </span>
-                        <h2 class="mt-6 text-3xl md:text-4xl font-bold text-slate-900 leading-tight">
-                            A cross-institutional network
-                        </h2>
-                        <p class="mt-5 text-lg text-slate-600 leading-relaxed">
-                            ScalingOpt is shaped by collaborations across universities and foundation-model research teams, with shared interests in optimization theory, systems, and large-scale language model training.
-                        </p>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5" data-aos="fade-up" data-aos-delay="100">
-                        <article class="partner-logo-card group rounded-2xl border border-slate-200/80 bg-white/90 backdrop-blur p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                            <div class="mb-5 flex h-28 items-center justify-center rounded-xl border border-slate-100 bg-slate-50/70 p-3">
-                                <img src="assets/img/partners/official/ntu-logo.png" alt="Nanyang Technological University logo" class="partner-logo-image partner-logo-image--wide" loading="lazy">
-                            </div>
-                            <p class="text-sm font-semibold text-slate-900">Nanyang Technological University</p>
-                            <p class="mt-1 text-sm text-slate-500">Singapore</p>
-                        </article>
-                        <article class="partner-logo-card group rounded-2xl border border-slate-200/80 bg-white/90 backdrop-blur p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                            <div class="mb-5 flex h-24 items-center justify-center rounded-xl border border-slate-100 bg-slate-50/70 p-4">
-                                <img src="assets/img/partners/official/nus-logo.jpg" alt="National University of Singapore logo" class="partner-logo-image" loading="lazy">
-                            </div>
-                            <p class="text-sm font-semibold text-slate-900">National University of Singapore</p>
-                            <p class="mt-1 text-sm text-slate-500">Singapore</p>
-                        </article>
-                        <article class="partner-logo-card group rounded-2xl border border-slate-200/80 bg-white/90 backdrop-blur p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                            <div class="mb-5 flex h-24 items-center justify-center rounded-xl border border-slate-100 bg-slate-50/70 p-4">
-                                <img src="https://brand.illinois.edu/wp-content/uploads/2024/02/Block-I-orange-white-background.png" alt="University of Illinois Urbana-Champaign logo" class="partner-logo-image" loading="lazy" referrerpolicy="no-referrer">
-                            </div>
-                            <p class="text-sm font-semibold text-slate-900">University of Illinois Urbana-Champaign</p>
-                            <p class="mt-1 text-sm text-slate-500">United States</p>
-                        </article>
-                        <article class="partner-logo-card group rounded-2xl border border-slate-200/80 bg-white/90 backdrop-blur p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                            <div class="mb-5 flex h-24 items-center justify-center rounded-xl border border-slate-100 bg-slate-50/70 p-4">
-                                <img src="assets/img/partners/official/ucla-logo.svg" alt="University of California, Los Angeles logo" class="partner-logo-image" loading="lazy">
-                            </div>
-                            <p class="text-sm font-semibold text-slate-900">University of California, Los Angeles</p>
-                            <p class="mt-1 text-sm text-slate-500">United States</p>
-                        </article>
-                        <article class="partner-logo-card group rounded-2xl border border-slate-200/80 bg-white/90 backdrop-blur p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                            <div class="mb-5 flex h-24 items-center justify-center rounded-xl border border-slate-100 bg-slate-50/70 p-4">
-                                <img src="https://hkust.edu.hk/sites/default/files/2024-03/HKUST_logo_1.svg" alt="Hong Kong University of Science and Technology logo" class="partner-logo-image" loading="lazy" referrerpolicy="no-referrer">
-                            </div>
-                            <p class="text-sm font-semibold text-slate-900">Hong Kong University of Science and Technology</p>
-                            <p class="mt-1 text-sm text-slate-500">Hong Kong SAR & Guangzhou</p>
-                        </article>
-                        <article class="partner-logo-card group rounded-2xl border border-slate-200/80 bg-white/90 backdrop-blur p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                            <div class="mb-5 flex h-24 items-center justify-center rounded-xl border border-slate-100 bg-slate-50/70 p-4">
-                                <img src="https://www.cpr.cuhk.edu.hk/wp-content/uploads/logoR_CUHK-1.png" alt="The Chinese University of Hong Kong logo" class="partner-logo-image" loading="lazy" referrerpolicy="no-referrer">
-                            </div>
-                            <p class="text-sm font-semibold text-slate-900">The Chinese University of Hong Kong</p>
-                            <p class="mt-1 text-sm text-slate-500">Hong Kong SAR & Shenzhen</p>
-                        </article>
-                        <article class="partner-logo-card group rounded-2xl border border-slate-200/80 bg-white/90 backdrop-blur p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                            <div class="mb-5 flex h-24 items-center justify-center rounded-xl border border-slate-100 bg-slate-50/70 p-4">
-                                <img src="https://www.pku.edu.cn/Uploads/Picture/2019/12/26/s5e04176fbbfa3.png" alt="Peking University logo" class="partner-logo-image" loading="lazy" referrerpolicy="no-referrer">
-                            </div>
-                            <p class="text-sm font-semibold text-slate-900">Peking University</p>
-                            <p class="mt-1 text-sm text-slate-500">Beijing</p>
-                        </article>
-                        <article class="partner-logo-card group rounded-2xl border border-slate-200/80 bg-white/90 backdrop-blur p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                            <div class="mb-5 flex h-24 items-center justify-center rounded-xl border border-slate-100 bg-slate-50/70 p-4">
-                                <img src="https://g.alicdn.com/qwenweb/qwen-ai-fe/0.0.4/favicon.ico" alt="Qwen logo" class="h-14 w-14 object-contain" loading="lazy" referrerpolicy="no-referrer">
-                            </div>
-                            <div class="flex flex-col gap-2">
-                                <div>
-                                    <p class="text-sm font-semibold text-slate-900">Qwen</p>
-                                    <p class="mt-1 text-sm text-slate-500">Foundation model research partner</p>
-                                </div>
-                                <p class="text-xs uppercase tracking-[0.18em] text-blue-700 font-semibold">Industry research interface</p>
-                            </div>
-                        </article>
                     </div>
                 </div>
             </section>
@@ -917,19 +712,10 @@
             </section>
 
             <!-- Live Visitor Map -->
-            <section class="bg-slate-950 py-10">
-                <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-4 sm:px-6 lg:flex-row lg:px-8">
-                    <div class="text-center lg:text-left">
-                        <p class="text-xs font-bold uppercase tracking-[0.2em] text-blue-300">Live Traffic</p>
-                        <h2 class="mt-2 text-2xl font-bold text-white">Visitors around the optimization map</h2>
-                        <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
-                            A small live view of the community discovering ScalingOpt in real time.
-                        </p>
-                    </div>
-                    <div class="w-[296px] max-w-full rounded-2xl border border-white/10 bg-white/10 p-2 shadow-2xl shadow-blue-950/50">
-                        <div class="visitor-map-widget mx-auto" style="width: 280px; max-width: 100%;" aria-label="Live visitor map">
-                            <script type="text/javascript" id="mapmyvisitors" src="//mapmyvisitors.com/map.js?d=4o2GSzVV2yQcImX4U9djNSlyjjNX6GpgnfteMiAPMds&cl=ffffff&w=a"></script>
-                        </div>
+            <section>
+                <div class="mx-auto flex max-w-7xl items-center justify-center px-4 sm:px-6 lg:px-8">
+                    <div class="visitor-map-widget mx-auto" style="width: 280px; max-width: 100%;" aria-label="Live visitor map">
+                        <script type="text/javascript" id="mapmyvisitors" src="//mapmyvisitors.com/map.js?d=4o2GSzVV2yQcImX4U9djNSlyjjNX6GpgnfteMiAPMds&cl=ffffff&w=a"></script>
                     </div>
                 </div>
             </section>
@@ -945,7 +731,7 @@
     
     <!-- Utils and Layout -->
     <script src="assets/js/utils.js"></script>
-    <script src="assets/js/layout.js"></script>
+    <script src="assets/js/layout.js?v=openenvision-brand-2"></script>
     
     <!-- AOS Library -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>

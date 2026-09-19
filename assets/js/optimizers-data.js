@@ -5034,6 +5034,190 @@ const optimizers = [
     ],
     "githubUrl": "https://github.com/tilde-research/aurora-release",
     "pseudocode": "\\begin{aligned}\n        &\\textbf{Input:} \\eta, \\mu, r=n/m, K \\\\\n        &\\textbf{Initialize:} W_0,\\; M_0 \\leftarrow 0 \\\\\n        &\\textbf{for } t=1 \\text{ to } T \\text{ do} \\\\\n        &\\quad G_t \\leftarrow \\nabla_W f_t(W_{t-1}) \\\\\n        &\\quad M_t \\leftarrow \\mu M_{t-1} + (1-\\mu)G_t \\\\\n        &\\quad O_t \\leftarrow \\operatorname{polar}(M_t) \\quad\\text{(semi-orthogonal Muon direction)} \\\\\n        &\\quad U_t \\leftarrow \\operatorname{AuroraBalance}_K(O_t, r) \\\\\n        &\\quad \\text{s.t. } U_t^{\\top}U_t \\approx I,\\; \\|U_{t,i:}\\|_2^2 \\approx r \\\\\n        &\\quad W_t \\leftarrow W_{t-1} - \\eta\\, U_t \\\\\n        &\\textbf{end for}\n    \\end{aligned}"
+  },
+  {
+    "id": "adana",
+    "name": "ADANA",
+    "fullName": "Adaptive Damped Nesterov Acceleration",
+    "description": "An AdamW-style optimizer combining logarithmic-time moment schedules with damped Nesterov acceleration and optional decaying weight decay for language-model pretraining",
+    "year": 2026,
+    "month": "February",
+    "category": "First-order",
+    "paper": {
+      "title": "Logarithmic-time Schedules for Scaling Language Models with Momentum",
+      "url": "https://arxiv.org/abs/2602.05298",
+      "authors": [
+        "Damien Ferbach",
+        "Courtney Paquette",
+        "Gauthier Gidel",
+        "Katie Everett",
+        "Elliot Paquette"
+      ]
+    },
+    "advantages": [
+      "Extends gradient history through time-varying first- and second-moment schedules",
+      "Damps Nesterov acceleration to balance faster learning with stochastic-gradient stability",
+      "Improves final validation loss over AdamW in reported FineWeb experiments with 45M-2.6B transformers",
+      "Uses two moment buffers and requires no architectural changes to AdamW-compatible models"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 1,
+        "range": "> 0; tune for model scale",
+        "description": "Peak learning rate; official PyTorch constructor default, not a training recommendation"
+      },
+      "delta": {
+        "default": 8,
+        "range": "> 0",
+        "description": "Moment timescale; gradient mixing weight is delta / (delta + step)"
+      },
+      "kappa": {
+        "default": 1,
+        "range": "Paper: 0 < kappa < 1; 1 disables growth",
+        "description": "Damping exponent; constructor default is 1.0; main paper experiments use 0.85"
+      },
+      "gamma_3_factor": {
+        "default": 1,
+        "range": "No constructor-enforced range",
+        "description": "Multiplier for the momentum contribution"
+      },
+      "epsilon": {
+        "default": 1e-8,
+        "range": "> 0",
+        "description": "Denominator stabilizer"
+      },
+      "weight_decay": {
+        "default": 0,
+        "range": "Nonnegative; 0 disables decay",
+        "description": "Independent decay coefficient, multiplied by the LR schedule but not the peak LR"
+      },
+      "wd_decaying": {
+        "default": "False",
+        "range": "True/False",
+        "description": "Enable decaying weight decay; the constructor leaves it disabled"
+      },
+      "wd_ts": {
+        "default": 1,
+        "range": "> 0",
+        "description": "Decay timescale: coefficient becomes weight_decay / (1 + step / wd_ts)"
+      },
+      "clipsnr": {
+        "default": "None",
+        "range": "None for base ADana",
+        "description": "Base variant shown here disables SNR clipping; enabling it selects Dana-MK4"
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": true
+    },
+    "popularity": 0,
+    "tags": [
+      "Adaptive",
+      "Damped Nesterov",
+      "Log-time Momentum",
+      "Weight Decay Scheduling",
+      "LLM Pretraining"
+    ],
+    "githubUrl": "https://github.com/mlexpos/adana",
+    "pseudocode": "\\begin{aligned}\n        &\\text{Official PyTorch base ADana; SNR clipping disabled} \\\\\n        &\\textbf{Input:} \\eta_0,\\ s_t,\\ \\delta,\\ \\kappa,\\ c,\\ \\epsilon,\\ w,\\ \\rho,\\ d \\\\\n        &\\text{Momentum scale } c,\\quad\\text{decay timescale } \\rho,\\quad\\text{decay flag } d \\\\\n        &\\text{Current learning rate } \\eta_t=\\eta_0 s_t \\\\\n        &\\textbf{Initialize:} \\theta_0,\\quad m_0=0,\\quad v_0=0 \\\\\n        &\\textbf{for } t=1,\\ldots,T\\textbf{ do} \\\\\n        &\\quad g_t\\leftarrow\\nabla f_t(\\theta_{t-1}) \\\\\n        &\\quad a_t\\leftarrow\\frac{\\delta}{\\delta+t} \\\\\n        &\\quad m_t\\leftarrow(1-a_t)m_{t-1}+a_tg_t \\\\\n        &\\quad v_t\\leftarrow(1-a_t)v_{t-1}+a_tg_t^{\\odot 2} \\\\\n        &\\quad b_t\\leftarrow c\\left[1+(1+t)^{1-\\kappa}\\right] \\\\\n        &\\quad u_t\\leftarrow\\frac{g_t+b_tm_t}{\\sqrt{v_t}+\\epsilon} \\\\\n        &\\quad \\lambda_t\\leftarrow\\begin{cases}w/(1+t/\\rho),&d=\\mathrm{True}\\\\w,&d=\\mathrm{False}\\end{cases} \\\\\n        &\\quad \\widetilde\\theta_t\\leftarrow\\theta_{t-1}-\\eta_0s_tu_t \\\\\n        &\\quad \\theta_t\\leftarrow(1-s_t\\lambda_t)\\widetilde\\theta_t \\\\\n        &\\textbf{end for} \\\\\n        &\\text{One parameter group; diagnostics and foreach batching omitted.}\n    \\end{aligned}"
+  },
+  {
+    "id": "schedule_free_plus",
+    "name": "ScheduleFree+",
+    "fullName": "ScheduleFree+ (AdamC + Schedule-Free + Polyak)",
+    "description": "Combines adaptive Polyak step sizes, AdamC weight decay, and schedule-free iterate averaging for large-batch and long-horizon language-model pretraining",
+    "year": 2026,
+    "month": "May",
+    "category": "First-order",
+    "paper": {
+      "title": "ScheduleFree+: Scaling Learning-Rate-Free & Schedule-Free Learning to Large Language Models",
+      "url": "https://arxiv.org/abs/2605.19095",
+      "authors": [
+        "Aaron Defazio"
+      ]
+    },
+    "advantages": [
+      "Adapts step sizes from the loss and gradient L1 norm without a learning-rate grid search in the reported experiments",
+      "Maintains an averaged model for evaluation without a final learning-rate decay phase",
+      "Restores inner momentum to improve robustness at larger batch sizes",
+      "Supports warm-started averaging and outer-momentum annealing for long training runs",
+      "Evaluated on LLMs from 120M to 2B parameters, with the strongest gains reported for long-duration pretraining"
+    ],
+    "hyperparameters": {
+      "lr": {
+        "default": 1,
+        "range": "> 0; reference multiplier is 1 after warmup",
+        "description": "Multiplier on the adaptive Polyak step; optional learning-rate warmup is supplied externally."
+      },
+      "betas": {
+        "default": "(0.9, 0.95)",
+        "range": "Each coefficient in [0, 1)",
+        "description": "Inner Adam first- and second-moment coefficients, separate from the Schedule-Free outer momentum."
+      },
+      "sf_beta1": {
+        "default": 0.9,
+        "range": "[0, 1)",
+        "description": "Outer mixing coefficient for y = sf_beta1 * x + (1 - sf_beta1) * z."
+      },
+      "polyak_beta": {
+        "default": 0,
+        "range": "[0, 1); paper experiments use 0.9",
+        "description": "EMA coefficient for the gradient L1 denominator; the reference constructor defaults to no smoothing."
+      },
+      "weight_decay": {
+        "default": 0,
+        "range": ">= 0; reference notes suggest 20 or 50",
+        "description": "AdamC decay uses the squared effective step size and the training iterate y; values are not interchangeable with AdamW."
+      },
+      "c_warmup": {
+        "default": 0,
+        "range": "Integer >= 0",
+        "description": "Initial steps with x tracking z; the reference recommends 1-2 times the external learning-rate warmup duration."
+      },
+      "r": {
+        "default": 0,
+        "range": "0 or 1 in the paper; reference also suggests 2",
+        "description": "Exponent of the step index in averaging weights; the paper recommends 1 for long runs."
+      },
+      "sf_beta1_anneal_steps": {
+        "default": 0,
+        "range": "Integer >= 0; 0 disables annealing",
+        "description": "Duration of optional interpolation in log(1 - sf_beta1) toward sf_beta1_max."
+      },
+      "sf_beta1_max": {
+        "default": 0.965,
+        "range": "[sf_beta1, 1) for increasing outer momentum",
+        "description": "Target outer momentum when annealing is enabled."
+      },
+      "weight_lr_power": {
+        "default": 2,
+        "range": "Reference setting: 2",
+        "description": "Exponent of the running maximum effective step size in averaging weights."
+      },
+      "eps": {
+        "default": 1e-8,
+        "range": "> 0",
+        "description": "Stabilizer in the Adam denominator; also floors the base learning-rate multiplier in the reference."
+      }
+    },
+    "implementation": {
+      "pytorch": true,
+      "tensorflow": false,
+      "jax": false
+    },
+    "popularity": 0,
+    "tags": [
+      "Schedule-Free",
+      "Learning-Rate-Free",
+      "Polyak Step Size",
+      "AdamC",
+      "Iterate Averaging",
+      "LLM Pretraining"
+    ],
+    "githubUrl": "https://github.com/facebookresearch/schedule_free/blob/main/schedulefree/adamc_schedulefree_plus_paper.py",
+    "pseudocode": "\\begin{aligned}\n        &\\textbf{Input: }\\gamma_t,\\lambda,\\beta_1,\\beta_2,\\beta_p,\\beta_{\\mathrm{sf}},r,p,C,\\epsilon \\\\\n        &\\text{Here }\\gamma_t\\text{ is the base multiplier, including optional warmup.} \\\\\n        &\\textbf{Initialize: }x_0=y_0=z_0=\\theta_0,\\quad m_0=v_0=e_0=W_0=0,\\quad a_0=\\epsilon \\\\\n        &\\textbf{for }t=1,\\ldots,T\\textbf{ do} \\\\\n        &\\quad b_t\\leftarrow\\beta_{\\mathrm{sf}}\\quad\\text{(or optional outer-momentum annealing)} \\\\\n        &\\quad F_t\\leftarrow f_t(y_{t-1}),\\qquad g_t\\leftarrow\\nabla f_t(y_{t-1}) \\\\\n        &\\quad I_t\\leftarrow b_t\\langle g_t,z_{t-1}-x_{t-1}\\rangle \\\\\n        &\\quad e_t\\leftarrow\\beta_p e_{t-1}+(1-\\beta_p)\\sqrt{\\pi/2}\\,\\|g_t\\|_1 \\\\\n        &\\quad \\widehat e_t\\leftarrow e_t/(1-\\beta_p^t),\\qquad\n          \\alpha_t\\leftarrow\\gamma_t\\,\\max(0,F_t+I_t)/\\widehat e_t \\\\\n        &\\quad a_t\\leftarrow\\max(a_{t-1},\\alpha_t),\\qquad w_t\\leftarrow t^r a_t^p \\\\\n        &\\quad (W_t,c_t)\\leftarrow\n          \\begin{cases}\n             (W_{t-1},1),&t\\le C,\\\\\n             (W_{t-1}+w_t,\\;w_t/(W_{t-1}+w_t)),&t>C\n          \\end{cases} \\\\\n        &\\quad m_t\\leftarrow\\beta_1m_{t-1}+(1-\\beta_1)g_t,\\qquad\n          v_t\\leftarrow\\beta_2v_{t-1}+(1-\\beta_2)g_t^2 \\\\\n        &\\quad \\widehat m_t\\leftarrow m_t/(1-\\beta_1^t),\\qquad\n          \\widehat v_t\\leftarrow v_t/(1-\\beta_2^t) \\\\\n        &\\quad z_t\\leftarrow z_{t-1}-\\alpha_t^2\\lambda y_{t-1}\n          -\\alpha_t\\,\\widehat m_t/(\\sqrt{\\widehat v_t}+\\epsilon) \\\\\n        &\\quad x_t\\leftarrow(1-c_t)x_{t-1}+c_tz_t,\\qquad\n          y_t\\leftarrow b_tx_t+(1-b_t)z_t \\\\\n        &\\textbf{end for};\\qquad \\textbf{return }x_T \\\\\n        &\\text{Train at }y_t\\text{; evaluate and export model weights at }x_t. \\\\\n        &\\text{Paper Algorithm 1; one parameter group.} \\\\\n        &\\text{Distributed reductions and annealing details omitted.}\n    \\end{aligned}"
   }
 ];
 
